@@ -11,14 +11,14 @@ licensing.
 To start the web version from command line, run
 
 ```
-./gradlew :web:run
+./gradlew :web:web:run
 ```
 
 This will start a development server on your machine where you can test the app. 
 If you need to access the server from other devices, you can specify a binding address
 
 ```
-./gradlew :web:run -Pgbind=A.B.C.D
+./gradlew :web:web:run -Pgbind=A.B.C.D
 ```
 
 where `A.B.C.D` is your IP address. 
@@ -29,9 +29,9 @@ You can also run `./gradlew :web:tasks` to list other options.
 To start the desktop version from command line, run
 
 ```
-./gradlew :desktop:run
+./gradlew :desktop:desktop:run
 ```
-You can also run `./gradlew :desktop:tasks` to list other options.
+You can also run `./gradlew :desktop:desktop:tasks` to list other options.
 
 ## Setup the development environment
 
