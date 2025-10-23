@@ -1,5 +1,6 @@
-# Welcome to GeoGebra!
+# Welcome to GeoGebra! But for linux
 
+For some reason, GeoGebra Classic 6 is not available for linux. WTF. But I decided to use electron and built myself a version of geogebra working exclusively for linux (I mean, if you are using windows, just download the app from https://www.geogebra.org/....)
 
 This repository contains source code of [GeoGebra](https://www.geogebra.org)'s math apps.
 It is available on a private GitLab instance and mirrored to GitHub.

@@ -2,3 +2,10 @@
 **/war/*
 **/.gradle/*
 .idea/*
+
+**/classic/css/*
+**/classic/node_modules/*
+**/classic/web3d/*
+**/classic/classic.html
+
+**/dist/*
