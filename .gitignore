@@ -1,0 +1,4 @@
+**/build*
+**/war/*
+**/.gradle/*
+.idea/*
