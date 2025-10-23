@@ -22,7 +22,8 @@
     "icon": "icons/logo.png",
     "linux": {
       "target": [
-        "AppImage"
+        "AppImage",
+        "deb"
       ],
       "maintainer": "damien.dams.contact@gmail.com"
     }

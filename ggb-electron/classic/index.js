@@ -5,12 +5,12 @@ let win
 
 function createWindow() {
   win = new BrowserWindow({
+
     width: 1280,
     height: 800,
     webPreferences: {
       nodeIntegration: false,
-      contextIsolation: true,
-      sandbox: false
+      contextIsolation: true
     },
     autoHideMenuBar: true,
     icon: path.join(__dirname, 'icons/logo.png')
