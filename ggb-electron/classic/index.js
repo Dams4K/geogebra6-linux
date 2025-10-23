@@ -1,17 +1,35 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
 
-function createWindow () {
-  const win = new BrowserWindow({
+let win
+
+function createWindow() {
+  win = new BrowserWindow({
     width: 1280,
     height: 800,
     webPreferences: {
-      nodeIntegration: false,   // GWT n’a pas besoin de Node
-      contextIsolation: true
-    }
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: false
+    },
+    autoHideMenuBar: true,
+    icon: path.join(__dirname, 'icons/logo.png')
   })
 
   win.loadFile('classic.html')
+
+  win.on('close', (event) => {
+	  if (!win.isDestroyed()) {
+		try {
+		  win.destroy()
+		} catch (e) {
+		  console.error('Error destroy window :', e)
+		}
+	  }
+  })
+  win.on('closed', () => {
+    win = null
+  })
 }
 
 app.whenReady().then(createWindow)
@@ -21,5 +39,5 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  if (win === null) createWindow()
 })
