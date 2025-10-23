@@ -38,12 +38,12 @@ You can also run `./gradlew :desktop:desktop:tasks` to list other options.
 * Open IntelliJ. If you don't have IntelliJ on your computer yet 
 then you can download and install it from [here](https://www.jetbrains.com/idea/download)
 * In the menu select File / New / Project from Version Control / Git
-* In the new window add the following path: `https://git.geogebra.org/ggb/geogebra.git`
+* In the new window add the following path: `https://github.com/Dams4K/geogebra6-linux.git`
 * Click on ‘Checkout’, select your preferred destination folder, select Java 1.8 as the SDK, 
 click on OK and wait…
 * After the project is checked out, select the root folder of the project, 
 open the Run Anything tool (Double ^ on Mac) and run the following command: 
-`./gradlew :web:run`
+`./gradlew :web:web:run`
 * After a minute or two the GWT UI will appear
 * After the Startup URLs are loaded on the UI, select the app that you wish start. For example, 
 if you select `graphing.html` and click on Launch Default Browser 
