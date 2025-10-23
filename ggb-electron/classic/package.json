@@ -1,0 +1,31 @@
+{
+  "name": "geogebra-classic-6",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": {
+    "name": "Dams4K",
+    "email": "damien.dams.contact@gmail.com "
+  },
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "electron": "^38.4.0"
+  },
+  "homepage": "https://www.geogebra.org/",
+  "build": {
+    "appId": "org.geogebra.classic6",
+    "productName": "GeoGebra Classic 6",
+    "icon": "icons/logo.png",
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "maintainer": "damien.dams.contact@gmail.com"
+    }
+  }
+}
