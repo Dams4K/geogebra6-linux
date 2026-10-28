@@ -33,7 +33,8 @@ function createWindow() {
     })
 
     win.on('close', (e) => {
-        app.quit();
+        e.preventDefault()
+        win.destroy()
     })
 
     win.on('closed', () => {
