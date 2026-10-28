@@ -50,5 +50,8 @@
         "!war/web3d/sourcemaps/**"
       ]
     }
+  },
+  "flatpak": {
+    "runtimeVersion": "26.08"
   }
 }
