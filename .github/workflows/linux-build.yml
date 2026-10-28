@@ -42,7 +42,8 @@ jobs:
       - name: Install Linux packaging tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y rpm rsync flatpak flatpak-builder
+          sudo apt-get install -y rpm rsync flatpak flatpak-builder fuse3
+          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
       - name: Install Electron dependencies
         working-directory: ggb-electron/classic
@@ -60,6 +61,7 @@ jobs:
             ggb-electron/classic/dist/*.AppImage
             ggb-electron/classic/dist/*.deb
             ggb-electron/classic/dist/*.rpm
+            ggb-electron/classic/dist/*.flatpak
           if-no-files-found: error
 
       - name: Publish GitHub Release
@@ -70,4 +72,5 @@ jobs:
             ggb-electron/classic/dist/*.AppImage
             ggb-electron/classic/dist/*.deb
             ggb-electron/classic/dist/*.rpm
+            ggb-electron/classic/dist/*.flatpak
           generate_release_notes: true
