@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.openGL;
 
 import java.util.ArrayList;
@@ -12,48 +28,48 @@ import org.geogebra.common.kernel.matrix.Coords;
 public class GLBufferManagerTemplatesForPoints extends GLBufferManager {
 
 	// we don't use buffers here
-	static final private int ELEMENTS_SIZE_START = 0;
-	static final private int INDICES_SIZE_START = 0;
+	private static final int ELEMENTS_SIZE_START = 0;
+	private static final int INDICES_SIZE_START = 0;
 
 	/**
 	 * number of templates for points
 	 */
-	final static private int POINT_TEMPLATES_COUNT = 3;
+	private static final int POINT_TEMPLATES_COUNT = 3;
 
 	private GLBufferIndicesArray bufferIndicesArray;
 
-	private ArrayList<Double>[] vertexTemplates;
-	private ArrayList<Double>[] normalTemplates;
-	private ArrayList<Short>[] indicesTemplates;
+	private final ArrayList<Double>[] vertexTemplates;
+	private final ArrayList<Double>[] normalTemplates;
+	private final ArrayList<Short>[] indicesTemplates;
 
 	private ArrayList<Double> currentVertexArray;
 	private ArrayList<Double> currentNormalArray;
 	private ArrayList<Short> currentIndicesArray;
 
 	/**
-	 * 
+	 *
 	 * @param pointSize
 	 *            point size
 	 * @return template index for this size
 	 */
-	static public int getIndexForPointSize(float pointSize) {
+	public static int getIndexForPointSize(float pointSize) {
 		return pointSize < 2.5f ? 0 : pointSize > 5.5f ? 2 : 1;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param index
 	 *            template index
 	 * @return sphere size for template index
 	 */
-	static public int getSphereSizeForIndex(int index) {
+	public static int getSphereSizeForIndex(int index) {
 		switch (index) {
-		case 0:
-			return 2;
-		case 1:
-			return 4;
-		default:
-			return 7;
+			case 0:
+				return 2;
+			case 1:
+				return 4;
+			default:
+				return 7;
 		}
 	}
 
@@ -61,7 +77,8 @@ public class GLBufferManagerTemplatesForPoints extends GLBufferManager {
 	 * constructor
 	 */
 	@SuppressWarnings("unchecked")
-	public GLBufferManagerTemplatesForPoints() {
+	public GLBufferManagerTemplatesForPoints(ManagerShaders manager) {
+		super(manager);
 		vertexTemplates = new ArrayList[POINT_TEMPLATES_COUNT];
 		normalTemplates = new ArrayList[POINT_TEMPLATES_COUNT];
 		indicesTemplates = new ArrayList[POINT_TEMPLATES_COUNT];
@@ -74,14 +91,13 @@ public class GLBufferManagerTemplatesForPoints extends GLBufferManager {
 	}
 
 	@Override
-	protected void putIndices(int size, TypeElement type,
-			boolean reuseSegment) {
+	protected void putIndices(int size, TypeElement type, boolean reuseSegment) {
 		// not used
 	}
 
 	/**
 	 * draw
-	 * 
+	 *
 	 * @param r
 	 *            renderer
 	 */
@@ -100,7 +116,7 @@ public class GLBufferManagerTemplatesForPoints extends GLBufferManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return new indices array
 	 */
 	public GLBufferIndicesArray getBufferIndicesArray() {
@@ -109,7 +125,7 @@ public class GLBufferManagerTemplatesForPoints extends GLBufferManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return current indices array
 	 */
 	public List<Short> getCurrentIndicesArray() {
@@ -122,12 +138,12 @@ public class GLBufferManagerTemplatesForPoints extends GLBufferManager {
 	}
 
 	@Override
-	public boolean isTemplateForPoints() {
+	boolean isTemplateForPoints() {
 		return true;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param manager
 	 *            manager
 	 * @param pointSize
@@ -146,8 +162,7 @@ public class GLBufferManagerTemplatesForPoints extends GLBufferManager {
 	private void createSphere(ManagerShaders manager, int templateIndex) {
 
 		manager.setScalerIdentity();
-		manager.drawSphere(getSphereSizeForIndex(templateIndex),
-				Coords.O, 1d, -1);
+		manager.drawSphere(getSphereSizeForIndex(templateIndex), Coords.O, 1d, -1);
 		manager.setScalerView();
 
 		currentVertexArray = new ArrayList<>();
@@ -173,14 +188,13 @@ public class GLBufferManagerTemplatesForPoints extends GLBufferManager {
 
 	/**
 	 * select template according to point size
-	 * 
+	 *
 	 * @param manager
 	 *            manager
 	 * @param pointSize
 	 *            point size
 	 */
-	public void selectSphereAndCreateIfNeeded(ManagerShaders manager,
-			float pointSize) {
+	public void selectSphereAndCreateIfNeeded(ManagerShaders manager, float pointSize) {
 
 		int templateIndex = getIndexForPointSize(pointSize);
 		currentVertexArray = vertexTemplates[templateIndex];
@@ -196,7 +210,7 @@ public class GLBufferManagerTemplatesForPoints extends GLBufferManager {
 	/**
 	 * select sphere corresponding to point size. WARNING: geometries must have
 	 * been created first
-	 * 
+	 *
 	 * @param pointSize
 	 *            point size
 	 */
@@ -210,15 +224,14 @@ public class GLBufferManagerTemplatesForPoints extends GLBufferManager {
 
 	/**
 	 * draw current sphere
-	 * 
+	 *
 	 * @param manager
 	 *            manager
 	 */
 	public void drawSphere(ManagerShaders manager) {
 		manager.startGeometry(Manager.Type.TRIANGLES);
-		manager.endGeometry(currentIndicesArray.size(), elementsLength,
-				currentVertexArray, currentNormalArray);
+		manager.endGeometry(
+				currentIndicesArray.size(), elementsLength, currentVertexArray, currentNormalArray);
 		manager.endList();
 	}
-
 }

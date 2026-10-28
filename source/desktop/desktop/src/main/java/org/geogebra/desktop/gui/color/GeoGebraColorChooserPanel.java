@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.gui.color;
 
 import java.awt.BorderLayout;
@@ -37,24 +53,24 @@ import org.geogebra.desktop.util.GuiResourcesD;
 
 /**
  * A color swatch chooser panel for GeoGebra.
- * 
+ *
  * @author G. Sturr
  */
-public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
+public final class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	protected AppD app;
-	protected GeoGebraColorChooser enclosingChooser;
-	protected GeoGebraColorChooserPanel myChooser;
+	private final AppD app;
+	private GeoGebraColorChooser enclosingChooser;
+	private final GeoGebraColorChooserPanel myChooser;
 
-	protected MainSwatchPanel mainSwatchPanel;
-	protected RecentSwatchPanel recentSwatchPanel;
-	protected PrimarySwatchPanel primarySwatchPanel;
-	protected CustomSwatchPanel customSwatchPanel;
+	private MainSwatchPanel mainSwatchPanel;
+	private RecentSwatchPanel recentSwatchPanel;
+	private PrimarySwatchPanel primarySwatchPanel;
+	private CustomSwatchPanel customSwatchPanel;
 
-	protected SwatchListener swatchListener;
-	protected ArrayList<SwatchPanel> swatchPanelList;
+	private SwatchListener swatchListener;
+	private ArrayList<SwatchPanel> swatchPanelList;
 
 	private JButton btnCustomColor;
 	private JLabel lblRecent;
@@ -62,12 +78,12 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 	private JPanel recentPanel;
 	private JPanel customPanel;
 
-	protected static final int largeSwatchSize = 16;
-	protected static final int smallSwatchSize = 14;
+	private static final int largeSwatchSize = 16;
+	private static final int smallSwatchSize = 14;
 
 	/**
 	 * Constructs a color chooser panel
-	 * 
+	 *
 	 * @param app application
 	 */
 	public GeoGebraColorChooserPanel(AppD app) {
@@ -153,7 +169,6 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 		mainPanel.add(customPanel, gbc);
 
 		add(mainPanel);
-
 	}
 
 	private void createGUIElements() {
@@ -193,7 +208,7 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 		recentPanel.setMaximumSize(getPreferredSize());
 
 		// create a button to open a RGB color chooser for custom colors
-		btnCustomColor = new JButton(app.getImageIcon(GuiResourcesD.LIST_ADD));
+		btnCustomColor = new JButton(app.getScaledIcon(GuiResourcesD.LIST_ADD));
 		btnCustomColor.addActionListener(new CustomButtonActionListener());
 		btnCustomColor.setPreferredSize(new Dimension(24, 18));
 		btnCustomColor.setFocusPainted(false);
@@ -204,13 +219,11 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 		customPanel = new JPanel(new BorderLayout());
 		customPanel.add(lblCustom, BorderLayout.NORTH);
 		customPanel.add(customSwatchPanel, BorderLayout.CENTER);
-		customPanel.add(LayoutUtil.flowPanel(0, 2, 0, btnCustomColor),
-				BorderLayout.SOUTH);
+		customPanel.add(LayoutUtil.flowPanel(0, 2, 0, btnCustomColor), BorderLayout.SOUTH);
 		customPanel.setMaximumSize(getPreferredSize());
 
 		// set the labels
 		setLabels();
-
 	}
 
 	@Override
@@ -226,20 +239,19 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 	@Override
 	public void updateChooser() {
 		setSwatchPanelSelection(getColorSelectionModel().getSelectedColor());
-
 	}
 
 	/**
 	 * Sets the visual feedback for the swatch panels so that the appropriate
 	 * panel shows the current selection.
-	 * 
+	 *
 	 * @param color color
 	 */
 	public void setSwatchPanelSelection(Color color) {
 
 		// clear visual feedback for swatch selection in the swatch panels
 		for (SwatchPanel panel : swatchPanelList) {
-			panel.setSelectionFromLocation(-1, -1);
+			panel.setSelectionFromLocation();
 		}
 
 		// exit if the chooser null selection flag is set
@@ -278,7 +290,7 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 
 	/**
 	 * MouseListener for the swatch panels.
-	 * 
+	 *
 	 */
 	class SwatchListener extends MouseAdapter {
 		@Override
@@ -295,8 +307,7 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 
 				// set the color selection to the color of the cell the mouse is
 				// above
-				Color color = mySwatchPanel.getColorForLocation(e.getX(),
-						e.getY());
+				Color color = mySwatchPanel.getColorForLocation(e.getX(), e.getY());
 				getColorSelectionModel().setSelectedColor(color);
 
 				// update the the recent swatch panel
@@ -310,13 +321,12 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 	/**
 	 * Action listener for the custom color button. Creates and shows a color
 	 * chooser dialog with a RGB color chooser panel.
-	 * 
+	 *
 	 */
 	class CustomButtonActionListener implements ActionListener {
 
 		JColorChooser chooser;
-		ActionListener okActionListener =
-				(e) -> customSwatchPanel.addCustomColor(chooser.getColor());
+		ActionListener okActionListener = (e) -> customSwatchPanel.addCustomColor(chooser.getColor());
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -324,22 +334,25 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 			chooser = new JColorChooser();
 			chooser.setColor(myChooser.getColorFromModel());
 			DefaultRGBChooserPanel rgb = new DefaultRGBChooserPanel(app);
-			AbstractColorChooserPanel[] panels = { rgb };
+			AbstractColorChooserPanel[] panels = {rgb};
 			chooser.setChooserPanels(panels);
 			chooser.setPreviewPanel(rgb.getPreview());
 
 			// show the chooser dialog
-			JDialog dialog = JColorChooser.createDialog(app.getMainComponent(),
-					app.getLocalization().getMenu("ChooseColor"), true, chooser,
-					okActionListener, null);
+			JDialog dialog = JColorChooser.createDialog(
+					app.getMainComponent(),
+					app.getLocalization().getMenu("ChooseColor"),
+					true,
+					chooser,
+					okActionListener,
+					null);
 			dialog.setVisible(true);
 		}
-
 	}
 
 	/**********************************************************
 	 * Base class for all swatch panels.
-	 * 
+	 *
 	 **********************************************************/
 	class SwatchPanel extends JPanel {
 
@@ -347,8 +360,7 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 
 		protected GColor[] colors;
 
-		protected Dimension swatchSize = new Dimension(largeSwatchSize,
-				largeSwatchSize);
+		protected Dimension swatchSize = new Dimension(largeSwatchSize, largeSwatchSize);
 		protected Dimension gap = new Dimension(1, 1);
 		protected Dimension numSwatches;
 		protected Dimension selectedSwatch = new Dimension(-1, -1);
@@ -356,8 +368,9 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 		protected Dimension prevHoverSwatch = new Dimension(-1, -1);
 
 		protected int swatchCount = 0;
+		Dimension cell = new Dimension();
 
-		public SwatchPanel() {
+		SwatchPanel() {
 
 			initValues();
 			initColors();
@@ -411,7 +424,7 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 		}
 
 		@Override
-		public void paintComponent(Graphics g) {
+		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			Graphics2D g2d = (Graphics2D) g;
 
@@ -428,16 +441,13 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 					int x;
 					if (!this.getComponentOrientation().isLeftToRight()
 							&& (this instanceof RecentSwatchPanel)) {
-						x = (numSwatches.width - column - 1)
-								* (swatchSize.width + gap.width) + insets.left;
+						x = (numSwatches.width - column - 1) * (swatchSize.width + gap.width) + insets.left;
 					} else {
-						x = column * (swatchSize.width + gap.width)
-								+ insets.left;
+						x = column * (swatchSize.width + gap.width) + insets.left;
 					}
 					int y = row * (swatchSize.height + gap.height) + insets.top;
 
-					g2d.fill3DRect(x + 1, y + 1, swatchSize.width - 1,
-							swatchSize.height - 1, true);
+					g2d.fill3DRect(x + 1, y + 1, swatchSize.width - 1, swatchSize.height - 1, true);
 
 					if (isSwatchCell(column, row)) {
 
@@ -445,26 +455,18 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 								&& row == selectedSwatch.height
 								&& column == selectedSwatch.width) {
 							g2d.setColor(Color.DARK_GRAY);
-							g2d.drawRect(x, y, swatchSize.width,
-									swatchSize.height);
+							g2d.drawRect(x, y, swatchSize.width, swatchSize.height);
 
 							if (app != null) {
-								g2d.drawImage(
-										app.getImageIcon(
-												GuiResourcesD.COLOR_CHOOSER_CHECK)
-												.getImage(),
-										x + 3, y + 3, null);
+								g2d.drawImage(app.getImage(GuiResourcesD.COLOR_CHOOSER_CHECK), x + 3, y + 3, null);
 							}
 						}
 
-						if (hoverSwatch != null && row == hoverSwatch.height
-								&& column == hoverSwatch.width) {
+						if (hoverSwatch != null && row == hoverSwatch.height && column == hoverSwatch.width) {
 							g2d.setColor(Color.DARK_GRAY);
-							g2d.drawRect(x, y, swatchSize.width,
-									swatchSize.height);
+							g2d.drawRect(x, y, swatchSize.width, swatchSize.height);
 						}
 					}
-
 				}
 			}
 		}
@@ -472,10 +474,8 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 		@Override
 		public Dimension getPreferredSize() {
 			Insets insets = getInsets();
-			int x = numSwatches.width * (swatchSize.width + gap.width)
-					+ insets.left + insets.right;
-			int y = numSwatches.height * (swatchSize.height + gap.height)
-					+ insets.top + insets.bottom;
+			int x = numSwatches.width * (swatchSize.width + gap.width) + insets.left + insets.right;
+			int y = numSwatches.height * (swatchSize.height + gap.height) + insets.top + insets.bottom;
 			return new Dimension(x, y);
 		}
 
@@ -487,23 +487,20 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 			}
 
 			Color color = getColorForLocation(e.getX(), e.getY());
-			String name = GeoGebraColorConstants.getGeogebraColorName(app,
-					GColor.newColor(color.getRed(), color.getGreen(),
-							color.getBlue(), color.getAlpha()));
-			String rgbStr = color.getRed() + ", " + color.getGreen() + ", "
-					+ color.getBlue();
+			String name = GeoGebraColorConstants.getGeogebraColorName(
+					app,
+					GColor.newColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()));
+			String rgbStr = color.getRed() + ", " + color.getGreen() + ", " + color.getBlue();
 			if (name != null) {
 				return name + "  " + rgbStr;
 			}
 			return rgbStr;
 		}
 
-		public Color getColorForLocation(int x, int y) {
+		Color getColorForLocation(int x, int y) {
 			int column;
-			if (!this.getComponentOrientation().isLeftToRight()
-					&& (this instanceof RecentSwatchPanel)) {
-				column = numSwatches.width - x / (swatchSize.width + gap.width)
-						- 1;
+			if (!this.getComponentOrientation().isLeftToRight() && (this instanceof RecentSwatchPanel)) {
+				column = numSwatches.width - x / (swatchSize.width + gap.width) - 1;
 			} else {
 				column = x / (swatchSize.width + gap.width);
 			}
@@ -512,7 +509,7 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 			return getColorForCell(column, row);
 		}
 
-		public void setCellFromLocation(int x, int y, Dimension p) {
+		void setCellFromLocation(int x, int y, Dimension p) {
 			if (x == -1 || y == -1) {
 				p.width = -1;
 				p.height = -1;
@@ -520,10 +517,8 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 			}
 
 			int column;
-			if (!this.getComponentOrientation().isLeftToRight()
-					&& (this instanceof RecentSwatchPanel)) {
-				column = numSwatches.width - x / (swatchSize.width + gap.width)
-						- 1;
+			if (!this.getComponentOrientation().isLeftToRight() && (this instanceof RecentSwatchPanel)) {
+				column = numSwatches.width - x / (swatchSize.width + gap.width) - 1;
 			} else {
 				column = x / (swatchSize.width + gap.width);
 			}
@@ -534,8 +529,7 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 
 		private Color getColorForCell(int column, int row) {
 			if ((row * numSwatches.width) + column < colors.length) {
-				return GColorD.getAwtColor(
-						colors[(row * numSwatches.width) + column]);
+				return GColorD.getAwtColor(colors[(row * numSwatches.width) + column]);
 			}
 			return Color.WHITE;
 		}
@@ -550,14 +544,13 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 					cell.width = i % numSwatches.width;
 					return true;
 				}
-
 			}
 			cell.height = -1;
 			cell.width = -1;
 			return false;
 		}
 
-		protected boolean setSelectionFromColor(Color color) {
+		boolean setSelectionFromColor(Color color) {
 			if (selectedSwatch == null) {
 				selectedSwatch = new Dimension();
 			}
@@ -576,33 +569,26 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 			return success;
 		}
 
-		protected void setSelectionFromLocation(int xLoc, int yLoc) {
-			if (xLoc < 0 || yLoc < 0) {
-				selectedSwatch.width = -1;
-				selectedSwatch.height = -1;
-			} else {
-				setCellFromLocation(xLoc, yLoc, selectedSwatch);
-			}
+		void setSelectionFromLocation() {
+			selectedSwatch.width = -1;
+			selectedSwatch.height = -1;
 			this.repaint();
 		}
 
-		Dimension cell = new Dimension();
-
-		protected boolean isSwatchLocation(int xLoc, int yLoc) {
+		boolean isSwatchLocation(int xLoc, int yLoc) {
 			setCellFromLocation(xLoc, yLoc, cell);
 			return isSwatchCell(cell.width, cell.height);
 		}
 
-		protected boolean isSwatchCell(int column, int row) {
+		boolean isSwatchCell(int column, int row) {
 			int count = row * numSwatches.width + column + 1;
 			return count <= swatchCount;
 		}
-
 	}
 
 	/*******************************************************
 	 * Recent swatch panel. This holds recently selected colors.
-	 * 
+	 *
 	 */
 	class RecentSwatchPanel extends SwatchPanel {
 
@@ -616,8 +602,7 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 
 		@Override
 		protected void initColors() {
-			Color defaultRecentColor = UIManager
-					.getColor("ColorChooser.swatchesDefaultRecentColor");
+			Color defaultRecentColor = UIManager.getColor("ColorChooser.swatchesDefaultRecentColor");
 			int numColors = numSwatches.width * numSwatches.height;
 
 			colors = new GColor[numColors];
@@ -631,7 +616,7 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 			swatchCount = 0;
 		}
 
-		public void setMostRecentColor(Color c) {
+		private void setMostRecentColor(Color c) {
 
 			System.arraycopy(colors, 0, colors, 1, colors.length - 1);
 			colors[0] = GColorD.newColor(c);
@@ -641,12 +626,11 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 
 			repaint();
 		}
-
 	}
 
 	/*******************************************************
 	 * Custom swatch panel. This holds user defined RGB colors.
-	 * 
+	 *
 	 */
 	class CustomSwatchPanel extends SwatchPanel {
 
@@ -665,8 +649,7 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 
 		@Override
 		protected void initColors() {
-			Color defaultRecentColor = UIManager
-					.getColor("ColorChooser.swatchesDefaultRecentColor");
+			Color defaultRecentColor = UIManager.getColor("ColorChooser.swatchesDefaultRecentColor");
 			int numColors = numSwatches.width * numSwatches.height;
 
 			colors = new GColor[numColors];
@@ -675,7 +658,7 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 			}
 		}
 
-		public void addCustomColor(Color color) {
+		private void addCustomColor(Color color) {
 
 			if (color == null) {
 				selectedSwatch.width = -1;
@@ -692,12 +675,10 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 				}
 
 				getColorSelectionModel().setSelectedColor(color);
-				primarySwatchPanel.setSelectionFromLocation(-1, -1);
-				mainSwatchPanel.setSelectionFromLocation(-1, -1);
+				primarySwatchPanel.setSelectionFromLocation();
+				mainSwatchPanel.setSelectionFromLocation();
 				recentSwatchPanel.setMostRecentColor(color);
-
 			}
-
 		}
 
 		@Override
@@ -707,13 +688,12 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 			}
 			return true;
 		}
-
 	}
 
 	/*******************************************************
 	 * Primary swatch panel. This holds primary (and near primary) colors and
 	 * grays.
-	 * 
+	 *
 	 */
 	class PrimarySwatchPanel extends SwatchPanel {
 
@@ -728,7 +708,6 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 		protected void initColors() {
 			colors = GeoGebraColorConstants.getPrimarySwatchColors();
 		}
-
 	}
 
 	/********************************************************
@@ -748,7 +727,5 @@ public class GeoGebraColorChooserPanel extends AbstractColorChooserPanel {
 		protected void initColors() {
 			colors = GeoGebraColorConstants.getMainColorSwatchColors();
 		}
-
 	}
-
 }

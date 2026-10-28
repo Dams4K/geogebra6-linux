@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to='editor'>
     <inherits name='org.geogebra.keyboard.KeyboardWeb'/>
-    <inherits name="com.himamis.retex.editor.JLMEditorDev" />
+    <inherits name="org.geogebra.editor.JLMEditorDev" />
 
     <!-- Specify the paths for translatable code                    -->
     <source path='editor'/>
+    <source path='awt'/>
     <source path='html5/bridge'/>
     <source path='html5/export'>
         <exclude name="**/GeoGebra*"/>
@@ -21,7 +22,7 @@
     <inherits name='org.geogebra.Common'/>
     <inherits name='org.geogebra.CommonKeyboard'/>
     <inherits name='org.geogebra.GgbJdk'/>
-    <inherits name="com.himamis.retex.editor.JLMEditorDev" />
+    <inherits name="org.geogebra.editor.JLMEditorDev" />
 
     <!-- Specify the paths for translatable code                    -->
     <!-- resources is both in source and resource because of SVGResource classes -->
@@ -32,6 +33,7 @@
     <set-configuration-property name="user.agent.runtimeWarning" value="false"/>
     <!-- #3511 -->
     <set-property name="compiler.stackMode" value="strip"/>
+    <set-property name="jre.checks.type" value="DISABLED" />
     <set-property name="gwt.uncaughtexceptionhandler.windowonerror" value="IGNORE"/>
     <set-property name="gwt.logging.enabled" value="FALSE"/>
     <set-configuration-property name="org.gwtproject.safecss.ForceCheckValidStyles" value="false"/>

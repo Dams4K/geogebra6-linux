@@ -1,20 +1,45 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.shared.components.dialog;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.geogebra.common.gui.SetLabels;
 import org.geogebra.web.html5.gui.BaseWidgetFactory;
 import org.geogebra.web.html5.gui.GPopupPanel;
+import org.geogebra.web.html5.gui.accessibility.HasFocus;
+import org.geogebra.web.html5.gui.util.AriaHelper;
 import org.geogebra.web.html5.gui.util.Dom;
 import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.util.Persistable;
 import org.gwtproject.core.client.Scheduler;
+import org.gwtproject.dom.client.Element;
 import org.gwtproject.dom.client.EventTarget;
 import org.gwtproject.event.dom.client.KeyCodes;
+import org.gwtproject.user.client.DOM;
 import org.gwtproject.user.client.Event;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.IsWidget;
 import org.gwtproject.user.client.ui.Label;
 import org.gwtproject.user.client.ui.RequiresResize;
+import org.gwtproject.user.client.ui.Widget;
+import org.jspecify.annotations.Nullable;
 
 import jsinterop.base.Js;
 
@@ -25,35 +50,38 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 	private FlowPanel dialogContent;
 	private Runnable positiveAction;
 	private Runnable negativeAction;
-	private StandardButton posButton;
-	private StandardButton negButton;
+	private @Nullable StandardButton posButton;
+	private @Nullable StandardButton negButton;
 	private boolean preventHide = false;
 	private final DialogData dialogData;
 	private Label title;
+	private final List<Widget> widgetList = new ArrayList<>();
+	private int focusIndex = 0;
 
 	/**
 	 * base dialog constructor
-	 * @param app - see {@link AppW}
-	 * @param dialogData - contains trans keys for title and buttons
-	 * @param autoHide - if the dialog should be closed on click outside
-	 * @param hasScrim - background should be greyed out
+	 * @param app see {@link AppW}
+	 * @param dialogData contains trans keys for title and buttons
+	 * @param autoHide if the dialog should be closed on click outside
+	 * @param hasScrim background should be greyed out
 	 */
-	public ComponentDialog(AppW app, DialogData dialogData, boolean autoHide,
-			boolean hasScrim) {
+	public ComponentDialog(AppW app, DialogData dialogData, boolean autoHide, boolean hasScrim) {
 		super(autoHide, app.getAppletFrame(), app);
 		this.dialogData = dialogData;
 		setGlassEnabled(hasScrim);
 		this.setStyleName("dialogComponent");
 		buildDialog();
 		app.addWindowResizeListener(this);
+		setAccessibilityProperties(hasScrim);
+		sinkEvents(Event.ONKEYDOWN);
+		addCloseHandler(closed -> app.unregisterPopup(this));
 	}
 
-	private void  buildDialog() {
+	private void buildDialog() {
 		FlowPanel dialogMainPanel = new FlowPanel();
 		dialogMainPanel.addStyleName("dialogMainPanel");
 
-		addTitleOfDialog(dialogMainPanel, dialogData.getTitleTransKey(),
-				dialogData.getSubTitleHTML());
+		addTitleOfDialog(dialogMainPanel, dialogData.getTitleTransKey(), dialogData.getSubTitleHTML());
 		createEmptyDialogContent(dialogMainPanel);
 		if (dialogData.getNegativeBtnTransKey() != null
 				|| dialogData.getPositiveBtnTransKey() != null) {
@@ -63,8 +91,8 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 		this.add(dialogMainPanel);
 	}
 
-	private void addTitleOfDialog(FlowPanel dialogMainPanel, String titleTransKey,
-			String subTitleHTML) {
+	private void addTitleOfDialog(
+			FlowPanel dialogMainPanel, String titleTransKey, String subTitleHTML) {
 		if (titleTransKey == null) {
 			return;
 		}
@@ -75,8 +103,7 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 
 		if (subTitleHTML != null) {
 			addStyleName("withSubtitle");
-			Label subTitle = BaseWidgetFactory.INSTANCE.newSecondaryText(
-					"", "dialogSubTitle");
+			Label subTitle = BaseWidgetFactory.INSTANCE.newSecondaryText("", "dialogSubTitle");
 			subTitle.getElement().setInnerHTML(subTitleHTML);
 			dialogMainPanel.add(subTitle);
 		}
@@ -103,10 +130,8 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 			return;
 		}
 
-		negButton = new StandardButton(app.getLocalization()
-				.getMenu(negTransKey));
-		negButton.setStyleName("dialogTextButton");
-
+		negButton =
+				BaseWidgetFactory.INSTANCE.newTextButton(app.getLocalization().getMenu(negTransKey));
 		negButton.addClickHandler(((AppW) app).getGlobalHandlers(), source -> onNegativeAction());
 		dialogButtonPanel.add(negButton);
 	}
@@ -116,10 +141,8 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 			return;
 		}
 
-		posButton = new StandardButton(app.getLocalization()
-				.getMenu(posTransKey));
-		posButton.setStyleName("dialogContainedButton");
-
+		posButton =
+				BaseWidgetFactory.INSTANCE.newFilledButton(app.getLocalization().getMenu(posTransKey));
 		posButton.addClickHandler(((AppW) app).getGlobalHandlers(), source -> onPositiveAction());
 		dialogButtonPanel.add(posButton);
 	}
@@ -129,8 +152,12 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 	 * @param negLabel new label for negative button
 	 */
 	public void updateBtnLabels(String posLabel, String negLabel) {
-		posButton.setLabel(app.getLocalization().getMenu(posLabel));
-		negButton.setLabel(app.getLocalization().getMenu(negLabel));
+		if (posButton != null) {
+			posButton.setLabel(app.getLocalization().getMenu(posLabel));
+		}
+		if (negButton != null) {
+			negButton.setLabel(app.getLocalization().getMenu(negLabel));
+		}
 	}
 
 	/**
@@ -138,7 +165,9 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 	 * @param disabled whether to disable
 	 */
 	public void setPosBtnDisabled(boolean disabled) {
-		setBtnDisabled(posButton, disabled);
+		if (posButton != null) {
+			setBtnDisabled(posButton, disabled);
+		}
 	}
 
 	private void setBtnDisabled(StandardButton btn, boolean disabled) {
@@ -151,27 +180,50 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 
 	/**
 	 * fills the dialog with content
-	 * @param content - content of the dialog
+	 * @param content content of the dialog
 	 */
 	public void addDialogContent(IsWidget content) {
 		dialogContent.add(content);
+		content.asWidget().addStyleName("keyboardFocus");
+		if (!content.asWidget().getElement().hasAttribute("tabindex")) {
+			content.asWidget().getElement().setTabIndex(0);
+		}
+		widgetList.add(content.asWidget());
+	}
+
+	/**
+	 * fills the dialog with the given list of widgets
+	 * @param widgets widget list of the dialog
+	 */
+	public void addDialogContent(IsWidget... widgets) {
+		for (IsWidget widget : widgets) {
+			addDialogContent(widget);
+		}
 	}
 
 	/**
 	 * clears dialog content and fills with this widget
-	 * @param content - content of the dialog
+	 * @param content content of the dialog
 	 */
 	public void setDialogContent(IsWidget content) {
 		dialogContent.clear();
+		widgetList.clear();
 		dialogContent.add(content);
+	}
+
+	/**
+	 * clears the dialog content
+	 */
+	protected void clearDialogContent() {
+		dialogContent.clear();
+		widgetList.clear();
 	}
 
 	/**
 	 * runs the negative action and hides the dialog
 	 */
 	private void onNegativeAction() {
-		if (negButton != null
-			&& negButton.getStyleName().contains("disabled")) {
+		if (negButton != null && negButton.getStyleName().contains("disabled")) {
 			return;
 		}
 		if (negativeAction != null) {
@@ -184,8 +236,7 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 	 * runs the positive action and hides the dialog
 	 */
 	public void onPositiveAction() {
-		if (posButton != null
-			&& posButton.getStyleName().contains("disabled")) {
+		if (posButton != null && posButton.getStyleName().contains("disabled")) {
 			return;
 		}
 		if (positiveAction != null) {
@@ -198,7 +249,7 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 
 	/**
 	 * set positive action
-	 * @param posAction - what should happen on positive button hit
+	 * @param posAction what should happen on positive button hit
 	 */
 	public void setOnPositiveAction(Runnable posAction) {
 		positiveAction = posAction;
@@ -206,7 +257,7 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 
 	/**
 	 * set negative action
-	 * @param negAction - what should happen on negative button hit
+	 * @param negAction what should happen on negative button hit
 	 */
 	public void setOnNegativeAction(Runnable negAction) {
 		negativeAction = negAction;
@@ -214,18 +265,31 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 
 	@Override
 	public void show() {
-		// make sure that the dialog content loaded before decide if should be scrollable
+		// make sure that the dialog content is loaded before we decide if it should be scrollable
 		Scheduler.get().scheduleDeferred(() -> {
 			super.show();
 			super.centerAndResize(((AppW) app).getAppletFrame().getKeyboardHeight());
+			((AppW) app).registerPopup(this);
+			if (negButton != null && !widgetList.contains(negButton)) {
+				widgetList.add(negButton);
+			}
+			if (posButton != null && !widgetList.contains(posButton)) {
+				widgetList.add(posButton);
+			}
+			initialFocusWidget();
 		});
 	}
 
-	/**
-	 * Show without centering.
-	 */
-	public void showDirectly() {
-		super.show();
+	protected void initialFocusWidget() {
+		widgetList.get(0).getElement().focus();
+	}
+
+	protected void updateFocusIndex(Widget focusedWidget) {
+		for (Widget w : widgetList) {
+			if (w == focusedWidget) {
+				focusIndex = widgetList.indexOf(w);
+			}
+		}
 	}
 
 	@Override
@@ -245,10 +309,16 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 			return; // onPreviewNativeEvent is global: ignore for hidden dialogs
 		}
 		Event nativeEvent = Event.as(event.getNativeEvent());
-		if (Event.ONKEYPRESS == event.getTypeInt() && isEnter(nativeEvent.getCharCode())
+		if (Event.ONKEYPRESS == event.getTypeInt()
+				&& isEnter(nativeEvent.getCharCode())
 				&& !isContentEditable(nativeEvent.getEventTarget())
 				&& !isTextarea(nativeEvent.getEventTarget())) {
-			onPositiveAction();
+			EventTarget target = nativeEvent.getEventTarget();
+			if (Element.is(target) && Element.as(target).getClassName().contains("materialTextButton")) {
+				onEscape();
+			} else {
+				onPositiveAction();
+			}
 		} else if (event.getTypeInt() == Event.ONKEYUP
 				&& nativeEvent.getKeyCode() == KeyCodes.KEY_ESCAPE) {
 			nativeEvent.stopPropagation();
@@ -274,5 +344,32 @@ public class ComponentDialog extends GPopupPanel implements RequiresResize, Pers
 	public void setLabels() {
 		title.setText(app.getLocalization().getMenu(dialogData.getTitleTransKey()));
 		updateBtnLabels(dialogData.getPositiveBtnTransKey(), dialogData.getNegativeBtnTransKey());
+	}
+
+	private void setAccessibilityProperties(boolean isModal) {
+		AriaHelper.setRole(this, "dialog");
+		AriaHelper.setModal(this, isModal);
+		AriaHelper.setLabel(this, app.getLocalization().getMenu(dialogData.getTitleTransKey()));
+	}
+
+	@Override
+	public void onBrowserEvent(Event event) {
+		if (DOM.eventGetType(event) == Event.ONKEYDOWN && event.getKeyCode() == KeyCodes.KEY_TAB) {
+			handleTab(event.getShiftKey());
+			event.stopPropagation();
+			event.preventDefault();
+		}
+	}
+
+	private void handleTab(boolean reverse) {
+		int increment = reverse ? -1 : 1;
+		do {
+			focusIndex = (focusIndex + widgetList.size() + increment) % widgetList.size();
+		} while (widgetList.get(focusIndex).getElement().getTabIndex() < 0);
+		if (widgetList.get(focusIndex) instanceof HasFocus) {
+			((HasFocus) widgetList.get(focusIndex)).focus();
+		} else {
+			widgetList.get(focusIndex).getElement().focus();
+		}
 	}
 }

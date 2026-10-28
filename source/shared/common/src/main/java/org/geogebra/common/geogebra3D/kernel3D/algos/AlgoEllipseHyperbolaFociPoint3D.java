@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoConic3D;
@@ -11,21 +27,25 @@ import org.geogebra.common.kernel.matrix.CoordMatrix4x4;
 import org.geogebra.common.kernel.matrix.CoordSys;
 import org.geogebra.common.kernel.matrix.Coords;
 
-public class AlgoEllipseHyperbolaFociPoint3D
-		extends AlgoEllipseHyperbolaFociPointND {
+public class AlgoEllipseHyperbolaFociPoint3D extends AlgoEllipseHyperbolaFociPointND {
 	private GeoPoint A2d;
 	private GeoPoint B2d;
 	private GeoPoint C2d;
 	private Coords project;
 
-	public AlgoEllipseHyperbolaFociPoint3D(Construction cons, String label,
-			GeoPointND A, GeoPointND B, GeoPointND C,
-			GeoDirectionND orientation, final int type) {
+	public AlgoEllipseHyperbolaFociPoint3D(
+			Construction cons,
+			String label,
+			GeoPointND A,
+			GeoPointND B,
+			GeoPointND C,
+			GeoDirectionND orientation,
+			final int type) {
 		super(cons, label, A, B, C, orientation, type);
 	}
 
-	public AlgoEllipseHyperbolaFociPoint3D(Construction cons, String label,
-			GeoPointND A, GeoPointND B, GeoPointND C, final int type) {
+	public AlgoEllipseHyperbolaFociPoint3D(
+			Construction cons, String label, GeoPointND A, GeoPointND B, GeoPointND C, final int type) {
 		this(cons, label, A, B, C, null, type);
 	}
 
@@ -72,8 +92,7 @@ public class AlgoEllipseHyperbolaFociPoint3D
 	 *            point on ellipse coords
 	 * @return true if coord sys is possible
 	 */
-	protected boolean setCoordSys(CoordSys cs, Coords Ac, Coords Bc,
-			Coords Cc) {
+	protected boolean setCoordSys(CoordSys cs, Coords Ac, Coords Bc, Coords Cc) {
 
 		// set the coord sys
 		cs.addPoint(Ac);
@@ -114,5 +133,4 @@ public class AlgoEllipseHyperbolaFociPoint3D
 	protected void initCoords() {
 		project = new Coords(4);
 	}
-
 }

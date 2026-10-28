@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import java.util.ArrayList;
@@ -35,8 +51,7 @@ public class AlgoPolyhedronConvex extends AlgoElement3D {
 	 * @param c
 	 *            construction
 	 */
-	public AlgoPolyhedronConvex(Construction c, String[] labels,
-			GeoElement[] pointList) {
+	public AlgoPolyhedronConvex(Construction c, String[] labels, GeoElement[] pointList) {
 
 		super(c);
 
@@ -55,16 +70,11 @@ public class AlgoPolyhedronConvex extends AlgoElement3D {
 			input[i].addAlgorithm(this);
 		}
 
-		outputPolyhedron = new OutputHandler<>(
-				new ElementFactory<GeoPolyhedron>() {
-					@Override
-					public GeoPolyhedron newElement() {
-						GeoPolyhedron p = new GeoPolyhedron(cons,
-								GeoPolyhedron.Type.UNKNOWN);
-						p.setParentAlgorithm(AlgoPolyhedronConvex.this);
-						return p;
-					}
-				});
+		outputPolyhedron = new OutputHandler<>(() -> {
+			GeoPolyhedron p = new GeoPolyhedron(cons, GeoPolyhedron.Type.UNKNOWN);
+			p.setParentAlgorithm(this);
+			return p;
+		});
 
 		outputPolyhedron.adjustOutputSize(1);
 
@@ -76,8 +86,7 @@ public class AlgoPolyhedronConvex extends AlgoElement3D {
 
 		GeoPolyhedron p = getPolyhedron();
 
-		int[][] faceIndices = quickHull3D
-				.getFaces(QuickHull3D.POINT_RELATIVE | QuickHull3D.CLOCKWISE);
+		int[][] faceIndices = quickHull3D.getFaces(QuickHull3D.POINT_RELATIVE | QuickHull3D.CLOCKWISE);
 		for (int i = 0; i < faceIndices.length; i++) {
 			p.startNewFace();
 			for (int k = 0; k < faceIndices[i].length; k++) {
@@ -118,8 +127,7 @@ public class AlgoPolyhedronConvex extends AlgoElement3D {
 		TreeSet<Integer> availableIndices = new TreeSet<>();
 		availableIndices.addAll(p.getPolygonsIndices());
 
-		int[][] faceIndices = quickHull3D
-				.getFaces(QuickHull3D.POINT_RELATIVE | QuickHull3D.CLOCKWISE);
+		int[][] faceIndices = quickHull3D.getFaces(QuickHull3D.POINT_RELATIVE | QuickHull3D.CLOCKWISE);
 		for (int i = 0; i < faceIndices.length; i++) {
 			p.startNewFace();
 			for (int k = 0; k < faceIndices[i].length; k++) {
@@ -146,7 +154,6 @@ public class AlgoPolyhedronConvex extends AlgoElement3D {
 			sb.append(index);
 		}
 		Log.debug(sb);
-
 	}
 
 	/**
@@ -162,27 +169,19 @@ public class AlgoPolyhedronConvex extends AlgoElement3D {
 	}
 
 	private OutputHandler<GeoSegment3D> createOutputSegments() {
-		return new OutputHandler<>(
-				new ElementFactory<GeoSegment3D>() {
-					@Override
-					public GeoSegment3D newElement() {
-						GeoSegment3D s = new GeoSegment3D(cons);
-						// s.setParentAlgorithm(AlgoPolyhedron.this);
-						return s;
-					}
-				});
+		return new OutputHandler<>(() -> {
+			GeoSegment3D s = new GeoSegment3D(cons);
+			// s.setParentAlgorithm(AlgoPolyhedron.this);
+			return s;
+		});
 	}
 
 	private OutputHandler<GeoPolygon3D> createOutputPolygons() {
-		return new OutputHandler<>(
-				new ElementFactory<GeoPolygon3D>() {
-					@Override
-					public GeoPolygon3D newElement() {
-						GeoPolygon3D p = new GeoPolygon3D(cons);
-						// p.setParentAlgorithm(AlgoPolyhedron.this);
-						return p;
-					}
-				});
+		return new OutputHandler<>(() -> {
+			GeoPolygon3D p = new GeoPolygon3D(cons);
+			// p.setParentAlgorithm(AlgoPolyhedron.this);
+			return p;
+		});
 	}
 
 	private void setLabels(String[] labels) {
@@ -195,7 +194,6 @@ public class AlgoPolyhedronConvex extends AlgoElement3D {
 				getOutput(i).setLabel(labels[i]);
 			}
 		}
-
 	}
 
 	/**
@@ -204,7 +202,6 @@ public class AlgoPolyhedronConvex extends AlgoElement3D {
 	private void updateOutputSegmentsAndPolygonsParentAlgorithms() {
 		outputSegments.updateParentAlgorithm();
 		outputPolygons.updateParentAlgorithm();
-
 	}
 
 	/*

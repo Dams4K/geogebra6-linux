@@ -1,3 +1,4 @@
+// vendored
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -21,6 +22,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.geogebra.common.util.debug.Log;
@@ -102,14 +104,14 @@ public class JSONObject {
 	 * returning true when compared to {@code null}. Its {@link #toString}
 	 * method returns "null".
 	 */
-
 	public static final Object NULL = new Object() {
 		@Override
-		@SuppressFBWarnings(value = "EQ_UNUSUAL",
+		@SuppressFBWarnings(
+				value = "EQ_UNUSUAL",
 				justification = "API specifies this broken equals implementation")
 		public boolean equals(Object o) {
 			return o == this || o == null; // API specifies this broken equals
-											// implementation
+			// implementation
 		}
 
 		@Override
@@ -122,6 +124,7 @@ public class JSONObject {
 			return "null";
 		}
 	};
+
 	private final LinkedHashMap<String, Object> nameValuePairs;
 
 	/**
@@ -152,10 +155,7 @@ public class JSONObject {
 			 * of the proper type. (We still defer validating the values).
 			 */
 			String key = (String) entry.getKey();
-			if (key == null) {
-				throw new NullPointerException("key == null");
-			}
-			nameValuePairs.put(key, wrap(entry.getValue()));
+			nameValuePairs.put(Objects.requireNonNull(key, "key == null"), wrap(entry.getValue()));
 		}
 	}
 
@@ -200,7 +200,7 @@ public class JSONObject {
 	 * Creates a new {@code JSONObject} by copying mappings for the listed names
 	 * from the given object. Names that aren't present in {@code copyFrom} will
 	 * be skipped.
-	 * 
+	 *
 	 * @param copyFrom
 	 *            original
 	 * @param names
@@ -218,7 +218,7 @@ public class JSONObject {
 
 	/**
 	 * Returns the number of name/value mappings in this object.
-	 * 
+	 *
 	 * @return number of keys
 	 */
 	public int length() {
@@ -228,7 +228,7 @@ public class JSONObject {
 	/**
 	 * Maps {@code name} to {@code value}, clobbering any existing name/value
 	 * mapping with the same name.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @param value
@@ -258,7 +258,7 @@ public class JSONObject {
 	/**
 	 * Maps {@code name} to {@code value}, clobbering any existing name/value
 	 * mapping with the same name.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @param value
@@ -313,7 +313,7 @@ public class JSONObject {
 	/**
 	 * Equivalent to {@code put(name, value)} when both parameters are non-null;
 	 * does nothing otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            name
 	 * @param value
@@ -341,7 +341,7 @@ public class JSONObject {
 	 * {@link JSONArray}. Using {@code accumulate} will result in either a
 	 * {@link JSONArray} or a mapping whose type is the type of {@code value}
 	 * depending on the number of calls to it.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @param value
@@ -353,8 +353,7 @@ public class JSONObject {
 	 */
 	// TODO: Change {@code append) to {@link #append} when append is
 	// unhidden.
-	public JSONObject accumulate(String name, Object value)
-			throws JSONException {
+	public JSONObject accumulate(String name, Object value) throws JSONException {
 		Object current = nameValuePairs.get(checkName(name));
 		if (current == null) {
 			return put(name, value);
@@ -376,7 +375,7 @@ public class JSONObject {
 	 * {@link JSONArray} mapping for {@code name} will be inserted if no mapping
 	 * exists. If the existing mapping for {@code name} is not a
 	 * {@link JSONArray}, a {@link JSONException} will be thrown.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @param value
@@ -420,7 +419,7 @@ public class JSONObject {
 
 	/**
 	 * Removes the named mapping if it exists; does nothing otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return the value previously mapped by {@code name}, or null if there was
@@ -433,7 +432,7 @@ public class JSONObject {
 	/**
 	 * Returns true if this object has no mapping for {@code name} or if it has
 	 * a mapping whose value is {@link #NULL}.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return whether corresponding value is one of null, NULL
@@ -446,7 +445,7 @@ public class JSONObject {
 	/**
 	 * Returns true if this object has a mapping for {@code name}. The mapping
 	 * may be {@link #NULL}.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return whether corresponding object is null
@@ -458,7 +457,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name}, or throws if no such mapping
 	 * exists.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return object value for given key
@@ -477,7 +476,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name}, or null if no such mapping
 	 * exists.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return object value for given key
@@ -489,7 +488,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is a boolean or
 	 * can be coerced to a boolean, or throws otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return object value for given key
@@ -509,7 +508,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is a boolean or
 	 * can be coerced to a boolean, or false otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return boolean value for given key or null
@@ -521,7 +520,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is a boolean or
 	 * can be coerced to a boolean, or {@code fallback} otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @param fallback
@@ -537,7 +536,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is a double or
 	 * can be coerced to a double, or throws otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return double value for given key
@@ -558,10 +557,10 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is a double or
 	 * can be coerced to a double, or {@code NaN} otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
-	 * 
+	 *
 	 * @return number value for given key or NaN
 	 */
 	public double optDouble(String name) {
@@ -571,12 +570,12 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is a double or
 	 * can be coerced to a double, or {@code fallback} otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @param fallback
 	 *            fallback
-	 * 
+	 *
 	 * @return number value for given key or fallback
 	 */
 	public double optDouble(String name, double fallback) {
@@ -588,7 +587,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is an int or
 	 * can be coerced to an int, or throws otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 *
@@ -608,7 +607,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is an int or
 	 * can be coerced to an int, or 0 otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key name
 	 * @return integer value
@@ -620,7 +619,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is an int or
 	 * can be coerced to an int, or {@code fallback} otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @param fallback
@@ -638,7 +637,7 @@ public class JSONObject {
 	 * can be coerced to a long, or throws otherwise. Note that JSON represents
 	 * numbers as doubles, so this is <a href="#lossy">lossy</a>; use strings to
 	 * transfer numbers via JSON.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return long value for given key
@@ -660,7 +659,7 @@ public class JSONObject {
 	 * can be coerced to a long, or 0 otherwise. Note that JSON represents
 	 * numbers as doubles, so this is <a href="#lossy">lossy</a>; use strings to
 	 * transfer numbers via JSON.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return long value for given key or 0
@@ -674,7 +673,7 @@ public class JSONObject {
 	 * can be coerced to a long, or {@code fallback} otherwise. Note that JSON
 	 * represents numbers as doubles, so this is <a href="#lossy">lossy</a>; use
 	 * strings to transfer numbers via JSON.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @param fallback
@@ -690,7 +689,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists, coercing it if
 	 * necessary, or throws if no such mapping exists.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return string value for given key
@@ -710,7 +709,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists, coercing it if
 	 * necessary, or the empty string if no such mapping exists.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return string value for given key or null
@@ -722,7 +721,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists, coercing it if
 	 * necessary, or {@code fallback} if no such mapping exists.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @param fallback
@@ -738,7 +737,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is a {@code
 	 * JSONArray}, or throws otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return array value for given key
@@ -758,7 +757,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is a {@code
 	 * JSONArray}, or null otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return array value for given key
@@ -771,7 +770,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is a {@code
 	 * JSONObject}, or throws otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return object value for given key
@@ -791,7 +790,7 @@ public class JSONObject {
 	/**
 	 * Returns the value mapped by {@code name} if it exists and is a {@code
 	 * JSONObject}, or null otherwise.
-	 * 
+	 *
 	 * @param name
 	 *            key
 	 * @return object value for given key or null
@@ -805,7 +804,7 @@ public class JSONObject {
 	 * Returns an array with the values corresponding to {@code names}. The
 	 * array contains null for names that aren't mapped. This method returns
 	 * null if {@code names} is either null or empty.
-	 * 
+	 *
 	 * @param names
 	 *            keys
 	 * @return array of values for given keys
@@ -832,7 +831,7 @@ public class JSONObject {
 	 * remove the corresponding mapping from this object. If this object is
 	 * modified after the iterator is returned, the iterator's behavior is
 	 * undefined. The order of the keys is undefined.
-	 * 
+	 *
 	 * @return key iterator
 	 */
 	public Iterator<String> keys() {
@@ -846,7 +845,7 @@ public class JSONObject {
 	 * behaviour is undefined if this object is modified after it is returned.
 	 *
 	 * See {@link #keys()}.
-	 * 
+	 *
 	 * @return set of keys
 	 *
 	 */
@@ -857,24 +856,24 @@ public class JSONObject {
 	/**
 	 * Returns an array containing the string names in this object. This method
 	 * returns null if this object contains no mappings.
-	 * 
+	 *
 	 * @return keys as JSON array
 	 */
 	public JSONArray names() {
-		return nameValuePairs.isEmpty() ? null
+		return nameValuePairs.isEmpty()
+				? null
 				: new JSONArray(new ArrayList<>(nameValuePairs.keySet()));
 	}
 
 	/**
 	 * Encodes this object as a compact JSON string, such as:
-	 * 
+	 *
 	 * <pre>
 	 * {"query":"Pizza","locations":[94043,90210]}
 	 * </pre>
 	 */
 	@Override
-	@SuppressFBWarnings(value = "NP_TOSTRING_COULD_RETURN_NULL",
-			justification = "API specifies this")
+	@SuppressFBWarnings(value = "NP_TOSTRING_COULD_RETURN_NULL", justification = "API specifies this")
 	public String toString() {
 		try {
 			JSONStringer stringer = new JSONStringer();
@@ -888,7 +887,7 @@ public class JSONObject {
 	/**
 	 * Encodes this object as a human readable JSON string for debugging, such
 	 * as:
-	 * 
+	 *
 	 * <pre>
 	 * {
 	 *     "query": "Pizza",
@@ -961,8 +960,7 @@ public class JSONObject {
 			JSONStringer stringer = new JSONStringer();
 			stringer.open(JSONStringer.Scope.NULL, "");
 			stringer.value(data);
-			stringer.close(JSONStringer.Scope.NULL, JSONStringer.Scope.NULL,
-					"");
+			stringer.close(JSONStringer.Scope.NULL, JSONStringer.Scope.NULL, "");
 			return stringer.toString();
 		} catch (JSONException e) {
 			throw new AssertionError(e);
@@ -981,7 +979,7 @@ public class JSONObject {
 	 * the object is a primitive wrapper type or {@code String}, returns the
 	 * object. Otherwise if the object is from a {@code java} package, returns
 	 * the result of {@code toString}. If wrapping fails, returns null.
-	 * 
+	 *
 	 * @param o
 	 *            Java object
 	 * @return JSON object
@@ -1007,10 +1005,14 @@ public class JSONObject {
 			if (o instanceof Map) {
 				return new JSONObject((Map) o);
 			}
-			if (o instanceof Boolean || o instanceof Byte
-					|| o instanceof Character || o instanceof Double
-					|| o instanceof Float || o instanceof Integer
-					|| o instanceof Long || o instanceof Short
+			if (o instanceof Boolean
+					|| o instanceof Byte
+					|| o instanceof Character
+					|| o instanceof Double
+					|| o instanceof Float
+					|| o instanceof Integer
+					|| o instanceof Long
+					|| o instanceof Short
 					|| o instanceof String) {
 				return o;
 			}
@@ -1029,4 +1031,8 @@ public class JSONObject {
 		return nameValuePairs.hashCode();
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof JSONObject && nameValuePairs.equals(((JSONObject) obj).nameValuePairs);
+	}
 }

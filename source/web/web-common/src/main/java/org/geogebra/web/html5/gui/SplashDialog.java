@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui;
 
 import org.geogebra.common.main.settings.config.AppConfigDefault;
@@ -43,13 +59,15 @@ public class SplashDialog extends SimplePanel {
 	 * @param frame
 	 *            frame
 	 */
-	public SplashDialog(boolean showLogo, GeoGebraElement geoGebraElement,
-			AppletParameters parameters, GeoGebraFrameW frame) {
+	public SplashDialog(
+			boolean showLogo,
+			GeoGebraElement geoGebraElement,
+			AppletParameters parameters,
+			GeoGebraFrameW frame) {
 		this.geoGebraElement = geoGebraElement;
 		this.geogebraFrame = frame;
 		previewExists = checkIfPreviewExists(geoGebraElement.getElement())
-				|| AppConfigDefault
-						.isUnbundledOrNotes(parameters.getDataParamAppName());
+				|| AppConfigDefault.isUnbundledOrNotes(parameters.getDataParamAppName());
 
 		if (!previewExists) {
 			FlowPanel panel = new FlowPanel();
@@ -58,8 +76,7 @@ public class SplashDialog extends SimplePanel {
 			style.setZIndex(1000000);
 			style.setBackgroundColor("white");
 			if (showLogo) {
-				NoDragImage logo = new NoDragImage(GuiResourcesSimple.INSTANCE
-						.ggb_logo_name(), 427 , 120);
+				NoDragImage logo = new NoDragImage(GuiResourcesSimple.INSTANCE.ggb_logo_name(), 427, 120);
 				panel.add(logo);
 			}
 			LoadSpinner spinner = new LoadSpinner();
@@ -84,14 +101,12 @@ public class SplashDialog extends SimplePanel {
 	}
 
 	private boolean checkIfPreviewExists(Element thisArticle) {
-		if (thisArticle != null && Dom.querySelectorForElement(thisArticle,
-				".ggb_preview") != null) {
+		if (thisArticle != null && Dom.querySelectorForElement(thisArticle, ".ggb_preview") != null) {
 			return true;
 		}
 		return thisArticle != null
 				&& thisArticle.getParentElement() != null
-				&& Dom.querySelectorForElement(thisArticle.getParentElement(),
-				".ggb_preview") != null;
+				&& Dom.querySelectorForElement(thisArticle.getParentElement(), ".ggb_preview") != null;
 	}
 
 	/**
@@ -127,5 +142,4 @@ public class SplashDialog extends SimplePanel {
 	public boolean isPreviewExists() {
 		return previewExists;
 	}
-
 }

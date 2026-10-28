@@ -1,19 +1,24 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.euclidian.draw;
 
 import static org.geogebra.common.main.PreviewFeature.IMPLICIT_PLOTTER;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GArea;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.euclidian.EuclidianView;
@@ -21,7 +26,7 @@ import org.geogebra.common.euclidian.EuclidianViewBoundsImp;
 import org.geogebra.common.euclidian.plot.GeneralPathClippedForCurvePlotter;
 import org.geogebra.common.euclidian.plot.implicit.BernsteinPlotter;
 import org.geogebra.common.euclidian.plot.implicit.CoordSystemAnimatedPlotter;
-import org.geogebra.common.factories.AwtFactory;
+import org.geogebra.common.euclidian.plot.implicit.CurveSignature;
 import org.geogebra.common.kernel.arithmetic.bernstein.BernsteinPolynomialConverter;
 import org.geogebra.common.kernel.implicit.GeoImplicit;
 import org.geogebra.common.main.PreviewFeature;
@@ -34,7 +39,7 @@ public class DrawImplicitCurve extends DrawLocus {
 	private CoordSystemAnimatedPlotter bernsteinPlotter;
 	private final GeoImplicit implicitCurve;
 	private final boolean bernsteinBasedPlotter;
-	private GeneralPathClippedForCurvePlotter gp;
+	GeneralPathClippedForCurvePlotter gp;
 
 	// private int fillSign; //0=>no filling, only curve -1=>fill the negative
 	// part, 1=>fill positive part
@@ -45,8 +50,11 @@ public class DrawImplicitCurve extends DrawLocus {
 	 * @param implicitCurve implicit curve
 	 */
 	public DrawImplicitCurve(EuclidianView view, GeoImplicit implicitCurve) {
-		this(view, implicitCurve, PreviewFeature.isAvailable(IMPLICIT_PLOTTER)
-				&& BernsteinPolynomialConverter.iSupported(implicitCurve.toGeoElement()));
+		this(
+				view,
+				implicitCurve,
+				PreviewFeature.isAvailable(IMPLICIT_PLOTTER)
+						&& BernsteinPolynomialConverter.isSupported(implicitCurve.toGeoElement()));
 	}
 
 	/**
@@ -54,10 +62,9 @@ public class DrawImplicitCurve extends DrawLocus {
 	 * @param view view
 	 * @param implicitCurve implicit curve
 	 */
-	public DrawImplicitCurve(EuclidianView view, GeoImplicit implicitCurve,
-			boolean bernsteinBasedPlotter) {
-		super(view, implicitCurve.getLocus(),
-				implicitCurve.getTransformedCoordSys());
+	public DrawImplicitCurve(
+			EuclidianView view, GeoImplicit implicitCurve, boolean bernsteinBasedPlotter) {
+		super(view, implicitCurve.getLocus(), implicitCurve.getTransformedCoordSys());
 		this.view = view;
 		this.implicitCurve = implicitCurve;
 		this.geo = implicitCurve.toGeoElement();
@@ -65,18 +72,21 @@ public class DrawImplicitCurve extends DrawLocus {
 
 		if (this.bernsteinBasedPlotter) {
 			createBernsteinPlotter();
-		} else {
-			update();
 		}
+		// updating visibility flags, strokes and traces needed with both plotters
+		update();
 	}
 
 	private void createBernsteinPlotter() {
 		gp = new GeneralPathClippedForCurvePlotter(view);
-		bernsteinPlotter = new BernsteinPlotter(geo, new EuclidianViewBoundsImp(view),
-				gp, implicitCurve.getTransformedCoordSys());
+		bernsteinPlotter = new BernsteinPlotter(
+				geo,
+				new EuclidianViewBoundsImp(view),
+				gp,
+				implicitCurve.getTransformedCoordSys(),
+				new CurveSignature(implicitCurve));
 		if (!createdByDrawList()) {
-			view.getEuclidianController()
-					.addZoomerAnimationListener(bernsteinPlotter, geo);
+			view.getEuclidianController().addZoomerAnimationListener(bernsteinPlotter, geo);
 		}
 	}
 

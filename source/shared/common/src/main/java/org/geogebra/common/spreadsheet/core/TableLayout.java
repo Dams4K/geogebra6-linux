@@ -1,14 +1,29 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.spreadsheet.core;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-
 import org.geogebra.common.util.MouseCursor;
 import org.geogebra.common.util.shape.Rectangle;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Stores sizes and coordinates of spreadsheet cells
@@ -25,8 +40,8 @@ final class TableLayout {
 	private double[] rowHeights;
 	private double[] cumulativeWidths;
 	private double[] cumulativeHeights;
-	final double defaultRowHeight;
-	final double defaultColumnWidth;
+	double defaultRowHeight;
+	double defaultColumnWidth;
 	private double rowHeaderWidth = DEFAULT_ROW_HEADER_WIDTH;
 	private double columnHeaderHeight;
 
@@ -58,6 +73,9 @@ final class TableLayout {
 	 * @return width in points
 	 */
 	double getWidth(int column) {
+		if (column < 0 || column >= columnWidths.length) {
+			return 0;
+		}
 		return columnWidths[column];
 	}
 
@@ -67,6 +85,9 @@ final class TableLayout {
 	 * @return height in points
 	 */
 	double getHeight(int row) {
+		if (row < 0 || row >= rowHeights.length) {
+			return 0;
+		}
 		return rowHeights[row];
 	}
 
@@ -76,6 +97,9 @@ final class TableLayout {
 	 * @return x-coordinate of column's left edge
 	 */
 	double getMinX(int column) {
+		if (column < 0 || column >= cumulativeWidths.length) {
+			return 0;
+		}
 		return cumulativeWidths[column];
 	}
 
@@ -85,6 +109,9 @@ final class TableLayout {
 	 * @return y-coordinate of row's top edge
 	 */
 	double getMinY(int row) {
+		if (row < 0 || row >= cumulativeHeights.length) {
+			return 0;
+		}
 		return cumulativeHeights[row];
 	}
 
@@ -95,6 +122,14 @@ final class TableLayout {
 		return rowHeights.length;
 	}
 
+	void setRowHeaderWidth(double rowHeaderWidth) {
+		this.rowHeaderWidth = rowHeaderWidth < 0 ? DEFAULT_ROW_HEADER_WIDTH : rowHeaderWidth;
+	}
+
+	void setColumnHeaderHeight(double columnHeaderHeight) {
+		this.columnHeaderHeight = columnHeaderHeight < 0 ? defaultRowHeight : columnHeaderHeight;
+	}
+
 	/**
 	 * @return number of columns
 	 */
@@ -102,8 +137,9 @@ final class TableLayout {
 		return columnWidths.length;
 	}
 
-	@Nonnull Rectangle getBounds(int row, int column) {
-		return new Rectangle(cumulativeWidths[column],
+	@NonNull Rectangle getBounds(int row, int column) {
+		return new Rectangle(
+				cumulativeWidths[column],
 				cumulativeWidths[column] + columnWidths[column],
 				cumulativeHeights[row],
 				cumulativeHeights[row] + rowHeights[row]);
@@ -116,9 +152,11 @@ final class TableLayout {
 	 * @return Screen bounds of the selection if it's finite, or {@code null} if it's empty
 	 * or unbounded in either direction (e.g. whole column).
 	 */
-	@CheckForNull Rectangle getBounds(TabularRange selection, Rectangle viewport) {
-		if (selection.getMinColumn() < 0 || selection.getMaxColumn() >= numberOfColumns()
-				|| selection.getMinRow() < 0 || selection.getMaxRow() >= numberOfRows()) {
+	@Nullable Rectangle getBounds(TabularRange selection, Rectangle viewport) {
+		if (selection.getMinColumn() < 0
+				|| selection.getMaxColumn() >= numberOfColumns()
+				|| selection.getMinRow() < 0
+				|| selection.getMaxRow() >= numberOfRows()) {
 			return null;
 		}
 		double offsetX = -viewport.getMinX() + getRowHeaderWidth();
@@ -127,19 +165,17 @@ final class TableLayout {
 		double minY = getMinY(selection.getMinRow());
 		double maxX = getMinX(selection.getMaxColumn() + 1);
 		double maxY = getMinY(selection.getMaxRow() + 1);
-		return new Rectangle(minX + offsetX, maxX + offsetX,
-				minY + offsetY, maxY + offsetY);
+		return new Rectangle(minX + offsetX, maxX + offsetX, minY + offsetY, maxY + offsetY);
 	}
 
-	@Nonnull Rectangle getRowHeaderBounds(int row) {
-		return new Rectangle(0,
-				rowHeaderWidth,
-				cumulativeHeights[row],
-				cumulativeHeights[row] + rowHeights[row]);
+	@NonNull Rectangle getRowHeaderBounds(int row) {
+		return new Rectangle(
+				0, rowHeaderWidth, cumulativeHeights[row], cumulativeHeights[row] + rowHeights[row]);
 	}
 
-	@Nonnull Rectangle getColumnHeaderBounds(int column) {
-		return new Rectangle(cumulativeWidths[column],
+	@NonNull Rectangle getColumnHeaderBounds(int column) {
+		return new Rectangle(
+				cumulativeWidths[column],
 				cumulativeWidths[column] + columnWidths[column],
 				0,
 				columnHeaderHeight);
@@ -160,27 +196,31 @@ final class TableLayout {
 	 * @return The {@link DragState} for the given point in the spreadsheet.
 	 */
 	// TODO find a better method name
-	@Nonnull DragState getResizeAction(double x, double y, Rectangle viewport) {
+	@NonNull DragState getResizeAction(double x, double y, Rectangle viewport) {
 		double xAbs = x + viewport.getMinX();
 		double yAbs = y + viewport.getMinY();
 		int row = findRow(yAbs);
 		int column = findColumn(xAbs);
-		if (y < columnHeaderHeight && column >= 0
+		if (y < columnHeaderHeight
+				&& column >= 0
 				&& x > rowHeaderWidth
 				&& xAbs > cumulativeWidths[column + 1] + rowHeaderWidth - 5) {
 			return new DragState(MouseCursor.RESIZE_X, row, column);
 		}
-		if (y < columnHeaderHeight && column > 0
+		if (y < columnHeaderHeight
+				&& column > 0
 				&& x > rowHeaderWidth
 				&& xAbs < cumulativeWidths[column] + rowHeaderWidth + 5) {
 			return new DragState(MouseCursor.RESIZE_X, row, column - 1);
 		}
-		if (x < rowHeaderWidth && row >= 0
+		if (x < rowHeaderWidth
+				&& row >= 0
 				&& y > columnHeaderHeight
 				&& yAbs > cumulativeHeights[row + 1] + columnHeaderHeight - 5) {
 			return new DragState(MouseCursor.RESIZE_Y, row, column);
 		}
-		if (x < rowHeaderWidth && row > 0
+		if (x < rowHeaderWidth
+				&& row > 0
 				&& y > columnHeaderHeight
 				&& yAbs < cumulativeHeights[row] + columnHeaderHeight + 5) {
 			return new DragState(MouseCursor.RESIZE_Y, row - 1, column);
@@ -282,8 +322,8 @@ final class TableLayout {
 		int lastColumn = Math.min(columnWidths.length - 1, findColumn(visibleArea.getMaxX()));
 		int firstRow = Math.max(0, findRow(visibleArea.getMinY() + columnHeaderHeight));
 		int lastRow = Math.min(rowHeights.length - 1, findRow(visibleArea.getMaxY()));
-		return new Portion(firstColumn, firstRow, lastColumn, lastRow,
-				visibleArea.getMinX(), visibleArea.getMinY());
+		return new Portion(
+				firstColumn, firstRow, lastColumn, lastRow, visibleArea.getMinX(), visibleArea.getMinY());
 	}
 
 	/**
@@ -402,7 +442,7 @@ final class TableLayout {
 	 * @return A {@code columnIndex => width} map for all columns that are not of
 	 * {@code defaultColumnWidth} width.
 	 */
-	@Nonnull Map<Integer, Double> getCustomColumnWidths() {
+	@NonNull Map<Integer, Double> getCustomColumnWidths() {
 		Map<Integer, Double> widths = new HashMap<>();
 		for (int i = 0; i < columnWidths.length; i++) {
 			if (columnWidths[i] != defaultColumnWidth) {
@@ -416,7 +456,7 @@ final class TableLayout {
 	 * @return A {@code rowIndex => height} map for all rows that are not of
 	 * {@code defaultRowHeight} height.
 	 */
-	@Nonnull Map<Integer, Double> getCustomRowHeights() {
+	@NonNull Map<Integer, Double> getCustomRowHeights() {
 		Map<Integer, Double> heights = new HashMap<>();
 		for (int i = 0; i < rowHeights.length; i++) {
 			if (rowHeights[i] != defaultRowHeight) {
@@ -424,6 +464,11 @@ final class TableLayout {
 			}
 		}
 		return heights;
+	}
+
+	void setDefaultCellSize(double width, double height) {
+		defaultRowHeight = height;
+		defaultColumnWidth = width;
 	}
 
 	/**
@@ -438,8 +483,7 @@ final class TableLayout {
 		final int toRow;
 		final int toColumn;
 
-		Portion(int fromColumn, int fromRow, int toColumn, int toRow, double xOffset,
-				double yOffset) {
+		Portion(int fromColumn, int fromRow, int toColumn, int toRow, double xOffset, double yOffset) {
 			this.fromColumn = fromColumn;
 			this.fromRow = fromRow;
 			this.toRow = toRow;

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -29,11 +33,13 @@ import org.geogebra.common.kernel.geos.GeoList;
 import org.geogebra.common.kernel.geos.GeoPoint;
 import org.geogebra.common.plugin.Operation;
 import org.geogebra.common.util.DoubleUtil;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Fit a Polynomial exactly to a set of coordinates. Unstable above about 12
  * coords adapted from AlgoPolynomialFromFunction
- * 
+ *
  * @author Michael Borcherds
  */
 public class AlgoPolynomialFromCoordinates extends AlgoElement {
@@ -49,8 +55,7 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
 	 * @param inputList
 	 *            points
 	 */
-	public AlgoPolynomialFromCoordinates(Construction cons, String label,
-			GeoList inputList) {
+	public AlgoPolynomialFromCoordinates(Construction cons, String label, GeoList inputList) {
 		super(cons);
 		this.inputList = inputList;
 
@@ -91,7 +96,6 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
 		}
 
 		setFromPoints(g, inputList, null);
-
 	}
 
 	/**
@@ -188,7 +192,6 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
 
 		g.setFunction(polyFun);
 		g.setDefined(true);
-
 	}
 
 	/**
@@ -198,8 +201,19 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
 	 *            coefficients
 	 * @return function
 	 */
-	public static Function buildPolyFunctionExpression(Kernel kernel,
-			double[] cof) {
+	public static Function buildPolyFunctionExpression(Kernel kernel, double[] cof) {
+		return buildPolyFunctionExpression(kernel, cof, false);
+	}
+
+	/**
+	 * Builds an expanded polynomial, optionally preserving near-unit coefficients exactly.
+	 * @param kernel kernel
+	 * @param cof coefficients in ascending power order
+	 * @param preserveCoefficients whether only exact unit coefficients may be simplified
+	 * @return function, or null if any coefficient is nonfinite
+	 */
+	public static @Nullable Function buildPolyFunctionExpression(
+			@NonNull Kernel kernel, double @NonNull [] cof, boolean preserveCoefficients) {
 		int n = cof.length;
 		ExpressionNode poly = null; // expression for the expanded polynomial
 		FunctionVariable fVar = new FunctionVariable(kernel);
@@ -215,20 +229,19 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
 			// build the expression x^k
 			ExpressionValue powerExp;
 			switch (k) {
-			case 0:
-				powerExp = null;
-				break;
+				case 0:
+					powerExp = null;
+					break;
 
-			case 1:
-				powerExp = fVar;
-				break;
+				case 1:
+					powerExp = fVar;
+					break;
 
-			default:
-				powerExp = new ExpressionNode(kernel, fVar, Operation.POWER,
-						new MyDouble(kernel, k));
+				default:
+					powerExp = new ExpressionNode(kernel, fVar, Operation.POWER, new MyDouble(kernel, k));
 			}
 
-			poly = addToPoly(poly, powerExp, coeff, kernel);
+			poly = addToPoly(poly, powerExp, coeff, kernel, preserveCoefficients);
 		}
 
 		// all coefficients were 0, we've got f(x) = 0
@@ -246,8 +259,17 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
 	 * @param kernel kernel
 	 * @return poly + powerExp * coeff (or just powerEexp * coeff if poly is null);
 	 */
-	public static ExpressionNode addToPoly(final ExpressionNode poly, ExpressionValue powerExp,
-			double coeff, Kernel kernel) {
+	public static ExpressionNode addToPoly(
+			final ExpressionNode poly, ExpressionValue powerExp, double coeff, Kernel kernel) {
+		return addToPoly(poly, powerExp, coeff, kernel, false);
+	}
+
+	private static @NonNull ExpressionNode addToPoly(
+			@Nullable ExpressionNode poly,
+			@Nullable ExpressionValue powerExp,
+			double coeff,
+			@NonNull Kernel kernel,
+			boolean preserveCoefficients) {
 		boolean negativeCoeff = coeff < 0;
 		// build the expression
 		// (coeff) * x^k
@@ -255,8 +277,9 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
 		MyDouble coeffMyDouble = null;
 		// check for poly != null rather than k != n-1 in case the leading
 		// coefficient was 0, eg FitPoly[{(1,-1),(0,0),(-1,-1),(2,-4)},3]
-		if (DoubleUtil.isEqual(coeff, 1.0)
-				|| (poly != null && DoubleUtil.isEqual(coeff, -1.0))) {
+		boolean positiveUnit = preserveCoefficients ? coeff == 1 : DoubleUtil.isEqual(coeff, 1);
+		boolean negativeUnit = preserveCoefficients ? coeff == -1 : DoubleUtil.isEqual(coeff, -1);
+		if (positiveUnit || (poly != null && negativeUnit)) {
 			if (powerExp == null) {
 				partExp = new MyDouble(kernel, 1.0);
 			} else {
@@ -267,11 +290,10 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
 			if (powerExp == null) {
 				partExp = coeffMyDouble;
 			} else {
-				if (coeff == -1 && powerExp.wrap().isOperation(Operation.MULTIPLY)) {
+				if (coeff == -1 && powerExp.isOperation(Operation.MULTIPLY)) {
 					partExp = multiplyFirstOperandOnly(powerExp, kernel, coeffMyDouble);
 				} else {
-					partExp = new ExpressionNode(kernel, coeffMyDouble,
-							Operation.MULTIPLY, powerExp);
+					partExp = new ExpressionNode(kernel, coeffMyDouble, Operation.MULTIPLY, powerExp);
 				}
 			}
 		}
@@ -284,32 +306,26 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
 				if (coeffMyDouble != null) {
 					coeffMyDouble.set(-coeff); // change sign
 				}
-				return new ExpressionNode(kernel, poly, Operation.MINUS,
-						partExp);
+				return new ExpressionNode(kernel, poly, Operation.MINUS, partExp);
 			} else {
-				return new ExpressionNode(kernel, poly, Operation.PLUS,
-						partExp);
+				return new ExpressionNode(kernel, poly, Operation.PLUS, partExp);
 			}
 		}
 	}
 
-	private static ExpressionValue multiplyFirstOperandOnly(ExpressionValue powerExp, Kernel kernel,
-			MyDouble coeffMyDouble) {
+	private static ExpressionValue multiplyFirstOperandOnly(
+			ExpressionValue powerExp, Kernel kernel, MyDouble coeffMyDouble) {
 		ExpressionNode firstOperand = powerExp.wrap().getLeftTree();
 		ExpressionNode node =
-				new ExpressionNode(kernel, coeffMyDouble, Operation.MULTIPLY,
-						firstOperand
-				);
-		return new ExpressionNode(kernel, node,
-				Operation.MULTIPLY, powerExp.wrap().getRightTree());
+				new ExpressionNode(kernel, coeffMyDouble, Operation.MULTIPLY, firstOperand);
+		return new ExpressionNode(kernel, node, Operation.MULTIPLY, powerExp.wrap().getRightTree());
 	}
 
-	private static void polcoeBig(double[] xx, double[] yy, int n,
-			double[] coff) {
-	// Given arrays x[0..n-1] and y[0..n-1] containing a tabulated function yi
-	// = f(xi), this routine
-	// returns an array of coefficients cof[0..n], such that yi = Sigma cofj.xj
-	// adapted from Numerical Recipes chap 3.5
+	private static void polcoeBig(double[] xx, double[] yy, int n, double[] coff) {
+		// Given arrays x[0..n-1] and y[0..n-1] containing a tabulated function yi
+		// = f(xi), this routine
+		// returns an array of coefficients cof[0..n], such that yi = Sigma cofj.xj
+		// adapted from Numerical Recipes chap 3.5
 		BigDecimal[] x = new BigDecimal[n];
 		BigDecimal[] y = new BigDecimal[n];
 		BigDecimal[] cof = new BigDecimal[n];
@@ -352,7 +368,5 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
 		for (i = 0; i < n; i++) {
 			coff[i] = cof[i].doubleValue();
 		}
-
 	}
-
 }

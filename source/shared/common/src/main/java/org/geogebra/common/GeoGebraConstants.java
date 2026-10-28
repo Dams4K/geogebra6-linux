@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common;
 
 /**
@@ -10,12 +26,11 @@ public interface GeoGebraConstants {
 	// as it is read by the build system
 	// and updated automatically by the "Version Bump" task
 	/** last build date */
-	public static final String BUILD_DATE = "22 October 2025";
+	String BUILD_DATE = "20 October 2026";
 	/** complete version string */
-
-	public static final String VERSION_STRING = "5.2.904.2";
+	String VERSION_STRING = "5.4.934.0";
 	/** proper noun, should NOT be translated / transliterated */
-	public static final String APPLICATION_NAME = "GeoGebra";
+	String APPLICATION_NAME = "GeoGebra";
 
 	/** App versions */
 	enum Version {
@@ -35,22 +50,22 @@ public interface GeoGebraConstants {
 		 */
 		public String getTransKey() {
 			switch (this) {
-			case GRAPHING:
-				return "GeoGebraGraphingCalculator";
-			case GRAPHING_3D:
-				return "GeoGebra3DGrapher";
-			case SCIENTIFIC:
-				return "GeoGebraScientificCalculator";
-			case CAS:
-				return "GeoGebraCASCalculator";
-			case GEOMETRY:
-				return "GeoGebraGeometry";
-			case NOTES:
-				return "GeoGebraNotes";
-			case SUITE:
-				return "GeoGebraCalculatorSuite";
-			default:
-				return null;
+				case GRAPHING:
+					return "GeoGebraGraphingCalculator";
+				case GRAPHING_3D:
+					return "GeoGebra3DGrapher";
+				case SCIENTIFIC:
+					return "GeoGebraScientificCalculator";
+				case CAS:
+					return "GeoGebraCASCalculator";
+				case GEOMETRY:
+					return "GeoGebraGeometry";
+				case NOTES:
+					return "GeoGebraNotes";
+				case SUITE:
+					return "GeoGebraCalculatorSuite";
+				default:
+					return null;
 			}
 		}
 	}
@@ -58,8 +73,7 @@ public interface GeoGebraConstants {
 	/**
 	 * Platform
 	 */
-	public enum Platform {
-
+	enum Platform {
 		DESKTOP("d"),
 
 		/** GeoGebra Graphing Calculator */
@@ -107,17 +121,12 @@ public interface GeoGebraConstants {
 
 			// everything except old Java desktop version should be version
 			// 6.0.x.x
-			switch (this) {
-			default:
-				// change 5.2.274.0 to 6.0.274.0
-				return getVersionString6() + "-" + suffix;
-			case DESKTOP:
-				return VERSION_STRING + "-" + suffix;
-			}
+			// change 5.4.274.0 to 6.0.274.0
+			return (this == DESKTOP ? VERSION_STRING : getVersionString6()) + "-" + suffix;
 		}
 
 		/**
-		 * 
+		 *
 		 * @return true if this is a phone version.
 		 */
 		public boolean isPhone() {
@@ -157,49 +166,42 @@ public interface GeoGebraConstants {
 	 * HKEY_LOCAL_MACHINE/Software/JavaSoft/Prefs/geogebra/version_check_allow =
 	 * false
 	 */
-	public static final String PREFERENCES_ROOT_GLOBAL = "/geogebra";
+	String PREFERENCES_ROOT_GLOBAL = "/geogebra";
 
 	/** root preferences node, eg HKEY_CURRENT_USER/Software/JavaSoft/Prefs/geogebra42/ */
-	public static final String PREFERENCES_ROOT = "/geogebra50";
+	String PREFERENCES_ROOT = "/geogebra50";
 	/** File format version */
-	public static final String XML_FILE_FORMAT = "5.0";
+	String XML_FILE_FORMAT = "5.0";
 
 	// This is used for checking if a minor update exists (on each run):
-	public static final String VERSION_URL_MINOR =
-			"https://download.geogebra.org/installers/5.2/version.txt";
+	String VERSION_URL_MINOR = "https://download.geogebra.org/installers/5.4/version.txt";
 
 	// This is used for checking whether a major update exists (monthly):
-	public static final String VERSION_URL = "https://download.geogebra.org/installers/version.txt";
+	String VERSION_URL = "https://download.geogebra.org/installers/version.txt";
 
-	public static final String INSTALLERS_URL = "https://www.geogebra.org/download";
+	String INSTALLERS_URL = "https://www.geogebra.org/download";
 
 	// archive
 	/** short version, for online archive */
-	public static final String SHORT_VERSION_STRING = "5.2";
+	String SHORT_VERSION_STRING = "5.4";
 	// File format versions
 	/** XSD for ggb files */
-	public static final String GGB_XSD_FILENAME = "ggb.xsd";
+	String GGB_XSD_FILENAME = "ggb.xsd";
 	/** XSD for ggt (macro) files */
-	public static final String GGT_XSD_FILENAME = "ggt.xsd";
+	String GGT_XSD_FILENAME = "ggt.xsd";
 	// URLs
-	/** URL of GeoGebra jars */
-	public final static String GEOGEBRA_ONLINE_ARCHIVE_BASE = "https://jars.geogebra.org/webstart/"
-			+ SHORT_VERSION_STRING + "/";
-	/** URL of GeoGebra jars, zipped */
-	public static final String GEOGEBRA_ONLINE_JARS_ZIP = GEOGEBRA_ONLINE_ARCHIVE_BASE
-			+ "geogebra-jars.zip";
-	/** update directory, typically on Windows */
-	public static final String GEOGEBRA_JARS_UPDATE_DIR = "\\GeoGebra 5.2\\jars\\update";
 
 	/** http prefix */
-	public static final String HTTP = "http://";
+	String HTTP = "http://";
 	/** https prefix */
-	public static final String HTTPS = "https://";
+	String HTTPS = "https://";
+	/** mailto prefix */
+	String MAILTO = "mailto:";
 
 	/** GeoGebra URL */
-	public final static String GEOGEBRA_WEBSITE = "https://www.geogebra.org/";
+	String GEOGEBRA_WEBSITE = "https://www.geogebra.org/";
 	/** GeoGebraTube beta URL, used when Feature.TUBE_BETA == true */
-	public final static String GEOGEBRA_WEBSITE_BETA = "https://beta.geogebra.org/";
+	String GEOGEBRA_WEBSITE_BETA = "https://beta.geogebra.org/";
 
 	String GEOGEBRA_HELP_WEBSITE = "https://geogebra.github.io/docs/manual/";
 
@@ -207,29 +209,30 @@ public interface GeoGebraConstants {
 	 * minimal precision in LocusEquation: by default rounding is at least 4
 	 * decimals (this changes dynamically when zooming in)
 	 */
-	public static final long PROVER_MIN_PRECISION = 10000;
+	long PROVER_MIN_PRECISION = 10000;
 
 	/** CSS class name for GeoGebraWeb container tag */
-	public static final String GGM_CLASS_NAME = "geogebraweb";
+	String GGM_CLASS_NAME = "geogebraweb";
 	/** mimetype of GGB files */
-	public static final String GGW_MIME_TYPE = "application/vnd.geogebra.file";
+	String GGW_MIME_TYPE = "application/vnd.geogebra.file";
 	/** Privacy Policy */
 	String PRIVACY_POLICY_URL = "https://www.geogebra.org/privacy";
 	/** license URL */
-	public static final String GGB_LICENSE_URL = "https://www.geogebra.org/license";
-	public static final String BYCS_LICENCE_URL
-			= "https://www.bycs.de/rechtliche-dokumente/board/impressum/index.html";
+	String GGB_LICENSE_URL = "https://www.geogebra.org/license";
+
+	String BYCS_LICENCE_URL = "https://www.bycs.de/rechtliche-dokumente/board/impressum/index.html";
 
 	/**
 	 * URL of the webpage to call if a file should be uploaded. If you want to
 	 * test GeoGebra Materials uploads on a test server, use a test IP URL
 	 * instead, e.g.: "http://140.78.116.131:8082/upload"
 	 */
-	public static final String uploadURL = "https://www.geogebra.org/upload";
-	public static final String uploadURLBeta = "https://beta.geogebra.org/upload";
+	String uploadURL = "https://www.geogebra.org/upload";
 
-	public static final String GEOGEBRA_LOADING_PNG = "https://www.geogebra.org/images/GeoGebra_loading.png";
-	public static final String APPLET_PLAY_PNG = "https://www.geogebra.org/images/applet_play.png";
+	String uploadURLBeta = "https://beta.geogebra.org/upload";
+
+	String GEOGEBRA_LOADING_PNG = "https://www.geogebra.org/images/GeoGebra_loading.png";
+	String APPLET_PLAY_PNG = "https://www.geogebra.org/images/applet_play.png";
 
 	// //////////////////////////////////////////////////////////////////////////
 	// AUTHENTICATING WITH GOOGLE
@@ -240,28 +243,29 @@ public interface GeoGebraConstants {
 	 * This app's personal client ID assigned by the Google APIs Console
 	 * (http://code.google.com/apis/console).
 	 */
-	public static final String GOOGLE_CLIENT_ID = "656990710877-g0tjpnhriv39e59f5s5ubs81sv2686m6"
-			+ ".apps.googleusercontent.com";
+	String GOOGLE_CLIENT_ID =
+			"656990710877-g0tjpnhriv39e59f5s5ubs81sv2686m6" + ".apps.googleusercontent.com";
 
 	/**
 	 * The Graphing Chrome app's client ID from the Google APIs Console
 	 * (http://code.google.com/apis/console).
 	 */
-	public static final String CHROME_APP_CLIENT_ID =
+	String CHROME_APP_CLIENT_ID =
 			"656990710877-3uu4empvnqi7co987usqk0talj3hnt2r.apps.googleusercontent.com";
 
 	// The auth scope being requested. This scope will allow the application to
 	// identify who the authenticated user is.
-	public static final String PLUS_ME_SCOPE = "https://www.googleapis.com/auth/plus.me";
-	public static final String DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly";
-	public static final String USERINFO_EMAIL_SCOPE = "https://www.googleapis.com/auth/userinfo.email";
-	public static final String USERINFO_PROFILE_SCOPE = "https://www.googleapis.com/auth/userinfo.profile";
-	public static final String API_USERINFO = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=";
+	String PLUS_ME_SCOPE = "https://www.googleapis.com/auth/plus.me";
+	String DRIVE_SCOPE =
+			"https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly";
+	String USERINFO_EMAIL_SCOPE = "https://www.googleapis.com/auth/userinfo.email";
+	String USERINFO_PROFILE_SCOPE = "https://www.googleapis.com/auth/userinfo.profile";
+	String API_USERINFO = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=";
 
-	public static final String FORUM_URL = "https://help.geogebra.org/";
-	public static final String REPORT_BUG_URL = "https://www.reddit.com/r/geogebra/";
+	String FORUM_URL = "https://help.geogebra.org/";
+	String REPORT_BUG_URL = "https://www.reddit.com/r/geogebra/";
 
-	public static final String EDIT_URL_BASE = "https://www.geogebra.org/material/edit/id/";
+	String EDIT_URL_BASE = "https://www.geogebra.org/material/edit/id/";
 
 	/**
 	 * Get the version string for versions 6.0.*
@@ -269,6 +273,6 @@ public interface GeoGebraConstants {
 	 * @return version string
 	 */
 	static String getVersionString6() {
-		return VERSION_STRING.replace("5.2.", "6.0.");
+		return VERSION_STRING.replace("5.4.", "6.0.");
 	}
 }

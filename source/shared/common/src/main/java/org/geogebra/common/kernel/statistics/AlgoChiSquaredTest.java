@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -27,8 +31,8 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * Performs a chi square Goodness of Fit test or Test of Independence.
- * 
- * 
+ *
+ *
  * @author G. Sturr
  */
 public class AlgoChiSquaredTest extends AlgoElement {
@@ -41,7 +45,7 @@ public class AlgoChiSquaredTest extends AlgoElement {
 	private final GeoNumberValue degreesOfFreedom;
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param geoList
@@ -49,8 +53,8 @@ public class AlgoChiSquaredTest extends AlgoElement {
 	 * @param geoList2
 	 *            second list
 	 */
-	public AlgoChiSquaredTest(Construction cons, GeoList geoList,
-			GeoList geoList2, GeoNumberValue degreesOfFreedom) {
+	public AlgoChiSquaredTest(
+			Construction cons, GeoList geoList, GeoList geoList2, GeoNumberValue degreesOfFreedom) {
 		super(cons);
 		this.geoList1 = geoList;
 		this.geoList2 = geoList2;
@@ -108,7 +112,7 @@ public class AlgoChiSquaredTest extends AlgoElement {
 
 		final int df;
 		int rows = geoList1.size();
-		int columns = 0;
+		int columns;
 
 		if (!geoList1.isDefined() || rows < 2) {
 			result.setUndefined();
@@ -122,8 +126,8 @@ public class AlgoChiSquaredTest extends AlgoElement {
 			}
 		}
 
-		double[][] observed = null;
-		double[][] expected = null;
+		double[][] observed;
+		double[][] expected;
 
 		// store observed and expected values in arrays
 
@@ -219,15 +223,14 @@ public class AlgoChiSquaredTest extends AlgoElement {
 		double testStat = 0;
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
-				diff[i][j] = (observed[i][j] - expected[i][j])
-						* (observed[i][j] - expected[i][j]) / expected[i][j];
+				diff[i][j] =
+						(observed[i][j] - expected[i][j]) * (observed[i][j] - expected[i][j]) / expected[i][j];
 				testStat += diff[i][j];
 			}
 		}
 
 		try {
-			double leftArea = getChiSquaredDistribution(df)
-					.cumulativeProbability(testStat);
+			double leftArea = getChiSquaredDistribution(df).cumulativeProbability(testStat);
 			p = 1 - leftArea;
 		} catch (RuntimeException e) {
 			// catches ArithmeticException, IllegalStateException and
@@ -240,7 +243,5 @@ public class AlgoChiSquaredTest extends AlgoElement {
 		result.clear();
 		result.addNumber(p, null);
 		result.addNumber(testStat, null);
-
 	}
-
 }

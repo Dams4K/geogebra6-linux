@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoCurveCartesian3D;
@@ -42,8 +58,7 @@ public class AlgoTranslate3D extends AlgoTranslate {
 
 	@Override
 	protected GeoElement getResultTemplate(GeoElement geo) {
-		if ((geo instanceof GeoFunction || geo instanceof GeoCurveCartesian)
-				&& v.isGeoElement3D()) {
+		if ((geo instanceof GeoFunction || geo instanceof GeoCurveCartesian) && v.isGeoElement3D()) {
 			return new GeoCurveCartesian3D(cons);
 		}
 
@@ -61,11 +76,10 @@ public class AlgoTranslate3D extends AlgoTranslate {
 	@Override
 	protected void setOutGeo() {
 		if (inGeo instanceof GeoFunction && v.isGeoElement3D()) {
-			AlgoTransformation3D.toGeoCurveCartesian(kernel,
-					(GeoFunction) inGeo, (GeoCurveCartesian3D) outGeo);
+			AlgoTransformation3D.toGeoCurveCartesian(
+					kernel, (GeoFunction) inGeo, (GeoCurveCartesian3D) outGeo);
 		} else {
 			super.setOutGeo();
 		}
 	}
-
 }

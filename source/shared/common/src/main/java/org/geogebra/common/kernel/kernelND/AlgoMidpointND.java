@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
-*/
-
 /*
- * AlgoMidPoint.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 24. September 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.kernelND;
@@ -36,7 +34,7 @@ public abstract class AlgoMidpointND extends AlgoElement {
 	private GeoPointND M; // output
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param P
@@ -57,9 +55,9 @@ public abstract class AlgoMidpointND extends AlgoElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * used for midpoint of a segment
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param segment
@@ -76,7 +74,7 @@ public abstract class AlgoMidpointND extends AlgoElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param construction
 	 *            construction
 	 * @return new GeoPointND
@@ -125,19 +123,19 @@ public abstract class AlgoMidpointND extends AlgoElement {
 
 	/**
 	 * copy coords of the point to the output point
-	 * 
+	 *
 	 * @param point
 	 *            input point
 	 */
-	abstract protected void copyCoords(GeoPointND point);
+	protected abstract void copyCoords(GeoPointND point);
 
 	/**
 	 * compute output point as midpoint of input points
 	 */
-	abstract protected void computeMidCoords();
+	protected abstract void computeMidCoords();
 
 	/**
-	 * 
+	 *
 	 * @return the output point
 	 */
 	public GeoPointND getPoint() {
@@ -145,7 +143,7 @@ public abstract class AlgoMidpointND extends AlgoElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return first input point
 	 */
 	protected GeoPointND getP() {
@@ -153,7 +151,7 @@ public abstract class AlgoMidpointND extends AlgoElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return second input point
 	 */
 	protected GeoPointND getQ() {
@@ -164,8 +162,7 @@ public abstract class AlgoMidpointND extends AlgoElement {
 	public String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("MidpointOfAB", "Midpoint of %0, %1",
-				P.getLabel(tpl), Q.getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault("MidpointOfAB", "Midpoint of %0, %1", P.getLabel(tpl), Q.getLabel(tpl));
 	}
 }

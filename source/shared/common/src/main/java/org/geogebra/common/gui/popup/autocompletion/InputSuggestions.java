@@ -1,9 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.popup.autocompletion;
 
 import org.geogebra.common.kernel.geos.GeoElement;
-
-import com.himamis.retex.editor.share.controller.EditorState;
-import com.himamis.retex.editor.share.editor.MathField;
+import org.geogebra.editor.share.controller.EditorState;
+import org.geogebra.editor.share.editor.MathField;
 
 /**
  * Class to decide if a text typed into a MathField should have suggestions.
@@ -26,8 +41,7 @@ public class InputSuggestions {
 	 * @return if suggestion is prevented for the given editorState
 	 */
 	public boolean isPreventedFor(EditorState editorState) {
-		return isTextInput() || editorState.isInsideQuotes()
-				|| editorState.isInScript();
+		return isTextInput() || editorState.isInsideQuotes() || editorState.isInScript();
 	}
 
 	/**
@@ -35,8 +49,7 @@ public class InputSuggestions {
 	 * @return if the input is text type.
 	 */
 	public boolean isTextInput() {
-		return forceAsText || (geo != null && geo.isGeoText()
-				&& geo.isTextCommand());
+		return forceAsText || (geo != null && geo.isGeoText() && geo.isTextCommand());
 	}
 
 	/**
@@ -54,6 +67,7 @@ public class InputSuggestions {
 	 */
 	public String getCommand(MathField mf) {
 		return mf == null || isPreventedFor(mf.getInternal().getEditorState())
-				? "" : mf.getInternal().getCharactersLeftOfCursor();
+				? ""
+				: mf.getInternal().getCharactersLeftOfCursor();
 	}
 }

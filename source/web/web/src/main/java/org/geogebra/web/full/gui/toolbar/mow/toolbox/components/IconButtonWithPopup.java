@@ -1,16 +1,29 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbar.mow.toolbox.components;
 
 import java.util.List;
 
-import org.geogebra.web.full.gui.app.GGWToolBar;
 import org.geogebra.web.full.gui.toolbar.mow.toolbox.ToolboxPopupPositioner;
 import org.geogebra.web.html5.gui.util.AriaHelper;
 import org.geogebra.web.html5.gui.view.IconSpec;
-import org.geogebra.web.html5.gui.view.ImageIconSpec;
 import org.geogebra.web.html5.main.AppW;
-import org.geogebra.web.resources.SVGResource;
 
-public class IconButtonWithPopup extends IconButton {
+public final class IconButtonWithPopup extends ToolIconButton {
 	private final AppW appW;
 	private final List<Integer> tools;
 	private CategoryPopup categoryPopup;
@@ -23,8 +36,8 @@ public class IconButtonWithPopup extends IconButton {
 	 * @param tools - list of tools
 	 * @param deselectButtons - deselect button callback
 	 */
-	public IconButtonWithPopup(AppW appW, IconSpec icon, String ariaLabel, List<Integer> tools,
-			Runnable deselectButtons) {
+	public IconButtonWithPopup(
+			AppW appW, IconSpec icon, String ariaLabel, List<Integer> tools, Runnable deselectButtons) {
 		super(appW, icon, ariaLabel, ariaLabel, () -> {}, null);
 		this.appW = appW;
 		this.tools = tools;
@@ -66,8 +79,8 @@ public class IconButtonWithPopup extends IconButton {
 	}
 
 	private void updateButton(int mode) {
-		GGWToolBar.getImageResource(mode, appW, image -> {
-			updateImgAndTxt(new ImageIconSpec((SVGResource) image), mode, appW);
+		getIconFromMode(mode, appW.getToolboxIconResource(), iconSpec -> {
+			updateImgAndTxt(iconSpec, mode, appW);
 			setActive(true);
 		});
 	}
@@ -75,7 +88,8 @@ public class IconButtonWithPopup extends IconButton {
 	@Override
 	public int getMode() {
 		return categoryPopup != null && categoryPopup.getLastSelectedMode() != -1
-				? categoryPopup.getLastSelectedMode() : tools.get(0);
+				? categoryPopup.getLastSelectedMode()
+				: tools.get(0);
 	}
 
 	@Override

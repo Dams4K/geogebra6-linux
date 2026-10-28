@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.euclidian;
 
 import java.util.List;
@@ -11,7 +27,7 @@ import org.geogebra.web.html5.main.AppW;
 /**
  * Line style popup
  */
-public class EuclidianLineStylePopup extends LineStylePopup {
+public final class EuclidianLineStylePopup extends LineStylePopup {
 	private final LineStyleModel model;
 
 	/**
@@ -19,8 +35,7 @@ public class EuclidianLineStylePopup extends LineStylePopup {
 	 *            application
 	 */
 	public EuclidianLineStylePopup(AppW app) {
-		super(app, LineStylePopup.getLineStyleIcons(), -1, 5,
-				SelectionTable.MODE_ICON, true, true);
+		super(app, LineStylePopup.getLineStyleIcons(), -1, 5, SelectionTable.MODE_ICON, true, true);
 		model = new LineStyleModel(app);
 		this.setKeepVisible(false);
 	}
@@ -41,6 +56,7 @@ public class EuclidianLineStylePopup extends LineStylePopup {
 			if (hasSlider()) {
 				setSliderValue(geo0.getLineThickness());
 				getSlider().setMinimum(model.maxMinimumThickness());
+				getSlider().setMaximum(model.minMaximumThickness());
 			}
 			selectLineType(geo0.getLineType());
 		}

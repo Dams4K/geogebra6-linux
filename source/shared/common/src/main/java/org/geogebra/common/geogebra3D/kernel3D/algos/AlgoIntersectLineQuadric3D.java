@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -42,6 +46,7 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 	public static final int INTERSECTION_SECANT_LINE = 5;
 	/** INTERSECTION TYPE: passing line */
 	public static final int INTERSECTION_PASSING_LINE = 6;
+
 	private GeoLineND g; // input
 	private GeoQuadricND q; // input
 	private GeoPoint3D[] D; // D: old points;
@@ -49,11 +54,12 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 	protected GeoPoint3D[] P;
 	/** new output points, not yet permuted */
 	protected GeoPoint3D[] Q;
+
 	private int intersectionType;
 	private boolean permuted;
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -63,14 +69,13 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 	 * @param q
 	 *            quadric
 	 */
-	AlgoIntersectLineQuadric3D(Construction cons, String label, GeoLineND g,
-			GeoQuadric3D q) {
+	AlgoIntersectLineQuadric3D(Construction cons, String label, GeoLineND g, GeoQuadric3D q) {
 		this(cons, g, q);
 		LabelManager.setLabels(label, P); // TODO change to P
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param labels
@@ -80,8 +85,7 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 	 * @param q
 	 *            quadric
 	 */
-	AlgoIntersectLineQuadric3D(Construction cons, String[] labels, GeoLineND g,
-			GeoQuadric3D q) {
+	AlgoIntersectLineQuadric3D(Construction cons, String[] labels, GeoLineND g, GeoQuadric3D q) {
 		this(cons, g, q);
 		LabelManager.setLabels(labels, P); // TODO change to P
 	}
@@ -97,7 +101,7 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param g
@@ -123,8 +127,7 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 		initForNearToRelationship();
 		computeNoPermutation();
 
-		if (cons.getApplication()
-				.fileVersionBefore(5, 0, 281, 0)) {
+		if (cons.getApplication().fileVersionBefore(5, 0, 281, 0)) {
 			// was not permuted at that time
 			permuted = false;
 		} else {
@@ -162,7 +165,7 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return line input
 	 */
 	GeoLineND getLine() {
@@ -170,7 +173,7 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return conic input
 	 */
 	GeoQuadricND getQuadric() {
@@ -179,8 +182,7 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 
 	@Override
 	public final String toString(StringTemplate tpl) {
-		return getLoc().getPlain("IntersectionPointOfAB", q.getLabel(tpl),
-				g.getLabel(tpl));
+		return getLoc().getPlain("IntersectionPointOfAB", q.getLabel(tpl), g.getLabel(tpl));
 	}
 
 	@Override
@@ -189,7 +191,7 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 		setPermutation();
 	}
 
-	final private void computeNoPermutation() {
+	private void computeNoPermutation() {
 
 		// g: X' = p + tv (X' is inhom coords)
 		// q: XAX = 0 (the second X is transposed; X = (X',1) is hom coords)
@@ -215,13 +217,18 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 		double u = v1 * Sv1 + v2 * Sv2 + v3 * Sv3;
 		double b = g.getStartInhomCoords().getX() * Sv1
 				+ g.getStartInhomCoords().getY() * Sv2
-				+ g.getStartInhomCoords().getZ() * Sv3 + m[7] * v1 + m[8] * v2
+				+ g.getStartInhomCoords().getZ() * Sv3
+				+ m[7] * v1
+				+ m[8] * v2
 				+ m[9] * v3;
 
 		double w = p1 * (m[0] * p1 + m[4] * p2 + m[5] * p3 + m[7])
 				+ p2 * (m[4] * p1 + m[1] * p2 + m[6] * p3 + m[8])
-				+ p3 * (m[5] * p1 + m[6] * p2 + m[2] * p3 + m[9]) + m[7] * p1
-				+ m[8] * p2 + m[9] * p3 + m[3];
+				+ p3 * (m[5] * p1 + m[6] * p2 + m[2] * p3 + m[9])
+				+ m[7] * p1
+				+ m[8] * p2
+				+ m[9] * p3
+				+ m[3];
 
 		if (DoubleUtil.isZero(u)) { // no quadratic term
 			if (DoubleUtil.isZero(b)) { // no linear term: 0 t = -w
@@ -252,43 +259,40 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 				Q[0].setCoords(g.getPointInD(3, t1));
 				Q[1].setCoords(Q[0].getCoords());
 				intersectionType = INTERSECTION_TANGENT_LINE;
-			} else { // two solutions
-				if (dis > 0) {
-					dis = Math.sqrt(dis);
-					// For accuracy, if b > 0 then we choose
-					// t1 = -(b+dis) / u
-					// t2 = (-b + dis) / u = w / -(b+dis)
-					// if b < 0 then we choose
-					// t1 = (-b - dis) / u = w / (-b+dis) = w / -(b-dis)
-					// t2 = -(b-dis) / u
+			} else if (dis > 0) { // two solutions
+				dis = Math.sqrt(dis);
+				// For accuracy, if b > 0 then we choose
+				// t1 = -(b+dis) / u
+				// t2 = (-b + dis) / u = w / -(b+dis)
+				// if b < 0 then we choose
+				// t1 = (-b - dis) / u = w / (-b+dis) = w / -(b-dis)
+				// t2 = -(b-dis) / u
 
-					boolean swap = b < 0.0;
-					if (swap) {
-						dis = -dis;
-					}
-					double n = -(b + dis);
-					double t1 = swap ? w / n : n / u;
-					double t2 = swap ? n / u : w / n;
-
-					Q[0].setCoords(g.getPointInD(3, t1));
-					Q[1].setCoords(g.getPointInD(3, t2));
-
-					intersectionType = INTERSECTION_SECANT_LINE;
-				} else { // dis < 0, no solution
-					Q[0].setUndefined();
-					Q[1].setUndefined();
-					intersectionType = INTERSECTION_PASSING_LINE;
+				boolean swap = b < 0.0;
+				if (swap) {
+					dis = -dis;
 				}
+				double n = -(b + dis);
+				double t1 = swap ? w / n : n / u;
+				double t2 = swap ? n / u : w / n;
+
+				Q[0].setCoords(g.getPointInD(3, t1));
+				Q[1].setCoords(g.getPointInD(3, t2));
+
+				intersectionType = INTERSECTION_SECANT_LINE;
+			} else { // dis < 0, no solution
+				Q[0].setUndefined();
+				Q[1].setUndefined();
+				intersectionType = INTERSECTION_PASSING_LINE;
 			}
 		}
 
 		for (int i = 0; i < 2; i++) {
 			checkIsOnLine(Q[i]);
 		}
-
 	}
 
-	final private void setPermutation() {
+	private void setPermutation() {
 		if (permuted) {
 			P[0].setCoordsFromPoint(Q[1]);
 			P[1].setCoordsFromPoint(Q[0]);
@@ -325,7 +329,7 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 	 * (toSceneInhomCoords.getX() - xRW); y = (toSceneInhomCoords.getY() - yRW);
 	 * lengthSqr = x * x + y * y; if (lengthSqr < mindist) { mindist =
 	 * lengthSqr; minIndex = i; } }
-	 * 
+	 *
 	 * return minIndex; }
 	 */
 
@@ -374,5 +378,4 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
 		// else: P[0] is defined (or P[1] is undefined): keep as is
 		return super.getOutputForCmdXML(i);
 	}
-
 }

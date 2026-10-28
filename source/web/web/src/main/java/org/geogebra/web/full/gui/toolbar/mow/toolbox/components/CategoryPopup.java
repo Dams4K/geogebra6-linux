@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbar.mow.toolbox.components;
 
 import java.util.ArrayList;
@@ -12,7 +28,7 @@ import org.gwtproject.user.client.ui.Widget;
 
 public class CategoryPopup extends GPopupPanel implements SetLabels {
 	private final Consumer<Integer> updateParentCallback;
-	private IconButton lastSelectedButton;
+	private ToolIconButton lastSelectedButton;
 	private FlowPanel contentPanel;
 	private final List<IconButton> buttons = new ArrayList<>();
 	private final Integer defaultTool;
@@ -25,8 +41,8 @@ public class CategoryPopup extends GPopupPanel implements SetLabels {
 	 * @param updateParentCallback - callback to update anchor
 	 * @param preventHide - whether it should close on tool selection or not
 	 */
-	public CategoryPopup(AppW app, List<Integer> tools, Consumer<Integer> updateParentCallback,
-			boolean preventHide) {
+	public CategoryPopup(
+			AppW app, List<Integer> tools, Consumer<Integer> updateParentCallback, boolean preventHide) {
 		super(app.getAppletFrame(), app);
 		setAutoHideEnabled(true);
 		this.updateParentCallback = updateParentCallback;
@@ -62,9 +78,8 @@ public class CategoryPopup extends GPopupPanel implements SetLabels {
 		toolsPanel.addStyleName("toolsHolder");
 
 		for (Integer mode : tools) {
-			IconButton button = createButton(mode);
+			ToolIconButton button = createButton(mode);
 			if (defaultTool.equals(mode)) {
-				app.setMode(mode);
 				updateButtonSelection(button);
 			}
 			toolsPanel.add(button);
@@ -74,8 +89,8 @@ public class CategoryPopup extends GPopupPanel implements SetLabels {
 		add(contentPanel);
 	}
 
-	private IconButton createButton(Integer mode) {
-		IconButton button = new IconButton(mode, (AppW) app);
+	private ToolIconButton createButton(Integer mode) {
+		ToolIconButton button = new ToolIconButton(mode, (AppW) app);
 		button.addFastClickHandler(source -> {
 			updateButtonSelection(button);
 			app.setMode(mode);
@@ -88,7 +103,7 @@ public class CategoryPopup extends GPopupPanel implements SetLabels {
 		return button;
 	}
 
-	private void updateButtonSelection(IconButton newSelectedButton) {
+	private void updateButtonSelection(ToolIconButton newSelectedButton) {
 		if (lastSelectedButton != null) {
 			lastSelectedButton.deactivate();
 		}
@@ -97,6 +112,9 @@ public class CategoryPopup extends GPopupPanel implements SetLabels {
 		lastSelectedButton.setActive(true);
 	}
 
+	/**
+	 * @return the mode of the last selected tool button, or -1 if none is selected
+	 */
 	public int getLastSelectedMode() {
 		return lastSelectedButton != null ? lastSelectedButton.getMode() : -1;
 	}

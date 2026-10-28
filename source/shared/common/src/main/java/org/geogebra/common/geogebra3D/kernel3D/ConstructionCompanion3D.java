@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D;
 
 import java.util.HashMap;
@@ -13,11 +29,10 @@ import org.geogebra.common.kernel.ConstructionDefaults;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.kernelND.GeoAxisND;
 import org.geogebra.common.kernel.kernelND.GeoDirectionND;
-import org.geogebra.common.main.Localization;
 
 /**
  * 3D construction companion
- * 
+ *
  * @author Mathieu
  */
 public class ConstructionCompanion3D extends ConstructionCompanion {
@@ -33,7 +48,7 @@ public class ConstructionCompanion3D extends ConstructionCompanion {
 
 	/**
 	 * default constructor
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 */
@@ -52,7 +67,6 @@ public class ConstructionCompanion3D extends ConstructionCompanion {
 		space = new GeoSpace(cons);
 
 		clippingCube = new GeoClippingCube3D(cons);
-
 	}
 
 	@Override
@@ -98,33 +112,17 @@ public class ConstructionCompanion3D extends ConstructionCompanion {
 			geoTable.put(xOyPlaneLocalName, xOyPlane);
 			geoTable.put(spaceLocalName, space);
 		}
-
 	}
 
 	@Override
 	public void updateLocalAxesNames() {
-
-		super.updateLocalAxesNames();
-
-		HashMap<String, GeoElement> geoTable = cons.getGeoTable();
-
-		geoTable.remove(zAxis3DLocalName);
-		geoTable.remove(xOyPlaneLocalName);
-		geoTable.remove(spaceLocalName);
-
-		Localization app = cons.getKernel().getLocalization();
-		zAxis3DLocalName = app.getMenu("zAxis");
-		xOyPlaneLocalName = app.getMenu("xOyPlane");
-		spaceLocalName = app.getMenu("space");
-
-		geoTable.put(zAxis3DLocalName, zAxis3D);
-		geoTable.put(xOyPlaneLocalName, xOyPlane);
-		geoTable.put(spaceLocalName, space);
-
+		zAxis3DLocalName = cons.updateLocalAxisName(zAxis3D, zAxis3DLocalName, "zAxis");
+		xOyPlaneLocalName = cons.updateLocalAxisName(xOyPlane, xOyPlaneLocalName, "xOyPlane");
+		spaceLocalName = cons.updateLocalAxisName(space, spaceLocalName, "space");
 	}
 
 	@Override
-	public Constants isConstantElement(GeoElement geo) {
+	public Constants getConstantElement(GeoElement geo) {
 		if (geo == zAxis3D) {
 			return Constants.Z_AXIS;
 		}
@@ -135,7 +133,7 @@ public class ConstructionCompanion3D extends ConstructionCompanion {
 			return Constants.SPACE;
 		}
 
-		return super.isConstantElement(geo);
+		return super.getConstantElement(geo);
 	}
 
 	@Override

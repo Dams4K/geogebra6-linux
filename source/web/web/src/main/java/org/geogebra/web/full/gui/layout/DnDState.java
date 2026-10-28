@@ -1,11 +1,27 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.layout;
 
 /**
  * The state of the drag and drop procedure.
- * 
+ *
  * @author Florian Sonner
  */
-public class DnDState {
+public final class DnDState {
 	/**
 	 * The panel will be placed in the top area of the target panel.
 	 */
@@ -46,13 +62,13 @@ public class DnDState {
 
 	/**
 	 * The panel will be placed on the left side of the split pane (just for
-	 * vertical split panes). 
+	 * vertical split panes).
 	 */
 	public static final int LEFT_OUT = 128;
 
 	/**
 	 * The panel which was dragged by the user. Can't be changed from the
-	 * outside as a new source should create a new DockState. 
+	 * outside as a new source should create a new DockState.
 	 */
 	private DockPanelW source;
 
@@ -78,7 +94,7 @@ public class DnDState {
 	public void setTarget(DockPanelW target) {
 		this.target = target;
 	}
-	
+
 	public DockPanelW getTarget() {
 		return target;
 	}
@@ -98,6 +114,9 @@ public class DnDState {
 		return region;
 	}
 
+	/**
+	 * @return whether the current region is one of the "out" regions.
+	 */
 	public boolean isRegionOut() {
 		return region >= TOP_OUT;
 	}

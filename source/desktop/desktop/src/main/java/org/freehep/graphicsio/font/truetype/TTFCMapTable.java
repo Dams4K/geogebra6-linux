@@ -5,7 +5,7 @@ import java.io.IOException;
 
 /**
  * CMAP Table.
- * 
+ *
  * @author Simon Fischer
  * @version $Id: TTFCMapTable.java,v 1.5 2009-08-17 21:44:45 murkle Exp $
  */
@@ -38,21 +38,19 @@ public class TTFCMapTable extends TTFTable {
 			length = ttf.readUShort();
 			version = ttf.readUShort();
 			switch (format) {
-			case 0:
-				tableFormat = new TableFormat0();
-				break;
-			case 4:
-				tableFormat = new TableFormat4();
-				break;
-			case 2:
-			case 6:
-				System.err.println(
-						"Unimplementet encoding table format: " + format);
-				break;
-			default:
-				System.err.println(
-						"Illegal value for encoding table format: " + format);
-				break;
+				case 0:
+					tableFormat = new TableFormat0();
+					break;
+				case 4:
+					tableFormat = new TableFormat4();
+					break;
+				case 2:
+				case 6:
+					System.err.println("Unimplementet encoding table format: " + format);
+					break;
+				default:
+					System.err.println("Illegal value for encoding table format: " + format);
+					break;
 			}
 			if (tableFormat != null) {
 				tableFormat.read();
@@ -61,15 +59,13 @@ public class TTFCMapTable extends TTFTable {
 
 		@Override
 		public String toString() {
-			String str = "[encoding] PID:" + platformID + " EID:" + encodingID
+			return "[encoding] PID:" + platformID + " EID:" + encodingID
 					+ " format:" + format + " v" + version
-					+ (tableFormat != null ? tableFormat.toString()
-							: " [no data read]");
-			return str;
+					+ (tableFormat != null ? tableFormat.toString() : " [no data read]");
 		}
 	}
 
-	public abstract class TableFormat {
+	public abstract static class TableFormat {
 		public abstract void read() throws IOException;
 
 		public abstract int getGlyphIndex(int character);
@@ -88,18 +84,15 @@ public class TTFCMapTable extends TTFTable {
 
 		@Override
 		public String toString() {
-			String str = "";
+			StringBuilder str = new StringBuilder();
 			for (int i = 0; i < glyphIdArray.length; i++) {
 				if (i % 16 == 0) {
-					str += "\n    " + Integer.toHexString(i / 16) + "x: ";
+					str.append("\n    ").append(Integer.toHexString(i / 16)).append("x: ");
 				}
 				String number = glyphIdArray[i] + "";
-				while (number.length() < 3) {
-					number = " " + number;
-				}
-				str += number + " ";
+				str.append(" ".repeat(Math.max(0, 3 - number.length()))).append(number).append(" ");
 			}
-			return str;
+			return str.toString();
 		}
 
 		@Override
@@ -129,8 +122,7 @@ public class TTFCMapTable extends TTFTable {
 			endCount = ttf.readUShortArray(segCount);
 			int reservedPad = ttf.readUShort();
 			if (reservedPad != 0) {
-				System.err
-						.println("reservedPad not 0, but " + reservedPad + ".");
+				System.err.println("reservedPad not 0, but " + reservedPad + ".");
 			}
 
 			startCount = ttf.readUShortArray(endCount.length);
@@ -142,12 +134,19 @@ public class TTFCMapTable extends TTFTable {
 
 		@Override
 		public String toString() {
-			String str = "\n   " + endCount.length + " sections:";
+			StringBuilder str = new StringBuilder("\n   " + endCount.length + " sections:");
 			for (int i = 0; i < endCount.length; i++) {
-				str += "\n    " + startCount[i] + " to " + endCount[i] + " : "
-						+ idDelta[i] + " (" + idRangeOffset[i] + ")";
+				str.append("\n    ")
+						.append(startCount[i])
+						.append(" to ")
+						.append(endCount[i])
+						.append(" : ")
+						.append(idDelta[i])
+						.append(" (")
+						.append(idRangeOffset[i])
+						.append(")");
 			}
-			return str;
+			return str.toString();
 		}
 
 		@Override
@@ -158,7 +157,7 @@ public class TTFCMapTable extends TTFTable {
 
 	public int version;
 
-	public EncodingTable encodingTable[];
+	public EncodingTable[] encodingTable;
 
 	@Override
 	public String getTag() {
@@ -173,17 +172,17 @@ public class TTFCMapTable extends TTFTable {
 			encodingTable[i] = new EncodingTable();
 			encodingTable[i].readHeader();
 		}
-		for (int i = 0; i < encodingTable.length; i++) {
-			encodingTable[i].readBody();
+		for (EncodingTable table : encodingTable) {
+			table.readBody();
 		}
 	}
 
 	@Override
 	public String toString() {
-		String str = super.toString() + " v" + version;
-		for (int i = 0; i < encodingTable.length; i++) {
-			str += "\n  " + encodingTable[i];
+		StringBuilder str = new StringBuilder(super.toString() + " v" + version);
+		for (EncodingTable table : encodingTable) {
+			str.append("\n  ").append(table);
 		}
-		return str;
+		return str.toString();
 	}
 }

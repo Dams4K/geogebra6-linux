@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.geos;
@@ -31,7 +35,7 @@ public class GeoScriptAction extends GeoElement {
 
 	/**
 	 * Creates new script action
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 */
@@ -41,7 +45,7 @@ public class GeoScriptAction extends GeoElement {
 
 	/**
 	 * Creates new script action
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param cmdScripting
@@ -49,8 +53,7 @@ public class GeoScriptAction extends GeoElement {
 	 * @param command
 	 *            command to be processed
 	 */
-	public GeoScriptAction(Construction cons, CmdScripting cmdScripting,
-			Command command) {
+	public GeoScriptAction(Construction cons, CmdScripting cmdScripting, Command command) {
 		this(cons);
 		action = cmdScripting;
 		this.command = command;
@@ -66,7 +69,6 @@ public class GeoScriptAction extends GeoElement {
 		GeoScriptAction n = new GeoScriptAction(cons);
 		n.set(this);
 		return n;
-
 	}
 
 	@Override
@@ -105,8 +107,8 @@ public class GeoScriptAction extends GeoElement {
 
 	@Override
 	public ExtendedBoolean isEqualExtended(GeoElementND geo) {
-		return ExtendedBoolean.newExtendedBoolean(geo instanceof GeoScriptAction
-				&& action == ((GeoScriptAction) geo).action);
+		return ExtendedBoolean.newExtendedBoolean(
+				geo instanceof GeoScriptAction && action == ((GeoScriptAction) geo).action);
 	}
 
 	/**
@@ -120,7 +122,7 @@ public class GeoScriptAction extends GeoElement {
 	}
 
 	@Override
-	final public HitType getLastHitType() {
+	public final HitType getLastHitType() {
 		return HitType.NONE;
 	}
 
@@ -128,5 +130,4 @@ public class GeoScriptAction extends GeoElement {
 	public ValueType getValueType() {
 		return ValueType.VOID;
 	}
-
 }

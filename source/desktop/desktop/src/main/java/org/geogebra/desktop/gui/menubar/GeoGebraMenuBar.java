@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.gui.menubar;
 
 import java.awt.BorderLayout;
@@ -24,10 +40,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.MenuElement;
-import javax.swing.ScrollPaneConstants;
 
 import org.geogebra.common.GeoGebraConstants;
 import org.geogebra.common.main.App;
@@ -43,6 +56,8 @@ import org.geogebra.desktop.main.LocalizationD;
 
 public class GeoGebraMenuBar extends JMenuBar {
 	private static final long serialVersionUID = 1736020764918189176L;
+	private static String glVersion = null;
+	private static String glCard = null;
 
 	private BaseMenu fileMenu;
 	private BaseMenu editMenu;
@@ -58,7 +73,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 
 	/**
 	 * Creates new menu-bar
-	 * 
+	 *
 	 * @param app
 	 *            Application
 	 * @param layout
@@ -76,8 +91,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 		 * with the color of the background we can prevent this.
 		 */
 		setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createMatteBorder(0, 0, 1, 0,
-						SystemColor.control),
+				BorderFactory.createMatteBorder(0, 0, 1, 0, SystemColor.control),
 				BorderFactory.createEmptyBorder(1, 1, 0, 1)));
 
 		this.app = app;
@@ -149,7 +163,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 	/**
 	 * Checkbox of Construction protocol view will be checked in view menu if
 	 * visible is true. Otherwise won't be checked.
-	 * 
+	 *
 	 * @param visible whether CP is showing
 	 */
 	public void updateCPView(boolean visible) {
@@ -213,9 +227,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 			MenuElement[] components = pm.getSubElements();
 
 			for (MenuElement com : components) {
-				if (com instanceof LanguageRadioButtonMenuItem) {
-					// do nothing
-				} else if (com instanceof JComponent) {
+				if (!(com instanceof LanguageRadioButtonMenuItem) && com instanceof JComponent) {
 					((JComponent) com).setFont(font);
 				}
 				if (com instanceof JMenuItem) {
@@ -233,7 +245,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 
 	/**
 	 * Show the print preview dialog.
-	 * 
+	 *
 	 * @param app application
 	 */
 	public static void showPrintPreview(final AppD app) {
@@ -242,14 +254,12 @@ public class GeoGebraMenuBar extends JMenuBar {
 				app.setWaitCursor();
 				GuiManagerD gui = (GuiManagerD) app.getGuiManager();
 				DockManagerD dm = gui.getLayout().getDockManager();
-				int viewId = (dm.getFocusedPanel() == null) ? -1
-						: dm.getFocusedPanel().getViewId();
-				PrintPreviewD pre = PrintPreviewD.get(app, viewId,
-						PageFormat.LANDSCAPE);
+				int viewId = (dm.getFocusedPanel() == null) ? -1 : dm.getFocusedPanel().getViewId();
+				PrintPreviewD pre = PrintPreviewD.get(app, viewId, PageFormat.LANDSCAPE);
 
 				pre.setVisible(true);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.debug(e);
 				Log.debug("Print preview not available");
 			} finally {
 				app.setDefaultCursor();
@@ -258,12 +268,9 @@ public class GeoGebraMenuBar extends JMenuBar {
 		runner.start();
 	}
 
-	private static String glVersion = null;
-	private static String glCard = null;
-
 	/**
 	 * Show the "About" dialog.
-	 * 
+	 *
 	 * @param app application
 	 */
 	public static void showAboutDialog(final AppD app) {
@@ -272,62 +279,48 @@ public class GeoGebraMenuBar extends JMenuBar {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html><b>");
 		appendVersion(sb, app);
-		sb.append("</b>  (");
+		sb.append("</b><br>");
 		sb.append("Java ");
 		AppD.appendJavaVersion(sb);
 		sb.append(", ");
 
 		sb.append(app.getHeapSize() / 1024 / 1024);
 		sb.append("MB, ");
+		app.getKernel().getGeoGebraCAS().getCurrentCAS();
 		sb.append(getCASVersion(app));
 
-		sb.append(")<br>");
-
+		sb.append("<br>");
 		sb.append(GeoGebraConstants.BUILD_DATE);
-
-		// license
-		String text = app.loadTextFile(AppD.LICENSE_FILE);
-		// We may want to modify the window size when the license file changes:
-		JTextArea textArea = new JTextArea(26, 72); // window size fine tuning
-													// (rows, cols)
-		textArea.setEditable(false);
-		// not sure if Monospaced is installed everywhere:
-		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		textArea.setText(text);
-		textArea.setCaretPosition(0);
+		sb.append("<br>");
+		String html = sb.toString();
+		JButton licenseButton = new JButton(new AbstractAction(loc.getMenu("License")) {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				app.getGuiManager().showURLinBrowser(GeoGebraConstants.GGB_LICENSE_URL);
+			}
+		});
 
 		JPanel systemInfoPanel = new JPanel(new BorderLayout(5, 5));
-		systemInfoPanel.add(new JLabel(sb.toString()), BorderLayout.CENTER);
-
-		// copy system information to clipboard
-
-		systemInfoPanel.add(new JButton(
-				new AbstractAction(loc.getMenu("SystemInformation")) {
-
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-
-						copyDebugInfoToClipboard(app);
-
-						app.showMessage(
-								loc.getMenu("SystemInformationMessage"));
-					}
-				}), loc.borderEast());
-
-		JScrollPane scrollPane = new JScrollPane(textArea,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		systemInfoPanel.add(new JLabel(html), BorderLayout.CENTER);
+		JPanel buttonPanel = new JPanel(new BorderLayout(5, 5));
+		buttonPanel.add(licenseButton, BorderLayout.WEST);
 		JPanel panel = new JPanel(new BorderLayout(5, 5));
 		panel.add(systemInfoPanel, BorderLayout.NORTH);
-		panel.add(scrollPane, BorderLayout.SOUTH);
+		panel.add(buttonPanel, BorderLayout.SOUTH);
 
-		JOptionPane infoPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
-				JOptionPane.DEFAULT_OPTION);
+		JOptionPane infoPane =
+				new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
+		String systemInformation = loc.getMenu("SystemInformation");
+		infoPane.setOptions(new Object[] {systemInformation, loc.getMenu("OK")});
+		infoPane.addPropertyChangeListener(evt -> {
+			if (systemInformation.equals(infoPane.getValue())) {
+				copyDebugInfoToClipboard(app);
 
-		final JDialog dialog = infoPane.createDialog(app.getMainComponent(),
-				loc.getMenu("AboutLicense"));
+				app.showMessage(loc.getMenu("SystemInformationMessage"));
+			}
+		});
+		final JDialog dialog =
+				infoPane.createDialog(app.getMainComponent(), loc.getMenu("AboutLicense"));
 
 		dialog.setVisible(true);
 	}
@@ -343,7 +336,6 @@ public class GeoGebraMenuBar extends JMenuBar {
 	 */
 	public static void copyDebugInfoToClipboard(AppD app) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[pre]");
 		appendVersion(sb, app);
 		sb.append(" (");
 		sb.append(GeoGebraConstants.BUILD_DATE);
@@ -355,7 +347,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 		sb.append(System.getProperty("os.name"));
 		sb.append("\nArchitecture: ");
 		sb.append(System.getProperty("os.arch")); // tells us 32 or 64 bit
-													// (Java)
+		// (Java)
 		sb.append("\nHeap: ");
 		sb.append(app.getHeapSize() / 1024 / 1024);
 		sb.append("MB\nCAS: ");
@@ -364,7 +356,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 			sb.append("\nGraphics Card: ").append(glCard);
 		}
 		if (glVersion != null) {
-			sb.append("\nGL Version: " + glVersion);
+			sb.append("\nGL Version: ").append(glVersion);
 		}
 		sb.append("\n\n");
 
@@ -378,15 +370,14 @@ public class GeoGebraMenuBar extends JMenuBar {
 		// copy file log
 		if (app.logFile != null) {
 			sb.append("File log from ").append(app.logFile).append(":\n");
-			String NL = System.getProperty("line.separator");
-			try (Scanner scanner = new Scanner(new File(app.logFile.toString()),
-					StandardCharsets.UTF_8)) {
+			String NL = System.lineSeparator();
+			try (Scanner scanner =
+					new Scanner(new File(app.logFile.toString()), StandardCharsets.UTF_8)) {
 				while (scanner.hasNextLine()) {
 					sb.append(scanner.nextLine()).append(NL);
 				}
 			} catch (IOException e) {
-				app.showMessage(
-						app.getLocalization().getMenu("CannotOpenLogFile"));
+				app.showMessage(app.getLocalization().getMenu("CannotOpenLogFile"));
 			}
 			sb.append("\n");
 		}
@@ -401,8 +392,8 @@ public class GeoGebraMenuBar extends JMenuBar {
 
 		sb.append("\n\nPreferences:\n");
 		sb.append(GeoGebraPreferencesD.getPref().getXMLPreferences());
-		sb.append("[/pre]");
-		Toolkit.getDefaultToolkit().getSystemClipboard()
+		Toolkit.getDefaultToolkit()
+				.getSystemClipboard()
 				.setContents(new StringSelection(sb.toString()), null);
 	}
 

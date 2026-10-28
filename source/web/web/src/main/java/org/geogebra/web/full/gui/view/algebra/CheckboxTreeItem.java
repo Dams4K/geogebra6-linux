@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import org.geogebra.common.kernel.geos.GeoBoolean;
@@ -7,10 +23,9 @@ import org.gwtproject.user.client.ui.TreeItem;
 import org.gwtproject.user.client.ui.Widget;
 
 /**
- * ReTeX based implementation of AV checkbox
- *
+ * Algebra view item with a checkbox.
  */
-public class CheckboxTreeItem extends LaTeXTreeItem {
+public final class CheckboxTreeItem extends LaTeXTreeItem {
 	/**
 	 * checkbox displaying boolean variables
 	 */
@@ -22,18 +37,16 @@ public class CheckboxTreeItem extends LaTeXTreeItem {
 	 */
 	public CheckboxTreeItem(GeoElement geo0) {
 		super(geo0);
+		checkBox = new ComponentCheckbox(loc, ((GeoBoolean) geo).getBoolean(), "");
+		buildGui();
+		content.addStyleName("noPadding");
+		content.addStyleName("checkboxWrapper");
+		main.addStyleName("checkboxElem");
 	}
 
 	@Override
 	protected LatexTreeItemController createController() {
 		return new CheckBoxTreeItemController(this);
-	}
-
-	@Override
-	protected void createAvexWidget() {
-		checkBox = new ComponentCheckbox(loc, ((GeoBoolean) geo).getBoolean(), "");
-		content.addStyleName("noPadding");
-		main.addStyleName("checkboxElem");
 	}
 
 	@Override
@@ -51,10 +64,8 @@ public class CheckboxTreeItem extends LaTeXTreeItem {
 
 		if (controls.hasAnimPanel()) {
 			controls.updateAnimPanel();
-
 		}
 		content.clear();
-		createAvexWidget();
 		addAVEXWidget(content);
 
 		geo.getAlgebraDescriptionTextOrHTMLDefault(

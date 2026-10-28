@@ -1,22 +1,38 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.plugin;
 
 /**
  * JavaScript interface of GeoGebra applets.
- * 
+ *
  * @author Markus Hohenwarter, Michael Borcherds
  */
 public interface JavaScriptAPI {
 
 	/**
 	 * Returns current construction as a ggb file in form of a byte array.
-	 * 
+	 *
 	 * @return null if something went wrong
 	 */
 	byte[] getGGBfile();
 
 	/**
 	 * Returns current construction in XML format. May be used for saving.
-	 * 
+	 *
 	 * @return XML representation of construction
 	 */
 	String getXML();
@@ -41,7 +57,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Returns the GeoGebra XML string for the given GeoElement object, i.e.
 	 * only the &lt;element&gt; tag is returned.
-	 * 
+	 *
 	 * @param objName
 	 *            object name
 	 * @return style XML
@@ -52,10 +68,10 @@ public interface JavaScriptAPI {
 	 * For a dependent GeoElement objName the XML string of the parent algorithm
 	 * and all its output objects is returned. For a free GeoElement objName ""
 	 * is returned.
-	 * 
+	 *
 	 * @param objName
 	 *            object name
-	 * 
+	 *
 	 * @return algorithm XML
 	 */
 	String getAlgorithmXML(String objName);
@@ -63,7 +79,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Opens construction given in XML format. May be used for loading
 	 * constructions.
-	 * 
+	 *
 	 * @param xml
 	 *            construction XML
 	 */
@@ -71,7 +87,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Loads encoded file into the applet
-	 * 
+	 *
 	 * @param base64
 	 *            base64 encoded content
 	 */
@@ -80,7 +96,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Evaluates the given XML string and changes the current construction.
 	 * Note: the construction is NOT cleared before evaluating the XML string.
-	 * 
+	 *
 	 * @param xmlString
 	 *            (partial) construction XML
 	 */
@@ -89,7 +105,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Evaluates the given string as if it was entered into GeoGebra's input
 	 * text field.
-	 * 
+	 *
 	 * @param cmdString
 	 *            command
 	 * @return whether execution was successful
@@ -98,7 +114,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Runs command in CAS without checking GeoGebra variables
-	 * 
+	 *
 	 * @param cmdString
 	 *            CAS command
 	 * @return CAS result
@@ -107,7 +123,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Runs command in CAS, all variables are substituted by GeoGebra objects
-	 * 
+	 *
 	 * @param cmdString
 	 *            CAS command
 	 * @return CAS result
@@ -116,7 +132,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * prints a string to the JavaScript / Java Console
-	 * 
+	 *
 	 * @param string
 	 *            string to be printed in console
 	 */
@@ -172,7 +188,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * returns true or false depending on whether the object is visible
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return whether object is visible
@@ -198,7 +214,7 @@ public interface JavaScriptAPI {
 	 * Returns the layer of the object with the given name in the geometry
 	 * window. returns layer, or -1 if object doesn't exist Michael Borcherds
 	 * 2008-02-27
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return layer index or -1
@@ -207,7 +223,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Shows or hides a complete layer Michael Borcherds 2008-02-27
-	 * 
+	 *
 	 * @param layer
 	 *            layer index
 	 * @param visible
@@ -217,7 +233,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Sets the fixed state of the object with the given name.
-	 * 
+	 *
 	 * @param objName
 	 *            object name
 	 * @param fixed
@@ -227,7 +243,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Sets the fixed state of the object with the given name.
-	 * 
+	 *
 	 * @param objName
 	 *            object name
 	 * @param fixed
@@ -284,7 +300,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Sets the label style of the object with the given name in the geometry
 	 * window.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @param style
@@ -295,7 +311,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns labeling style of the object
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return labeling style
@@ -309,7 +325,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns the line thickness of the object
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return line thickness
@@ -323,7 +339,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns the lineType of the object
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return line style
@@ -337,7 +353,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns the filling of the object as an int (or -1 for no filling)
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return the filling of the object as an int (or -1 for no filling)
@@ -347,7 +363,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Returns the point style of the object as an int (or -1 for default, or
 	 * not a point)
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return the point style of the object as an int (or -1 for default, or
@@ -357,7 +373,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Sets the point style of the object (-1 for default)
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @param style
@@ -368,7 +384,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Returns the point style of the object as an int (or -1 for default, or
 	 * not a point)
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return point size
@@ -377,7 +393,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Sets the point style of the object (-1 for default)
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @param style
@@ -387,7 +403,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Sets the color of the object with the given name.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @param red
@@ -416,13 +432,13 @@ public interface JavaScriptAPI {
 	void setPenSize(int size);
 
 	/**
-	 * 
+	 *
 	 * @return pen size in pixels
 	 */
-	int getPenSize();
+	double getPenSize();
 
 	/**
-	 * 
+	 *
 	 * @return pen color as RGB hex string (eg #AB1234)
 	 */
 	String getPenColor();
@@ -431,7 +447,7 @@ public interface JavaScriptAPI {
 	 * Returns the color of the object as an hex string. Note that the
 	 * hex-string starts with # and uses upper case letters, e.g. "#FF0000" for
 	 * red.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return hex color
@@ -445,7 +461,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns true if the object with the given name exists.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return whether object exists
@@ -454,15 +470,14 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Renames an object from oldName to newName.
-	 * 
+	 *
 	 * @return whether renaming worked
 	 */
-	boolean renameObject(String oldObjName, String newObjName,
-			boolean forceRename);
+	boolean renameObject(String oldObjName, String newObjName, boolean forceRename);
 
 	/**
 	 * Renames an object from oldName to newName.
-	 * 
+	 *
 	 * @return whether renaming worked
 	 */
 	boolean renameObject(String oldObjName, String newObjName);
@@ -480,14 +495,14 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Starts automatic animation for all objects with the animating flag set.
-	 * 
+	 *
 	 * @see #setAnimating(String, boolean)
 	 */
 	void startAnimation();
 
 	/**
 	 * Stops animation for all objects with the animating flag set.
-	 * 
+	 *
 	 * @see #setAnimating(String, boolean)
 	 */
 	void stopAnimation();
@@ -501,7 +516,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns whether automatic animation is currently running.
-	 * 
+	 *
 	 * @return whether automatic animation is currently running.
 	 */
 	boolean isAnimationRunning();
@@ -514,16 +529,15 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Current frame rate of the animation.
-	 * 
+	 *
 	 * @return in seconds
 	 */
-
 	double getFrameRate();
 
 	/**
 	 * Returns true if the object with the given name has a valid value at the
 	 * moment.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return whether it's currently defined
@@ -532,7 +546,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns true if the object with the given name is independent.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return whether it is independent on other objects
@@ -563,7 +577,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns the value of the object with the given name as a string.
-	 * 
+	 *
 	 * @param objName
 	 *            object name
 	 * @param localized
@@ -574,7 +588,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns the description of the object with the given name as a string.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return description string
@@ -583,7 +597,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns the description of the object with the given name as a string.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @param localize
@@ -594,7 +608,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns the object with the given name as a LaTeX string.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return object value as LaTeX
@@ -603,7 +617,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns the command of the object with the given name as a string.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return defining command
@@ -612,7 +626,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns the command of the object with the given name as a string.
-	 * 
+	 *
 	 * @param objName
 	 *            object name
 	 * @param localize
@@ -641,7 +655,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Returns the x-coord of the object with the given name. Note: returns 0 if
 	 * the object is not a point or a vector.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return x-coordinate
@@ -651,7 +665,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Returns the y-coord of the object with the given name. Note: returns 0 if
 	 * the object is not a point or a vector.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return y-coordinate
@@ -661,7 +675,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Returns the z-coord of the object with the given name. Note: returns 0 if
 	 * the object is not a point or a vector.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return z-coordinate
@@ -671,7 +685,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Sets the coordinates of the object with the given name. Note: if the
 	 * specified object is not a point or a vector, nothing happens.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @param x
@@ -691,7 +705,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Returns the double value of the object with the given name. Note: returns
 	 * 0 if the object does not have a value.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return value or 0
@@ -701,7 +715,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Sets the double value of the object with the given name. Note: if the
 	 * specified object is not a number, nothing happens.
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @param value
@@ -736,8 +750,8 @@ public interface JavaScriptAPI {
 	 * @param greyscale whether to flatten colors to greyscale
 	 * @return success
 	 */
-	boolean writePNGtoFile(String filename, double exportScale,
-			boolean transparent, double DPI, boolean greyscale);
+	boolean writePNGtoFile(
+			String filename, double exportScale, boolean transparent, double DPI, boolean greyscale);
 
 	/**
 	 * @param exportScale
@@ -752,14 +766,17 @@ public interface JavaScriptAPI {
 	 *            true for monochrome
 	 * @return base64 encoded picture of active view
 	 */
-	String getPNGBase64(double exportScale, boolean transparent,
-			double dpi, boolean copyToClipboard, boolean greyscale);
+	String getPNGBase64(
+			double exportScale,
+			boolean transparent,
+			double dpi,
+			boolean copyToClipboard,
+			boolean greyscale);
 
 	/**
 	 * Sets the Cartesian coordinate system in the graphics window.
 	 */
-	void setCoordSystem(double xmin, double xmax, double ymin,
-			double ymax);
+	void setCoordSystem(double xmin, double xmax, double ymin, double ymax);
 
 	/**
 	 * Shows or hides the x- and y-axis of the coordinate system in the graphics
@@ -771,8 +788,7 @@ public interface JavaScriptAPI {
 	 * Shows or hides the x- and y-axis of the coordinate system in the graphics
 	 * window.
 	 */
-	void setAxesVisible(int view, boolean xVisible, boolean yVisible,
-			boolean zVisible);
+	void setAxesVisible(int view, boolean xVisible, boolean yVisible, boolean zVisible);
 
 	/**
 	 * @param view 1 for graphics view 1, 2 for GV 2, -1 for 3D
@@ -780,8 +796,7 @@ public interface JavaScriptAPI {
 	 * @param yStep y-axis step
 	 * @param zStep z-axis step
 	 */
-	void setAxisSteps(int view, String xStep, String yStep,
-			String zStep);
+	void setAxisSteps(int view, String xStep, String yStep, String zStep);
 
 	/**
 	 * @param view 1 for graphics view 1, 2 for GV 2, -1 for 3D
@@ -789,8 +804,7 @@ public interface JavaScriptAPI {
 	 * @param yLabel y-axis label
 	 * @param zLabel z-axis label
 	 */
-	void setAxisLabels(int view, String xLabel, String yLabel,
-			String zLabel);
+	void setAxisLabels(int view, String xLabel, String yLabel, String zLabel);
 
 	/**
 	 * @param view 1 for graphics view 1, 2 for GV 2, -1 for 3D
@@ -798,8 +812,7 @@ public interface JavaScriptAPI {
 	 * @param yUnit y-axis unit
 	 * @param zUnit z-axis unit
 	 */
-	void setAxisUnits(int view, String xUnit, String yUnit,
-			String zUnit);
+	void setAxisUnits(int view, String xUnit, String yUnit, String zUnit);
 
 	/**
 	 * @param view 1 for graphics view 1, 2 for GV 2, -1 for 3D
@@ -809,7 +822,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Shows or hides the coordinate grid in the graphics windows 1 and 2.
-	 * 
+	 *
 	 * @param flag
 	 *            visibility flag
 	 */
@@ -834,14 +847,14 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns an array with all object names.
-	 * 
+	 *
 	 * @return all object names
 	 */
 	String[] getAllObjectNames();
 
 	/**
 	 * Returns an array with all object names.
-	 * 
+	 *
 	 * @param type
 	 *            object type
 	 * @return objects of this type
@@ -856,14 +869,14 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Returns the number of objects in the construction.
-	 * 
+	 *
 	 * @return number of objects
 	 */
 	int getObjectNumber();
 
 	/**
 	 * Returns the name of the n-th object of this construction.
-	 * 
+	 *
 	 * @param i
 	 *            index in construction
 	 * @return object label
@@ -873,7 +886,7 @@ public interface JavaScriptAPI {
 	/**
 	 * Returns the type of the object with the given name as a string (e.g.
 	 * point, line, circle, ...)
-	 * 
+	 *
 	 * @param objName
 	 *            object label
 	 * @return object type
@@ -882,7 +895,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Sets the mode of the geometry window (EuclidianView).
-	 * 
+	 *
 	 * @param mode
 	 *            app mode
 	 */
@@ -903,7 +916,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Removes a previously registered add listener
-	 * 
+	 *
 	 * @see #registerAddListener(Object)
 	 */
 	void unregisterAddListener(Object jsFunction);
@@ -918,7 +931,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Removes a previously registered remove listener
-	 * 
+	 *
 	 * @see #registerRemoveListener(Object)
 	 */
 	void unregisterRemoveListener(Object jsFunction);
@@ -933,7 +946,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Removes a previously registered clear listener
-	 * 
+	 *
 	 * @see #registerClearListener(Object)
 	 */
 	void unregisterClearListener(Object jsFunction);
@@ -948,7 +961,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Removes a previously registered rename listener.
-	 * 
+	 *
 	 * @see #registerRenameListener(Object)
 	 */
 	void unregisterRenameListener(Object jsFunction);
@@ -963,7 +976,7 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Removes a previously registered update listener.
-	 * 
+	 *
 	 * @see #registerRemoveListener(Object)
 	 */
 	void unregisterUpdateListener(Object jsFunction);
@@ -974,17 +987,17 @@ public interface JavaScriptAPI {
 	 * is called using the name of the changed object as the single argument. If
 	 * objName previously had a mapping JavaScript function, the old value is
 	 * replaced.
-	 * 
+	 *
 	 * <p>Example: First, set a change listening JavaScript function:
 	 * ggbApplet.registerObjectUpdateListener("A", "myJavaScriptFunction"); Then
-	 * the GeoGebra Applet will call the Javascript function
+	 * the GeoGebra Applet will call the JavaScript function
 	 * myJavaScriptFunction("A"); whenever object A changes.
 	 */
-	void registerObjectUpdateListener(String objName,  Object jsFunction);
+	void registerObjectUpdateListener(String objName, Object jsFunction);
 
 	/**
 	 * Removes a previously set change listener for the given object.
-	 * 
+	 *
 	 * @see #registerObjectUpdateListener
 	 */
 	void unregisterObjectUpdateListener(String objName);
@@ -1021,12 +1034,11 @@ public interface JavaScriptAPI {
 	 * objName previously had a mapping JavaScript function, the old value is
 	 * replaced.
 	 */
-	void registerObjectClickListener(String objName,
-			 Object jsFunction);
+	void registerObjectClickListener(String objName, Object jsFunction);
 
 	/**
 	 * Removes a previously set change listener for the given object.
-	 * 
+	 *
 	 * @see #registerObjectClickListener
 	 */
 	void unregisterObjectClickListener(String objName);
@@ -1039,9 +1051,9 @@ public interface JavaScriptAPI {
 
 	/**
 	 * Gets the double value of the specified index of the list.
-	 * 
+	 *
 	 * <p>Returns Double.NaN if the object is not a GeoNumeric/Angle
-	 * 
+	 *
 	 * @param objName
 	 *            list label
 	 * @param index
@@ -1104,14 +1116,14 @@ public interface JavaScriptAPI {
 
 	/**
 	 * @param enable
-	 * 
+	 *
 	 *            whether labels draggable or not
 	 */
 	void enableLabelDrags(boolean enable);
 
 	/**
 	 * @param enable
-	 * 
+	 *
 	 *            whether shift - drag - zoom enabled or not
 	 */
 	void enableShiftDragZoom(boolean enable);
@@ -1123,8 +1135,7 @@ public interface JavaScriptAPI {
 	 * @param italic whether to use italic
 	 * @param serif whether to use a serif font
 	 */
-	void setFont(String label, int size, boolean bold, boolean italic,
-			boolean serif);
+	void setFont(String label, int size, boolean bold, boolean italic, boolean serif);
 
 	/**
 	 * Change the rounding setting.
@@ -1184,22 +1195,44 @@ public interface JavaScriptAPI {
 	void evalLaTeX(String input, int mode);
 
 	/**
-	 * 
+	 * Evaluate an expression in LaTeX form.
+	 * @param input LaTeX input
+	 */
+	void evalLaTeX(String input);
+
+	/**
+	 *
 	 * @return 3D model exported in collada format
 	 */
-	String exportCollada(double xmin, double xmax, double ymin,
-			double ymax, double zmin, double zmax, double xyScale,
-			double xzScale, double xTickDistance, double yTickDistance,
+	String exportCollada(
+			double xmin,
+			double xmax,
+			double ymin,
+			double ymax,
+			double zmin,
+			double zmax,
+			double xyScale,
+			double xzScale,
+			double xTickDistance,
+			double yTickDistance,
 			double zTickDistance);
 
 	/**
-	 * 
+	 *
 	 * @return 3D model exported in simple 3d format
 	 */
-	String exportSimple3d(String name, double xmin, double xmax,
+	String exportSimple3d(
+			String name,
+			double xmin,
+			double xmax,
 			double ymin,
-			double ymax, double zmin, double zmax, double xyScale,
-			double xzScale, double xTickDistance, double yTickDistance,
+			double ymax,
+			double zmin,
+			double zmax,
+			double xyScale,
+			double xzScale,
+			double xTickDistance,
+			double yTickDistance,
 			double zTickDistance);
 
 	/**

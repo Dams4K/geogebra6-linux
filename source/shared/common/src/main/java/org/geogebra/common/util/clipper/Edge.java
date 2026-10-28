@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util.clipper;
 
 import org.geogebra.common.kernel.arithmetic.MyDouble;
@@ -40,14 +56,16 @@ class Edge {
 	Edge nextInSEL;
 	Edge prevInSEL;
 
-	protected final static int SKIP = -2;
+	protected static final int SKIP = -2;
 
-	protected final static int UNASSIGNED = -1;
+	protected static final int UNASSIGNED = -1;
 
-	protected final static double HORIZONTAL = -3.4E+38;
+	protected static final double HORIZONTAL = -3.4E+38;
 
-	static enum Side {
-		LEFT, RIGHT
+	/** Edge endpoint. */
+	enum Side {
+		LEFT,
+		RIGHT
 	}
 
 	static boolean doesE2InsertBeforeE1(Edge e1, Edge e2) {
@@ -61,9 +79,9 @@ class Edge {
 	}
 
 	static boolean slopesEqual(Edge e1, Edge e2) {
-		return DoubleUtil.isEqual(e1.getDelta().getY() * e2.getDelta().getX(),
+		return DoubleUtil.isEqual(
+				e1.getDelta().getY() * e2.getDelta().getX(),
 				e1.getDelta().getX() * e2.getDelta().getY());
-
 	}
 
 	static void swapPolyIndexes(Edge edge1, Edge edge2) {
@@ -85,21 +103,20 @@ class Edge {
 		if (currentY == edge.getTop().getY()) {
 			return edge.getTop().getX();
 		}
-		return edge.getBot().getX()
-				+ edge.deltaX * (currentY - edge.getBot().getY());
+		return edge.getBot().getX() + edge.deltaX * (currentY - edge.getBot().getY());
 	}
 
 	/**
 	 * modified to be compatible with double
 	 */
-	public Edge() {
+	Edge() {
 		delta = new DoublePoint();
 		top = new DoublePoint();
 		bot = new DoublePoint();
 		current = new DoublePoint();
 	}
 
-	public Edge findNextLocMin() {
+	Edge findNextLocMin() {
 		Edge e = this;
 		Edge e2;
 		boolean go = true;
@@ -107,8 +124,7 @@ class Edge {
 			while (!e.bot.equals(e.prev.bot) || e.current.equals(e.top)) {
 				e = e.next;
 			}
-			if (!isEdgeHorizontal(e.deltaX)
-					&& !isEdgeHorizontal(e.prev.deltaX)) {
+			if (!isEdgeHorizontal(e.deltaX) && !isEdgeHorizontal(e.prev.deltaX)) {
 				break;
 			}
 			while (isEdgeHorizontal(e.prev.deltaX)) {
@@ -132,52 +148,51 @@ class Edge {
 	/**
 	 * modified to be compatible with double
 	 */
-	public DoublePoint getBot() {
+	DoublePoint getBot() {
 		return bot;
 	}
 
 	/**
 	 * modified to be compatible with double
 	 */
-	public DoublePoint getCurrent() {
+	DoublePoint getCurrent() {
 		return current;
 	}
 
 	/**
 	 * modified to be compatible with double
 	 */
-	public DoublePoint getDelta() {
+	DoublePoint getDelta() {
 		return delta;
 	}
 
 	/**
 	 * modified to be compatible with double
 	 */
-	public DoublePoint getTop() {
+	DoublePoint getTop() {
 		return top;
 	}
 
-	public Edge getMaximaPair() {
+	Edge getMaximaPair() {
 		Edge result = null;
 		if (next.top.equals(top) && next.nextInLML == null) {
 			result = next;
 		} else if (prev.top.equals(top) && prev.nextInLML == null) {
 			result = prev;
 		}
-		if (result != null && (result.outIdx == Edge.SKIP
-				|| result.nextInAEL == result.prevInAEL
-						&& !result.isHorizontal())) {
+		if (result != null
+				&& (result.outIdx == Edge.SKIP
+						|| result.nextInAEL == result.prevInAEL && !result.isHorizontal())) {
 			return null;
 		}
 		return result;
 	}
 
-	public Edge getNextInAEL(Direction direction) {
+	Edge getNextInAEL(Direction direction) {
 		return direction == Direction.LEFT_TO_RIGHT ? nextInAEL : prevInAEL;
 	}
 
-	public boolean isContributing(PolyFillType clipFillType,
-			PolyFillType subjFillType, ClipType clipType) {
+	boolean isContributing(PolyFillType clipFillType, PolyFillType subjFillType, ClipType clipType) {
 
 		PolyFillType pft, pft2;
 		if (polyType == PolyType.SUBJECT) {
@@ -189,118 +204,116 @@ class Edge {
 		}
 
 		switch (pft) {
-		case EVEN_ODD:
-			// return false if a subj line has been flagged as inside a subj
-			// polygon
-			if (windDelta == 0 && windCnt != 1) {
-				return false;
-			}
-			break;
-		case NON_ZERO:
-			if (Math.abs(windCnt) != 1) {
-				return false;
-			}
-			break;
-		case POSITIVE:
-			if (windCnt != 1) {
-				return false;
-			}
-			break;
-		default: // PolyFillType.pftNegative
-			if (windCnt != -1) {
-				return false;
-			}
-			break;
+			case EVEN_ODD:
+				// return false if a subj line has been flagged as inside a subj
+				// polygon
+				if (windDelta == 0 && windCnt != 1) {
+					return false;
+				}
+				break;
+			case NON_ZERO:
+				if (Math.abs(windCnt) != 1) {
+					return false;
+				}
+				break;
+			case POSITIVE:
+				if (windCnt != 1) {
+					return false;
+				}
+				break;
+			default: // PolyFillType.pftNegative
+				if (windCnt != -1) {
+					return false;
+				}
+				break;
 		}
 
 		switch (clipType) {
-		case INTERSECTION:
-			switch (pft2) {
-			case EVEN_ODD:
-			case NON_ZERO:
-				return windCnt2 != 0;
-			case POSITIVE:
-				return windCnt2 > 0;
-			default:
-				return windCnt2 < 0;
-			}
-		case UNION:
-			switch (pft2) {
-			case EVEN_ODD:
-			case NON_ZERO:
-				return windCnt2 == 0;
-			case POSITIVE:
-				return windCnt2 <= 0;
-			default:
-				return windCnt2 >= 0;
-			}
-		case DIFFERENCE:
-			if (polyType == PolyType.SUBJECT) {
+			case INTERSECTION:
 				switch (pft2) {
-				case EVEN_ODD:
-				case NON_ZERO:
-					return windCnt2 == 0;
-				case POSITIVE:
-					return windCnt2 <= 0;
-				default:
-					return windCnt2 >= 0;
+					case EVEN_ODD:
+					case NON_ZERO:
+						return windCnt2 != 0;
+					case POSITIVE:
+						return windCnt2 > 0;
+					default:
+						return windCnt2 < 0;
 				}
-			}
-			switch (pft2) {
-			case EVEN_ODD:
-			case NON_ZERO:
-				return windCnt2 != 0;
-			case POSITIVE:
-				return windCnt2 > 0;
-			default:
-				return windCnt2 < 0;
-			}
-		case XOR:
-			if (windDelta == 0) {
+			case UNION:
 				switch (pft2) {
-				case EVEN_ODD:
-				case NON_ZERO:
-					return windCnt2 == 0;
-				case POSITIVE:
-					return windCnt2 <= 0;
-				default:
-					return windCnt2 >= 0;
+					case EVEN_ODD:
+					case NON_ZERO:
+						return windCnt2 == 0;
+					case POSITIVE:
+						return windCnt2 <= 0;
+					default:
+						return windCnt2 >= 0;
 				}
-			}
-			return true;
+			case DIFFERENCE:
+				if (polyType == PolyType.SUBJECT) {
+					switch (pft2) {
+						case EVEN_ODD:
+						case NON_ZERO:
+							return windCnt2 == 0;
+						case POSITIVE:
+							return windCnt2 <= 0;
+						default:
+							return windCnt2 >= 0;
+					}
+				}
+				switch (pft2) {
+					case EVEN_ODD:
+					case NON_ZERO:
+						return windCnt2 != 0;
+					case POSITIVE:
+						return windCnt2 > 0;
+					default:
+						return windCnt2 < 0;
+				}
+			case XOR:
+				if (windDelta == 0) {
+					switch (pft2) {
+						case EVEN_ODD:
+						case NON_ZERO:
+							return windCnt2 == 0;
+						case POSITIVE:
+							return windCnt2 <= 0;
+						default:
+							return windCnt2 >= 0;
+					}
+				}
+				return true;
 		}
 		return true;
 	}
 
-	public boolean isEvenOddAltFillType(PolyFillType clipFillType,
-			PolyFillType subjFillType) {
+	boolean isEvenOddAltFillType(PolyFillType clipFillType, PolyFillType subjFillType) {
 		if (polyType == PolyType.SUBJECT) {
 			return clipFillType == PolyFillType.EVEN_ODD;
 		}
 		return subjFillType == PolyFillType.EVEN_ODD;
 	}
 
-	public boolean isEvenOddFillType(PolyFillType clipFillType,
-			PolyFillType subjFillType) {
+	boolean isEvenOddFillType(PolyFillType clipFillType, PolyFillType subjFillType) {
 		if (polyType == PolyType.SUBJECT) {
 			return subjFillType == PolyFillType.EVEN_ODD;
 		}
 		return clipFillType == PolyFillType.EVEN_ODD;
 	}
 
-	public boolean isHorizontal() {
+	boolean isHorizontal() {
 		return delta.getY() == 0;
 	}
 
-	public boolean isIntermediate(double y) {
+	boolean isIntermediate(double y) {
 		return top.getY() == y && nextInLML != null;
 	}
 
-	public boolean isMaxima(double Y) {
+	boolean isMaxima(double Y) {
 		return top.getY() == Y && nextInLML == null;
 	}
 
-	public void reverseHorizontal() {
+	void reverseHorizontal() {
 		// swap horizontal edges' top and bottom x's so they follow the natural
 		// progression of the bounds - ie so their xbots will align with the
 		// adjoining lower edge. [Helpful in the ProcessHorizontal() method.]
@@ -312,27 +325,26 @@ class Edge {
 		temp = top.getZ();
 		top.setZ(bot.getZ());
 		bot.setZ(temp);
-
 	}
 
 	/**
 	 * modified to be compatible with double
 	 */
-	public void setBot(DoublePoint bot) {
+	void setBot(DoublePoint bot) {
 		this.bot.set(bot);
 	}
 
 	/**
 	 * modified to be compatible with double
 	 */
-	public void setCurrent(DoublePoint current) {
+	void setCurrent(DoublePoint current) {
 		this.current.set(current);
 	}
 
 	/**
 	 * modified to be compatible with double
 	 */
-	public void setTop(DoublePoint top) {
+	void setTop(DoublePoint top) {
 		this.top.set(top);
 	}
 
@@ -348,7 +360,7 @@ class Edge {
 				+ prevInSEL + "]";
 	}
 
-	public void updateDeltaX() {
+	void updateDeltaX() {
 
 		delta.setX(top.getX() - bot.getX());
 		delta.setY(top.getY() - bot.getY());
@@ -362,5 +374,4 @@ class Edge {
 	private static boolean isEdgeHorizontal(double d) {
 		return MyDouble.exactEqual(d, Edge.HORIZONTAL);
 	}
-
 }

@@ -1,10 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.CheckForNull;
-
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GAffineTransform;
 import org.geogebra.common.awt.GBasicStroke;
 import org.geogebra.common.awt.GGraphics2D;
@@ -17,9 +32,9 @@ import org.geogebra.common.euclidian.EuclidianBoundingBoxHandler;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.MediaBoundingBox;
 import org.geogebra.common.euclidian.inline.InlineTextController;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.geos.GeoInline;
 import org.geogebra.common.kernel.geos.GeoInlineText;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Class that handles drawing inline text elements.
@@ -29,14 +44,14 @@ public class DrawInlineText extends Drawable implements DrawInline {
 	public static final int PADDING = 8;
 
 	protected final GeoInline text;
-	protected @CheckForNull InlineTextController textController;
+	protected @Nullable InlineTextController textController;
 
 	protected final TransformableRectangle rectangle;
 
-	protected final static GBasicStroke border1 = AwtFactory.getPrototype().newBasicStroke(1f,
-			GBasicStroke.CAP_BUTT, GBasicStroke.JOIN_MITER);
-	protected final static GBasicStroke border3 = AwtFactory.getPrototype().newBasicStroke(3f,
-			GBasicStroke.CAP_BUTT, GBasicStroke.JOIN_MITER);
+	protected static final GBasicStroke border1 =
+			AwtFactory.getPrototype().newBasicStroke(1f, GBasicStroke.CAP_BUTT, GBasicStroke.JOIN_MITER);
+	protected static final GBasicStroke border3 =
+			AwtFactory.getPrototype().newBasicStroke(3f, GBasicStroke.CAP_BUTT, GBasicStroke.JOIN_MITER);
 
 	/**
 	 * Create a new DrawInlineText instance.
@@ -65,20 +80,17 @@ public class DrawInlineText extends Drawable implements DrawInline {
 
 		GPoint2D point = text.getLocation();
 		if (textController != null && point != null) {
+			double contentWidth = text.getContentWidth();
+			double contentHeight = text.getContentHeight();
 			double angle = text.getAngle();
 			double width = text.getWidth();
 			double height = text.getHeight();
-			double contentWidth = text.getContentWidth();
-			double contentHeight = text.getContentHeight();
 
-			textController.setLocation(view.toScreenCoordX(point.getX()),
-					view.toScreenCoordY(point.getY()));
+			textController.setLocation(
+					view.toScreenCoordX(point.getX()), view.toScreenCoordY(point.getY()));
 			textController.setHeight((int) contentHeight - 2 * PADDING);
 			textController.setWidth((int) contentWidth - 2 * PADDING);
 			textController.setTransform(angle, width / contentWidth, height / contentHeight);
-			if (textController.updateFontSize()) {
-				textController.updateContent();
-			}
 		}
 	}
 
@@ -90,10 +102,21 @@ public class DrawInlineText extends Drawable implements DrawInline {
 	}
 
 	@Override
+	public boolean hasContent() {
+		// no controller == loaded from file, assume not empty
+		return textController == null || textController.hasContent();
+	}
+
+	@Override
 	public void saveContent() {
 		if (textController != null) {
 			textController.saveContent();
 		}
+	}
+
+	@Override
+	public double getScale() {
+		return rectangle.realWidth() / text.getContentWidth();
 	}
 
 	@Override
@@ -102,9 +125,9 @@ public class DrawInlineText extends Drawable implements DrawInline {
 	}
 
 	@Override
-	public void toBackground() {
+	public void toBackground(DrawInline.SuspensionTrigger trigger) {
 		if (textController != null) {
-			textController.toBackground();
+			textController.toBackground(trigger);
 		}
 	}
 
@@ -147,25 +170,25 @@ public class DrawInlineText extends Drawable implements DrawInline {
 	}
 
 	protected void draw(GGraphics2D g2, int borderRadius) {
-		if (text.isEuclidianVisible() && textController != null
+		if (text.isEuclidianVisible()
+				&& textController != null
 				&& rectangle.getDirectTransform() != null) {
 			double contentWidth = text.getContentWidth();
 			double contentHeight = text.getContentHeight();
-			GAffineTransform tr =
-					rectangle.scaleForZoom(contentWidth, contentHeight);
+			GAffineTransform tr = rectangle.scaleForZoom(contentWidth, contentHeight);
 			g2.saveTransform();
 			g2.transform(tr);
 
 			if (geo.getBackgroundColor() != null) {
 				g2.setPaint(geo.getBackgroundColor());
-				g2.fillRoundRect(0, 0, (int) contentWidth, (int) contentHeight,
-						2 * borderRadius, 2 * borderRadius);
+				g2.fillRoundRect(
+						0, 0, (int) contentWidth, (int) contentHeight, 2 * borderRadius, 2 * borderRadius);
 			}
 			if (geo.getLineThickness() != GeoInlineText.NO_BORDER) {
 				g2.setPaint(text.getBorderColor());
 				g2.setStroke(getBorderStroke());
-				g2.drawRoundRect(0, 0, (int) contentWidth, (int) contentHeight,
-						2 * borderRadius, 2 * borderRadius);
+				g2.drawRoundRect(
+						0, 0, (int) contentWidth, (int) contentHeight, 2 * borderRadius, 2 * borderRadius);
 			}
 
 			textController.draw(g2);

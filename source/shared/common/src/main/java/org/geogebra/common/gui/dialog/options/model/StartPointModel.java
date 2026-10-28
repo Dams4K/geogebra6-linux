@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import org.geogebra.common.kernel.CircularDefinitionException;
@@ -10,6 +26,7 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.error.ErrorHandler;
 import org.geogebra.common.main.error.ErrorHelper;
+import org.geogebra.common.properties.impl.objects.PlacementProperty;
 import org.geogebra.common.util.StringUtil;
 
 public class StartPointModel extends MultipleGeosModel {
@@ -43,7 +60,6 @@ public class StartPointModel extends MultipleGeosModel {
 				equalLocation = false;
 				break;
 			}
-
 		}
 
 		GeoPointND p = geo0.getStartPoint();
@@ -52,7 +68,6 @@ public class StartPointModel extends MultipleGeosModel {
 		} else {
 			getListener().setSelectedIndex(-1);
 		}
-
 	}
 
 	@Override
@@ -64,8 +79,7 @@ public class StartPointModel extends MultipleGeosModel {
 		GeoPointND newLoc = null;
 		handler.resetError();
 		if (!StringUtil.emptyTrim(strLoc)) {
-			newLoc = kernel.getAlgebraProcessor().evaluateToPoint(strLoc,
-					handler, true);
+			newLoc = kernel.getAlgebraProcessor().evaluateToPoint(strLoc, handler, true);
 		}
 		if (newLoc == null) {
 			return;
@@ -100,7 +114,8 @@ public class StartPointModel extends MultipleGeosModel {
 		if (!(geo instanceof Locateable && !((Locateable) geo).isAlwaysFixed())
 				|| geo.isGeoImage()
 				|| geo.getParentAlgorithm() instanceof AlgoVector
-				|| isAbsoluteLocation(geo)) {
+				|| isAbsoluteLocation(geo)
+				|| PlacementProperty.isDependentTextCommand(geo)) {
 			valid = false;
 		}
 		return valid;

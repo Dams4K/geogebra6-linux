@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -39,16 +43,14 @@ public abstract class AlgoLinePoint extends AlgoElement3D {
 	 * @param inputParallel
 	 *            parallel line or vector
 	 */
-	public AlgoLinePoint(Construction cons, GeoPointND point,
-			GeoElement inputParallel) {
+	public AlgoLinePoint(Construction cons, GeoPointND point, GeoElement inputParallel) {
 		super(cons);
 		this.point = point;
 		this.inputParallel = inputParallel;
 		line = createLine(cons);
 		line.showUndefinedInAlgebraView(true);
 
-		setInputOutput(new GeoElement[] { (GeoElement) point, inputParallel },
-				new GeoElement[] { line });
+		setInputOutput(new GeoElement[] {(GeoElement) point, inputParallel}, new GeoElement[] {line});
 
 		// compute line
 		compute();
@@ -60,7 +62,7 @@ public abstract class AlgoLinePoint extends AlgoElement3D {
 
 	/**
 	 * create the line
-	 * 
+	 *
 	 * @param cons1
 	 *            construction
 	 * @return the line
@@ -93,12 +95,12 @@ public abstract class AlgoLinePoint extends AlgoElement3D {
 		}
 	}
 
-	abstract protected Coords getDirection();
+	protected abstract Coords getDirection();
 
 	@Override
 	public String toString(StringTemplate tpl) {
-		return getLoc().getPlain("LineThroughAParallelToB", point.getLabel(tpl),
-				inputParallel.getLabel(tpl));
+		return getLoc()
+				.getPlain("LineThroughAParallelToB", point.getLabel(tpl), inputParallel.getLabel(tpl));
 	}
 
 	/*

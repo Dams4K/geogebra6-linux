@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoIntersectLines.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -53,8 +51,7 @@ public class AlgoIntersectLines extends AlgoIntersectAbstract
 	private PVariable[] botanaVars;
 
 	/** Creates new AlgoJoinPoints */
-	public AlgoIntersectLines(Construction cons, String label, GeoLine g,
-			GeoLine h) {
+	public AlgoIntersectLines(Construction cons, String label, GeoLine g, GeoLine h) {
 		super(cons);
 		this.g = g;
 		this.h = h;
@@ -66,12 +63,11 @@ public class AlgoIntersectLines extends AlgoIntersectAbstract
 
 		S.setLabel(label);
 		addIncidence();
-
 	}
 
 	/**
 	 * @author Tam
-	 * 
+	 *
 	 *         for special cases of e.g. AlgoIntersectLineConic
 	 */
 	private void addIncidence() {
@@ -136,13 +132,12 @@ public class AlgoIntersectLines extends AlgoIntersectAbstract
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("IntersectionOfAandB",
-				"Intersection of %0 and %1", g.getLabel(tpl),
-				h.getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault(
+						"IntersectionOfAandB", "Intersection of %0 and %1", g.getLabel(tpl), h.getLabel(tpl));
 	}
 
 	@Override
@@ -151,8 +146,7 @@ public class AlgoIntersectLines extends AlgoIntersectAbstract
 	}
 
 	@Override
-	public void getFreeVariables(HashSet<PVariable> variables)
-			throws NoSymbolicParametersException {
+	public void getFreeVariables(HashSet<PVariable> variables) throws NoSymbolicParametersException {
 		if ((g instanceof GeoSegment) || (h instanceof GeoSegment)) {
 			throw new NoSymbolicParametersException();
 		}
@@ -165,8 +159,7 @@ public class AlgoIntersectLines extends AlgoIntersectAbstract
 	}
 
 	@Override
-	public int[] getDegrees(AbstractProverReciosMethod a)
-			throws NoSymbolicParametersException {
+	public int[] getDegrees(AbstractProverReciosMethod a) throws NoSymbolicParametersException {
 		if ((g instanceof GeoSegment) || (h instanceof GeoSegment)) {
 			throw new NoSymbolicParametersException();
 		}
@@ -179,8 +172,7 @@ public class AlgoIntersectLines extends AlgoIntersectAbstract
 	}
 
 	@Override
-	public BigInteger[] getExactCoordinates(
-			final HashMap<PVariable, BigInteger> values)
+	public BigInteger[] getExactCoordinates(final HashMap<PVariable, BigInteger> values)
 			throws NoSymbolicParametersException {
 		if ((g instanceof GeoSegment) || (h instanceof GeoSegment)) {
 			throw new NoSymbolicParametersException();
@@ -216,8 +208,7 @@ public class AlgoIntersectLines extends AlgoIntersectAbstract
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 		if (botanaPolynomials != null) {
 			return botanaPolynomials;
 		}
@@ -228,11 +219,10 @@ public class AlgoIntersectLines extends AlgoIntersectAbstract
 		 * geometry, it's better to assume that segment intersection is not a
 		 * real problem. TODO: Consider adding an NDG somehow in this case (but
 		 * maybe not really important and useful).
-		 * 
+		 *
 		 * See also AlgoIntersectLineConic.
 		 */
-		if (g != null
-				&& h != null /* && !g.isGeoSegment() && !h.isGeoSegment() */) {
+		if (g != null && h != null /* && !g.isGeoSegment() && !h.isGeoSegment() */) {
 			if (botanaVars == null) {
 				botanaVars = new PVariable[2];
 				botanaVars[0] = new PVariable(kernel);
@@ -240,15 +230,14 @@ public class AlgoIntersectLines extends AlgoIntersectAbstract
 			}
 			PVariable[] fv = g.getBotanaVars(g);
 			botanaPolynomials = new PPolynomial[2];
-			botanaPolynomials[0] = PPolynomial.collinear(fv[0], fv[1], fv[2],
-					fv[3], botanaVars[0], botanaVars[1]);
+			botanaPolynomials[0] =
+					PPolynomial.collinear(fv[0], fv[1], fv[2], fv[3], botanaVars[0], botanaVars[1]);
 			fv = h.getBotanaVars(h);
-			botanaPolynomials[1] = PPolynomial.collinear(fv[0], fv[1], fv[2],
-					fv[3], botanaVars[0], botanaVars[1]);
+			botanaPolynomials[1] =
+					PPolynomial.collinear(fv[0], fv[1], fv[2], fv[3], botanaVars[0], botanaVars[1]);
 
 			return botanaPolynomials;
 		}
 		throw new NoSymbolicParametersException();
 	}
-
 }

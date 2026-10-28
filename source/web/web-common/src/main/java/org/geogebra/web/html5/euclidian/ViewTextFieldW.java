@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.euclidian;
 
 import org.geogebra.common.awt.GRectangle;
@@ -23,10 +39,9 @@ public class ViewTextFieldW extends ViewTextField {
 		this.euclidianView = euclidianView;
 	}
 
-	private AutoCompleteTextFieldW newAutoCompleteTextField(int length,
-			Drawable drawTextField) {
-		AutoCompleteTextFieldW textFieldW = new AutoCompleteTextFieldW(length,
-				this.euclidianView.getApplication(), drawTextField);
+	private AutoCompleteTextFieldW newAutoCompleteTextField(int length, Drawable drawTextField) {
+		AutoCompleteTextFieldW textFieldW =
+				new AutoCompleteTextFieldW(length, this.euclidianView.getApplication(), drawTextField);
 		return textFieldW;
 	}
 
@@ -57,14 +72,13 @@ public class ViewTextFieldW extends ViewTextField {
 	public void setBoxBounds(GRectangle bounds) {
 		ensureBoxExists();
 		if (box.getParent() != null) {
-			((AbsolutePanel) box.getParent()).setWidgetPosition(box,
-					(int) bounds.getMinX(), (int) bounds.getMinY());
+			((AbsolutePanel) box.getParent())
+					.setWidgetPosition(box, (int) bounds.getMinX(), (int) bounds.getMinY());
 		}
 	}
 
 	@Override
-	public AutoCompleteTextField getTextField(int length,
-			DrawInputBox drawInputBox) {
+	public AutoCompleteTextField getTextField(int length, DrawInputBox drawInputBox) {
 		if (textField == null) {
 			textField = newAutoCompleteTextField(length, drawInputBox);
 			textField.setAutoComplete(false);

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -25,8 +29,7 @@ import org.geogebra.common.util.debug.Log;
  * f(x,y) = a x^2 + b y that depends on a and b.
  * @author Markus Hohenwarter
  */
-public class AlgoDependentFunctionNVar extends AlgoElement
-		implements DependentAlgo {
+public class AlgoDependentFunctionNVar extends AlgoElement implements DependentAlgo {
 
 	private FunctionNVar fun;
 	private GeoFunctionNVar f; // output
@@ -37,6 +40,7 @@ public class AlgoDependentFunctionNVar extends AlgoElement
 	/**
 	 * @param cons construction
 	 * @param fun input function
+	 * @implNote the inequality tree and construction defaults are not set, up to the caller
 	 */
 	public AlgoDependentFunctionNVar(Construction cons, FunctionNVar fun) {
 		super(cons, false);
@@ -47,14 +51,12 @@ public class AlgoDependentFunctionNVar extends AlgoElement
 		f.setFunction(fun);
 
 		expression = fun.getExpression();
-		expContainsFunctions = AlgoDependentFunction
-				.containsFunctions(expression);
+		expContainsFunctions = AlgoDependentFunction.containsFunctions(expression);
 		if (expContainsFunctions) {
 			expandedFun = new FunctionNVar(fun, kernel);
 		}
 		setInputOutput(); // for AlgoElement
 		compute();
-		f.setConstructionDefaults();
 	}
 
 	@Override
@@ -102,8 +104,8 @@ public class AlgoDependentFunctionNVar extends AlgoElement
 			ExpressionValue ev = null;
 
 			try { // needed for eg f(x)=floor(x) f'(x)
-				ev = AlgoDependentFunction.expandFunctionDerivativeNodes(
-						expression.deepCopy(kernel), false);
+				ev =
+						AlgoDependentFunction.expandFunctionDerivativeNodes(expression.deepCopy(kernel), false);
 			} catch (Exception e) {
 				Log.debug(e);
 				Log.debug("derivative failed");
@@ -150,5 +152,4 @@ public class AlgoDependentFunctionNVar extends AlgoElement
 	public ExpressionNode getExpression() {
 		return expression;
 	}
-
 }

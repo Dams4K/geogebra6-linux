@@ -1,8 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.properties.impl.objects;
 
 import org.geogebra.common.kernel.geos.GProperty;
 import org.geogebra.common.kernel.geos.GeoElement;
-import org.geogebra.common.kernel.geos.GeoList;
 import org.geogebra.common.kernel.geos.PointProperties;
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.plugin.EuclidianStyleConstants;
@@ -42,14 +57,7 @@ public class PointSizeProperty extends AbstractRangeProperty<Integer> {
 	}
 
 	private void setSize(GeoElement element, int size) {
-		if (element instanceof GeoList) {
-			GeoList list = (GeoList) element;
-			for (int i = 0; i < list.size(); i++) {
-				setSize(list.get(i), size);
-			}
-		} else if (element instanceof PointProperties) {
-			((PointProperties) element).setPointSize(size);
-		}
+		((PointProperties) element).setPointSize(size);
 	}
 
 	@Override

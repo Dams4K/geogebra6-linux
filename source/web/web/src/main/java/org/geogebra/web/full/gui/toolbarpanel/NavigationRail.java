@@ -1,6 +1,20 @@
-package org.geogebra.web.full.gui.toolbarpanel;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
+package org.geogebra.web.full.gui.toolbarpanel;
 
 import org.geogebra.common.GeoGebraConstants;
 import org.geogebra.common.awt.GColor;
@@ -24,6 +38,7 @@ import org.geogebra.web.resources.SVGResource;
 import org.geogebra.web.shared.GlobalHeader;
 import org.gwtproject.core.client.Scheduler;
 import org.gwtproject.user.client.ui.FlowPanel;
+import org.jspecify.annotations.Nullable;
 
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.HTMLImageElement;
@@ -34,11 +49,11 @@ import jsinterop.base.Js;
  */
 class NavigationRail extends FlowPanel implements ExamListener {
 	private MenuToggleButton btnMenu;
-	private @CheckForNull StandardButton btnAlgebra;
-	private @CheckForNull StandardButton btnTools;
-	private @CheckForNull StandardButton btnDistribution;
-	private @CheckForNull StandardButton btnTableView;
-	private @CheckForNull StandardButton btnSpreadsheet;
+	private @Nullable StandardButton btnAlgebra;
+	private @Nullable StandardButton btnTools;
+	private @Nullable StandardButton btnDistribution;
+	private @Nullable StandardButton btnTableView;
+	private @Nullable StandardButton btnSpreadsheet;
 	private final FlowPanel contents;
 	private FlowPanel center;
 	private boolean animating = false;
@@ -48,16 +63,18 @@ class NavigationRail extends FlowPanel implements ExamListener {
 	 * Parent tool panel
 	 */
 	final ToolbarPanel toolbarPanel;
+
 	private FocusableWidget focusableMenuButton;
-	private final ExamController examController = GlobalScope.examController;
+	private final ExamController examController;
 
 	/**
 	 * @param toolbarPanel
 	 *            - panel containing the toolbar
 	 */
-	public NavigationRail(ToolbarPanel toolbarPanel) {
+	NavigationRail(ToolbarPanel toolbarPanel) {
 		this.app = toolbarPanel.getApp();
 		this.toolbarPanel = toolbarPanel;
+		examController = GlobalScope.getExamController(app);
 		contents = new FlowPanel();
 		contents.addStyleName("contents");
 		add(contents);
@@ -70,7 +87,7 @@ class NavigationRail extends FlowPanel implements ExamListener {
 		setTabIndexes();
 		lastOrientation = app.isPortrait();
 		setStyleName("header");
-		updateIcons(!examController.isIdle());
+		updateIcons(toolbarPanel.isOpen() ? toolbarPanel.getSelectedTabId() : null, useExamStyle());
 		app.getExamEventBus().add(this);
 	}
 
@@ -112,32 +129,31 @@ class NavigationRail extends FlowPanel implements ExamListener {
 	}
 
 	private void createAlgebraButton() {
-		btnAlgebra = createTabButton("Algebra",
-				MaterialDesignResources.INSTANCE.toolbar_algebra_graphing());
+		btnAlgebra =
+				createTabButton("Algebra", MaterialDesignResources.INSTANCE.toolbar_algebra_graphing());
 		btnAlgebra.addFastClickHandler(source -> onAlgebraPressed());
 	}
 
 	private void createToolsButton() {
-		btnTools = createTabButton("Tools",
-				MaterialDesignResources.INSTANCE.toolbar_tools());
+		btnTools = createTabButton("Tools", MaterialDesignResources.INSTANCE.toolbar_tools());
 		btnTools.addFastClickHandler(source -> onToolsPressed());
 	}
 
 	private void createTableViewButton() {
-		btnTableView = createTabButton("Table",
-				MaterialDesignResources.INSTANCE.toolbar_table_view_black());
+		btnTableView =
+				createTabButton("Table", MaterialDesignResources.INSTANCE.toolbar_table_view_black());
 		btnTableView.addFastClickHandler(source -> onTableViewPressed());
 	}
 
 	private void createDistributionButton() {
-		btnDistribution = createTabButton("Distribution",
-				MaterialDesignResources.INSTANCE.toolbar_distribution());
+		btnDistribution =
+				createTabButton("Distribution", MaterialDesignResources.INSTANCE.toolbar_distribution());
 		btnDistribution.addFastClickHandler(source -> onDistributionPressed());
 	}
 
 	private void createSpreadsheetButton() {
-		btnSpreadsheet = createTabButton("Perspective.Spreadsheet",
-				MaterialDesignResources.INSTANCE.toolbar_spreadsheet());
+		btnSpreadsheet = createTabButton(
+				"Perspective.Spreadsheet", MaterialDesignResources.INSTANCE.toolbar_spreadsheet());
 		btnSpreadsheet.addFastClickHandler(source -> onSpreadsheetPressed());
 	}
 
@@ -231,18 +247,17 @@ class NavigationRail extends FlowPanel implements ExamListener {
 		updateIcons(null, useExamStyle());
 		addCloseOrientationStyles();
 		toolbarPanel.setMoveMode();
+		app.closePopups();
 		toolbarPanel.close(snap, time);
 		app.getAccessibilityManager().focusAnchorOrMenu();
 	}
 
 	private boolean useExamStyle() {
-		return examController.isExamActive()
-				&& app.getAppletParameters().getDataParamFitToScreen();
+		return GlobalScope.isExamActive(app) && app.getAppletParameters().getDataParamFitToScreen();
 	}
 
 	private void addCloseOrientationStyles() {
-		Dom.toggleClass(toolbarPanel, "closePortrait",
-				"closeLandscape", app.isPortrait());
+		Dom.toggleClass(toolbarPanel, "closePortrait", "closeLandscape", app.isPortrait());
 	}
 
 	void removeCloseOrientationStyles() {
@@ -299,10 +314,9 @@ class NavigationRail extends FlowPanel implements ExamListener {
 	/**
 	 * @param expanded - whether menu is expanded
 	 */
-	public void markMenuAsExpanded(boolean expanded) {
+	void markMenuAsExpanded(boolean expanded) {
 		if (btnMenu != null) {
-			btnMenu.getElement().setAttribute("aria-expanded",
-					String.valueOf(expanded));
+			btnMenu.getElement().setAttribute("aria-expanded", String.valueOf(expanded));
 			btnMenu.getElement().removeAttribute("aria-pressed");
 		}
 	}
@@ -337,23 +351,25 @@ class NavigationRail extends FlowPanel implements ExamListener {
 	}
 
 	private void addShareButton() {
-		GlobalHeader.INSTANCE.initShareButton(share -> {
-			app.hideMenu();
-			FileMenuW.share(app, share);
-		}, app);
+		GlobalHeader.INSTANCE.initShareButton(
+				share -> {
+					app.hideMenu();
+					FileMenuW.share(app, share);
+				},
+				app);
 	}
 
 	/**
 	 * Hide the entire undo/redo panel (eg. during animation).
 	 */
-	public void hideUndoRedoPanel() {
+	void hideUndoRedoPanel() {
 		toolbarPanel.showHideUndoRedoPanel(false);
 	}
 
 	/**
 	 * @return - true if toolbar is open
 	 */
-	public boolean isOpen() {
+	boolean isOpen() {
 		return toolbarPanel.isOpen();
 	}
 
@@ -370,14 +386,13 @@ class NavigationRail extends FlowPanel implements ExamListener {
 	/**
 	 * update style of toolbar
 	 */
-	public void updateStyle() {
+	void updateStyle() {
 		if (isAnimating()) {
 			return;
 		}
 
 		String orientation = app.isPortrait() ? "portrait" : "landscape";
-		Dom.toggleClass(this, "compact",
-				app.getAppletFrame().hasCompactNavigationRail());
+		Dom.toggleClass(this, "compact", app.getAppletFrame().hasCompactNavigationRail());
 		if (isOpen()) {
 			removeCloseStyles();
 			addStyleName("header-open-" + orientation);
@@ -403,14 +418,13 @@ class NavigationRail extends FlowPanel implements ExamListener {
 		if (btnMenu == null) {
 			return;
 		}
-		Dom.toggleClass(btnMenu, "portraitMenuBtn",
-				"landscapeMenuBtn", app.isPortrait());
+		Dom.toggleClass(btnMenu, "portraitMenuBtn", "landscapeMenuBtn", app.isPortrait());
 	}
 
 	/**
 	 * handle resize of toolbar
 	 */
-	public void resize() {
+	void resize() {
 		if (isAnimating()) {
 			return;
 		}
@@ -420,7 +434,7 @@ class NavigationRail extends FlowPanel implements ExamListener {
 	/**
 	 * @return true if animating
 	 */
-	public boolean isAnimating() {
+	boolean isAnimating() {
 		return animating;
 	}
 
@@ -428,14 +442,14 @@ class NavigationRail extends FlowPanel implements ExamListener {
 	 * @param b
 	 *            - set if animating
 	 */
-	public void setAnimating(boolean b) {
+	void setAnimating(boolean b) {
 		this.animating = b;
 	}
 
 	/**
 	 * Resets toolbar.
 	 */
-	public void reset() {
+	void reset() {
 		resize();
 		toolbarPanel.updateUndoRedoPosition();
 	}
@@ -443,7 +457,7 @@ class NavigationRail extends FlowPanel implements ExamListener {
 	/**
 	 * Called when app changes orientation.
 	 */
-	public void onOrientationChange() {
+	void onOrientationChange() {
 		if (lastOrientation != app.isPortrait()) {
 			removeOpenStyles();
 			removeCloseStyles();
@@ -466,8 +480,8 @@ class NavigationRail extends FlowPanel implements ExamListener {
 				if (app.getAppletParameters().getDataParamFitToScreen()) {
 					width = NavigatorUtil.getWindowWidth();
 				}
-				toolbarPanel.setLastOpenWidth((int) (width
-						* PerspectiveDecoder.landscapeRatio(app, width)));
+				toolbarPanel.setLastOpenWidth(
+						(int) (width * PerspectiveDecoder.landscapeRatio(app, width)));
 			}
 		}
 	}
@@ -483,7 +497,7 @@ class NavigationRail extends FlowPanel implements ExamListener {
 	/**
 	 * Sets tab order for header buttons.
 	 */
-	public void setTabIndexes() {
+	void setTabIndexes() {
 		if (btnMenu != null) {
 			new FocusableWidget(AccessibilityGroup.MENU, null, btnMenu).attachTo(app);
 		}
@@ -494,7 +508,7 @@ class NavigationRail extends FlowPanel implements ExamListener {
 	}
 
 	/** Sets focus to Burger menu */
-	public void focusMenu() {
+	void focusMenu() {
 		if (btnMenu != null) {
 			btnMenu.getElement().focus();
 		}
@@ -503,7 +517,7 @@ class NavigationRail extends FlowPanel implements ExamListener {
 	/**
 	 * After visibility changed in landscape
 	 */
-	public void onLandscapeAnimationEnd() {
+	void onLandscapeAnimationEnd() {
 		if (!isOpen()) {
 			getElement().getStyle().clearWidth();
 			toolbarPanel.updateUndoRedoPosition();
@@ -519,7 +533,7 @@ class NavigationRail extends FlowPanel implements ExamListener {
 		});
 	}
 
-	public void updateIcons(boolean exam) {
+	void updateIcons(boolean exam) {
 		updateIcons(toolbarPanel.getSelectedTabId(), exam);
 	}
 
@@ -536,11 +550,12 @@ class NavigationRail extends FlowPanel implements ExamListener {
 	 * @param left distance from left canvas edge
 	 * @param top distance from top canvas edge
 	 */
-	public void paintToCanvas(CanvasRenderingContext2D context2d, int left, int top) {
+	void paintToCanvas(CanvasRenderingContext2D context2d, int left, int top) {
 		int btnTop = 40;
 		context2d.globalAlpha = 0.54;
-		for (StandardButton btn: new StandardButton[]{btnAlgebra, btnTools, btnTableView,
-				btnDistribution, btnSpreadsheet}) {
+		for (StandardButton btn :
+				new StandardButton[] {btnAlgebra, btnTools, btnTableView, btnDistribution, btnSpreadsheet
+				}) {
 			if (btn != null) {
 				HTMLImageElement el = Js.uncheckedCast(btn.getImage().getElement());
 				context2d.drawImage(el, left + 24, top + btnTop);
@@ -555,7 +570,7 @@ class NavigationRail extends FlowPanel implements ExamListener {
 		removeStyleName("examCheat");
 	}
 
-	public void resetExamStyle() {
+	void resetExamStyle() {
 		resetHeaderClasses();
 		boolean examStyle = useExamStyle();
 		updateIcons(examStyle);

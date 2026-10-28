@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.layout.panels;
 
 import org.geogebra.common.main.App;
@@ -5,15 +21,16 @@ import org.geogebra.web.full.gui.layout.DockPanelW;
 import org.geogebra.web.full.gui.view.probcalculator.ProbabilityCalculatorViewW;
 import org.geogebra.web.full.main.AppWFull;
 import org.gwtproject.resources.client.ResourcePrototype;
+import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Widget;
 
 /**
  * @author gabor
- * 
+ *
  *         ProabilityCalculator dockpanel for Web
  *
  */
-public class ProbabilityCalculatorDockPanelW extends DockPanelW {
+public final class ProbabilityCalculatorDockPanelW extends DockPanelW {
 
 	/**
 	 * default width of this panel
@@ -25,7 +42,8 @@ public class ProbabilityCalculatorDockPanelW extends DockPanelW {
 	 *            App Creates panel
 	 */
 	public ProbabilityCalculatorDockPanelW(AppWFull app) {
-		super(App.VIEW_PROBABILITY_CALCULATOR,
+		super(
+				App.VIEW_PROBABILITY_CALCULATOR,
 				app.isSuite() ? null : "0", // toolbar string - move tool only, force!
 				true);
 
@@ -37,15 +55,17 @@ public class ProbabilityCalculatorDockPanelW extends DockPanelW {
 	public void onResize() {
 		super.onResize();
 		if (app.getGuiManager().hasProbabilityCalculator()) {
-			((ProbabilityCalculatorViewW) app.getGuiManager()
-					.getProbabilityCalculator()).onResize();
+			((ProbabilityCalculatorViewW) app.getGuiManager().getProbabilityCalculator()).onResize();
 		}
 	}
 
 	@Override
 	protected Widget loadComponent() {
-		return ((ProbabilityCalculatorViewW) app.getGuiManager()
-				.getProbabilityCalculator()).getWrapperPanel();
+		if (!app.supportsView(App.VIEW_PROBABILITY_CALCULATOR)) {
+			return new FlowPanel();
+		}
+		return ((ProbabilityCalculatorViewW) app.getGuiManager().getProbabilityCalculator())
+				.getWrapperPanel();
 	}
 
 	@Override
@@ -73,8 +93,16 @@ public class ProbabilityCalculatorDockPanelW extends DockPanelW {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			((ProbabilityCalculatorViewW) app.getGuiManager()
-					.getProbabilityCalculator()).createGeoElements();
+			((ProbabilityCalculatorViewW) app.getGuiManager().getProbabilityCalculator())
+					.createGeoElements();
 		}
+	}
+
+	@Override
+	protected boolean needsResetIcon() {
+		return app.showResetIcon()
+				&& !app.showView(App.VIEW_EUCLIDIAN)
+				&& !app.showView(App.VIEW_EUCLIDIAN2)
+				&& !app.showView(App.VIEW_EUCLIDIAN3D);
 	}
 }

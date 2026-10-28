@@ -5,10 +5,11 @@
   <inherits name='org.geogebra.Common'/>
   <inherits name='org.geogebra.GgbJdk'/>
   <inherits name='org.geogebra.web.AppCacheLinker' />
-  <inherits name="com.himamis.retex.editor.JLMEditorDev" />
+  <inherits name="org.geogebra.editor.JLMEditorDev" />
   <inherits name="org.quickjs.Emscripten" />
 
   <!-- Specify the paths for translatable code                    -->
+  <source path='awt'/>
   <source path='html5'/>
   <source path='resources'/>
   <!-- resources is both in source and resource because of SVGResource, SassResource classes -->
@@ -21,6 +22,7 @@
   <set-configuration-property name="user.agent.runtimeWarning" value="false"/>
   <!-- #3511 -->
   <set-property name="compiler.stackMode" value="strip"/>
+  <set-property name="jre.checks.type" value="DISABLED" />
   <set-property name="gwt.uncaughtexceptionhandler.windowonerror" value="IGNORE"/>
   <set-property name="gwt.logging.enabled" value="FALSE"/>
   <replace-with class="org.geogebra.web.html5.util.OfflineLoadingStrategy">

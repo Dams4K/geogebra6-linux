@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import org.geogebra.common.annotation.MissingDoc;
@@ -17,7 +33,6 @@ public class ShowLabelModel extends OptionsModel {
 	public interface IShowLabelListener extends PropertyListener {
 		@MissingDoc
 		void update(boolean isEqualVal, boolean isEqualMode, int mode);
-
 	}
 
 	public ShowLabelModel(App app, IShowLabelListener listener) {
@@ -46,8 +61,7 @@ public class ShowLabelModel extends OptionsModel {
 				equalLabelMode = false;
 			}
 
-			showNameValue = showNameValue && temp.isLabelValueShowable()
-					&& !isDropDownList(temp);
+			showNameValue = showNameValue && temp.isLabelValueShowable() && !isDropDownList(temp);
 		}
 
 		// change "Show Label:" to "Show Label" if there's no menu
@@ -105,16 +119,15 @@ public class ShowLabelModel extends OptionsModel {
 	 */
 	public static boolean match(GeoElement geo) {
 		return geo.isLabelShowable() || isDropDownList(geo);
-
 	}
 
 	public static int getDropdownIndex(GeoElement geo0) {
-		return geo0.getLabelMode() == GeoElementND.LABEL_CAPTION_VALUE ? 4
+		return geo0.getLabelMode() == GeoElementND.LABEL_CAPTION_VALUE
+				? 4
 				: Math.min(geo0.getLabelMode(), 3);
 	}
 
 	public int fromDropdown(int selectedIndex) {
-		return selectedIndex > 3 ? GeoElementND.LABEL_CAPTION_VALUE
-				: selectedIndex;
+		return selectedIndex > 3 ? GeoElementND.LABEL_CAPTION_VALUE : selectedIndex;
 	}
 }

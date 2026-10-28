@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -50,8 +54,8 @@ public abstract class AlgoConicPartCircumcircleND extends AlgoConicPart {
 	 * @param type
 	 *            conic type
 	 */
-	public AlgoConicPartCircumcircleND(Construction cons, String label,
-			GeoPointND A, GeoPointND B, GeoPointND C, int type) {
+	public AlgoConicPartCircumcircleND(
+			Construction cons, String label, GeoPointND A, GeoPointND B, GeoPointND C, int type) {
 		this(cons, A, B, C, type);
 		conicPart.setLabel(label);
 	}
@@ -68,8 +72,8 @@ public abstract class AlgoConicPartCircumcircleND extends AlgoConicPart {
 	 * @param type
 	 *            conic type
 	 */
-	public AlgoConicPartCircumcircleND(Construction cons, GeoPointND A,
-			GeoPointND B, GeoPointND C, int type) {
+	public AlgoConicPartCircumcircleND(
+			Construction cons, GeoPointND A, GeoPointND B, GeoPointND C, int type) {
 		super(cons, type);
 		this.A = A;
 		this.B = B;
@@ -91,21 +95,20 @@ public abstract class AlgoConicPartCircumcircleND extends AlgoConicPart {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cons1
 	 *            construction
 	 * @param type1
 	 *            part type (arc or sector)
 	 * @return output conic part
 	 */
-	abstract protected GeoConicND createConicPart(Construction cons1,
-			int type1);
+	protected abstract GeoConicND createConicPart(Construction cons1, int type1);
 
 	/**
-	 * 
+	 *
 	 * @return circle algo
 	 */
-	abstract protected AlgoCircleThreePoints getAlgo();
+	protected abstract AlgoCircleThreePoints getAlgo();
 
 	private void setIncidence() {
 		A.addIncidence(conicPart, false);
@@ -115,22 +118,18 @@ public abstract class AlgoConicPartCircumcircleND extends AlgoConicPart {
 
 	@Override
 	public Commands getClassName() {
-		switch (type) {
-		case GeoConicNDConstants.CONIC_PART_ARC:
+		if (type == GeoConicNDConstants.CONIC_PART_ARC) {
 			return Commands.CircumcircleArc;
-		default:
-			return Commands.CircumcircleSector;
 		}
+		return Commands.CircumcircleSector;
 	}
 
 	@Override
 	public int getRelatedModeID() {
-		switch (type) {
-		case GeoConicNDConstants.CONIC_PART_ARC:
+		if (type == GeoConicNDConstants.CONIC_PART_ARC) {
 			return EuclidianConstants.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS;
-		default:
-			return EuclidianConstants.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS;
 		}
+		return EuclidianConstants.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS;
 	}
 
 	// for AlgoElement
@@ -155,23 +154,22 @@ public abstract class AlgoConicPartCircumcircleND extends AlgoConicPart {
 
 		conicPart.set(conic);
 		switch (conicPart.getType()) {
-		case GeoConicNDConstants.CONIC_PARALLEL_LINES:
-			computeDegenerate();
-			break;
+			case GeoConicNDConstants.CONIC_PARALLEL_LINES:
+				computeDegenerate();
+				break;
 
-		case GeoConicNDConstants.CONIC_CIRCLE:
-			computeCircle();
-			break;
+			case GeoConicNDConstants.CONIC_CIRCLE:
+				computeCircle();
+				break;
 
-		case GeoConicNDConstants.CONIC_SINGLE_POINT:
-			computeSinglePoint();
-			break;
+			case GeoConicNDConstants.CONIC_SINGLE_POINT:
+				computeSinglePoint();
+				break;
 
-		default:
-			// this should not happen
-			Log.debug("AlgoCirclePartPoints: unexpected conic type: "
-					+ conicPart.getType());
-			conicPart.setUndefined();
+			default:
+				// this should not happen
+				Log.debug("AlgoCirclePartPoints: unexpected conic type: " + conicPart.getType());
+				conicPart.setUndefined();
 		}
 	}
 
@@ -224,8 +222,8 @@ public abstract class AlgoConicPartCircumcircleND extends AlgoConicPart {
 
 		// check orientation of triangle A, B, C to see
 		// whether we have to swap start and end angle
-		double det = (getBx() - getAx()) * (getCy() - getAy())
-				- (getBy() - getAy()) * (getCx() - getAx());
+		double det =
+				(getBx() - getAx()) * (getCy() - getAy()) - (getBy() - getAy()) * (getCx() - getAx());
 
 		((GeoConicPartND) conicPart).setParameters(alpha, beta, det > 0);
 	}
@@ -239,47 +237,46 @@ public abstract class AlgoConicPartCircumcircleND extends AlgoConicPart {
 
 	/**
 	 * Method for LocusEqu.
-	 * 
+	 *
 	 * @return first point.
 	 */
-	abstract public GeoPoint getA();
+	public abstract GeoPoint getA();
 
 	/**
 	 * Method for LocusEqu.
-	 * 
+	 *
 	 * @return second point.
 	 */
-	abstract public GeoPoint getB();
+	public abstract GeoPoint getB();
 
 	/**
 	 * Method for LocusEqu.
-	 * 
+	 *
 	 * @return third point.
 	 */
-	abstract public GeoPoint getC();
+	public abstract GeoPoint getC();
 
-	final private double getAx() {
+	private double getAx() {
 		return getA().inhomX;
 	}
 
-	final private double getAy() {
+	private double getAy() {
 		return getA().inhomY;
 	}
 
-	final private double getBx() {
+	private double getBx() {
 		return getB().inhomX;
 	}
 
-	final private double getBy() {
+	private double getBy() {
 		return getB().inhomY;
 	}
 
-	final private double getCx() {
+	private double getCx() {
 		return getC().inhomX;
 	}
 
-	final private double getCy() {
+	private double getCy() {
 		return getC().inhomY;
 	}
-
 }

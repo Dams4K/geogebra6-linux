@@ -1,5 +1,17 @@
-/**
- * 
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.desktop.gui.view.algebra;
@@ -15,8 +27,6 @@ import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.desktop.main.AppD;
 
-//this is needed to distinguish between the editing
-// of independent and dependent objects
 /**
  * Editor for AV
  */
@@ -38,8 +48,8 @@ public class MyCellEditorD extends DefaultCellEditor {
 
 	/** Implements the <code>TreeCellEditor</code> interface. */
 	@Override
-	public Component getTreeCellEditorComponent(JTree tree, Object value,
-			boolean isSelected, boolean expanded, boolean leaf, int row) {
+	public Component getTreeCellEditorComponent(
+			JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
 
 		String str = null;
 		if (value instanceof DefaultMutableTreeNode) {
@@ -48,8 +58,7 @@ public class MyCellEditorD extends DefaultCellEditor {
 			if (ob instanceof GeoElement) {
 				GeoElement geo = (GeoElement) ob;
 				StringTemplate tpl = StringTemplate.defaultTemplate;
-				if ((geo.isPointOnPath() || geo.isPointInRegion())
-						&& geo.isChangeable()) {
+				if ((geo.isPointOnPath() || geo.isPointInRegion()) && geo.isChangeable()) {
 					str = geo.toString(tpl);
 				} else if (geo.isChangeable()) {
 					str = geo.getDefinitionForInputBar();

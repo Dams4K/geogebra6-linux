@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main.settings;
 
 import java.util.Arrays;
@@ -5,15 +21,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import org.geogebra.common.main.App;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This enum defines the algebra style options.
  */
 public enum AlgebraStyle {
-
 	UNDEFINED(-1, ""),
 	VALUE(0, "Value"),
 	DESCRIPTION(1, "Description"),
@@ -22,14 +36,14 @@ public enum AlgebraStyle {
 	LINEAR_NOTATION(4, "LinearNotation");
 
 	private final int numericValue;
-	private final @Nonnull String translationKey;
+	private final @NonNull String translationKey;
 
 	/**
 	 * Constructor
 	 * @param numericValue The numeric value associated with this Algebra Style.
 	 * @param translationKey The key used for translating this Algebra Style.
 	 */
-	AlgebraStyle(int numericValue, @Nonnull String translationKey) {
+	AlgebraStyle(int numericValue, @NonNull String translationKey) {
 		this.numericValue = numericValue;
 		this.translationKey = translationKey;
 	}
@@ -44,7 +58,7 @@ public enum AlgebraStyle {
 	/**
 	 * @return The translation key associated with this Algebra Style.
 	 */
-	public @Nonnull String getTranslationKey() {
+	public @NonNull String getTranslationKey() {
 		return translationKey;
 	}
 
@@ -52,7 +66,7 @@ public enum AlgebraStyle {
 	 * @param app Application
 	 * @return The next Algebra Style that is currently available.
 	 */
-	public @Nonnull AlgebraStyle getNextAvailableStyle(@Nonnull App app) {
+	public @NonNull AlgebraStyle getNextAvailableStyle(@NonNull App app) {
 		List<AlgebraStyle> availableStyles = getAvailableValues(app);
 		int currentStyle = availableStyles.indexOf(this);
 		return availableStyles.get((currentStyle + 1) % availableStyles.size());
@@ -63,7 +77,7 @@ public enum AlgebraStyle {
 	 * @return The enum constant that is associated with the passed numeric value or
 	 * {@link AlgebraStyle#UNDEFINED} if the passed numeric value is invalid.
 	 */
-	public static @Nonnull AlgebraStyle fromNumericValue(int numericValue) {
+	public static @NonNull AlgebraStyle fromNumericValue(int numericValue) {
 		return Arrays.stream(values())
 				.filter(style -> style.getNumericValue() == numericValue)
 				.findAny()
@@ -74,9 +88,9 @@ public enum AlgebraStyle {
 	 * @param app App
 	 * @return A list of available values that can be used within the current app.
 	 */
-	public static @Nonnull List<AlgebraStyle> getAvailableValues(@Nonnull App app) {
-		Comparator<AlgebraStyle> definitionAndValueFirst = Comparator.comparing(
-				style -> style != DEFINITION_AND_VALUE);
+	public static @NonNull List<AlgebraStyle> getAvailableValues(@NonNull App app) {
+		Comparator<AlgebraStyle> definitionAndValueFirst =
+				Comparator.comparing(style -> style != DEFINITION_AND_VALUE);
 		return Arrays.stream(values())
 				.filter(style -> style.isAvailable(app))
 				.sorted(definitionAndValueFirst.thenComparing(AlgebraStyle::getNumericValue))
@@ -85,12 +99,14 @@ public enum AlgebraStyle {
 
 	private boolean isAvailable(App app) {
 		switch (this) {
-		case UNDEFINED: return false;
-		case DEFINITION_AND_VALUE:
-			return !app.isDesktop();
-		case LINEAR_NOTATION:
-			return app.isHTML5Applet();
-		default: return true;
+			case UNDEFINED:
+				return false;
+			case DEFINITION_AND_VALUE:
+				return !app.isDesktop();
+			case LINEAR_NOTATION:
+				return app.isHTML5Applet();
+			default:
+				return true;
 		}
 	}
 }

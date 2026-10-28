@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.properties.impl.graphics;
 
 import java.util.ArrayList;
@@ -10,7 +26,7 @@ import org.geogebra.common.properties.Property;
 import org.geogebra.common.properties.impl.collections.AbstractPropertyCollection;
 
 public class RulingPropertiesCollection extends AbstractPropertyCollection<Property>
-	implements SettingsDependentProperty {
+		implements SettingsDependentProperty {
 
 	private final EuclidianSettings evSettings;
 
@@ -20,14 +36,14 @@ public class RulingPropertiesCollection extends AbstractPropertyCollection<Prope
 	 * @param settings euclidian settings
 	 * @param euclidianView euclidian view
 	 */
-	public RulingPropertiesCollection(Localization localization, EuclidianSettings settings,
-			EuclidianView euclidianView) {
+	public RulingPropertiesCollection(
+			Localization localization, EuclidianSettings settings, EuclidianView euclidianView) {
 		super(localization, "Ruling");
 		this.evSettings = settings;
 		ArrayList<Property> properties = new ArrayList<>();
 		properties.add(new RulingStyleProperty(localization, settings, euclidianView));
-		properties.add(new RulingGridColorProperty(localization, settings, true));
-		properties.add(new RulingGridLineStyleProperty(localization, settings, true));
+		properties.add(new RulingGridColorProperty(localization, settings));
+		properties.add(new RulingGridLineStyleProperty(localization, settings));
 		properties.add(new RulingGridBoldProperty(localization, settings));
 		setProperties(properties.toArray(new Property[0]));
 	}

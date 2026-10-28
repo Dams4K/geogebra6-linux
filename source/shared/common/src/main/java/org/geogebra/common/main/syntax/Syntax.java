@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main.syntax;
 
 import java.util.Collection;
@@ -6,13 +22,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import org.geogebra.common.kernel.arithmetic.Command;
 import org.geogebra.common.kernel.commands.CommandProcessor;
 import org.geogebra.common.kernel.commands.Commands;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.main.MyError;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class representing the syntax of commands.
@@ -30,7 +45,7 @@ public final class Syntax {
 		 * @param argument the command argument to check
 		 * @return {@code true} if the argument matches with the syntax, {@code false} otherwise
 		 */
-		boolean matches(GeoElement argument);
+		boolean matches(@NonNull GeoElement argument);
 
 		/**
 		 * Constructs a syntax argument matcher for checking
@@ -42,7 +57,7 @@ public final class Syntax {
 		}
 	}
 
-	private Syntax(@Nonnull Commands command, @Nonnull List<ArgumentMatcher> argumentMatchers) {
+	private Syntax(@NonNull Commands command, @NonNull List<ArgumentMatcher> argumentMatchers) {
 		this.command = command;
 		this.argumentMatchers = argumentMatchers;
 	}
@@ -56,8 +71,7 @@ public final class Syntax {
 	 * @param argumentMatchers list of argument matchers
 	 * @return {@code Syntax} with the given command and argument matchers
 	 */
-	public static Syntax of(@Nonnull Commands command,
-			@Nonnull ArgumentMatcher... argumentMatchers) {
+	public static Syntax of(@NonNull Commands command, @NonNull ArgumentMatcher... argumentMatchers) {
 		return new Syntax(command, List.of(argumentMatchers));
 	}
 
@@ -89,21 +103,22 @@ public final class Syntax {
 	 * argument (with error type {@link org.geogebra.common.main.MyError.Errors#IllegalArgument}
 	 */
 	public static void checkRestrictedSyntaxes(
-			@Nonnull Map<Commands, Set<Syntax>> allowedSyntaxesForRestrictedCommands,
-			@Nonnull Command command, @Nonnull CommandProcessor commandProcessor) throws MyError {
+			@NonNull Map<Commands, Set<Syntax>> allowedSyntaxesForRestrictedCommands,
+			@NonNull Command command,
+			@NonNull CommandProcessor commandProcessor)
+			throws MyError {
 		Commands currentCommand = Commands.stringToCommand(command.getName());
 
 		// If the command is not restricted, we return
 		if (!allowedSyntaxesForRestrictedCommands.containsKey(currentCommand)) {
 			return;
 		}
-		Set<Syntax> allowedSyntaxes =
-				allowedSyntaxesForRestrictedCommands.get(currentCommand);
+		Set<Syntax> allowedSyntaxes = allowedSyntaxesForRestrictedCommands.get(currentCommand);
 		GeoElement[] currentArguments = commandProcessor.resArgs(command);
 
 		// If the command is restricted but this syntax is allowed, we return
-		if (allowedSyntaxes.stream().anyMatch(syntax ->
-				matches(syntax, currentCommand, currentArguments))) {
+		if (allowedSyntaxes.stream()
+				.anyMatch(syntax -> matches(syntax, currentCommand, currentArguments))) {
 			return;
 		}
 		Set<Syntax> syntaxesWithSameNumberOfArguments = allowedSyntaxes.stream()
@@ -118,21 +133,20 @@ public final class Syntax {
 
 		// Find the first mismatching argument of the closest allowed syntax
 		// with same number of arguments and throw an argument exception using that
-		Syntax closestSyntax = findMostSimilarSyntax(
-				currentArguments, syntaxesWithSameNumberOfArguments);
-		int firstMismatchingArgumentIndex = findFirstMismatchingArgumentIndex(
-				currentArguments, closestSyntax);
+		Syntax closestSyntax =
+				findMostSimilarSyntax(currentArguments, syntaxesWithSameNumberOfArguments);
+		int firstMismatchingArgumentIndex =
+				findFirstMismatchingArgumentIndex(currentArguments, closestSyntax);
 		throw commandProcessor.argErr(command, command.getArgument(firstMismatchingArgumentIndex));
 	}
 
-	private static Syntax findMostSimilarSyntax(
-			GeoElement[] arguments, Collection<Syntax> syntaxes) {
+	private static Syntax findMostSimilarSyntax(GeoElement[] arguments, Collection<Syntax> syntaxes) {
 		Syntax bestCandidate = syntaxes.stream().findFirst().get();
 		int highestNumberOfMatchingArguments = 0;
 		for (Syntax syntax : syntaxes) {
 			int numberOfMatchingArguments = 0;
 			for (int argIndex = 0; argIndex < syntax.argumentMatchers.size(); argIndex++) {
-				if (syntax.argumentMatcherAt(argIndex).matches(arguments[argIndex])) {
+				if (matches(syntax.argumentMatcherAt(argIndex), arguments[argIndex])) {
 					numberOfMatchingArguments++;
 				} else {
 					break;
@@ -149,7 +163,7 @@ public final class Syntax {
 
 	private static int findFirstMismatchingArgumentIndex(GeoElement[] arguments, Syntax syntax) {
 		for (int argIndex = 0; argIndex < arguments.length; argIndex++) {
-			if (!syntax.argumentMatcherAt(argIndex).matches(arguments[argIndex])) {
+			if (!matches(syntax.argumentMatcherAt(argIndex), arguments[argIndex])) {
 				return argIndex;
 			}
 		}
@@ -164,10 +178,14 @@ public final class Syntax {
 			return false;
 		}
 		for (int argIndex = 0; argIndex < arguments.length; argIndex++) {
-			if (!syntax.argumentMatcherAt(argIndex).matches(arguments[argIndex])) {
+			if (!matches(syntax.argumentMatcherAt(argIndex), arguments[argIndex])) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	private static boolean matches(ArgumentMatcher argumentMatcher, GeoElement argument) {
+		return argument != null && argumentMatcher.matches(argument);
 	}
 }

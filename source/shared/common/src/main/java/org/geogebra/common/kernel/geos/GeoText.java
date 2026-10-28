@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.geos;
@@ -16,13 +20,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.annotation.CheckForNull;
-
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GFont;
 import org.geogebra.common.awt.GRectangle2D;
 import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.euclidian.EuclidianViewInterfaceCommon;
-import org.geogebra.common.factories.AwtFactory;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.CircularDefinitionException;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.StringTemplate;
@@ -50,8 +53,9 @@ import org.geogebra.common.util.ExtendedBoolean;
 import org.geogebra.common.util.IndexHTMLBuilder;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.debug.Log;
+import org.geogebra.editor.share.util.Unicode;
+import org.jspecify.annotations.Nullable;
 
-import com.himamis.retex.editor.share.util.Unicode;
 import com.himamis.retex.renderer.share.TeXFormula;
 import com.himamis.retex.renderer.share.serialize.SerializationAdapter;
 import com.himamis.retex.renderer.share.serialize.TeXAtomSerializer;
@@ -61,8 +65,12 @@ import com.himamis.retex.renderer.share.serialize.TeXAtomSerializer;
  *
  */
 public class GeoText extends GeoElement
-		implements AbsoluteScreenLocateable, TextValue,
-		TextProperties, SpreadsheetTraceable, HasSymbolicMode, HasAuralText {
+		implements AbsoluteScreenLocateable,
+				TextValue,
+				TextProperties,
+				SpreadsheetTraceable,
+				HasSymbolicMode,
+				HasAuralText {
 	public static final String NEW_LINE = "\\\\n";
 	private static Comparator<GeoText> comparator;
 
@@ -91,6 +99,7 @@ public class GeoText extends GeoElement
 	 * used for eg Text["text",(1,2)] to stop it being editable
 	 */
 	public boolean isTextCommand = false;
+
 	private final StringBuilder sbToString = new StringBuilder(80);
 
 	private SpreadsheetTraceCase spreadsheetTraceableCase = SpreadsheetTraceCase.NOT_TESTED;
@@ -98,19 +107,19 @@ public class GeoText extends GeoElement
 	private ExpressionNode spreadsheetTraceableLeftTree;
 
 	/** index of extra small modifier */
-	final public static int FONTSIZE_EXTRA_SMALL = 0;
+	public static final int FONTSIZE_EXTRA_SMALL = 0;
 	/** index of very small modifier */
-	final public static int FONTSIZE_VERY_SMALL = 1;
+	public static final int FONTSIZE_VERY_SMALL = 1;
 	/** index of small modifier */
-	final public static int FONTSIZE_SMALL = 2;
+	public static final int FONTSIZE_SMALL = 2;
 	/** index of medium modifier */
-	final public static int FONTSIZE_MEDIUM = 3;
+	public static final int FONTSIZE_MEDIUM = 3;
 	/** index of large modifier */
-	final public static int FONTSIZE_LARGE = 4;
+	public static final int FONTSIZE_LARGE = 4;
 	/** index of very large modifier */
-	final public static int FONTSIZE_VERY_LARGE = 5;
+	public static final int FONTSIZE_VERY_LARGE = 5;
 	/** index of extra large modifier */
-	final public static int FONTSIZE_EXTRA_LARGE = 6;
+	public static final int FONTSIZE_EXTRA_LARGE = 6;
 
 	// for absolute screen location
 	private boolean hasAbsoluteScreenLocation = false;
@@ -121,6 +130,7 @@ public class GeoText extends GeoElement
 	/**
 	 */
 	boolean alwaysFixed = false;
+
 	private StringTemplate tpl = StringTemplate.defaultTemplate;
 	private GeoText linkedText;
 
@@ -190,7 +200,7 @@ public class GeoText extends GeoElement
 
 	/**
 	 * Copy constructor
-	 * 
+	 *
 	 * @param text
 	 *            text to copy
 	 */
@@ -214,11 +224,9 @@ public class GeoText extends GeoElement
 		// but update to desired number format
 		if (cons != geo.getConstruction() && isAlgoMacroOutput()) {
 			if (!useSignificantFigures) {
-				gt.setPrintDecimals(printDecimals > -1 ? printDecimals
-						: kernel.getPrintDecimals(), true);
+				gt.setPrintDecimals(printDecimals > -1 ? printDecimals : kernel.getPrintDecimals(), true);
 			} else {
-				gt.setPrintFigures(printFigures > -1 ? printFigures
-						: kernel.getPrintFigures(), true);
+				gt.setPrintFigures(printFigures > -1 ? printFigures : kernel.getPrintFigures(), true);
 			}
 			str = gt.str;
 			isLaTeX = gt.isLaTeX;
@@ -279,14 +287,14 @@ public class GeoText extends GeoElement
 
 	/**
 	 * Sets the text contained in this object
-	 * 
+	 *
 	 * @param text2
 	 *            text
 	 */
-	final public void setTextString(String text2) {
+	public final void setTextString(String text2) {
 		String text = text2 == null ? "" : text2;
 		// Michael Borcherds 2008-05-11
-		// remove trailing linefeeds (FreeHEP EMF export doesn't like them)
+		// remove trailing line feeds (FreeHEP EMF export doesn't like them)
 		while (text.length() > 1 && text.charAt(text.length() - 1) == '\n') {
 			text = text.substring(0, text.length() - 1);
 		}
@@ -299,20 +307,22 @@ public class GeoText extends GeoElement
 			// for eg Text["Hello\\nWorld",(1,1)]
 			str = text.replace(NEW_LINE, "\n");
 		}
-
 	}
 
 	/**
 	 * Returns the string wrapped in this text
-	 * 
+	 *
 	 * @return the string wrapped in this text
 	 */
 	@Override
-	final public @CheckForNull String getTextString() {
+	public final @Nullable String getTextString() {
 		return str;
 	}
 
-	final public String getTextStringSafe() {
+	/**
+	 * @return the string wrapped in this text, or empty string if not set
+	 */
+	public final String getTextStringSafe() {
 		return str == null ? "" : str;
 	}
 
@@ -326,8 +336,7 @@ public class GeoText extends GeoElement
 	}
 
 	@Override
-	public void setStartPoint(GeoPointND p, int number)
-			throws CircularDefinitionException {
+	public void setStartPoint(GeoPointND p, int number) throws CircularDefinitionException {
 		setStartPoint(p);
 	}
 
@@ -336,8 +345,8 @@ public class GeoText extends GeoElement
 		// don't allow this if it's eg Text["hello",(2,3)]
 		if (alwaysFixed) {
 			return;
-		// macro output uses initStartPoint() only
-		// if (isAlgoMacroOutput()) return;
+			// macro output uses initStartPoint() only
+			// if (isAlgoMacroOutput()) return;
 		}
 
 		// check for circular definition
@@ -398,7 +407,8 @@ public class GeoText extends GeoElement
 	public void update(boolean drag) {
 
 		super.update(drag);
-		if (!cons.isFileLoading() && getLabelSimple() != null
+		if (!cons.isFileLoading()
+				&& getLabelSimple() != null
 				&& getLabelSimple().startsWith("altText")) {
 			kernel.getApplication().setAltText(this);
 		}
@@ -410,7 +420,8 @@ public class GeoText extends GeoElement
 		for (GeoElement geo : updateListeners) {
 			// dynamic caption change will trigger corner changes for any object that has
 			// corners except texts (those do not render the caption)
-			if (geo instanceof HasCorners && !geo.isGeoText()
+			if (geo instanceof HasCorners
+					&& !geo.isGeoText()
 					&& ((HasCorners) geo).needsUpdatedBoundingBox()) {
 				geo.updateRepaint();
 			} else {
@@ -525,7 +536,7 @@ public class GeoText extends GeoElement
 	}
 
 	/**
-	 * 
+	 *
 	 * @param isCommand
 	 *            new value of isTextCommand
 	 */
@@ -537,8 +548,7 @@ public class GeoText extends GeoElement
 	public boolean isTextCommand() {
 
 		// check for eg If[ a==1 , "hello", "bye"] first
-		if ((getParentAlgorithm() != null)
-				&& !(getParentAlgorithm() instanceof AlgoDependentText)) {
+		if ((getParentAlgorithm() != null) && !(getParentAlgorithm() instanceof AlgoDependentText)) {
 			return true;
 		}
 
@@ -566,7 +576,7 @@ public class GeoText extends GeoElement
 
 	/**
 	 * For Text[Text[a]] the inner text must use template of the outer
-	 * 
+	 *
 	 * @param text
 	 *            descendant whose string template may be used
 	 */
@@ -578,7 +588,7 @@ public class GeoText extends GeoElement
 	}
 
 	/**
-	 * 
+	 *
 	 * @param alwaysFixed
 	 *            flag to prevent movement of Text["whee",(1,2)]
 	 */
@@ -618,19 +628,16 @@ public class GeoText extends GeoElement
 	 * save object in XML format
 	 */
 	@Override
-	public final void getExpressionXML(StringBuilder sb) {
+	public final void getExpressionXML(XMLStringBuilder sb) {
 
 		// an independent text needs to add
 		// its expression itself
 		// e.g. text0 = "Circle"
 		if (isIndependent() && getDefaultGeoType() < 0) {
-			sb.append("<expression label=\"");
-			StringUtil.encodeXML(sb, label);
-			sb.append("\" exp=\"");
-			StringUtil.encodeXML(sb,
-					toOutputValueString(StringTemplate.xmlTemplate));
-			// expression
-			sb.append("\"/>\n");
+			sb.startTag("expression", 0)
+					.attr("label", label)
+					.attr("exp", toOutputValueString(StringTemplate.xmlTemplate))
+					.endTag();
 		}
 	}
 
@@ -638,33 +645,28 @@ public class GeoText extends GeoElement
 	 * returns all class-specific xml tags for getXML
 	 */
 	@Override
-	protected void getStyleXML(StringBuilder sb) {
+	protected void getStyleXML(XMLStringBuilder sb) {
 		if (isSymbolicMode()) {
-			sb.append("\t<symbolic val=\"true\" />\n");
+			sb.startTag("symbolic").attr("val", true).endTag();
 		}
-		XMLBuilder.getXMLvisualTags(this, sb, false);
+		XMLBuilder.getXMLVisualTags(this, sb, false);
 
-		getXMLfixedTag(sb);
+		getXMLFixedTag(sb);
 
 		if (isLaTeX) {
-			sb.append("\t<isLaTeX val=\"true\"/>\n");
+			sb.startTag("isLaTeX").attr("val", true).endTag();
 		}
 
-		appendFontTag(sb, serifFont, fontSizeD, fontStyle, isLaTeX,
-				kernel.getApplication());
+		appendFontTag(sb, serifFont, fontSizeD, fontStyle, isLaTeX, kernel.getApplication());
 
 		// print decimals
 		if (printDecimals >= 0 && !useSignificantFigures) {
-			sb.append("\t<decimals val=\"");
-			sb.append(printDecimals);
-			sb.append("\"/>\n");
+			sb.startTag("decimals").attr("val", printDecimals).endTag();
 		}
 
 		// print significant figures
 		if (printFigures >= 0 && useSignificantFigures) {
-			sb.append("\t<significantfigures val=\"");
-			sb.append(printFigures);
-			sb.append("\"/>\n");
+			sb.startTag("significantfigures").attr("val", printFigures).endTag();
 		}
 
 		getBreakpointXML(sb);
@@ -674,34 +676,30 @@ public class GeoText extends GeoElement
 		getXMLDynCaptionTag(sb);
 
 		// store location of text (and possible labelOffset)
-		sb.append(getXMLlocation());
+		getXMLLocation(sb);
 		getScriptTags(sb);
 	}
 
 	/**
 	 * Returns startPoint of this text in XML notation.
 	 */
-	private String getXMLlocation() {
-		StringBuilder sb = new StringBuilder();
+	private String getXMLLocation(XMLStringBuilder sb) {
 
 		if (hasAbsoluteScreenLocation && startPoint == null) {
-			sb.append("\t<absoluteScreenLocation x=\"");
-			sb.append(labelOffsetX);
-			sb.append("\" y=\"");
-			sb.append(labelOffsetY);
-			sb.append("\"/>\n");
+			sb.startTag("absoluteScreenLocation");
+			sb.attr("x", labelOffsetX);
+			sb.attr("y", labelOffsetY);
+			sb.endTag();
 		} else {
 			// location of text
 			if (startPoint != null) {
 				startPoint.appendStartPointXML(sb, isAbsoluteScreenLocActive());
 
 				if (labelOffsetX != 0 || labelOffsetY != 0) {
-					sb.append("\t<labelOffset");
-					sb.append(" x=\"");
-					sb.append(labelOffsetX);
-					sb.append("\" y=\"");
-					sb.append(labelOffsetY);
-					sb.append("\"/>\n");
+					sb.startTag("labelOffset");
+					sb.attr("x", labelOffsetX);
+					sb.attr("y", labelOffsetY);
+					sb.endTag();
 				}
 			}
 		}
@@ -709,10 +707,9 @@ public class GeoText extends GeoElement
 	}
 
 	@Override
-	public void setAllVisualPropertiesExceptEuclidianVisible(GeoElement geo,
-			boolean keepAdvanced, boolean setAuxiliaryProperty) {
-		super.setAllVisualPropertiesExceptEuclidianVisible(geo, keepAdvanced,
-				setAuxiliaryProperty);
+	public void setAllVisualPropertiesExceptEuclidianVisible(
+			GeoElement geo, boolean keepAdvanced, boolean setAuxiliaryProperty) {
+		super.setAllVisualPropertiesExceptEuclidianVisible(geo, keepAdvanced, setAuxiliaryProperty);
 
 		// start point of text
 		if (geo instanceof GeoText) {
@@ -748,7 +745,7 @@ public class GeoText extends GeoElement
 
 	/**
 	 * Returns true for LaTeX texts
-	 * 
+	 *
 	 * @return true for LaTeX texts
 	 */
 	public boolean isLaTeX() {
@@ -757,7 +754,7 @@ public class GeoText extends GeoElement
 
 	/**
 	 * Changes type of this object to math rendering type (LaTeX)
-	 * 
+	 *
 	 * @param b
 	 *            true for math rendering
 	 * @param updateParentAlgo
@@ -782,7 +779,6 @@ public class GeoText extends GeoElement
 		if (parent != null && !(parent instanceof AlgoSequence)) {
 			parent.update();
 		}
-
 	}
 
 	@Override
@@ -831,7 +827,7 @@ public class GeoText extends GeoElement
 			locPoint = new GeoPoint(cons);
 			try {
 				setStartPoint(locPoint);
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 				// circular definition, do nothing
 			}
 		}
@@ -869,43 +865,48 @@ public class GeoText extends GeoElement
 		return true;
 	}
 
-	// public int getFontSize() {
-	// return fontSize;
-	// }
-
 	@Override
 	public double getFontSizeMultiplier() {
 		return fontSizeD;
 	}
 
 	/**
-	 * 
+	 * Computes font size for drawing on canvas, for backwards compatibility rounded down.
+	 * @param baseFontSize font size used by the view that renders this text
+	 * @return font size in points
+	 */
+	public double getFontSize(double baseFontSize) {
+		return (int) Math.max(4, baseFontSize * fontSizeD);
+	}
+
+	/**
+	 *
 	 * @param index
 	 *            index of size in the settings
 	 * @return additive size modifier
 	 */
 	public static double getRelativeFontSize(int index) {
 		switch (index) {
-		case FONTSIZE_EXTRA_SMALL: // extra small
-			return 0.5;
-		case FONTSIZE_VERY_SMALL: // very small
-			return 0.7;
-		case FONTSIZE_SMALL: // small
-			return 1;
-		default:
-		case FONTSIZE_MEDIUM: // medium
-			return 1.4;
-		case FONTSIZE_LARGE: // large
-			return 2;
-		case FONTSIZE_VERY_LARGE: // very large
-			return 4;
-		case FONTSIZE_EXTRA_LARGE: // extra large
-			return 8;
+			case FONTSIZE_EXTRA_SMALL: // extra small
+				return 0.5;
+			case FONTSIZE_VERY_SMALL: // very small
+				return 0.7;
+			case FONTSIZE_SMALL: // small
+				return 1;
+			default:
+			case FONTSIZE_MEDIUM: // medium
+				return 1.4;
+			case FONTSIZE_LARGE: // large
+				return 2;
+			case FONTSIZE_VERY_LARGE: // very large
+				return 4;
+			case FONTSIZE_EXTRA_LARGE: // extra large
+				return 8;
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @param d
 	 *            font size modifier
 	 * @return corresponding index
@@ -948,20 +949,19 @@ public class GeoText extends GeoElement
 
 		// needed for eg \sqrt in latex
 		if ((fontStyle & GFont.BOLD) != 0) {
-			setLineThickness(
-					EuclidianStyleConstants.DEFAULT_LINE_THICKNESS * 2);
+			setLineThickness(EuclidianStyleConstants.DEFAULT_LINE_THICKNESS * 2);
 		} else {
 			setLineThickness(EuclidianStyleConstants.DEFAULT_LINE_THICKNESS);
 		}
 	}
 
 	@Override
-	final public int getPrintDecimals() {
+	public final int getPrintDecimals() {
 		return printDecimals;
 	}
 
 	@Override
-	final public int getPrintFigures() {
+	public final int getPrintFigures() {
 		return printFigures;
 	}
 
@@ -999,13 +999,11 @@ public class GeoText extends GeoElement
 			}
 		}
 		algo.update();
-
 	}
 
 	@Override
 	public boolean useSignificantFigures() {
 		return useSignificantFigures;
-
 	}
 
 	@Override
@@ -1033,27 +1031,27 @@ public class GeoText extends GeoElement
 		}
 
 		switch (index) {
-		case 4: // top left
-			result.setCoords(boundingBox.getX(), boundingBox.getY(), 1.0);
-			break;
+			case 4: // top left
+				result.setCoords(boundingBox.getX(), boundingBox.getY(), 1.0);
+				break;
 
-		case 3: // top right
-			result.setCoords(boundingBox.getX() + boundingBox.getWidth(),
-					boundingBox.getY(), 1.0);
-			break;
+			case 3: // top right
+				result.setCoords(boundingBox.getX() + boundingBox.getWidth(), boundingBox.getY(), 1.0);
+				break;
 
-		case 2: // bottom right
-			result.setCoords(boundingBox.getX() + boundingBox.getWidth(),
-					boundingBox.getY() + boundingBox.getHeight(), 1.0);
-			break;
+			case 2: // bottom right
+				result.setCoords(
+						boundingBox.getX() + boundingBox.getWidth(),
+						boundingBox.getY() + boundingBox.getHeight(),
+						1.0);
+				break;
 
-		case 1: // bottom left
-			result.setCoords(boundingBox.getX(),
-					boundingBox.getY() + boundingBox.getHeight(), 1.0);
-			break;
+			case 1: // bottom left
+				result.setCoords(boundingBox.getX(), boundingBox.getY() + boundingBox.getHeight(), 1.0);
+				break;
 
-		default:
-			result.setUndefined();
+			default:
+				result.setUndefined();
 		}
 	}
 
@@ -1094,14 +1092,13 @@ public class GeoText extends GeoElement
 	 *            true to make sure this object updates itself
 	 */
 	@Override
-	public final void setNeedsUpdatedBoundingBox(
-			boolean needsUpdate) {
+	public final void setNeedsUpdatedBoundingBox(boolean needsUpdate) {
 		this.needsUpdatedBoundingBox = needsUpdate;
 	}
 
 	// Michael Borcherds 2008-04-30
 	@Override
-	final public ExtendedBoolean isEqualExtended(GeoElementND geo) {
+	public final ExtendedBoolean isEqualExtended(GeoElementND geo) {
 		// return false if it's a different type
 		if (str == null) {
 			return ExtendedBoolean.FALSE;
@@ -1115,35 +1112,30 @@ public class GeoText extends GeoElement
 	/**
 	 * Returns a comparator for GeoText objects. If equal, doesn't return zero
 	 * (otherwise TreeSet deletes duplicates)
-	 * 
+	 *
 	 * @return comparator
 	 */
 	public static Comparator<GeoText> getComparator() {
 		if (comparator == null) {
-			comparator = new Comparator<GeoText>() {
-				@Override
-				public int compare(GeoText itemA, GeoText itemB) {
-					// remove accents etc
-					String strA = StringUtil.removeAccents(itemA.getTextStringSafe());
-					String strB = StringUtil.removeAccents(itemB.getTextStringSafe());
 
-					// do comparison without accents etc
-					int comp = strA.compareTo(strB);
+			comparator = (itemA, itemB) -> {
+				String strA = StringUtil.removeAccents(itemA.getTextStringSafe());
+				String strB = StringUtil.removeAccents(itemB.getTextStringSafe());
 
-					if (comp == 0) {
-						// try compare with accents
-						comp = itemA.getTextStringSafe()
-								.compareTo(itemB.getTextStringSafe());
-					}
+				// do comparison without accents etc
+				int comp = strA.compareTo(strB);
 
-					if (comp == 0) {
-						// if we return 0 for equal strings, the TreeSet deletes
-						// the equal one
-						return itemA.getConstructionIndex() > itemB
-								.getConstructionIndex() ? -1 : 1;
-					}
-					return comp;
+				if (comp == 0) {
+					// try compare with accents
+					comp = itemA.getTextStringSafe().compareTo(itemB.getTextStringSafe());
 				}
+
+				if (comp == 0) {
+					// if we return 0 for equal strings, the TreeSet deletes
+					// the equal one
+					return itemA.getConstructionIndex() > itemB.getConstructionIndex() ? -1 : 1;
+				}
+				return comp;
 			};
 		}
 
@@ -1175,8 +1167,7 @@ public class GeoText extends GeoElement
 
 	@Override
 	public boolean isLaTeXDrawableGeo() {
-		return isLaTeX() || (str != null
-				&& str.indexOf('_') != -1);
+		return isLaTeX() || (str != null && str.indexOf('_') != -1);
 	}
 
 	@Override
@@ -1191,7 +1182,7 @@ public class GeoText extends GeoElement
 
 	/**
 	 * String template; contains both string type and precision
-	 * 
+	 *
 	 * @return template
 	 */
 	public StringTemplate getStringTemplate() {
@@ -1202,19 +1193,20 @@ public class GeoText extends GeoElement
 	}
 
 	private enum SpreadsheetTraceCase {
-		NOT_TESTED, TRUE, FALSE
+		NOT_TESTED,
+		TRUE,
+		FALSE
 	}
 
 	/**
 	 * set objects for trace to spreadsheet
-	 * 
+	 *
 	 * @param leftTree
 	 *            tree for column heading
 	 * @param value
 	 *            value to trace
 	 */
-	public void setSpreadsheetTraceable(ExpressionNode leftTree,
-			ExpressionValue value) {
+	public void setSpreadsheetTraceable(ExpressionNode leftTree, ExpressionValue value) {
 		this.spreadsheetTraceableLeftTree = leftTree;
 		this.spreadsheetTraceableValue = value;
 	}
@@ -1229,33 +1221,33 @@ public class GeoText extends GeoElement
 	@Override
 	public boolean isSpreadsheetTraceable() {
 		switch (spreadsheetTraceableCase) {
-		case TRUE:
-			return true;
-		case FALSE:
-			return false;
-		case NOT_TESTED:
-			AlgoElement algo = getParentAlgorithm();
-			if (algo != null && (algo instanceof AlgoDependentText)) {
-				((AlgoDependentText) algo).setSpreadsheetTraceableText();
-				if (spreadsheetTraceableLeftTree != null) {
-					spreadsheetTraceableCase = SpreadsheetTraceCase.TRUE;
-					// if no traceable value, only copy possible
-					if (spreadsheetTraceableValue == null) {
-						traceModes = TraceModesEnum.ONLY_COPY;
-					} else {
-						traceModes = TraceModesEnum.ONE_VALUE_OR_COPY;
+			case TRUE:
+				return true;
+			case FALSE:
+				return false;
+			case NOT_TESTED:
+				AlgoElement algo = getParentAlgorithm();
+				if (algo instanceof AlgoDependentText) {
+					((AlgoDependentText) algo).setSpreadsheetTraceableText();
+					if (spreadsheetTraceableLeftTree != null) {
+						spreadsheetTraceableCase = SpreadsheetTraceCase.TRUE;
+						// if no traceable value, only copy possible
+						if (spreadsheetTraceableValue == null) {
+							traceModes = TraceModesEnum.ONLY_COPY;
+						} else {
+							traceModes = TraceModesEnum.ONE_VALUE_OR_COPY;
+						}
+						return true;
 					}
-					return true;
 				}
-			}
-			// spreadsheetTraceableCase =
-			// SpreadsheetTraceableCase.FALSE;
-			// return false;
-			spreadsheetTraceableCase = SpreadsheetTraceCase.TRUE;
-			traceModes = TraceModesEnum.ONLY_COPY;
-			return true;
-		default:
-			return false;
+				// spreadsheetTraceableCase =
+				// SpreadsheetTraceableCase.FALSE;
+				// return false;
+				spreadsheetTraceableCase = SpreadsheetTraceCase.TRUE;
+				traceModes = TraceModesEnum.ONLY_COPY;
+				return true;
+			default:
+				return false;
 		}
 	}
 
@@ -1270,10 +1262,8 @@ public class GeoText extends GeoElement
 	}
 
 	@Override
-	public void addToSpreadsheetTraceList(
-			ArrayList<GeoNumeric> spreadsheetTraceList) {
-		GeoNumeric numeric = new GeoNumeric(cons,
-				spreadsheetTraceableValue.evaluateDouble());
+	public void addToSpreadsheetTraceList(ArrayList<GeoNumeric> spreadsheetTraceList) {
+		GeoNumeric numeric = new GeoNumeric(cons, spreadsheetTraceableValue.evaluateDouble());
 		spreadsheetTraceList.add(numeric);
 	}
 
@@ -1296,20 +1286,23 @@ public class GeoText extends GeoElement
 	 * @param app
 	 *            application
 	 */
-	public static void appendFontTag(StringBuilder sb, boolean serifFont,
-			double fontSizeD, int fontStyle, boolean isLaTeX, App app) {
+	public static void appendFontTag(
+			XMLStringBuilder sb,
+			boolean serifFont,
+			double fontSizeD,
+			int fontStyle,
+			boolean isLaTeX,
+			App app) {
 		// font settings
 		if (serifFont || fontSizeD != 1 || fontStyle != 0 || isLaTeX) {
-			sb.append("\t<font serif=\"");
-			sb.append(serifFont);
+			sb.startTag("font");
+			sb.attr("serif", serifFont);
 
 			// multiplier
-			sb.append("\" sizeM=\"");
-			sb.append(fontSizeD);
+			sb.attr("sizeM", fontSizeD);
 
 			// work out an estimate (can't guarantee exact)
-			double oldFontSize = app.getFontSize() * fontSizeD
-					- app.getFontSize();
+			double oldFontSize = app.getFontSize() * fontSizeD - app.getFontSize();
 
 			if (oldFontSize > 0) {
 				oldFontSize = Math.ceil(oldFontSize);
@@ -1317,12 +1310,10 @@ public class GeoText extends GeoElement
 				oldFontSize = Math.floor(oldFontSize);
 			}
 			// still write this (for ggb40 compatibility)
-			sb.append("\" size=\"");
-			sb.append((int) oldFontSize);
+			sb.attr("size", (int) oldFontSize);
 
-			sb.append("\" style=\"");
-			sb.append(fontStyle);
-			sb.append("\"/>\n");
+			sb.attr("style", fontStyle);
+			sb.endTag();
 		}
 	}
 
@@ -1353,7 +1344,7 @@ public class GeoText extends GeoElement
 	}
 
 	@Override
-	final public HitType getLastHitType() {
+	public final HitType getLastHitType() {
 		return HitType.ON_FILLING;
 	}
 
@@ -1365,12 +1356,12 @@ public class GeoText extends GeoElement
 			return true;
 		}
 
-		if (kernel.getApplication().getActiveEuclidianView()
-				.isEuclidianView3D() && hasStaticLocation()) {
+		if (kernel.getApplication().getActiveEuclidianView().isEuclidianView3D()
+				&& hasStaticLocation()) {
 			// visible only in 3D view
 			try {
 				kernel.getApplication().removeFromEuclidianView(this);
-			} catch (Exception e) {
+			} catch (RuntimeException ignored) {
 				// in case EV is null
 			}
 			visibleInView3D = ExtendedBoolean.TRUE;
@@ -1401,7 +1392,6 @@ public class GeoText extends GeoElement
 	@Override
 	public ValueType getValueType() {
 		return ValueType.TEXT;
-
 	}
 
 	@Override
@@ -1450,7 +1440,7 @@ public class GeoText extends GeoElement
 
 	/**
 	 * Sets the total width of the geo.
-	 * 
+	 *
 	 * @param width
 	 *            to set.
 	 */
@@ -1460,7 +1450,7 @@ public class GeoText extends GeoElement
 
 	/**
 	 * Sets the total height of the geo.
-	 * 
+	 *
 	 * @param height
 	 *            to set.
 	 */
@@ -1497,13 +1487,12 @@ public class GeoText extends GeoElement
 	}
 
 	/**
-	 * 
+	 *
 	 * @param builder
 	 *            .
 	 * @return the editable text itself, without label and ""-s.
 	 */
-	final public String getDescriptionForAV(
-			IndexHTMLBuilder builder) {
+	public final String getDescriptionForAV(IndexHTMLBuilder builder) {
 		String txt = getDefinitionForEditor();
 		builder.clear();
 		builder.append(txt);
@@ -1540,7 +1529,7 @@ public class GeoText extends GeoElement
 	}
 
 	/**
-	 * 
+	 *
 	 * @return text to read out (LaTeX is converted to "nice" form)
 	 */
 	@Override
@@ -1558,13 +1547,14 @@ public class GeoText extends GeoElement
 	 * @return aural text assuming this is LaTeX
 	 */
 	public String getAuralTextLaTeX() {
-		kernel.getApplication().getDrawEquation()
-				.checkFirstCall();
+		kernel.getApplication().getDrawEquation().checkFirstCall();
 		// TeXAtomSerializer makes formula human-readable.
 		TeXFormula tf = getTeXFormula();
 		SerializationAdapter adapter = ScreenReader.getSerializationAdapter(app);
-		adapter.getTableAdapter().setShouldTransposeMatrices(algoParent instanceof TableAlgo
-				&& ((TableAlgo) algoParent).isTransposed());
+		adapter
+				.getTableAdapter()
+				.setShouldTransposeMatrices(
+						algoParent instanceof TableAlgo && ((TableAlgo) algoParent).isTransposed());
 		return new TeXAtomSerializer(adapter).serialize(tf.root);
 	}
 
@@ -1612,14 +1602,14 @@ public class GeoText extends GeoElement
 		List<GeoElement> listenersCopy = new ArrayList<>(text.updateListeners);
 		updateListeners.clear();
 		text.updateListeners.clear();
-		for (GeoElement geo: listenersCopy) {
+		for (GeoElement geo : listenersCopy) {
 			geo.setDynamicCaption(this);
 			registerUpdateListener(geo);
 		}
 	}
 
-	public void setHorizontalAlignment(Integer horizAlign) {
-		horizontalAlignment = horizAlign;
+	public void setHorizontalAlignment(Integer horizontalAlign) {
+		horizontalAlignment = horizontalAlign;
 	}
 
 	public Integer getHorizontalAlignment() {
@@ -1660,5 +1650,4 @@ public class GeoText extends GeoElement
 		}
 		return b.toString();
 	}
-
 }

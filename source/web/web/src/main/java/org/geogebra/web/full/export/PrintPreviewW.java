@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.export;
 
 import java.util.ArrayList;
@@ -26,7 +42,7 @@ import elemental2.dom.HTMLCollection;
 /**
  * Print dialog
  */
-public class PrintPreviewW extends ComponentDialog {
+public final class PrintPreviewW extends ComponentDialog {
 	private ComponentDropDown viewDropDown;
 	private FlowPanel printPanel;
 	private SimplePanel scalePanelHolder;
@@ -95,8 +111,8 @@ public class PrintPreviewW extends ComponentDialog {
 	}
 
 	private int getFocusedPanelIdx() {
-		DockPanelW focusedPanel = ((GuiManagerW) app.getGuiManager())
-				.getLayout().getDockManager().getFocusedPanel();
+		DockPanelW focusedPanel =
+				((GuiManagerW) app.getGuiManager()).getLayout().getDockManager().getFocusedPanel();
 		if (focusedPanel == null) {
 			return 0;
 		} else {
@@ -108,15 +124,14 @@ public class PrintPreviewW extends ComponentDialog {
 	/**
 	 * Dialog close callback
 	 */
-	protected void onPreviewClose() {
+	private void onPreviewClose() {
 		app.setDefaultCursor();
 		app.closePopups();
 	}
 
 	private void onPositiveButtonAction() {
 		int selectedValue = indices.get(viewDropDown.getSelectedIndex());
-		if (selectedValue == App.VIEW_EUCLIDIAN
-				|| selectedValue == App.VIEW_EUCLIDIAN2) {
+		if (selectedValue == App.VIEW_EUCLIDIAN || selectedValue == App.VIEW_EUCLIDIAN2) {
 			createPreview(selectedValue + "");
 		} else {
 			DomGlobal.window.print();
@@ -128,13 +143,10 @@ public class PrintPreviewW extends ComponentDialog {
 		int selectedValue = indices.get(viewDropDown.getSelectedIndex());
 		AppW appw = (AppW) app;
 		if (App.VIEW_EUCLIDIAN == selectedValue) {
-			scalePanelHolder.add(new PrintScalePanelW(appw, app
-					.getEuclidianView1()));
+			scalePanelHolder.add(new PrintScalePanelW(appw, app.getEuclidianView1()));
 			setPosBtnDisabled(false);
 		} else if (App.VIEW_EUCLIDIAN2 == selectedValue) {
-			scalePanelHolder
-					.add(new PrintScalePanelW(appw, app
-							.getEuclidianView2(1)));
+			scalePanelHolder.add(new PrintScalePanelW(appw, app.getEuclidianView2(1)));
 			setPosBtnDisabled(false);
 		} else {
 			createPreview(selectedValue + "");
@@ -142,39 +154,32 @@ public class PrintPreviewW extends ComponentDialog {
 	}
 
 	private void createPreview(final String viewID) {
-		createPrintables(Integer.parseInt(viewID), (AppW) app, printPanel,
-				() -> setPosBtnDisabled(false));
+		createPrintables(
+				Integer.parseInt(viewID), (AppW) app, printPanel, () -> setPosBtnDisabled(false));
 	}
 
-	private void createPrintables(int viewID, AppW app, FlowPanel pPanel,
-			Runnable enablePrintBtn) {
+	private void createPrintables(int viewID, AppW app, FlowPanel pPanel, Runnable enablePrintBtn) {
 		GuiManagerW gui = (GuiManagerW) app.getGuiManager();
 		PrintableW view;
-		if (viewID == App.VIEW_CAS) {
-			view = (PrintableW) gui.getCasView();
-		} else if (viewID == App.VIEW_CONSTRUCTION_PROTOCOL) {
-			view = (PrintableW) app.getGuiManager()
-					.getConstructionProtocolView();
-		} else if (viewID == App.VIEW_SPREADSHEET) {
-			view = gui.getSpreadsheetView();
+		// only views provided by initKeysAndIndices should be handled here
+		if (viewID == App.VIEW_CONSTRUCTION_PROTOCOL) {
+			view = (PrintableW) app.getGuiManager().getConstructionProtocolView();
 		} else if (viewID == App.VIEW_EUCLIDIAN2) {
 			view = app.getEuclidianView2(1);
 		} else if (viewID == App.VIEW_ALGEBRA) {
 			view = gui.getAlgebraView();
-		} else if (viewID == App.VIEW_DATA_ANALYSIS) {
-			view = (PrintableW) gui.getDataAnalysisView();
 		} else {
 			view = app.getEuclidianView1();
 		}
 
-		view.getPrintable(pPanel, enablePrintBtn) ;
+		view.getPrintable(pPanel, enablePrintBtn);
 	}
 
 	private static void removePrintPanelFromDOM() {
-		HTMLCollection<elemental2.dom.Element> pp = Dom
-				.getElementsByClassName("printPanel");
-		if (pp.getLength() != 0) {
-			pp.getAt(0).remove();
+		HTMLCollection<elemental2.dom.Element> pp = Dom.getElementsByClassName("printPanel");
+		elemental2.dom.Element element = pp.getAt(0);
+		if (element != null) {
+			element.remove();
 		}
 	}
 }

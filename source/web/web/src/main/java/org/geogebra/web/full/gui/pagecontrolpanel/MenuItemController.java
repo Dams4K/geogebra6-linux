@@ -1,9 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.pagecontrolpanel;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.CheckForNull;
 
 import org.geogebra.common.io.ObjectLabelHandler;
 import org.geogebra.common.plugin.Event;
@@ -18,12 +32,13 @@ import org.geogebra.web.html5.gui.util.BrowserStorage;
 import org.geogebra.web.html5.util.CopyPasteW;
 import org.geogebra.web.shared.components.dialog.DialogData;
 import org.gwtproject.core.client.Scheduler;
+import org.jspecify.annotations.Nullable;
 
 import elemental2.core.Global;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.Response;
 
-public class MenuItemController {
+public final class MenuItemController {
 	private final AppWFull appW;
 	private final GeoGebraFrameFull frame;
 	private final GPopupPanel contextMenu;
@@ -75,18 +90,21 @@ public class MenuItemController {
 			String url = BrowserStorage.LOCAL.getItem(BrowserStorage.COPY_SLIDE);
 			String objects = BrowserStorage.LOCAL.getItem(BrowserStorage.COPY_SLIDE_OBJECTS);
 
-			DomGlobal.fetch(url).then(Response::text).then(text -> {
-				pastePage(pasteAfter, text, objects);
-				return null;
-			}).catch_(err -> {
-				// paste data from previous session -> delete
-				BrowserStorage.LOCAL.removeItem(BrowserStorage.COPY_SLIDE);
-				BrowserStorage.LOCAL.removeItem(BrowserStorage.COPY_SLIDE_OBJECTS);
-				if (paste != null) {
-					paste.setEnabled(false);
-				}
-				return null;
-			});
+			DomGlobal.fetch(url)
+					.then(Response::text)
+					.then(text -> {
+						pastePage(pasteAfter, text, objects);
+						return null;
+					})
+					.catch_(err -> {
+						// paste data from previous session -> delete
+						BrowserStorage.LOCAL.removeItem(BrowserStorage.COPY_SLIDE);
+						BrowserStorage.LOCAL.removeItem(BrowserStorage.COPY_SLIDE_OBJECTS);
+						if (paste != null) {
+							paste.setEnabled(false);
+						}
+						return null;
+					});
 		};
 	}
 
@@ -97,9 +115,8 @@ public class MenuItemController {
 		return () -> {
 			contextMenu.hide();
 			boolean oneSlide = appW.getPageController().getSlideCount() == 1;
-			appW.dispatchEvent(new Event(oneSlide ? EventType.CLEAR_PAGE
-					: EventType.REMOVE_PAGE, null,
-					card.getID()));
+			appW.dispatchEvent(
+					new Event(oneSlide ? EventType.CLEAR_PAGE : EventType.REMOVE_PAGE, null, card.getID()));
 			frame.getPageControlPanel().removePage(card.getPageIndex());
 		};
 	}
@@ -142,11 +159,12 @@ public class MenuItemController {
 		frame.getPageControlPanel().pastePage(pasteAfter, targetID, text);
 	}
 
-	protected Map<String, Object> getPasteJson(PagePreviewCard pasteAfter, String content,
-			String targetId, String objects) {
+	private Map<String, Object> getPasteJson(
+			PagePreviewCard pasteAfter, String content, String targetId, String objects) {
 		Map<String, Object> pasteJson = new HashMap<>();
 		pasteJson.put("argument", targetId);
-		pasteJson.put("to", pasteAfter.getPageIndex() + 1);
+		// note: this must be double so that JS can understand it
+		pasteJson.put("to", pasteAfter.getPageIndex() + 1.0);
 		pasteJson.put("ggbFile", content);
 		pasteJson.put("targets", Global.JSON.parse(objects));
 		return pasteJson;
@@ -158,15 +176,15 @@ public class MenuItemController {
 	}
 
 	private String getObjectNames(PagePreviewCard card) {
-		return Global.JSON.stringify(ObjectLabelHandler.findObjectNames(
-				card.getFile().get("geogebra.xml").string));
+		return Global.JSON.stringify(
+				ObjectLabelHandler.findObjectNames(card.getFile().get("geogebra.xml").string));
 	}
 
 	/**
 	 * Update visibility of paste item based on available internal clipboard content.
 	 * @param pasteItem paste item
 	 */
-	public void updatePasteVisibility(@CheckForNull AriaMenuItem pasteItem) {
+	public void updatePasteVisibility(@Nullable AriaMenuItem pasteItem) {
 		if (pasteItem == null) {
 			return;
 		}
@@ -176,12 +194,14 @@ public class MenuItemController {
 			return;
 		}
 
-		DomGlobal.fetch(slideContent).then(text -> {
-			pasteItem.setEnabled(true);
-			return null;
-		}).catch_(error -> {
-			pasteItem.setEnabled(false);
-			return null;
-		});
+		DomGlobal.fetch(slideContent)
+				.then(text -> {
+					pasteItem.setEnabled(true);
+					return null;
+				})
+				.catch_(error -> {
+					pasteItem.setEnabled(false);
+					return null;
+				});
 	}
 }

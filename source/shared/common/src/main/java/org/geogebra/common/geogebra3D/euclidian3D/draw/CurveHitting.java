@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
@@ -31,23 +47,21 @@ public class CurveHitting {
 	/**
 	 * @param hitting
 	 *            hitting
-	 * 
+	 *
 	 * @param curve
 	 *            curve
 	 * @param hitLineThickness
 	 *            thickness of the hitting curve
 	 * @return whether the curve was hit
 	 */
-	public boolean hit(Hitting hitting,
-			Path curve, double hitLineThickness) {
+	public boolean hit(Hitting hitting, Path curve, double hitLineThickness) {
 		hittingPoint.setWillingCoords(hitting.getOrigin());
 		hittingPoint.setWillingDirection(hitting.getDirection());
 		GeoElement geo = parent.getGeoElement();
 		curve.pointChanged(hittingPoint);
 
 		Coords closestPoint = hittingPoint.getInhomCoordsInD3();
-		closestPoint.projectLine(hitting.getOrigin(), hitting.getDirection(), project,
-				lineCoords);
+		closestPoint.projectLine(hitting.getOrigin(), hitting.getDirection(), project, lineCoords);
 
 		// check if point on line is visible
 		if (!hitting.isInsideClipping(project)) {
@@ -58,9 +72,7 @@ public class CurveHitting {
 		if (d <= hitLineThickness) {
 			double z = -lineCoords[0];
 			double dz = geo.getLineThickness() / view.getScale();
-			parent.setZPickIfBetter(z + dz, z - dz,
-					hitting.discardPositiveHits(),
-					lineCoords[0]);
+			parent.setZPickIfBetter(z + dz, z - dz, hitting.discardPositiveHits(), lineCoords[0]);
 			return true;
 		}
 

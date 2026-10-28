@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.advanced;
@@ -22,11 +26,10 @@ import org.geogebra.common.util.StringUtil;
 
 /**
  * Handles rotated texts
- * 
+ *
  * @author Michael
  *
  */
-
 public class AlgoRotateText extends AlgoElement {
 
 	private GeoText text; // output
@@ -37,7 +40,7 @@ public class AlgoRotateText extends AlgoElement {
 
 	/**
 	 * Creates new unlabeled text rotation algo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param args
@@ -76,7 +79,7 @@ public class AlgoRotateText extends AlgoElement {
 
 	/**
 	 * Returns the resulting text
-	 * 
+	 *
 	 * @return resulting text
 	 */
 	public GeoText getResult() {
@@ -97,7 +100,7 @@ public class AlgoRotateText extends AlgoElement {
 
 	/**
 	 * Appends LaTeX command for the rotated text to the string builder.
-	 * 
+	 *
 	 * @param sbuilder
 	 *            string builder
 	 * @param text
@@ -105,8 +108,7 @@ public class AlgoRotateText extends AlgoElement {
 	 * @param degrees
 	 *            rotation algo
 	 */
-	public static void appendRotatedText(StringBuilder sbuilder, GeoText text,
-			double degrees) {
+	public static void appendRotatedText(StringBuilder sbuilder, GeoText text, double degrees) {
 		boolean latex = text.isLaTeX();
 		sbuilder.append("\\rotatebox{");
 		sbuilder.append(degrees); // convert to degrees
@@ -130,5 +132,4 @@ public class AlgoRotateText extends AlgoElement {
 	public boolean isLaTeXTextCommand() {
 		return true;
 	}
-
 }

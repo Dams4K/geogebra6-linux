@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * XMLFileReader.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 09. Mai 2003, 16:05
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.desktop.io;
@@ -28,7 +26,7 @@ import java.util.zip.ZipInputStream;
 
 import javax.imageio.ImageIO;
 
-import org.geogebra.common.jre.gui.MyImageJre;
+import org.geogebra.common.awt.MyImage;
 import org.geogebra.common.jre.headless.AppDI;
 import org.geogebra.common.jre.io.MyXMLioJre;
 import org.geogebra.common.kernel.Construction;
@@ -37,12 +35,12 @@ import org.geogebra.common.util.debug.Log;
 import org.geogebra.desktop.gui.MyImageD;
 
 /**
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class MyXMLioD extends MyXMLioJre {
 	/**
-	 * 
+	 *
 	 * @param kernel
 	 *            Kernel
 	 * @param cons
@@ -69,45 +67,39 @@ public class MyXMLioD extends MyXMLioJre {
 				((AppDI) app).addExternalImage(name, new MyImageD(img));
 			}
 		} catch (IOException e) {
-			Log.debug("readZipFromURL: image could not be loaded: "
-					+ name);
+			Log.debug("readZipFromURL: image could not be loaded: " + name);
 			Log.debug(e);
 		}
 	}
 
 	@Override
-	final protected MyImageJre getExportImage(double width, double height) {
-		return ((AppDI) app).getExportImage(THUMBNAIL_PIXELS_X,
-				THUMBNAIL_PIXELS_Y);
+	protected final MyImage getExportImage(double width, double height) {
+		return ((AppDI) app).getExportImage(THUMBNAIL_PIXELS_X, THUMBNAIL_PIXELS_Y);
 	}
 
 	@Override
-	final protected MyImageJre getExternalImage(String fileName) {
+	protected final MyImage getExternalImage(String fileName) {
 		return ((AppDI) app).getExternalImage(fileName);
 	}
 
 	@Override
-	final protected void writeImage(MyImageJre img, String ext, OutputStream os)
-			throws IOException {
+	protected final void writeImage(MyImage img, String ext, OutputStream os) throws IOException {
 		ImageIO.write((BufferedImage) ((MyImageD) img).getImage(), ext, os);
-
 	}
 
 	/**
 	 * Get the preview image of a ggb file.
-	 * 
+	 *
 	 * @param file
 	 *            file
 	 * @throws IOException
 	 *             when file is not valid ggb
 	 * @return preview image
 	 */
-	public final static BufferedImage getPreviewImage(File file)
-			throws IOException {
+	public static final BufferedImage getPreviewImage(File file) throws IOException {
 		// just allow preview images for ggb files
 		if (!file.getName().endsWith(".ggb")) {
-			throw new IllegalArgumentException(
-					"Preview image source file has to be of the type .ggb");
+			throw new IllegalArgumentException("Preview image source file has to be of the type .ggb");
 		}
 
 		FileInputStream fis = new FileInputStream(file);

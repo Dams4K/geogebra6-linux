@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel;
 
 import org.geogebra.common.kernel.kernelND.GeoElementND;
@@ -13,11 +29,11 @@ public interface Locateable extends GeoElementND {
 	 * @throws CircularDefinitionException
 	 *             in case the start point depends on this object
 	 */
-	public void setStartPoint(GeoPointND p) throws CircularDefinitionException;
+	void setStartPoint(GeoPointND p) throws CircularDefinitionException;
 
 	/**
 	 * Unregisters start point
-	 * 
+	 *
 	 * @param p
 	 *            start point to remove
 	 */
@@ -29,10 +45,10 @@ public interface Locateable extends GeoElementND {
 
 	/**
 	 * Returns (first) start point
-	 * 
+	 *
 	 * @return start point
 	 */
-	public GeoPointND getStartPoint();
+	GeoPointND getStartPoint();
 
 	/**
 	 * @param p
@@ -42,9 +58,11 @@ public interface Locateable extends GeoElementND {
 	 * @throws CircularDefinitionException
 	 *             in case the start point depends on this object
 	 */
-	public void setStartPoint(GeoPointND p, int number)
-			throws CircularDefinitionException;
+	void setStartPoint(GeoPointND p, int number) throws CircularDefinitionException;
 
+	/**
+	 * @return number of start points (corners) this object has
+	 */
 	default int getStartPointCount() {
 		return 1;
 	}
@@ -60,23 +78,23 @@ public interface Locateable extends GeoElementND {
 	/**
 	 * Sets the startpoint without performing any checks. This is needed for
 	 * macros.
-	 * 
+	 *
 	 * @param p
 	 *            start point
 	 * @param number
 	 *            index
 	 */
-	public void initStartPoint(GeoPointND p, int number);
+	void initStartPoint(GeoPointND p, int number);
 
 	/**
 	 * @return true if the location is absolute
 	 */
-	public boolean hasStaticLocation();
+	boolean hasStaticLocation();
 
 	/**
 	 * @return true iff object is always fixed
 	 */
-	public boolean isAlwaysFixed();
+	boolean isAlwaysFixed();
 
 	/**
 	 * Use this method to tell the locateable that its startpoint will be set
@@ -90,6 +108,5 @@ public interface Locateable extends GeoElementND {
 	/**
 	 * Update that does not change value, but only location
 	 */
-	public void updateLocation();
-
+	void updateLocation();
 }

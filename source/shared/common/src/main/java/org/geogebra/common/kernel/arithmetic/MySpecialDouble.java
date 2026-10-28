@@ -1,38 +1,43 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.arithmetic;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
-import javax.annotation.CheckForNull;
-
+import org.apache.commons.math3.util.Precision;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.plugin.Operation;
 import org.geogebra.common.util.StringUtil;
-
-import com.himamis.retex.editor.share.input.Character;
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.input.Character;
+import org.geogebra.editor.share.util.Unicode;
+import org.jspecify.annotations.Nullable;
 
 /**
  * MyDouble that returns a certain string in toString(). This is used for
  * example for the degree sign in geogebra.parser.Parser.jj: new
  * MySpecialDouble(kernel, Math.PI / 180.0d, "\u00b0" );
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class MySpecialDouble extends MyDouble {
 
+	public static final BigDecimal DEGREE = new BigDecimal("0.017453292519943295769");
 	private String strToString;
 	private final String originalString;
 	private final boolean keepOriginalString;
@@ -42,6 +47,7 @@ public class MySpecialDouble extends MyDouble {
 	BigDecimal bd;
 	// 0 = uninitialized, NaN = not a fraction, power of 10 otherwise
 	private double denominator = 0;
+	private int forcedAngleUnit = -1;
 
 	/**
 	 * @param kernel
@@ -80,7 +86,6 @@ public class MySpecialDouble extends MyDouble {
 	 */
 	public MySpecialDouble(Kernel kernel, double val, String str, boolean fromCas) {
 		super(kernel, val);
-
 		originalString = fromCas ? StringUtil.canonicalNumber(str) : str;
 
 		strToString = originalString;
@@ -92,8 +97,7 @@ public class MySpecialDouble extends MyDouble {
 				|| strToString.equals(Unicode.EULER_GAMMA_STRING)
 				|| "euler_gamma".equals(strToString);
 		boolean containsE = strToString.indexOf("E") > 0;
-		keepOriginalString = !isLetterConstant
-				&& (containsE || Double.isInfinite(val));
+		keepOriginalString = !isLetterConstant && (containsE || Double.isInfinite(val));
 
 		if (keepOriginalString && fromCas) {
 			BigDecimal bd = new BigDecimal(strToString);
@@ -117,17 +121,18 @@ public class MySpecialDouble extends MyDouble {
 
 	/**
 	 * Copy constructor.
-	 * 
+	 *
 	 * @param sd
 	 *            special double to copy
 	 */
 	public MySpecialDouble(MySpecialDouble sd) {
 		super(sd);
+		forcedAngleUnit = sd.forcedAngleUnit;
 		originalString = sd.originalString;
 		strToString = sd.strToString;
 		keepOriginalString = sd.keepOriginalString;
 		isLetterConstant = sd.isLetterConstant; // for Pi, Euler, or Degree
-												// constant
+		// constant
 		scientificNotation = sd.scientificNotation;
 		setFromOutside = sd.setFromOutside;
 		bd = sd.bd;
@@ -159,14 +164,16 @@ public class MySpecialDouble extends MyDouble {
 	@Override
 	public String toString(StringTemplate tpl) {
 		if (setFromOutside) {
+			if (getAngleDim() == 1) {
+				return kernel.formatAngle(getDouble(), bd, tpl, true, forcedAngleUnit).toString();
+			}
 			return super.toString(tpl);
 		}
 		if (!isLetterConstant) {
 			// serializing to CAS -- simply print input
 
 			if (tpl.hasCASType()) {
-				return tpl.convertScientificNotationGiac(
-						StringUtil.canonicalNumber(originalString));
+				return tpl.convertScientificNotationGiac(StringUtil.canonicalNumber(originalString));
 			}
 
 			if (isPercentage()) {
@@ -181,8 +188,7 @@ public class MySpecialDouble extends MyDouble {
 			// use significant digits
 			// print the original string
 			if (keepOriginalString
-					|| (!tpl.useScientific(kernel.useSignificantFigures)
-							&& !strToString.contains("."))
+					|| (!tpl.useScientific(kernel.useSignificantFigures) && !strToString.contains("."))
 					|| tpl.allowMoreDigits()) {
 				if (scientificNotation) {
 					// change 5.1E-20 to 5.1*10^(-20) or 5.1 \cdot 10^{-20}
@@ -199,15 +205,15 @@ public class MySpecialDouble extends MyDouble {
 		// letter constants for pi, e, or degree character
 		char ch = strToString.charAt(0);
 		switch (ch) {
-		case Unicode.pi:
-			return tpl.getPi();
-		case Unicode.DEGREE_CHAR:
-			return tpl.getDegree();
-		case Unicode.EULER_CHAR:
-			if (strToString.equals(Unicode.EULER_GAMMA_STRING)) {
-				return tpl.getEulerGamma();
-			}
-			return tpl.getEulerNumber();
+			case Unicode.pi:
+				return tpl.getPi();
+			case Unicode.DEGREE_CHAR:
+				return tpl.getDegree();
+			case Unicode.EULER_CHAR:
+				if (strToString.equals(Unicode.EULER_GAMMA_STRING)) {
+					return tpl.getEulerGamma();
+				}
+				return tpl.getEulerNumber();
 		}
 
 		return strToString;
@@ -230,16 +236,6 @@ public class MySpecialDouble extends MyDouble {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		return super.equals(o);
-	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-
-	@Override
 	public boolean isDigits() {
 		return StringUtil.isDigit(strToString.charAt(0));
 	}
@@ -249,16 +245,14 @@ public class MySpecialDouble extends MyDouble {
 		if (setFromOutside) {
 			return super.unaryMinus(kernel);
 		}
-		if (!isLetterConstant && !scientificNotation) {
+		if (!isLetterConstant) {
 			return new MySpecialDouble(kernel, -getDouble(), flipSign(originalString));
 		}
-		return new ExpressionNode(kernel, new MinusOne(kernel),
-				Operation.MULTIPLY, this);
+		return new ExpressionNode(kernel, new MinusOne(kernel), Operation.MULTIPLY, this);
 	}
 
 	private String flipSign(String originalString) {
-		return originalString.startsWith("-")
-				? originalString.substring(1) : "-" + originalString;
+		return originalString.startsWith("-") ? originalString.substring(1) : "-" + originalString;
 	}
 
 	public boolean isScientificNotation() {
@@ -269,22 +263,21 @@ public class MySpecialDouble extends MyDouble {
 		return strToString.endsWith("%");
 	}
 
+	/**
+	 * @return whether this is an angle or the pi constant
+	 */
 	public boolean isAngleUnit() {
 		return isAngle() || Unicode.PI_STRING.equals(strToString);
 	}
 
-	public void setString(String toString) {
-		this.strToString = toString;
-	}
-
 	@Override
-	public @CheckForNull BigDecimal toDecimal() {
+	public @Nullable BigDecimal toDecimal() {
 		if (!Double.isFinite(getDouble())) {
 			return null;
 		}
 		if (bd == null && !setFromOutside) {
 			if (isLetterConstant) {
-				bd = BigDecimal.valueOf(getDouble());
+				bd = getConstantDecimal();
 			} else if (isPercentage()) {
 				bd = new BigDecimal(strToString.substring(0, strToString.length() - 1))
 						.multiply(BigDecimal.valueOf(0.01));
@@ -295,6 +288,25 @@ public class MySpecialDouble extends MyDouble {
 		return bd;
 	}
 
+	private BigDecimal getConstantDecimal() {
+		return switch (strToString.charAt(0)) {
+			case Unicode.pi -> new BigDecimal("3.1415926535897932385");
+			case Unicode.DEGREE_CHAR -> DEGREE;
+			case Unicode.EULER_CHAR -> {
+				if (strToString.equals(Unicode.EULER_GAMMA_STRING)) {
+					yield new BigDecimal("0.57721566490153286061");
+				}
+				yield new BigDecimal("2.7182818284590452353");
+			}
+			case 'r' -> BigDecimal.ONE;
+			case Unicode.GRADIAN -> new BigDecimal("0.015707963267948966192");
+			default -> throw new IllegalStateException();
+		};
+	}
+
+	/**
+	 * @return whether this is a decimal number (not a fraction)
+	 */
 	public boolean isDecimal() {
 		return strToString != null && strToString.contains(".") && !isFraction();
 	}
@@ -330,8 +342,36 @@ public class MySpecialDouble extends MyDouble {
 		return false;
 	}
 
+	@Override
+	protected void makeAngle(boolean deg) {
+		super.makeAngle(deg);
+		forcedAngleUnit = Kernel.ANGLE_DEGREE;
+	}
+
+	@Override
+	protected void setPrecise(double newVal) {
+		if (isImprecise() || !Double.isFinite(newVal)) {
+			set(newVal);
+		} else {
+			set(new BigDecimal(newVal));
+		}
+	}
+
+	@Override
+	protected void doRound(int digits, int angleUnit) {
+		BigDecimal exact;
+		if (getAngleDim() == 1 && Kernel.angleUnitUsesDegrees(angleUnit)) {
+			set(Kernel.PI_180 * Precision.round(getDouble() * Kernel.CONST_180_PI, digits));
+		} else if ((exact = toDecimal()) != null) {
+			set(exact.setScale(digits, RoundingMode.HALF_UP));
+		} else {
+			// number or angle in radians
+			setPrecise(Precision.round(getDouble(), digits));
+		}
+	}
+
 	private void initFraction() {
-		if (strToString == null) {
+		if (strToString == null || setFromOutside) {
 			denominator = Double.NaN;
 			return;
 		}

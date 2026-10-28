@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import java.util.ArrayList;
@@ -34,13 +50,13 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * Class for drawing a 2-var function
- * 
+ *
  * @author mathieu
- * 
+ *
  */
 public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
-	final static private boolean DEBUG = false;
+	private static final boolean DEBUG = false;
 
 	/** The function being rendered */
 	SurfaceEvaluable surfaceGeo;
@@ -48,8 +64,8 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	// number of intervals in root mesh (for each parameters, if parameters
 	// delta are equals)
 	private static final short ROOT_MESH_INTERVALS_SPEED = 10;
-	private static final short ROOT_MESH_INTERVALS_SPEED_SQUARE = ROOT_MESH_INTERVALS_SPEED
-			* ROOT_MESH_INTERVALS_SPEED;
+	private static final short ROOT_MESH_INTERVALS_SPEED_SQUARE =
+			ROOT_MESH_INTERVALS_SPEED * ROOT_MESH_INTERVALS_SPEED;
 
 	// number of split for boundary
 	private static final short BOUNDARY_SPLIT = 10;
@@ -59,10 +75,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	private static final int MAX_SPLIT_QUALITY = MAX_SPLIT_SPEED * 2;
 
 	private static final int MAX_SPLIT_IN_ONE_UPDATE_SPEED = 512;
-	private static final int MAX_SPLIT_IN_ONE_UPDATE_QUALITY = MAX_SPLIT_IN_ONE_UPDATE_SPEED
-			* 2;
-	final private static int HIT_SAMPLES = 10;
-	final private static double DELTA_SAMPLES = 1.0 / HIT_SAMPLES;
+	private static final int MAX_SPLIT_IN_ONE_UPDATE_QUALITY = MAX_SPLIT_IN_ONE_UPDATE_SPEED * 2;
+	private static final int HIT_SAMPLES = 10;
+	private static final double DELTA_SAMPLES = 1.0 / HIT_SAMPLES;
 
 	private SurfaceEvaluable.LevelOfDetail levelOfDetail = SurfaceEvaluable.LevelOfDetail.QUALITY;
 
@@ -114,6 +129,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	 * used to draw "still to split" corners
 	 */
 	protected Corner[] cornerForStillToSplit;
+
 	protected Corner[] cornerToDrawStillToSplit;
 
 	/**
@@ -128,6 +144,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	 * max distance in real world under which we don't check angles
 	 */
 	protected double maxRWDistanceNoAngleCheck;
+
 	protected double maxBend;
 	protected int notDrawn;
 
@@ -152,13 +169,12 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		private static final long serialVersionUID = 1L;
 		private DrawSurface3D surface;
 
-		public NotEnoughCornersException(DrawSurface3D surface,
-				String message) {
+		NotEnoughCornersException(DrawSurface3D surface, String message) {
 			super(message);
 			this.surface = surface;
 		}
 
-		public void caught() {
+		void caught() {
 			Log.debug(this);
 			surface.setNoRoomLeft();
 		}
@@ -166,7 +182,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param a_view3d
 	 *            view
 	 * @param surface
@@ -185,7 +201,6 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		}
 
 		splitsStartedNotFinished = false;
-
 	}
 
 	private void setLevelOfDetail() {
@@ -200,14 +215,14 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 		// set sizes
 		switch (levelOfDetail) {
-		case SPEED:
-			maxSplit = MAX_SPLIT_SPEED;
-			maxSplitsInOneUpdate = MAX_SPLIT_IN_ONE_UPDATE_SPEED;
-			break;
-		case QUALITY:
-			maxSplit = MAX_SPLIT_QUALITY;
-			maxSplitsInOneUpdate = MAX_SPLIT_IN_ONE_UPDATE_QUALITY;
-			break;
+			case SPEED:
+				maxSplit = MAX_SPLIT_SPEED;
+				maxSplitsInOneUpdate = MAX_SPLIT_IN_ONE_UPDATE_SPEED;
+				break;
+			case QUALITY:
+				maxSplit = MAX_SPLIT_QUALITY;
+				maxSplitsInOneUpdate = MAX_SPLIT_IN_ONE_UPDATE_QUALITY;
+				break;
 		}
 
 		maxDraw = maxSplit;
@@ -218,7 +233,6 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		nextSplit = new DrawSurface3D.Corner[maxSplit + 4];
 		drawList = new CornerAndCenter[maxDraw + 100];
 		cornerList = new DrawSurface3D.Corner[cornerListSize];
-
 	}
 
 	private void setTolerances() {
@@ -226,27 +240,26 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 		// set sizes
 		switch (levelOfDetail) {
-		case SPEED:
-			maxRWDistanceNoAngleCheck = 1 * maxRWPixelDistance;
-			maxRWDistance = 5 * maxRWPixelDistance;
-			maxBend = getView3D().getMaxBendSpeedSurface();
-			break;
-		case QUALITY:
-			maxRWDistanceNoAngleCheck = 1 * maxRWPixelDistance;
-			maxRWDistance = 2 * maxRWPixelDistance;
-			maxBend = CurveSegmentPlotter.MAX_BEND;
-			break;
+			case SPEED:
+				maxRWDistanceNoAngleCheck = 1 * maxRWPixelDistance;
+				maxRWDistance = 5 * maxRWPixelDistance;
+				maxBend = getView3D().getMaxBendSpeedSurface();
+				break;
+			case QUALITY:
+				maxRWDistanceNoAngleCheck = 1 * maxRWPixelDistance;
+				maxRWDistance = 2 * maxRWPixelDistance;
+				maxBend = CurveSegmentPlotter.MAX_BEND;
+				break;
 		}
-
 	}
 
 	/**
 	 * console debug
-	 * 
+	 *
 	 * @param s
 	 *            message
 	 */
-	final static protected void debug(String s) {
+	protected static void debug(String s) {
 		if (DEBUG) {
 			Log.debug(s);
 		}
@@ -281,8 +294,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 				return;
 			}
 
-			if (getGeoElement()
-					.getLineTypeHidden() == EuclidianStyleConstants.LINE_TYPE_HIDDEN_NONE) {
+			if (getGeoElement().getLineTypeHidden() == EuclidianStyleConstants.LINE_TYPE_HIDDEN_NONE) {
 				return;
 			}
 
@@ -291,7 +303,6 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 			renderer.getGeometryManager().draw(getGeometryIndex());
 		}
-
 	}
 
 	@Override
@@ -306,8 +317,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 			}
 
 			setDrawingColor(GColor.DARK_GRAY);
-			renderer.getTextures()
-					.setDashFromLineType(getGeoElement().getLineType());
+			renderer.getTextures().setDashFromLineType(getGeoElement().getLineType());
 
 			renderer.getGeometryManager().draw(getGeometryIndex());
 		}
@@ -336,8 +346,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 			// maybe it was set to null after redefine, so we need to compute it again
 			surfaceGeo.setDerivatives();
 
-			if (levelOfDetail == LevelOfDetail.QUALITY
-					&& splitsStartedNotFinished) {
+			if (levelOfDetail == LevelOfDetail.QUALITY && splitsStartedNotFinished) {
 				draw();
 				drawOccurred = true;
 			}
@@ -346,8 +355,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 			uParam.initBorder(surfaceGeo, getView3D(), 0);
 			vParam.initBorder(surfaceGeo, getView3D(), 1);
 
-			if (DoubleUtil.isZero(uParam.delta)
-					|| DoubleUtil.isZero(vParam.delta)) {
+			if (DoubleUtil.isZero(uParam.delta) || DoubleUtil.isZero(vParam.delta)) {
 				setSurfaceIndex(-1);
 				setWireframeInvisible();
 				return true;
@@ -361,8 +369,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 			initBounds();
 
-			debug("\nmax distances = " + maxRWDistance + ", "
-					+ maxRWDistanceNoAngleCheck);
+			debug("\nmax distances = " + maxRWDistance + ", " + maxRWDistanceNoAngleCheck);
 
 			// create root mesh
 			double uOverVFactor = uParam.delta / vParam.delta;
@@ -430,8 +437,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 				+ "\ncorner list size : " + cornerListIndex
 				+ "\nstill room left : " + stillRoomLeft);
 
-		splitsStartedNotFinished = currentSplitIndex
-				- currentSplitStoppedIndex + nextSplitIndex > 0;
+		splitsStartedNotFinished = currentSplitIndex - currentSplitStoppedIndex + nextSplitIndex > 0;
 
 		// time = System.currentTimeMillis();
 
@@ -439,29 +445,28 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		oldThickness = -1;
 
 		switch (levelOfDetail) {
-		case SPEED:
-		default:
-			draw();
-			// still room left and still split to do: still to update
-			drawUpToDate = !splitsStartedNotFinished || !stillRoomLeft;
-			return drawUpToDate;
-		case QUALITY:
-			splitsStartedNotFinished = splitsStartedNotFinished
-					&& stillRoomLeft;
-			if (!splitsStartedNotFinished) {
-				if (!drawOccurred) {
-					// no draw at start: can do the draw now
-					draw();
-					drawUpToDate = true;
-					return true;
+			case SPEED:
+			default:
+				draw();
+				// still room left and still split to do: still to update
+				drawUpToDate = !splitsStartedNotFinished || !stillRoomLeft;
+				return drawUpToDate;
+			case QUALITY:
+				splitsStartedNotFinished = splitsStartedNotFinished && stillRoomLeft;
+				if (!splitsStartedNotFinished) {
+					if (!drawOccurred) {
+						// no draw at start: can do the draw now
+						draw();
+						drawUpToDate = true;
+						return true;
+					}
+					// no room left or no split to do: update is finished, but
+					// the
+					// object may change
+					return false;
 				}
-				// no room left or no split to do: update is finished, but
-				// the
-				// object may change
+				// still room left and still split to do: still to update
 				return false;
-			}
-			// still room left and still split to do: still to update
-			return false;
 		}
 
 		// time = System.currentTimeMillis() - time;
@@ -473,21 +478,21 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 	/**
 	 * ends geometry
-	 * 
+	 *
 	 * @param surface
 	 *            surface plotter
-	 * 
+	 *
 	 */
-	static final private void endGeometry(PlotterSurface surface) {
+	private static void endGeometry(PlotterSurface surface) {
 		surface.endGeometryDirect();
 	}
 
 	/**
 	 * draw all corners and centers
-	 * 
+	 *
 	 * @param surface
 	 *            surface plotter
-	 * 
+	 *
 	 */
 	protected void drawCornersAndCenters(PlotterSurface surface) {
 		// used with GL.drawElements()
@@ -529,7 +534,6 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 				drawCornersAndCenters(surface);
 				endGeometry(surface);
-
 			}
 
 		} else {
@@ -559,7 +563,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		drawWireframe(renderer);
 	}
 
-	static final private boolean isDefinedForWireframe(Corner corner) {
+	private static boolean isDefinedForWireframe(Corner corner) {
 		if (corner.p.isFinalUndefined()) {
 			return false;
 		}
@@ -619,11 +623,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 				currentPointIsDefined = isDefinedForWireframe(above);
 				if (currentPointIsDefined) {
 					if (lastPointIsDefined) {
-						brush.drawTo(above.p.getXd(), above.p.getYd(),
-								above.p.getZd(), true);
+						brush.drawTo(above.p.getXd(), above.p.getYd(), above.p.getZd(), true);
 					} else {
-						brush.moveTo(above.p.getXd(), above.p.getYd(),
-								above.p.getZd());
+						brush.moveTo(above.p.getXd(), above.p.getYd(), above.p.getZd());
 					}
 				}
 				lastPointIsDefined = currentPointIsDefined;
@@ -644,11 +646,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 				currentPointIsDefined = isDefinedForWireframe(left);
 				if (currentPointIsDefined) {
 					if (lastPointIsDefined) {
-						brush.drawTo(left.p.getXd(), left.p.getYd(),
-								left.p.getZd(), true);
+						brush.drawTo(left.p.getXd(), left.p.getYd(), left.p.getZd(), true);
 					} else {
-						brush.moveTo(left.p.getXd(), left.p.getYd(),
-								left.p.getZd());
+						brush.moveTo(left.p.getXd(), left.p.getYd(), left.p.getZd());
 					}
 				}
 				lastPointIsDefined = currentPointIsDefined;
@@ -666,8 +666,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 	@Override
 	protected void updateForView() {
-		if (getView3D().viewChangedByZoom()
-				|| getView3D().viewChangedByTranslate()) {
+		if (getView3D().viewChangedByZoom() || getView3D().viewChangedByTranslate()) {
 			setWaitForUpdate();
 		}
 	}
@@ -720,9 +719,12 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 	private boolean inCullingBox(Coords3 p) {
 		// check point is in culling box
-		return (p.getXd() > cullingBox[0]) && (p.getXd() < cullingBox[1])
-				&& (p.getYd() > cullingBox[2]) && (p.getYd() < cullingBox[3])
-				&& (p.getZd() > cullingBox[4]) && (p.getZd() < cullingBox[5]);
+		return (p.getXd() > cullingBox[0])
+				&& (p.getXd() < cullingBox[1])
+				&& (p.getYd() > cullingBox[2])
+				&& (p.getYd() < cullingBox[3])
+				&& (p.getZd() > cullingBox[4])
+				&& (p.getZd() < cullingBox[5]);
 	}
 
 	private void initBounds() {
@@ -751,7 +753,6 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		if (p.getZd() > boundsMax.getZ()) {
 			boundsMax.setZ(p.getZd());
 		}
-
 	}
 
 	@Override
@@ -775,8 +776,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 		wireframeBottomCornersLength = 0;
 		wireframeRightCornersLength = 0;
-		int wireFrameSetU = uParam.wireFrameStep,
-				wireFrameSetV = vParam.wireFrameStep;
+		int wireFrameSetU = uParam.wireFrameStep, wireFrameSetV = vParam.wireFrameStep;
 		if (wireframeNeeded()) {
 			if (uParam.wireframeUnique) {
 				wireFrameSetU = 0;
@@ -800,8 +800,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		Corner right = bottomRight;
 		int uN = uParam.n;
 		for (int i = 0; i < uN - 1; i++) {
-			right = addLeftToMesh(right, uParam.max - uParam.delta * i / uN,
-					vParam.borderMax);
+			right = addLeftToMesh(right, uParam.max - uParam.delta * i / uN, vParam.borderMax);
 			if (wireframeNeeded()) {
 				if (wireFrameSetU == uParam.wireFrameStep) { // set wireframe
 					wireframeBottomCorners[wireframeBottomCornersLength] = right;
@@ -826,9 +825,13 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		int vN = vParam.n;
 		// all intermediate rows
 		for (int j = 0; j < vN - 1; j++) {
-			bottomRight = addRowAboveToMesh(bottomRight,
-					vParam.max - vParam.delta * j / vN, uParam.borderMin,
-					uParam.borderMax, uParam.max, uN);
+			bottomRight = addRowAboveToMesh(
+					bottomRight,
+					vParam.max - vParam.delta * j / vN,
+					uParam.borderMin,
+					uParam.borderMax,
+					uParam.max,
+					uN);
 			if (wireframeNeeded()) {
 				if (wireFrameSetV == vParam.wireFrameStep) { // set wireframe
 					wireframeRightCorners[wireframeRightCornersLength] = bottomRight;
@@ -845,8 +848,8 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		}
 
 		// last row
-		bottomRight = addRowAboveToMesh(bottomRight, vParam.borderMin,
-				uParam.borderMin, uParam.borderMax, uParam.max, uN);
+		bottomRight = addRowAboveToMesh(
+				bottomRight, vParam.borderMin, uParam.borderMin, uParam.borderMax, uParam.max, uN);
 		if (wireframeNeeded()) {
 			if (vParam.wireframeBorder == 1) {
 				wireframeRightCorners[wireframeRightCornersLength] = bottomRight;
@@ -857,15 +860,14 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		return first;
 	}
 
-	final private Corner addLeftToMesh(Corner right, double u, double v)
-			throws NotEnoughCornersException {
+	private Corner addLeftToMesh(Corner right, double u, double v) throws NotEnoughCornersException {
 		Corner left = newCorner(u, v);
 		right.l = left;
 		return left;
 	}
 
-	final private Corner addRowAboveToMesh(Corner bottomRight, double v,
-			double uBorderMin, double uBorderMax, double uMax, int uN)
+	private Corner addRowAboveToMesh(
+			Corner bottomRight, double v, double uBorderMin, double uBorderMax, double uMax, int uN)
 			throws NotEnoughCornersException {
 		Corner below = bottomRight;
 		Corner right = newCorner(uBorderMax, v);
@@ -882,8 +884,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		return bottomRight.a;
 	}
 
-	private static void splitRootMesh(Corner first)
-			throws NotEnoughCornersException {
+	private static void splitRootMesh(Corner first) throws NotEnoughCornersException {
 
 		Corner nextAbove, nextLeft;
 
@@ -901,7 +902,6 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 			}
 			current = nextAbove;
 		}
-
 	}
 
 	private boolean split() throws NotEnoughCornersException {
@@ -916,13 +916,12 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 			currentSplitStoppedIndex = 0;
 		}
 
-		while (currentSplitStoppedIndex < currentSplitIndex
-				&& loopSplitIndex < maxSplitsInOneUpdate) {
+		while (currentSplitStoppedIndex < currentSplitIndex && loopSplitIndex < maxSplitsInOneUpdate) {
 			currentSplit[currentSplitStoppedIndex].split(false);
 			currentSplitStoppedIndex++;
 
-			if (drawListIndex + currentSplitIndex - currentSplitStoppedIndex
-					+ nextSplitIndex >= maxDraw) { // no room left for new draw
+			if (drawListIndex + currentSplitIndex - currentSplitStoppedIndex + nextSplitIndex
+					>= maxDraw) { // no room left for new draw
 				return false;
 			}
 
@@ -939,22 +938,21 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		}
 
 		return true; // went to end of loop
-
 	}
 
 	/**
-	 * 
+	 *
 	 * @return new coords 3
 	 */
-	final static protected Coords3 newCoords3() {
+	protected static Coords3 newCoords3() {
 		return new CoordsDouble3();
 	}
 
-	final private void scaleXYZ(Coords3 p) {
+	private void scaleXYZ(Coords3 p) {
 		getView3D().scaleXYZ(p);
 	}
 
-	final private void scaleAndNormalizeNormalXYZ(Coords3 n) {
+	private void scaleAndNormalizeNormalXYZ(Coords3 n) {
 		getView3D().scaleAndNormalizeNormalXYZ(n);
 	}
 
@@ -1012,8 +1010,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		return CoordsDouble3.UNDEFINED;
 	}
 
-	protected Coords3 evaluateNormal(Coords3 p, double u, double v,
-			Coords3 normal) {
+	protected Coords3 evaluateNormal(Coords3 p, double u, double v, Coords3 normal) {
 
 		boolean defined;
 		// normal is final value: use evaluatedNormal to compute
@@ -1037,10 +1034,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 		scaleAndNormalizeNormalXYZ(normal);
 		return normal;
-
 	}
 
-	class Corner {
+	protected class Corner {
 		Coords3 p;
 		Coords3 normal;
 		double u;
@@ -1050,16 +1046,16 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		Corner l; // left
 		int id;
 
-		public Corner(int id) {
+		Corner(int id) {
 			this.id = id;
 		}
 
-		public Corner(double u, double v, int id) {
+		Corner(double u, double v, int id) {
 			this.id = id;
 			set(u, v);
 		}
 
-		public void set(double u, double v) {
+		void set(double u, double v) {
 			this.u = u;
 			this.v = v;
 			p = evaluatePoint(u, v, p);
@@ -1073,7 +1069,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 			l = null;
 		}
 
-		public void set(Corner c) {
+		void set(Corner c) {
 			u = c.u;
 			v = c.v;
 			p = c.p;
@@ -1081,11 +1077,11 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 			id = c.id;
 		}
 
-		public Corner(double u, double v, Coords3 p) {
+		Corner(double u, double v, Coords3 p) {
 			set(u, v, p);
 		}
 
-		public void set(double u, double v, Coords3 p) {
+		void set(double u, double v, Coords3 p) {
 			this.u = u;
 			this.v = v;
 			this.p = p;
@@ -1098,47 +1094,21 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 		/**
 		 * draw this corner as part of "next to split" list
-		 * 
+		 *
 		 * @param surface
 		 *            surface plotter
 		 */
-		public void drawAsNextToSplit(PlotterSurface surface) {
-
-			// if (this.p.isNotFinalUndefined()){
-			// if (a.p.isNotFinalUndefined()){
-			// if (l.p.isNotFinalUndefined()){
-			// drawTriangle(surface, this, a, l);
-			// if (l.a.p.isNotFinalUndefined()){
-			// drawTriangle(surface, l, a, l.a);
-			// }
-			// }else{
-			// if (l.a.p.isNotFinalUndefined()){
-			// drawTriangle(surface, this, a, l.a);
-			// }
-			// }
-			// }else{
-			// if (l.p.isNotFinalUndefined() && l.a.p.isNotFinalUndefined()){
-			// drawTriangle(surface, this, l.a, l);
-			// }
-			// }
-			// }else{ // this undefined
-			// if (l.p.isNotFinalUndefined() && a.p.isNotFinalUndefined() &&
-			// l.a.p.isNotFinalUndefined()){
-			// drawTriangle(surface, l, a, l.a);
-			// }
-			// }
-
+		void drawAsNextToSplit(PlotterSurface surface) {
 			drawAsStillToSplit(surface);
-
 		}
 
 		/**
 		 * draw this corner as part of "still to split" list
-		 * 
+		 *
 		 * @param surface
 		 *            surface plotter
 		 */
-		public void drawAsStillToSplit(PlotterSurface surface) {
+		void drawAsStillToSplit(PlotterSurface surface) {
 
 			// prevent keeping old element id
 			for (int i = 0; i < cornerToDrawStillToSplit.length; i++) {
@@ -1181,11 +1151,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 						// previous undefined -- current defined : create
 						// intermediate
 						if (DoubleUtil.isEqual(previous.u, current.u)) {
-							findV(current, previous, BOUNDARY_SPLIT,
-									cornerToDrawStillToSplit[index]);
+							findV(current, previous, BOUNDARY_SPLIT, cornerToDrawStillToSplit[index]);
 						} else {
-							findU(current, previous, BOUNDARY_SPLIT,
-									cornerToDrawStillToSplit[index]);
+							findU(current, previous, BOUNDARY_SPLIT, cornerToDrawStillToSplit[index]);
 						}
 						index++;
 					}
@@ -1197,11 +1165,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 						// previous defined -- current undefined : create
 						// intermediate
 						if (DoubleUtil.isEqual(previous.u, current.u)) {
-							findV(previous, current, BOUNDARY_SPLIT,
-									cornerToDrawStillToSplit[index]);
+							findV(previous, current, BOUNDARY_SPLIT, cornerToDrawStillToSplit[index]);
 						} else {
-							findU(previous, current, BOUNDARY_SPLIT,
-									cornerToDrawStillToSplit[index]);
+							findU(previous, current, BOUNDARY_SPLIT, cornerToDrawStillToSplit[index]);
 						}
 						index++;
 					}
@@ -1219,14 +1185,17 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 			setBarycenter(v0, n0, index, cornerToDrawStillToSplit);
 
 			for (int i = 0; i < index; i++) {
-				drawTriangle(surface, v0, n0,
+				drawTriangle(
+						surface,
+						v0,
+						n0,
 						cornerToDrawStillToSplit[(i + 1) % index],
 						cornerToDrawStillToSplit[i]);
 			}
-
 		}
 
-		public void split(boolean draw) throws NotEnoughCornersException {
+		@SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
+		void split(boolean draw) throws NotEnoughCornersException {
 
 			Corner left, above, subLeft, subAbove;
 
@@ -1263,25 +1232,19 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 							boolean split;
 							if (draw) { // time to draw
 								split = false;
-							} else if (n.p.isFinalUndefined()
-									|| w.p.isFinalUndefined()) { // some
-																	// undefined
-																	// point:
-																	// force
-																	// split
+							} else if (n.p.isFinalUndefined() || w.p.isFinalUndefined()) { // some
+								// undefined
+								// point:
+								// force
+								// split
 								split = true;
 							} else { // check distance
 								double d = getDistance(left.a, n, w);
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
-									if (isAngleOK(maxBend, left.a, n, w)) { // angle
-																			// ok
-										split = false;
-									} else { // angle not ok
-										split = true;
-									}
+									// angle
+									split = !isAngleOK(maxBend, left.a, n, w);
 								} else { // no need to check angle
 									split = false;
 								}
@@ -1317,25 +1280,19 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 							boolean split;
 							if (draw) { // time to draw
 								split = false;
-							} else if (n.p.isFinalUndefined()
-									|| e.p.isFinalUndefined()) { // some
-																	// undefined
-																	// point:
-																	// force
-																	// split
+							} else if (n.p.isFinalUndefined() || e.p.isFinalUndefined()) { // some
+								// undefined
+								// point:
+								// force
+								// split
 								split = true;
 							} else { // check distance
 								double d = getDistance(above, n, e);
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
-									if (isAngleOK(maxBend, above, n, e)) { // angle
-																			// ok
-										split = false;
-									} else { // angle not ok
-										split = true;
-									}
+									// angle
+									split = !isAngleOK(maxBend, above, n, e);
 								} else { // no need to check angle
 									split = false;
 								}
@@ -1359,21 +1316,20 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 							boolean split;
 							if (draw) { // time to draw
 								split = false;
-							} else if (subAbove != null
-									&& subAbove.p.isFinalUndefined()) { // some
-																		// undefined
-																		// point:
-																		// force
-																		// split
+							} else if (subAbove != null && subAbove.p.isFinalUndefined()) { // some
+								// undefined
+								// point:
+								// force
+								// split
 								split = true;
 							} else { // check distance
 								double d = getDistance(above, left.a);
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
+									// angle
 									if (isAngleOK(maxBend, above, left.a)) { // angle
-																				// ok
+										// ok
 										split = false;
 									} else { // angle not ok
 										split = true;
@@ -1399,19 +1355,13 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 								if (!draw) {
 									// check distances
-									double d = getDistanceNoLoop(above, e, w,
-											left.a);
+									double d = getDistanceNoLoop(above, e, w, left.a);
 									if (Double.isInfinite(d)) { // d >
-																// maxRWDistance
+										// maxRWDistance
 										split = true;
 									} else if (d > maxRWDistanceNoAngleCheck) { // check
-																				// angle
-										if (isAngleOKNoLoop(maxBend, above, e,
-												w, left.a)) { // angle ok
-											split = false;
-										} else { // angle not ok
-											split = true;
-										}
+										// angle
+										split = !isAngleOKNoLoop(maxBend, above, e, w, left.a);
 									} else { // no need to check angle
 										split = false;
 									}
@@ -1453,25 +1403,19 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 							boolean split;
 							if (draw) { // time to draw
 								split = false;
-							} else if (s.p.isFinalUndefined()
-									|| w.p.isFinalUndefined()) { // some
-																	// undefined
-																	// point:
-																	// force
-																	// split
+							} else if (s.p.isFinalUndefined() || w.p.isFinalUndefined()) { // some
+								// undefined
+								// point:
+								// force
+								// split
 								split = true;
 							} else { // check distance
 								double d = getDistance(left, s, w);
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
-									if (isAngleOK(maxBend, left, s, w)) { // angle
-																			// ok
-										split = false;
-									} else { // angle not ok
-										split = true;
-									}
+									// angle
+									split = !isAngleOK(maxBend, left, s, w);
 								} else { // no need to check angle
 									split = false;
 								}
@@ -1489,28 +1433,26 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 								// drawing
 								addToDrawList(w.a, s, w, left);
-
 							}
 						} else {
 							// l and l.a defined /2/
 							boolean split;
 							if (draw) { // time to draw
 								split = false;
-							} else if (subLeft != null
-									&& subLeft.p.isFinalUndefined()) { // some
-																		// undefined
-																		// point:
-																		// force
-																		// split
+							} else if (subLeft != null && subLeft.p.isFinalUndefined()) { // some
+								// undefined
+								// point:
+								// force
+								// split
 								split = true;
 							} else { // check distance
 								double d = getDistance(left.a, left);
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
+									// angle
 									if (isAngleOK(maxBend, left.a, left)) { // angle
-																			// ok
+										// ok
 										split = false;
 									} else { // angle not ok
 										split = true;
@@ -1536,19 +1478,13 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 								if (!draw) {
 									// check distances
-									double d = getDistanceNoLoop(left.a, n, s,
-											left);
+									double d = getDistanceNoLoop(left.a, n, s, left);
 									if (Double.isInfinite(d)) { // d >
-																// maxRWDistance
+										// maxRWDistance
 										split = true;
 									} else if (d > maxRWDistanceNoAngleCheck) { // check
-																				// angle
-										if (isAngleOKNoLoop(maxBend, left.a, n,
-												s, left)) { // angle ok
-											split = false;
-										} else { // angle not ok
-											split = true;
-										}
+										// angle
+										split = !isAngleOKNoLoop(maxBend, left.a, n, s, left);
 									} else { // no need to check angle
 										split = false;
 									}
@@ -1582,9 +1518,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
+									// angle
 									if (isAngleOK(maxBend, left, above)) { // angle
-																			// ok
+										// ok
 										split = false;
 									} else { // angle not ok
 										split = true;
@@ -1598,9 +1534,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 							} else {
 								// find defined between l and this
 								Corner s;
-								if (subLeft != null) {
-									s = subLeft;
-								} else {
+								if (subLeft == null) {
 									s = newCorner();
 									findU(left, this, BOUNDARY_SPLIT, s);
 									// new neighbors
@@ -1608,11 +1542,8 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 									s.l = left;
 								}
 								// find defined between a and this
-								Corner e;
-								if (subAbove != null) {
-									e = subAbove;
-								} else {
-									e = newCorner();
+								if (subAbove == null) {
+									Corner e = newCorner();
 									findV(above, this, BOUNDARY_SPLIT, e);
 									// new neighbors
 									this.a = e;
@@ -1631,35 +1562,31 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 								// drawing
 								addToDrawList(w.a, left, above);
-
 							}
 						} else {
 							// l, a and l.a not undefined /3/
 							boolean split;
 							if (draw) { // time to draw
 								split = false;
-							} else if (subLeft != null
-									&& subLeft.p.isFinalUndefined()) { // some
-																		// undefined
-																		// point:
-																		// force
-																		// split
+							} else if (subLeft != null && subLeft.p.isFinalUndefined()) { // some
+								// undefined
+								// point:
+								// force
+								// split
 								split = true;
-							} else if (subAbove != null
-									&& subAbove.p.isFinalUndefined()) { // some
-																		// undefined
-																		// point:
-																		// force
-																		// split
+							} else if (subAbove != null && subAbove.p.isFinalUndefined()) { // some
+								// undefined
+								// point:
+								// force
+								// split
 								split = true;
 							} else { // check distance
 								double d = getDistance(left.a, left, above);
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
-									if (isAngleOK(maxBend, left.a, left,
-											above)) { // angle ok
+									// angle
+									if (isAngleOK(maxBend, left.a, left, above)) { // angle ok
 										split = false;
 									} else { // angle not ok
 										split = true;
@@ -1672,11 +1599,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 								split(subLeft, left, subAbove, above);
 							} else {
 								// find defined between l and this
-								Corner s;
-								if (subLeft != null) {
-									s = subLeft;
-								} else {
-									s = newCorner();
+
+								if (subLeft == null) {
+									Corner s = newCorner();
 									findU(left, this, BOUNDARY_SPLIT, s);
 									// new neighbors
 									this.l = s;
@@ -1684,9 +1609,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 								}
 								// find defined between a and this
 								Corner e;
-								if (subAbove != null) {
-									e = subAbove;
-								} else {
+								if (subAbove == null) {
 									e = newCorner();
 									findV(above, this, BOUNDARY_SPLIT, e);
 									// new neighbors
@@ -1724,25 +1647,19 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 							boolean split;
 							if (draw) { // time to draw
 								split = false;
-							} else if (s.p.isFinalUndefined()
-									|| e.p.isFinalUndefined()) { // some
-																	// undefined
-																	// point:
-																	// force
-																	// split
+							} else if (s.p.isFinalUndefined() || e.p.isFinalUndefined()) { // some
+								// undefined
+								// point:
+								// force
+								// split
 								split = true;
 							} else { // check distance
 								double d = getDistance(this, s, e);
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
-									if (isAngleOK(maxBend, this, s, e)) { // angle
-																			// ok
-										split = false;
-									} else { // angle not ok
-										split = true;
-									}
+									// angle
+									split = !isAngleOK(maxBend, this, s, e);
 								} else { // no need to check angle
 									split = false;
 								}
@@ -1773,9 +1690,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
+									// angle
 									if (isAngleOK(maxBend, left.a, this)) { // angle
-																			// ok
+										// ok
 										split = false;
 									} else { // angle not ok
 										split = true;
@@ -1788,22 +1705,16 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 								split(subLeft, left, subAbove, above);
 							} else {
 								// find defined between l and this
-								Corner s;
-								if (subLeft != null) {
-									s = subLeft;
-								} else {
-									s = newCorner();
+								if (subLeft == null) {
+									Corner s = newCorner();
 									findU(this, left, BOUNDARY_SPLIT, s);
 									// new neighbors
 									this.l = s;
 									s.l = left;
 								}
 								// find defined between a and this
-								Corner e;
-								if (subAbove != null) {
-									e = subAbove;
-								} else {
-									e = newCorner();
+								if (subAbove == null) {
+									Corner e = newCorner();
 									findV(this, above, BOUNDARY_SPLIT, e);
 									// new neighbors
 									this.a = e;
@@ -1830,21 +1741,20 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 							boolean split;
 							if (draw) { // time to draw
 								split = false;
-							} else if (subLeft != null
-									&& subLeft.p.isFinalUndefined()) { // some
-																		// undefined
-																		// point:
-																		// force
-																		// split
+							} else if (subLeft != null && subLeft.p.isFinalUndefined()) { // some
+								// undefined
+								// point:
+								// force
+								// split
 								split = true;
 							} else { // check distance
 								double d = getDistance(this, above);
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
+									// angle
 									if (isAngleOK(maxBend, this, above)) { // angle
-																			// ok
+										// ok
 										split = false;
 									} else { // angle not ok
 										split = true;
@@ -1870,19 +1780,13 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 								if (!draw) {
 									// check distances
-									double d = getDistanceNoLoop(this, s, n,
-											above);
+									double d = getDistanceNoLoop(this, s, n, above);
 									if (Double.isInfinite(d)) { // d >
-																// maxRWDistance
+										// maxRWDistance
 										split = true;
 									} else if (d > maxRWDistanceNoAngleCheck) { // check
-																				// angle
-										if (isAngleOKNoLoop(maxBend, this, s, n,
-												above)) { // angle ok
-											split = false;
-										} else { // angle not ok
-											split = true;
-										}
+										// angle
+										split = !isAngleOKNoLoop(maxBend, this, s, n, above);
 									} else { // no need to check angle
 										split = false;
 									}
@@ -1902,7 +1806,6 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 									// drawing
 									addToDrawList(left.a, this, above, n, s);
-
 								}
 							}
 						} else {
@@ -1910,21 +1813,19 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 							boolean split;
 							if (draw) { // time to draw
 								split = false;
-							} else if (subLeft != null
-									&& subLeft.p.isFinalUndefined()) { // some
-																		// undefined
-																		// point:
-																		// force
-																		// split
+							} else if (subLeft != null && subLeft.p.isFinalUndefined()) { // some
+								// undefined
+								// point:
+								// force
+								// split
 								split = true;
 							} else { // check distance
 								double d = getDistance(above, left.a, this);
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
-									if (isAngleOK(maxBend, above, left.a,
-											this)) { // angle ok
+									// angle
+									if (isAngleOK(maxBend, above, left.a, this)) { // angle ok
 										split = false;
 									} else { // angle not ok
 										split = true;
@@ -1938,9 +1839,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 							} else {
 								// find defined between this and l
 								Corner s;
-								if (subLeft != null) {
-									s = subLeft;
-								} else {
+								if (subLeft == null) {
 									s = newCorner();
 									findU(this, left, BOUNDARY_SPLIT, s);
 									// new neighbors
@@ -1966,21 +1865,20 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 							boolean split;
 							if (draw) { // time to draw
 								split = false;
-							} else if (subAbove != null
-									&& subAbove.p.isFinalUndefined()) { // some
-																		// undefined
-																		// point:
-																		// force
-																		// split
+							} else if (subAbove != null && subAbove.p.isFinalUndefined()) { // some
+								// undefined
+								// point:
+								// force
+								// split
 								split = true;
 							} else { // check distance
 								double d = getDistance(this, left);
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
+									// angle
 									if (isAngleOK(maxBend, this, left)) { // angle
-																			// ok
+										// ok
 										split = false;
 									} else { // angle not ok
 										split = true;
@@ -2006,19 +1904,15 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 								if (!draw) {
 									// check distances
-									double d = getDistanceNoLoop(this, e, w,
-											left);
+									double d = getDistanceNoLoop(this, e, w, left);
 									if (Double.isInfinite(d)) { // d >
-																// maxRWDistance
+										// maxRWDistance
 										split = true;
 									} else if (d > maxRWDistanceNoAngleCheck) { // check
-																				// angle
-										if (isAngleOKNoLoop(maxBend, this, e, w,
-												left)) { // angle ok
-											split = false;
-										} else { // angle not ok
-											split = true;
-										}
+										// angle
+										// angle ok
+										// angle not ok
+										split = !isAngleOKNoLoop(maxBend, this, e, w, left);
 									} else { // no need to check angle
 										split = false;
 									}
@@ -2045,25 +1939,19 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 							boolean split;
 							if (draw) { // time to draw
 								split = false;
-							} else if (subAbove != null
-									&& subAbove.p.isFinalUndefined()) { // some
-																		// undefined
-																		// point:
-																		// force
-																		// split
+							} else if (subAbove != null && subAbove.p.isFinalUndefined()) { // some
+								// undefined
+								// point:
+								// force
+								// split
 								split = true;
 							} else { // check distance
 								double d = getDistance(left, left.a, this);
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
-									if (isAngleOK(maxBend, left, left.a,
-											this)) { // angle ok
-										split = false;
-									} else { // angle not ok
-										split = true;
-									}
+									// angle
+									split = !isAngleOK(maxBend, left, left.a, this);
 								} else { // no need to check angle
 									split = false;
 								}
@@ -2076,9 +1964,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 								findU(left.a, above, BOUNDARY_SPLIT, n);
 								// find defined between this and a
 								Corner e;
-								if (subAbove != null) {
-									e = subAbove;
-								} else {
+								if (subAbove == null) {
 									e = newCorner();
 									findV(this, above, BOUNDARY_SPLIT, e);
 									// new neighbors
@@ -2104,9 +1990,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 								if (Double.isInfinite(d)) { // d > maxRWDistance
 									split = true;
 								} else if (d > maxRWDistanceNoAngleCheck) { // check
-																			// angle
+									// angle
 									if (isAngleOK(maxBend, this, left, above)) { // angle
-																					// ok
+										// ok
 										split = false;
 									} else { // angle not ok
 										split = true;
@@ -2133,38 +2019,32 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 								// drawing
 								addToDrawList(w.a, this, left, above);
-
 							}
 						} else {
 							// this, l, a and l.a defined /4/
 							if (draw) {
 								// drawing
-								addToDrawList(left.a, this, left, above,
-										left.a);
+								addToDrawList(left.a, this, left, above, left.a);
 							} else {
 								// check distances
-								double d = getDistance(this, left, above,
-										left.a);
+								double d = getDistance(this, left, above, left.a);
 								if (Double.isInfinite(d)
 										|| (d > maxRWDistanceNoAngleCheck
-												&& !isAngleOK(maxBend, this,
-														left, above, left.a))) {
+												&& !isAngleOK(maxBend, this, left, above, left.a))) {
 									split(subLeft, left, subAbove, above);
 								} else {
 									// drawing
-									addToDrawList(left.a, this, left, above,
-											left.a);
+									addToDrawList(left.a, this, left, above, left.a);
 								}
 							}
 						}
 					}
 				}
 			}
-
 		}
 
-		private void split(Corner subLeft, Corner left, Corner subAbove,
-				Corner above) throws NotEnoughCornersException {
+		private void split(Corner subLeft, Corner left, Corner subAbove, Corner above)
+				throws NotEnoughCornersException {
 			// new corners
 			double um = (u + left.u) / 2;
 			double vm = (v + above.v) / 2;
@@ -2229,14 +2109,18 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 			end.isNotEnd = false;
 		}
 
-		private void findU(Corner defined, Corner undefined, int depth,
-				Corner corner) {
-			findU(defined.p, defined.u, defined.u, undefined.u, defined.v,
-					depth, corner, true);
+		private void findU(Corner defined, Corner undefined, int depth, Corner corner) {
+			findU(defined.p, defined.u, defined.u, undefined.u, defined.v, depth, corner, true);
 		}
 
-		private void findU(Coords3 lastDefined, double uLastDef, double uDef,
-				double uUndef, double vRow, int depth, Corner corner,
+		private void findU(
+				Coords3 lastDefined,
+				double uLastDef,
+				double uDef,
+				double uUndef,
+				double vRow,
+				int depth,
+				Corner corner,
 				boolean lastDefinedIsFirst) {
 
 			double uNew = (uDef + uUndef) / 2;
@@ -2255,24 +2139,25 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 				}
 			} else {
 				if (coords.isFinalUndefined()) {
-					findU(lastDefined, uLastDef, uDef, uNew, vRow, depth - 1,
-							corner, lastDefinedIsFirst);
+					findU(lastDefined, uLastDef, uDef, uNew, vRow, depth - 1, corner, lastDefinedIsFirst);
 				} else {
-					findU(coords, uNew, uNew, uUndef, vRow, depth - 1, corner,
-							false);
+					findU(coords, uNew, uNew, uUndef, vRow, depth - 1, corner, false);
 				}
 			}
-
 		}
 
-		private void findV(Corner defined, Corner undefined, int depth,
-				Corner corner) {
-			findV(defined.p, defined.v, defined.v, undefined.v, defined.u,
-					depth, corner, true);
+		private void findV(Corner defined, Corner undefined, int depth, Corner corner) {
+			findV(defined.p, defined.v, defined.v, undefined.v, defined.u, depth, corner, true);
 		}
 
-		private void findV(Coords3 lastDefined, double vLastDef, double vDef,
-				double vUndef, double uRow, int depth, Corner corner,
+		private void findV(
+				Coords3 lastDefined,
+				double vLastDef,
+				double vDef,
+				double vUndef,
+				double uRow,
+				int depth,
+				Corner corner,
 				boolean lastDefinedIsFirst) {
 
 			double vNew = (vDef + vUndef) / 2;
@@ -2291,37 +2176,32 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 				}
 			} else {
 				if (coords.isFinalUndefined()) {
-					findV(lastDefined, vLastDef, vDef, vNew, uRow, depth - 1,
-							corner, lastDefinedIsFirst);
+					findV(lastDefined, vLastDef, vDef, vNew, uRow, depth - 1, corner, lastDefinedIsFirst);
 				} else {
-					findV(coords, vNew, vNew, vUndef, uRow, depth - 1, corner,
-							false);
+					findV(coords, vNew, vNew, vUndef, uRow, depth - 1, corner, false);
 				}
 			}
-
 		}
-
 	}
 
 	/**
 	 * set center as barycenter for points
-	 * 
+	 *
 	 * @param center
 	 *            center
 	 * @param normal
 	 *            normal for center point
 	 * @param c
 	 *            corners
-	 * 
+	 *
 	 */
-	static protected void setBarycenter(Coords3 center, Coords3 normal,
-			Corner... c) {
+	protected static void setBarycenter(Coords3 center, Coords3 normal, Corner... c) {
 		setBarycenter(center, normal, c.length, c);
 	}
 
 	/**
 	 * set center as barycenter for points
-	 * 
+	 *
 	 * @param center
 	 *            center
 	 * @param normal
@@ -2330,10 +2210,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	 *            length of considered corners
 	 * @param c
 	 *            corners
-	 * 
+	 *
 	 */
-	static protected void setBarycenter(Coords3 center, Coords3 normal,
-			int length, Corner... c) {
+	protected static void setBarycenter(Coords3 center, Coords3 normal, int length, Corner... c) {
 		double f = 1.0 / length;
 
 		// // try first barycenter about parameters
@@ -2369,7 +2248,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param c1
 	 *            first corner
 	 * @param c2
@@ -2409,7 +2288,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param c1
 	 *            first corner
 	 * @param c2
@@ -2459,7 +2338,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param c1
 	 *            first corner
 	 * @param c2
@@ -2471,8 +2350,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	 * @return max distance between c1-c2 / c2-c3 / c3-c4, or POSITIVE_INFINITY
 	 *         if distance is more than maxRWDistance
 	 */
-	protected double getDistanceNoLoop(Corner c1, Corner c2, Corner c3,
-			Corner c4) {
+	protected double getDistanceNoLoop(Corner c1, Corner c2, Corner c3, Corner c4) {
 		double ret;
 		double d;
 
@@ -2502,7 +2380,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param c1
 	 *            first corner
 	 * @param c2
@@ -2555,8 +2433,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		// |det(v, w)| / v . w < MAX_BEND
 		// |det(v, w)| < MAX_BEND * (v . w)
 
-		double innerProduct = v.getXd() * w.getXd() + v.getYd() * w.getYd()
-				+ v.getZd() * w.getZd();
+		double innerProduct = v.getXd() * w.getXd() + v.getYd() * w.getYd() + v.getZd() * w.getZd();
 
 		if (innerProduct <= 0) {
 			// angle >= 90 degrees
@@ -2573,7 +2450,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param bend
 	 *            tan of max angle
 	 * @param c1
@@ -2587,7 +2464,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param bend
 	 *            tan of max angle
 	 * @param c1
@@ -2598,15 +2475,14 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	 *            third corner
 	 * @return true if angle is ok between c1-c2 and c2-c3 and c3-c1
 	 */
-	protected static boolean isAngleOK(double bend, Corner c1, Corner c2,
-			Corner c3) {
+	protected static boolean isAngleOK(double bend, Corner c1, Corner c2, Corner c3) {
 		return isAngleOK(c1.normal, c2.normal, bend)
 				&& isAngleOK(c2.normal, c3.normal, bend)
 				&& isAngleOK(c3.normal, c1.normal, bend);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param bend
 	 *            tan of max angle
 	 * @param c1
@@ -2619,8 +2495,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	 *            fourth corner
 	 * @return true if angle is ok between c1-c2 and c2-c3 and c3-c4 and c4-c1
 	 */
-	protected static boolean isAngleOK(double bend, Corner c1, Corner c2,
-			Corner c3, Corner c4) {
+	protected static boolean isAngleOK(double bend, Corner c1, Corner c2, Corner c3, Corner c4) {
 		return isAngleOK(c1.normal, c2.normal, bend)
 				&& isAngleOK(c2.normal, c3.normal, bend)
 				&& isAngleOK(c3.normal, c4.normal, bend)
@@ -2628,7 +2503,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param bend
 	 *            tan of max angle
 	 * @param c1
@@ -2641,8 +2516,8 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	 *            fourth corner
 	 * @return true if angle is ok between c1-c2 and c2-c3 and c3-c4
 	 */
-	protected static boolean isAngleOKNoLoop(double bend, Corner c1, Corner c2,
-			Corner c3, Corner c4) {
+	protected static boolean isAngleOKNoLoop(
+			double bend, Corner c1, Corner c2, Corner c3, Corner c4) {
 		return isAngleOK(c1.normal, c2.normal, bend)
 				&& isAngleOK(c2.normal, c3.normal, bend)
 				&& isAngleOK(c3.normal, c4.normal, bend);
@@ -2654,7 +2529,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		Coords3 centerNormal;
 		int id;
 
-		public CornerAndCenter(Corner corner, int id) {
+		CornerAndCenter(Corner corner, int id) {
 			center = newCoords3();
 			centerNormal = newCoords3();
 			setCorner(corner);
@@ -2663,40 +2538,39 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 		/**
 		 * set the corner
-		 * 
+		 *
 		 * @param corner
 		 *            corner
 		 */
-		public void setCorner(Corner corner) {
+		void setCorner(Corner corner) {
 			this.corner = corner;
 		}
 
 		/**
-		 * 
+		 *
 		 * @return corner
 		 */
-		public Corner getCorner() {
+		Corner getCorner() {
 			return corner;
 		}
 
 		/**
-		 * 
+		 *
 		 * @return center
 		 */
-		public Coords3 getCenter() {
+		Coords3 getCenter() {
 			return center;
 		}
 
 		/**
-		 * 
+		 *
 		 * @return center normal
 		 */
-		public Coords3 getCenterNormal() {
+		Coords3 getCenterNormal() {
 			return centerNormal;
 		}
 
-		public void drawDebug(PlotterSurface surface) {
-
+		void drawDebug(PlotterSurface surface) {
 			surface.startTrianglesWireFrame();
 			draw(surface);
 			surface.endGeometryDirect();
@@ -2704,10 +2578,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 			surface.startTrianglesWireFrameSurface();
 			draw(surface);
 			surface.endGeometryDirect();
-
 		}
 
-		public void draw(PlotterSurface surface) {
+		void draw(PlotterSurface surface) {
 			Corner p1, p2;
 
 			// go left
@@ -2813,26 +2686,25 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 				drawTriangleCheckCorners(surface, this, ne1, ne2);
 			}
 		}
-
 	}
 
 	/**
 	 * draw triangle with surface plotter
-	 * 
+	 *
 	 * @param surface
 	 *            surface plotter
 	 * @param p0
 	 *            first point
 	 * @param n0
 	 *            first point normal
-	 * 
+	 *
 	 * @param c1
 	 *            second point
 	 * @param c2
 	 *            third point
 	 */
-	protected void drawTriangle(PlotterSurface surface, Coords3 p0, Coords3 n0,
-			Corner c1, Corner c2) {
+	protected void drawTriangle(
+			PlotterSurface surface, Coords3 p0, Coords3 n0, Corner c1, Corner c2) {
 
 		surface.normalDirect(n0);
 		surface.vertexDirect(p0);
@@ -2840,12 +2712,11 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		surface.vertexDirect(c2.p);
 		surface.normalDirect(c1.normal);
 		surface.vertexDirect(c1.p);
-
 	}
 
 	/**
 	 * draws triangle between center and two corners
-	 * 
+	 *
 	 * @param surface
 	 *            surface plotter
 	 * @param cc
@@ -2855,27 +2726,26 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	 * @param c2
 	 *            second corner
 	 */
-	protected void drawTriangle(PlotterSurface surface, CornerAndCenter cc,
-			Corner c1, Corner c2) {
+	protected void drawTriangle(PlotterSurface surface, CornerAndCenter cc, Corner c1, Corner c2) {
 		drawTriangle(surface, cc.center, cc.centerNormal, c1, c2);
 	}
 
 	/**
 	 * draw triangle with surface plotter, check if second and third points are
 	 * defined
-	 * 
+	 *
 	 * @param surface
 	 *            surface plotter
 	 * @param cc
 	 *            first point and normal
-	 * 
+	 *
 	 * @param c1
 	 *            second point
 	 * @param c2
 	 *            third point
 	 */
-	final protected void drawTriangleCheckCorners(PlotterSurface surface,
-			CornerAndCenter cc, Corner c1, Corner c2) {
+	protected final void drawTriangleCheckCorners(
+			PlotterSurface surface, CornerAndCenter cc, Corner c1, Corner c2) {
 		if (c1.p.isFinalUndefined()) {
 			return;
 		}
@@ -2888,7 +2758,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 	/**
 	 * add the corner to next split array
-	 * 
+	 *
 	 * @param corner
 	 *            corner
 	 */
@@ -2898,7 +2768,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param u
 	 *            first parameter
 	 * @param v
@@ -2907,11 +2777,10 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	 *             if no new corner left in array
 	 * @return new corner calculated for parameters u, v
 	 */
-	protected Corner newCorner(double u, double v)
-			throws NotEnoughCornersException {
+	protected Corner newCorner(double u, double v) throws NotEnoughCornersException {
 		if (cornerListIndex >= cornerListSize) {
-			throw new NotEnoughCornersException(this, "Index " + cornerListIndex
-					+ " is larger than size " + cornerListSize);
+			throw new NotEnoughCornersException(
+					this, "Index " + cornerListIndex + " is larger than size " + cornerListSize);
 		}
 		Corner c = cornerList[cornerListIndex];
 		if (c == null) {
@@ -2931,8 +2800,8 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	 */
 	protected Corner newCorner() throws NotEnoughCornersException {
 		if (cornerListIndex >= cornerListSize) {
-			throw new NotEnoughCornersException(this, "Index " + cornerListIndex
-					+ " is larger than size " + cornerListSize);
+			throw new NotEnoughCornersException(
+					this, "Index " + cornerListIndex + " is larger than size " + cornerListSize);
 		}
 		Corner c = cornerList[cornerListIndex];
 		if (c == null) {
@@ -2950,8 +2819,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 			return false;
 		}
 
-		if (getGeoElement()
-				.getAlphaValue() < EuclidianController.MIN_VISIBLE_ALPHA_VALUE) {
+		if (getGeoElement().getAlphaValue() < EuclidianController.MIN_VISIBLE_ALPHA_VALUE) {
 			return false;
 		}
 
@@ -2972,54 +2840,46 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 			calculateBorders();
 		}
 		for (GeoCurveCartesian3D border : borders) {
-			isHit = curveHitting.hit(hitting, border,
-					Math.max(5, getGeoElement().getLineThickness())) || isHit;
-
+			isHit = curveHitting.hit(hitting, border, Math.max(5, getGeoElement().getLineThickness()))
+					|| isHit;
 		}
 		return isHit;
 	}
 
 	private void calculateBorders() {
 		for (int axis = 0; axis < 2; axis++) {
-			double[] paramValues = new double[] {
-					surfaceGeo.getMinParameter(axis),
-					surfaceGeo.getMaxParameter(axis) };
+			double[] paramValues =
+					new double[] {surfaceGeo.getMinParameter(axis), surfaceGeo.getMaxParameter(axis)};
 			for (int borderIndex = 0; borderIndex < 2; borderIndex++) {
-				GeoCurveCartesian3D border = setHitting(axis,
-						paramValues[borderIndex]);
+				GeoCurveCartesian3D border = setHitting(axis, paramValues[borderIndex]);
 				borders.add(border);
 			}
 		}
 	}
 
 	private GeoCurveCartesian3D setHitting(int axis, double paramValue) {
-		GeoCurveCartesian3D border = new GeoCurveCartesian3D(
-				getGeoElement().getConstruction());
+		GeoCurveCartesian3D border = new GeoCurveCartesian3D(getGeoElement().getConstruction());
 		GeoSurfaceCartesian3D geoSurface3D = (GeoSurfaceCartesian3D) getGeoElement();
 		FunctionNVar[] functions = geoSurface3D.getFunctions();
 		Function[] borderFunctions = new Function[functions.length];
 		for (int i = 0; i < functions.length; i++) {
 			Kernel kernel = geoSurface3D.getKernel();
-			ExpressionNode expr = functions[i].getFunctionExpression()
-					.deepCopy(kernel);
+			ExpressionNode expr = functions[i].getFunctionExpression().deepCopy(kernel);
 			FunctionVariable fVar = new FunctionVariable(kernel, "u");
 			expr = expr.traverse(VariableReplacer.getReplacer(
-					functions[i].getVarString(axis,
-							StringTemplate.defaultTemplate),
-					new MyDouble(kernel, paramValue), kernel)).wrap();
-			expr = expr
-					.traverse(VariableReplacer.getReplacer(
-							functions[i].getVarString(1 - axis,
-									StringTemplate.defaultTemplate),
-							fVar, kernel))
+							functions[i].getVarString(axis, StringTemplate.defaultTemplate),
+							new MyDouble(kernel, paramValue),
+							kernel))
+					.wrap();
+			expr = expr.traverse(VariableReplacer.getReplacer(
+							functions[i].getVarString(1 - axis, StringTemplate.defaultTemplate), fVar, kernel))
 					.wrap();
 			borderFunctions[i] = new Function(expr, fVar);
 		}
 		border.setFun(borderFunctions);
-		border.setInterval(geoSurface3D.getMinParameter(1 - axis),
-				geoSurface3D.getMaxParameter(1 - axis));
+		border.setInterval(
+				geoSurface3D.getMinParameter(1 - axis), geoSurface3D.getMaxParameter(1 - axis));
 		return border;
-
 	}
 
 	private boolean hitFunction2Var(Hitting hitting) {
@@ -3027,7 +2887,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 
 		hitting.calculateClippedValues();
 		if (Double.isNaN(hitting.x0)) { // hitting doesn't intersect
-										// clipping box
+			// clipping box
 			resetLastHitParameters(geoF);
 			return false;
 		}
@@ -3035,24 +2895,22 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		double[][] xyzf = geoF.getXYZF();
 
 		// compute samples from xyz0 to xyz1, try to find consecutive +/-
-		geoF.setXYZ(hitting.x0, hitting.y0, hitting.z0,
-				xyzf[GeoFunctionNVar.DICHO_LAST]);
+		geoF.setXYZ(hitting.x0, hitting.y0, hitting.z0, xyzf[GeoFunctionNVar.DICHO_LAST]);
 		boolean isLessZ0 = false, isLessZ1;
 		isLessZ1 = GeoFunctionNVar.isLessZ(xyzf[GeoFunctionNVar.DICHO_LAST]);
-		double t = 0;
 
 		for (int i = 1; i <= HIT_SAMPLES; i++) {
 			double[] tmp = xyzf[GeoFunctionNVar.DICHO_FIRST];
 			xyzf[GeoFunctionNVar.DICHO_FIRST] = xyzf[GeoFunctionNVar.DICHO_LAST];
 			xyzf[GeoFunctionNVar.DICHO_LAST] = tmp;
-			t = i * DELTA_SAMPLES;
-			geoF.setXYZ(hitting.x0 * (1 - t) + hitting.x1 * t,
+			double t = i * DELTA_SAMPLES;
+			geoF.setXYZ(
+					hitting.x0 * (1 - t) + hitting.x1 * t,
 					hitting.y0 * (1 - t) + hitting.y1 * t,
 					hitting.z0 * (1 - t) + hitting.z1 * t,
 					xyzf[GeoFunctionNVar.DICHO_LAST]);
 			isLessZ0 = isLessZ1;
-			isLessZ1 = GeoFunctionNVar
-					.isLessZ(xyzf[GeoFunctionNVar.DICHO_LAST]);
+			isLessZ1 = GeoFunctionNVar.isLessZ(xyzf[GeoFunctionNVar.DICHO_LAST]);
 			if (isLessZ0 ^ isLessZ1) {
 				break; // found
 			}
@@ -3064,12 +2922,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 				resetLastHitParameters(geoF);
 				return false;
 			}
-			double dx = xyzf[GeoFunctionNVar.DICHO_FIRST][0]
-					- hitting.getOrigin().getX();
-			double dy = xyzf[GeoFunctionNVar.DICHO_FIRST][1]
-					- hitting.getOrigin().getY();
-			double dz = xyzf[GeoFunctionNVar.DICHO_FIRST][2]
-					- hitting.getOrigin().getZ();
+			double dx = xyzf[GeoFunctionNVar.DICHO_FIRST][0] - hitting.getOrigin().getX();
+			double dy = xyzf[GeoFunctionNVar.DICHO_FIRST][1] - hitting.getOrigin().getY();
+			double dz = xyzf[GeoFunctionNVar.DICHO_FIRST][2] - hitting.getOrigin().getZ();
 			double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
 			setZPick(-d, -d, hitting.discardPositiveHits(), d);
 			setLastHitParameters(geoF, false);
@@ -3077,12 +2932,9 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		}
 
 		if (isLessZ1) {
-			double dx = xyzf[GeoFunctionNVar.DICHO_FIRST][0]
-					- hitting.getOrigin().getX();
-			double dy = xyzf[GeoFunctionNVar.DICHO_FIRST][1]
-					- hitting.getOrigin().getY();
-			double dz = xyzf[GeoFunctionNVar.DICHO_FIRST][2]
-					- hitting.getOrigin().getZ();
+			double dx = xyzf[GeoFunctionNVar.DICHO_FIRST][0] - hitting.getOrigin().getX();
+			double dy = xyzf[GeoFunctionNVar.DICHO_FIRST][1] - hitting.getOrigin().getY();
+			double dz = xyzf[GeoFunctionNVar.DICHO_FIRST][2] - hitting.getOrigin().getZ();
 			double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
 			setZPick(-d, -d, hitting.discardPositiveHits(), d);
 			setLastHitParameters(geoF, true);
@@ -3093,8 +2945,7 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 		return false;
 	}
 
-	private static void setLastHitParameters(GeoFunctionNVar geoF,
-			boolean swap) {
+	private static void setLastHitParameters(GeoFunctionNVar geoF, boolean swap) {
 		geoF.setLastHitParameters(swap);
 	}
 
@@ -3137,13 +2988,11 @@ public class DrawSurface3D extends Drawable3DSurfaces implements HasZPick {
 	}
 
 	@Override
-	public void setZPickIfBetter(double zNear, double zFar,
-			boolean discardPositive, double positionOnHitting) {
-		if (!needsDiscardZPick(discardPositive, zNear, zFar)
-				&& (zNear > getZPickNear())) {
+	public void setZPickIfBetter(
+			double zNear, double zFar, boolean discardPositive, double positionOnHitting) {
+		if (!needsDiscardZPick(discardPositive, zNear, zFar) && (zNear > getZPickNear())) {
 			setZPickValue(zNear, zFar);
 			setPositionOnHitting(positionOnHitting);
 		}
 	}
-
 }

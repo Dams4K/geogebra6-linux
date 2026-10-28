@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import java.util.ArrayList;
@@ -10,6 +26,7 @@ import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoImage;
 import org.geogebra.common.kernel.geos.GeoList;
 import org.geogebra.common.main.App;
+import org.geogebra.common.properties.impl.objects.PlacementProperty;
 
 public class AbsoluteScreenLocationModel extends BooleanOptionModel {
 
@@ -38,8 +55,7 @@ public class AbsoluteScreenLocationModel extends BooleanOptionModel {
 
 			// geo could be redefined, so need to change geos[i] to
 			// new geo
-			EuclidianStyleBarStatic.applyFixPosition(al, value,
-					app.getActiveEuclidianView());
+			EuclidianStyleBarStatic.applyFixPosition(al, value, app.getActiveEuclidianView());
 		}
 		storeUndoInfo();
 	}
@@ -49,8 +65,8 @@ public class AbsoluteScreenLocationModel extends BooleanOptionModel {
 		return "AbsoluteScreenLocation";
 	}
 
-	public static void setAbsolute(AbsoluteScreenLocateable geo,
-			boolean value, EuclidianViewInterfaceCommon ev) {
+	public static void setAbsolute(
+			AbsoluteScreenLocateable geo, boolean value, EuclidianViewInterfaceCommon ev) {
 		if (value) {
 			if (!geo.isAbsoluteScreenLocActive()) {
 				// convert real world to screen coords
@@ -76,11 +92,12 @@ public class AbsoluteScreenLocationModel extends BooleanOptionModel {
 	@Override
 	public boolean isValidAt(int index) {
 		GeoElement geo = getGeoAt(index);
-		if (geo instanceof AbsoluteScreenLocateable) {
-			AbsoluteScreenLocateable absLoc = (AbsoluteScreenLocateable) geo;
-			if (!absLoc.isAbsoluteScreenLocateable() || geo.isGeoBoolean()
-					|| geo instanceof GeoList || (geo instanceof GeoImage
-							&& ((GeoImage) geo).isCentered())) {
+		if (geo instanceof AbsoluteScreenLocateable absLoc) {
+			if (!absLoc.isAbsoluteScreenLocateable()
+					|| geo.isGeoBoolean()
+					|| geo instanceof GeoList
+					|| (geo instanceof GeoImage && ((GeoImage) geo).isCentered())
+					|| PlacementProperty.isDependentTextCommand(geo)) {
 
 				return false;
 			}
@@ -90,5 +107,4 @@ public class AbsoluteScreenLocationModel extends BooleanOptionModel {
 		// whiteboard: no abs position for texts or images
 		return !geo.getKernel().getApplication().isWhiteboardActive();
 	}
-
 }

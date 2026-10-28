@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.algos;
 
 import org.geogebra.common.kernel.Construction;
@@ -25,15 +41,12 @@ public class FunctionNvarFold implements FoldComputer {
 
 	@Override
 	public void add(GeoElement geoElement, Operation op) {
-		FunctionNVar fn = GeoFunction
-				.operationSymb(op, result, (FunctionalNVar) geoElement)
+		FunctionNVar fn = GeoFunction.operationSymb(op, result, (FunctionalNVar) geoElement)
 				.deepCopy(geoElement.getKernel());
-		fn.setExpression(AlgoDependentFunction
-				.expandFunctionDerivativeNodes(fn.getExpression(), true)
+		fn.setExpression(AlgoDependentFunction.expandFunctionDerivativeNodes(fn.getExpression(), true)
 				.wrap());
 		result.setFunction(fn);
 		this.result.setDefined(true);
-
 	}
 
 	@Override
@@ -51,5 +64,4 @@ public class FunctionNvarFold implements FoldComputer {
 	public void finish() {
 		this.result.setDefined(true);
 	}
-
 }

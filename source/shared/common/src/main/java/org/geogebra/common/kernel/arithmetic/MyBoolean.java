@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.arithmetic;
@@ -21,19 +25,20 @@ import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.commands.EvalInfo;
 import org.geogebra.common.kernel.geos.GeoBoolean;
 import org.geogebra.common.kernel.geos.GeoElement;
+import org.geogebra.common.main.Localization;
 
 import com.google.j2objc.annotations.Weak;
 
 /**
  * Helper class to evaluate expressions with GeoBoolean objects in it.
- * 
+ *
  * @see ExpressionNode#evaluate(StringTemplate)
  * @author Markus Hohenwarter
  */
-public class MyBoolean extends ValidExpression
-		implements BooleanValue, NumberValue {
+public class MyBoolean extends ValidExpression implements BooleanValue, NumberValue {
 
 	private boolean value;
+
 	@Weak
 	private Kernel kernel;
 
@@ -42,7 +47,7 @@ public class MyBoolean extends ValidExpression
 
 	/**
 	 * Creates new boolean
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 * @param value
@@ -64,16 +69,15 @@ public class MyBoolean extends ValidExpression
 	public MyBoolean(Kernel kernel, boolean value, boolean defined) {
 		this(kernel, value);
 		this.isDefined = defined;
-
 	}
 
 	/**
 	 * Sets value of this boolean
-	 * 
+	 *
 	 * @param value
 	 *            new value
 	 */
-	final public void setValue(boolean value) {
+	public final void setValue(boolean value) {
 		this.value = value;
 	}
 
@@ -88,7 +92,7 @@ public class MyBoolean extends ValidExpression
 	}
 
 	@Override
-	final public boolean isLeaf() {
+	public final boolean isLeaf() {
 		return true;
 	}
 
@@ -98,7 +102,7 @@ public class MyBoolean extends ValidExpression
 	}
 
 	@Override
-	final public boolean isNumberValue() {
+	public final boolean isNumberValue() {
 		return true;
 	}
 
@@ -113,27 +117,27 @@ public class MyBoolean extends ValidExpression
 	}
 
 	@Override
-	final public String toValueString(StringTemplate tpl) {
+	public final String toValueString(StringTemplate tpl) {
 		return toString(tpl);
 	}
 
 	@Override
-	final public String toLaTeXString(boolean symbolic, StringTemplate tpl) {
+	public final String toLaTeXString(boolean symbolic, StringTemplate tpl) {
 		return toString(tpl);
 	}
 
 	@Override
-	final public boolean contains(ExpressionValue ev) {
+	public final boolean contains(ExpressionValue ev) {
 		return ev == this;
 	}
 
 	@Override
-	final public MyBoolean getMyBoolean() {
+	public final MyBoolean getMyBoolean() {
 		return new MyBoolean(kernel, value);
 	}
 
 	@Override
-	final public boolean getBoolean() {
+	public final boolean getBoolean() {
 		return value;
 	}
 
@@ -155,6 +159,11 @@ public class MyBoolean extends ValidExpression
 	 */
 	public Kernel getKernel() {
 		return kernel;
+	}
+
+	@Override
+	public Localization getLocalization() {
+		return kernel.getLocalization();
 	}
 
 	@Override

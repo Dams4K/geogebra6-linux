@@ -1,16 +1,20 @@
-package org.geogebra.common.kernel.statistics;
-
-/* 
- GeoGebra - Dynamic Mathematics for Everyone
- http://www.geogebra.org
-
- This file is part of GeoGebra.
-
- This program is free software; you can redistribute it and/or modify it 
- under the terms of the GNU General Public License as published by 
- the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
+
+package org.geogebra.common.kernel.statistics;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.DecompositionSolver;
@@ -30,13 +34,13 @@ import org.geogebra.common.util.debug.Log;
  * AlgoFit A general linear curvefit: Fit[&lt;List of Points&gt;,&lt;List of
  * Functions&gt;] Example: f(x)=1, g(x)=x, h(x)=e^x L={A,B,...} c(x)=Fit[L,{f,g,h}]
  * will give a least square curvefit: c(x)= a+b*x+c*e^x
- * 
+ *
  * Simple test procedure: Make points A,B, ... L={A,B,...} f(x)=1, g(x)=x,
  * h(x)=x^2,... =x^n F={f,g,h,...} right(x)=Regpoly[L,n] fit(x)=Fit[L,F]
- * 
+ *
  * The solution is the usual: M_t*M*X=M_t*Y, the solution of overdetermined
  * linear equation systems..
- * 
+ *
  * @author Hans-Petter Ulven
  * @version 2010-02-23
  */
@@ -62,8 +66,7 @@ public class AlgoFit extends AlgoElement implements FitAlgo {
 	 * @param functionlist
 	 *            lists of functions that can be used in result
 	 */
-	public AlgoFit(Construction cons, GeoList pointlist,
-			GeoList functionlist) {
+	public AlgoFit(Construction cons, GeoList pointlist, GeoList functionlist) {
 		super(cons);
 
 		this.pointlist = pointlist;
@@ -115,7 +118,8 @@ public class AlgoFit extends AlgoElement implements FitAlgo {
 		matP = new Array2DRowRealMatrix(functionsize, 1); // Solution parameters
 
 		if (!pointlist.isDefined() // Lot of things can go wrong...
-				|| !functionlist.isDefined() || (functionsize > datasize)) {
+				|| !functionlist.isDefined()
+				|| (functionsize > datasize)) {
 			// Perhaps a max restriction of functions and data?
 			// Even if noone would try 500 datapoints and 100 functions...
 			fitfunction.setUndefined();
@@ -141,8 +145,7 @@ public class AlgoFit extends AlgoElement implements FitAlgo {
 			if (solver.isNonSingular()) {
 				matP = solver.solve(matY);
 
-				fitfunction = functionarray.makeFunction(fitfunction,
-						functionlist, matP);
+				fitfunction = functionarray.makeFunction(fitfunction, functionlist, matP);
 
 			} else {
 				fitfunction.setUndefined();
@@ -161,35 +164,29 @@ public class AlgoFit extends AlgoElement implements FitAlgo {
 	}
 
 	// Get info from lists into matrixes and functionarray
-	private final boolean makeMatrixes() {
-		GeoElement geo = null;
-		GeoPointND point = null;
-
+	private boolean makeMatrixes() {
 		// Make array of functions:
 		for (int i = 0; i < functionsize; i++) {
-			geo = functionlist.get(i);
+			GeoElement geo = functionlist.get(i);
 			if (!functionarray.set(i, geo)) {
 				return false;
 			}
 		} // for all functions
-			// Make matrixes with the right values: M*P=Y
+		// Make matrixes with the right values: M*P=Y
 		matM = new Array2DRowRealMatrix(datasize, functionsize);
 		matY = new Array2DRowRealMatrix(datasize, 1);
 		for (int r = 0; r < datasize; r++) {
-			geo = pointlist.get(r);
+			GeoElement geo = pointlist.get(r);
 			if (!geo.isGeoPoint()) {
 				// throw (new Exception("Not points in function list..."));
 				return false;
 			} // if not point
-			point = (GeoPointND) geo;
+			GeoPointND point = (GeoPointND) geo;
 			matY.setEntry(r, 0, functionarray.extractValueCoord(point));
 			for (int c = 0; c < functionsize; c++) {
 				matM.setEntry(r, c, functionarray.evaluate(c, point));
 			}
-		} // for rows (=datapoints)
-			// mprint("M:",M);
-			// mprint(Y:",Y);
-
+		}
 		return true;
 	}
 
@@ -203,5 +200,4 @@ public class AlgoFit extends AlgoElement implements FitAlgo {
 
 		return ret;
 	}
-
 }

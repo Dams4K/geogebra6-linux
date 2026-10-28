@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -20,11 +24,10 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
 
 /**
  * Remove undefined objects from a list.
- * 
+ *
  * @author Michael Borcherds
  * @version 2008-03-04
  */
-
 public class AlgoRemoveUndefined extends AlgoElement {
 
 	private GeoList inputList; // input
@@ -33,7 +36,7 @@ public class AlgoRemoveUndefined extends AlgoElement {
 
 	/**
 	 * Creates new undefined removal algo.
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -41,8 +44,7 @@ public class AlgoRemoveUndefined extends AlgoElement {
 	 * @param inputList
 	 *            list to be filtered
 	 */
-	public AlgoRemoveUndefined(Construction cons, String label,
-			GeoList inputList) {
+	public AlgoRemoveUndefined(Construction cons, String label, GeoList inputList) {
 		super(cons);
 		this.inputList = inputList;
 
@@ -74,7 +76,7 @@ public class AlgoRemoveUndefined extends AlgoElement {
 
 	/**
 	 * Returns the pruned list
-	 * 
+	 *
 	 * @return pruned list
 	 */
 	public GeoList getResult() {
@@ -108,12 +110,12 @@ public class AlgoRemoveUndefined extends AlgoElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param geo
 	 *            geo
 	 * @return true if geo is defined (and finite for a point)
 	 */
-	static final public boolean isDefined(GeoElement geo) {
+	public static boolean isDefined(GeoElement geo) {
 
 		boolean isDefined = geo.isDefined();
 
@@ -125,5 +127,4 @@ public class AlgoRemoveUndefined extends AlgoElement {
 
 		return isDefined;
 	}
-
 }

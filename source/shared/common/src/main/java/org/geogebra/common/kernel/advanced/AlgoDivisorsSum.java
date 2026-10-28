@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.advanced;
 
 import org.geogebra.common.kernel.Construction;
@@ -29,8 +45,7 @@ public class AlgoDivisorsSum extends AlgoElement {
 	 * @param sum
 	 *            true to compute divisor sum, otherwise count divisors
 	 */
-	public AlgoDivisorsSum(Construction c, String label, GeoNumberValue number,
-			boolean sum) {
+	public AlgoDivisorsSum(Construction c, String label, GeoNumberValue number, boolean sum) {
 		super(c);
 		this.number = number;
 		this.sum = sum;
@@ -45,7 +60,7 @@ public class AlgoDivisorsSum extends AlgoElement {
 	@Override
 	protected void setInputOutput() {
 		setOnlyOutput(result);
-		input = new GeoElement[] { number.toGeoElement() };
+		input = new GeoElement[] {number.toGeoElement()};
 		setDependencies();
 	}
 
@@ -62,8 +77,7 @@ public class AlgoDivisorsSum extends AlgoElement {
 			if (sum) {
 				double prime = pair.get(0).evaluateDouble();
 				Log.debug(prime);
-				res = res * Math
-						.round((Math.pow(prime, exp + 1) - 1) / (prime - 1.0));
+				res = res * Math.round((Math.pow(prime, exp + 1) - 1) / (prime - 1.0));
 			} else {
 				res = res * Math.round(exp + 1);
 			}
@@ -82,5 +96,4 @@ public class AlgoDivisorsSum extends AlgoElement {
 		}
 		return Commands.Divisors;
 	}
-
 }

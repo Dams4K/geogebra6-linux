@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.keyboard.web.factory.model.inputbox.math;
 
 import static org.geogebra.keyboard.base.model.impl.factory.Util.addButton;
@@ -6,6 +22,7 @@ import static org.geogebra.keyboard.base.model.impl.factory.Util.addInputButton;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.geogebra.editor.share.input.FunctionVariableAdapter;
 import org.geogebra.keyboard.base.model.KeyboardModel;
 import org.geogebra.keyboard.base.model.KeyboardModelFactory;
 import org.geogebra.keyboard.base.model.impl.KeyboardModelImpl;
@@ -14,8 +31,6 @@ import org.geogebra.keyboard.base.model.impl.factory.ButtonFactory;
 import org.geogebra.keyboard.base.model.impl.factory.NumberKeyUtil;
 import org.geogebra.keyboard.web.factory.model.inputbox.util.Cursive;
 import org.geogebra.keyboard.web.factory.model.inputbox.util.MathKeyUtil;
-
-import com.himamis.retex.editor.share.input.FunctionVariableAdapter;
 
 public class FunctionMathKeyboardFactory implements KeyboardModelFactory {
 	private final List<String> vars;
@@ -55,11 +70,10 @@ public class FunctionMathKeyboardFactory implements KeyboardModelFactory {
 		getVarsLimited().forEach(varName -> {
 			String cursiveBoldLetter = Cursive.getCursiveCaption(varName);
 			String buttonCaption = cursiveBoldLetter == null ? varName : cursiveBoldLetter;
-			addInputButton(row, buttonFactory, buttonCaption,
-					FunctionVariableAdapter.wrap(varName));
+			addInputButton(row, buttonFactory, buttonCaption, FunctionVariableAdapter.wrap(varName));
 		});
-		addButton(row, buttonFactory.createEmptySpace(
-				vars.size() > MAX_VARS ? 0.2f : 4.2f - vars.size()));
+		addButton(
+				row, buttonFactory.createEmptySpace(vars.size() > MAX_VARS ? 0.2f : 4.2f - vars.size()));
 	}
 
 	private Stream<String> getVarsLimited() {

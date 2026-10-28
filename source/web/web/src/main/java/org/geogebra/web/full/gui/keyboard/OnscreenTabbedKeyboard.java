@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.keyboard;
 
 import org.geogebra.common.euclidian.event.PointerEventType;
@@ -17,11 +33,10 @@ import org.geogebra.web.html5.util.CSSEvents;
 
 /**
  * Web implementation of onscreen keyboard
- * 
+ *
  * @author Zbynek, based on Balazs's cross-platform model
  */
-public class OnscreenTabbedKeyboard extends TabbedKeyboard
-		implements VirtualKeyboardGUI {
+public final class OnscreenTabbedKeyboard extends TabbedKeyboard implements VirtualKeyboardGUI {
 
 	private InputBarHelpPopup helpPopup = null;
 
@@ -35,18 +50,17 @@ public class OnscreenTabbedKeyboard extends TabbedKeyboard
 		super(app, hasMoreButton);
 		ClickStartHandler.initDefaults(this, true, true);
 	}
-	
+
 	private void createHelpPopup() {
 		if (helpPopup != null) {
 			return;
 		}
 		AlgebraViewW av = (AlgebraViewW) ((AppW) hasKeyboard).getAlgebraView();
-		helpPopup = new InputBarHelpPopup((AppW) hasKeyboard,
-				av != null ? av.getInputTreeItem() : null,
-				"helpPopupAV");
+		helpPopup = new InputBarHelpPopup(
+				(AppW) hasKeyboard, av != null ? av.getInputTreeItem() : null, "helpPopupAV");
 		helpPopup.addAutoHidePartner(this.getElement());
 	}
-	
+
 	@Override
 	public void show() {
 		this.keyboardWanted = true;
@@ -92,10 +106,13 @@ public class OnscreenTabbedKeyboard extends TabbedKeyboard
 	@Override
 	public void remove(final Runnable runnable) {
 		this.addStyleName("animatingOut");
-		CSSEvents.runOnAnimation(() -> {
-			setVisible(false);
-			runnable.run();
-		}, getElement(), "animatingOut");
+		CSSEvents.runOnAnimation(
+				() -> {
+					setVisible(false);
+					runnable.run();
+				},
+				getElement(),
+				"animatingOut");
 	}
 
 	@Override
@@ -104,17 +121,15 @@ public class OnscreenTabbedKeyboard extends TabbedKeyboard
 		if (!show) {
 			createHelpPopup();
 			GuiManagerInterfaceW gm = ((AppW) hasKeyboard).getGuiManager();
-			InputBarHelpPanelW helpPanel = (InputBarHelpPanelW) gm
-					.getInputHelpPanel();
+			InputBarHelpPanelW helpPanel = (InputBarHelpPanelW) gm.getInputHelpPanel();
 			updateHelpPosition(helpPanel, x, y);
-			
+
 		} else if (helpPopup != null) {
 			helpPopup.hide();
 		}
 	}
-	
-	private void updateHelpPosition(final InputBarHelpPanelW helpPanel,
-			final int x, final int y) {
+
+	private void updateHelpPosition(final InputBarHelpPanelW helpPanel, final int x, final int y) {
 		helpPopup.setPopupPositionAndShow(
 				(offsetWidth, offsetHeight) -> doUpdateHelpPosition(helpPanel, x, y));
 	}
@@ -127,34 +142,30 @@ public class OnscreenTabbedKeyboard extends TabbedKeyboard
 	 * @param y
 	 *            popup y-coord
 	 */
-	protected void doUpdateHelpPosition(final InputBarHelpPanelW helpPanel,
-			final int x, final int y) {
+	private void doUpdateHelpPosition(final InputBarHelpPanelW helpPanel, final int x, final int y) {
 		AppW appw = (AppW) hasKeyboard;
 		double scale = appw.getGeoGebraElement().getScaleX();
-		double renderScale = appw.getAppletParameters().getDataParamApp() ? scale
-				: 1;
-		double left = x - appw.getAbsLeft()
-				- helpPanel.getPreferredWidth(scale);
+		double renderScale = appw.getAppletParameters().getDataParamApp() ? scale : 1;
+		double left = x - appw.getAbsLeft() - helpPanel.getPreferredWidth(scale);
 
-		helpPopup.getElement().getStyle().setProperty("left",
-				left * renderScale + "px");
+		helpPopup.getElement().getStyle().setProperty("left", left * renderScale + "px");
 		int maxOffsetHeight;
 		int totalHeight = (int) appw.getHeight();
 		int toggleButtonTop = (int) ((y - (int) appw.getAbsTop()) / scale);
 		if (toggleButtonTop < totalHeight / 2) {
 			maxOffsetHeight = totalHeight - toggleButtonTop;
-			helpPopup.getElement().getStyle().setProperty("top",
-					toggleButtonTop * renderScale + "px");
+			helpPopup.getElement().getStyle().setProperty("top", toggleButtonTop * renderScale + "px");
 			helpPopup.getElement().getStyle().setProperty("bottom", "auto");
 			helpPopup.removeStyleName("helpPopupAVBottom");
 			helpPopup.addStyleName("helpPopupAV");
 		} else {
 			int minBottom = appw.isApplet() ? 0 : 10;
 			int bottom = totalHeight - toggleButtonTop;
-			maxOffsetHeight = bottom > 0 ? totalHeight - bottom
-					: totalHeight - minBottom;
-			helpPopup.getElement().getStyle().setProperty("bottom",
-					(bottom > 0 ? bottom : minBottom) * renderScale + "px");
+			maxOffsetHeight = bottom > 0 ? totalHeight - bottom : totalHeight - minBottom;
+			helpPopup
+					.getElement()
+					.getStyle()
+					.setProperty("bottom", (bottom > 0 ? bottom : minBottom) * renderScale + "px");
 			helpPopup.getElement().getStyle().setProperty("top", "auto");
 			helpPopup.removeStyleName("helpPopupAV");
 			helpPopup.addStyleName("helpPopupAVBottom");
@@ -166,5 +177,11 @@ public class OnscreenTabbedKeyboard extends TabbedKeyboard
 	@Override
 	public void addAutoHidePartner(GPopupPanel popup) {
 		popup.addAutoHidePartner(getElement());
+	}
+
+	@Override
+	public void finishAnimation() {
+		removeStyleName("animating");
+		removeStyleName("animatingOut");
 	}
 }

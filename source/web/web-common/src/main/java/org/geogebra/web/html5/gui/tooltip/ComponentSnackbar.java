@@ -1,6 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.tooltip;
 
 import org.geogebra.common.ownership.GlobalScope;
+import org.geogebra.web.html5.gui.BaseWidgetFactory;
 import org.geogebra.web.html5.gui.util.AriaHelper;
 import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.main.AppW;
@@ -71,10 +88,9 @@ public class ComponentSnackbar extends FlowPanel {
 		add(textContainer);
 
 		if (toolTip.buttonTransKey != null) {
-			actionBtn = new StandardButton(app.getLocalization()
-					.getMenu(toolTip.buttonTransKey));
-			actionBtn.addStyleName("materialTextButton");
-			if (shouldAddButton(toolTip)) {
+			actionBtn = BaseWidgetFactory.INSTANCE.newTextButton(
+					app.getLocalization().getMenu(toolTip.buttonTransKey));
+			if (shouldAddButton(toolTip, app)) {
 				add(actionBtn);
 			}
 			actionBtn.addFastClickHandler(source -> {
@@ -88,11 +104,10 @@ public class ComponentSnackbar extends FlowPanel {
 
 	/**
 	 * @param toolTip - tooltip data
-	 * @return whether should add button, dont allow redirects in exam mode
+	 * @return whether to add button, depends on exam mode (to disallow redirects)
 	 */
-	private boolean shouldAddButton(ToolTip toolTip) {
-		return GlobalScope.examController.isIdle()
-				|| "Share".equals(toolTip.buttonTransKey);
+	private boolean shouldAddButton(ToolTip toolTip, AppW app) {
+		return !GlobalScope.isExamActive(app) || "Share".equals(toolTip.buttonTransKey);
 	}
 
 	/**

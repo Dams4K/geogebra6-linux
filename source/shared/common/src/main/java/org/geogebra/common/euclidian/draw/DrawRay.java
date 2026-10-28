@@ -1,25 +1,24 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * DrawSegment
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 21. 8 . 2003
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GBasicStroke;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.GLine2D;
@@ -29,7 +28,6 @@ import org.geogebra.common.euclidian.EuclidianStatic;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.Previewable;
 import org.geogebra.common.euclidian.clipping.ClipLine;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.ConstructionDefaults;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.kernelND.GeoLineND;
@@ -38,7 +36,7 @@ import org.geogebra.common.kernel.matrix.Coords;
 import org.geogebra.common.util.MyMath;
 
 /**
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class DrawRay extends SetDrawable implements Previewable {
@@ -59,7 +57,7 @@ public class DrawRay extends SetDrawable implements Previewable {
 
 	/**
 	 * Creates new DrawRay
-	 * 
+	 *
 	 * @param view
 	 *            view
 	 * @param ray
@@ -75,7 +73,7 @@ public class DrawRay extends SetDrawable implements Previewable {
 
 	/**
 	 * Creates a new DrawSegment for preview.
-	 * 
+	 *
 	 * @param view
 	 *            view
 	 * @param points
@@ -85,14 +83,16 @@ public class DrawRay extends SetDrawable implements Previewable {
 		this.view = view;
 		this.points = points;
 
-		geo = view.getKernel().getConstruction().getConstructionDefaults()
+		geo = view.getKernel()
+				.getConstruction()
+				.getConstructionDefaults()
 				.getDefaultGeo(ConstructionDefaults.DEFAULT_RAY);
 
 		updatePreview();
 	}
 
 	@Override
-	final public void update() {
+	public final void update() {
 		update(true);
 	}
 
@@ -121,7 +121,6 @@ public class DrawRay extends SetDrawable implements Previewable {
 			tmpCoords2.setX(equation.getY());
 			tmpCoords2.setY(-equation.getX());
 			update(A, tmpCoords2, showLabel);
-
 		}
 	}
 
@@ -177,7 +176,6 @@ public class DrawRay extends SetDrawable implements Previewable {
 			yLabel = (int) (a[1] + v[1] / 2.0 + ny * unit);
 			addLabelOffset();
 		}
-
 	}
 
 	private void setClippedLine() {
@@ -207,13 +205,15 @@ public class DrawRay extends SetDrawable implements Previewable {
 
 		if (onscreenA) {
 			// A on screen
-			line.setLine(a[0], a[1], a[0] + lambda * v[0],
-					a[1] + lambda * v[1]);
+			line.setLine(a[0], a[1], a[0] + lambda * v[0], a[1] + lambda * v[1]);
 		} else {
 			// A off screen
 			// clip ray at screen, that's important for huge coordinates of A
-			GPoint2D[] clippedPoints = ClipLine.getClipped(a[0], a[1],
-					a[0] + lambda * v[0], a[1] + lambda * v[1],
+			GPoint2D[] clippedPoints = ClipLine.getClipped(
+					a[0],
+					a[1],
+					a[0] + lambda * v[0],
+					a[1] + lambda * v[1],
 					view.getMinXScreen() - EuclidianStatic.CLIP_DISTANCE,
 					view.getMaxXScreen() + EuclidianStatic.CLIP_DISTANCE,
 					view.getMinYScreen() - EuclidianStatic.CLIP_DISTANCE,
@@ -222,14 +222,17 @@ public class DrawRay extends SetDrawable implements Previewable {
 			if (clippedPoints == null) {
 				isVisible = false;
 			} else {
-				line.setLine(clippedPoints[0].getX(), clippedPoints[0].getY(),
-						clippedPoints[1].getX(), clippedPoints[1].getY());
+				line.setLine(
+						clippedPoints[0].getX(),
+						clippedPoints[0].getY(),
+						clippedPoints[1].getX(),
+						clippedPoints[1].getY());
 			}
 		}
 	}
 
 	@Override
-	final public void draw(GGraphics2D g2) {
+	public final void draw(GGraphics2D g2) {
 		if (isVisible) {
 			if (isHighlighted()) {
 				g2.setPaint(geo.getSelColor());
@@ -253,56 +256,52 @@ public class DrawRay extends SetDrawable implements Previewable {
 	 * @param objStroke
 	 *            stroke
 	 */
-	final public void setStroke(GBasicStroke objStroke) {
+	public final void setStroke(GBasicStroke objStroke) {
 		this.objStroke = objStroke;
 	}
 
 	@Override
-	final public void drawTrace(GGraphics2D g2) {
+	public final void drawTrace(GGraphics2D g2) {
 		g2.setPaint(getObjectColor());
 		g2.setStroke(objStroke);
 		g2.draw(line);
 	}
 
 	@Override
-	final public void updatePreview() {
+	public final void updatePreview() {
 		isVisible = points.size() == 1;
 		if (isVisible) {
 			// start point
 			// Coords coords = ((GeoPointND)
 			// points.get(0)).getInhomCoordsInD2();
-			Coords coords = view
-					.getCoordsForView(points.get(0).getInhomCoordsInD3());
+			Coords coords = view.getCoordsForView(points.get(0).getInhomCoordsInD3());
 			coords.get(a);
 			view.toScreenCoords(a);
 		}
 	}
 
 	@Override
-	final public void updateMousePos(double mouseRWx, double mouseRWy) {
+	public final void updateMousePos(double mouseRWx, double mouseRWy) {
 		double xRW = mouseRWx;
 		double yRW = mouseRWy;
 		GeoPointND startPoint = points != null && points.size() > 0 ? points.get(0) : null;
 
 		if (isVisible) {
-			if (startPoint != null && !(startPoint.getInhomX() == xRW
-					&& startPoint.getInhomY() == yRW)) {
+			if (startPoint != null && !(startPoint.getInhomX() == xRW && startPoint.getInhomY() == yRW)) {
 				// need these as we don't want rounding when Alt pressed (nearest 15
 				// degrees)
 				double xx = view.toScreenCoordX(xRW);
 				double yy = view.toScreenCoordY(yRW);
 
 				// round angle to nearest 15 degrees if alt pressed
-				if (points.size() == 1
-						&& view.getEuclidianController().isAltDown()) {
+				if (points.size() == 1 && view.getEuclidianController().isAltDown()) {
 					// double xRW = view.toRealWorldCoordX(x);
 					// double yRW = view.toRealWorldCoordY(y);
 					GeoPointND p = points.get(0);
 					double px = p.getInhomX();
 					double py = p.getInhomY();
 					double angle = Math.atan2(yRW - py, xRW - px) * 180 / Math.PI;
-					double radius = Math.sqrt(
-							(py - yRW) * (py - yRW) + (px - xRW) * (px - xRW));
+					double radius = Math.sqrt((py - yRW) * (py - yRW) + (px - xRW) * (px - xRW));
 
 					// round angle to nearest 15 degrees
 					angle = Math.round(angle / 15) * 15;
@@ -335,7 +334,7 @@ public class DrawRay extends SetDrawable implements Previewable {
 	}
 
 	@Override
-	final public void drawPreview(GGraphics2D g2) {
+	public final void drawPreview(GGraphics2D g2) {
 		if (isVisible && isPreviewVisible) {
 			g2.setPaint(getObjectColor());
 			updateStrokes(geo);
@@ -350,13 +349,12 @@ public class DrawRay extends SetDrawable implements Previewable {
 	}
 
 	@Override
-	final public boolean hit(int x, int y, int hitThreshold) {
-		return line.intersects(x - hitThreshold, y - hitThreshold,
-				2 * hitThreshold, 2 * hitThreshold);
+	public final boolean hit(int x, int y, int hitThreshold) {
+		return line.intersects(x - hitThreshold, y - hitThreshold, 2 * hitThreshold, 2 * hitThreshold);
 	}
 
 	@Override
-	final public boolean isInside(GRectangle rect) {
+	public final boolean isInside(GRectangle rect) {
 		return false;
 	}
 

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.geos;
 
 import org.geogebra.common.kernel.Construction;
@@ -6,7 +22,7 @@ import org.geogebra.common.media.MediaURLParser;
 
 /**
  * Class for representing playable media data.
- * 
+ *
  * @author laszlo
  *
  */
@@ -18,18 +34,17 @@ public abstract class GeoMedia extends GeoWidget {
 
 	/**
 	 * Constructs a new, empty media element.
-	 * 
+	 *
 	 * @param c
 	 *            the construction.
 	 */
 	public GeoMedia(Construction c) {
 		super(c);
-		app = getKernel().getApplication();
 	}
 
 	/**
 	 * Constructs a new media element with given content.
-	 * 
+	 *
 	 * @param c
 	 *            the construction.
 	 * @param url
@@ -48,7 +63,7 @@ public abstract class GeoMedia extends GeoWidget {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the source of the media.
 	 */
 	public String getSrc() {
@@ -57,7 +72,7 @@ public abstract class GeoMedia extends GeoWidget {
 
 	/**
 	 * Set the source and call changed handler.
-	 * 
+	 *
 	 * @param src
 	 *            to set.
 	 * @param format
@@ -71,7 +86,7 @@ public abstract class GeoMedia extends GeoWidget {
 
 	/**
 	 * Set the source and call changed handler.
-	 * 
+	 *
 	 * @param src
 	 *            to set.
 	 * @param formatStr
@@ -102,14 +117,14 @@ public abstract class GeoMedia extends GeoWidget {
 
 	/**
 	 * Sets the current position to a given time in seconds.
-	 * 
+	 *
 	 * @param secs
 	 *            to set.
 	 */
 	public abstract void setCurrentTime(int secs);
 
 	/**
-	 * 
+	 *
 	 * @return the media format.
 	 */
 	public MediaFormat getFormat() {

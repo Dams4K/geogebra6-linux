@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.dialog.image;
 
 import org.geogebra.common.util.debug.Log;
@@ -16,13 +32,13 @@ import jsinterop.base.Js;
 /**
  * Panel for HTML5 webcam input
  */
-public class WebCamInputPanel extends FlowPanel {
+public final class WebCamInputPanel extends FlowPanel {
 	private final boolean isElectronMac;
 	private SimplePanel inputWidget;
 	private HTMLVideoElement video;
 	private int canvasWidth = 640;
 	private int canvasHeight = 480; // overwritten by real
-									// dimensions
+	// dimensions
 	private final AppW app;
 	private final WebcamDialogInterface webcamDialog;
 	private WebcamPermissionDialog permissionDialog;
@@ -122,49 +138,43 @@ public class WebCamInputPanel extends FlowPanel {
 	}
 
 	private String getPermissionDeniedTitleKey() {
-		return isElectronMac && !app.isByCS() ? "permission.camera.denied"
-				: "Webcam.Denied.Caption";
+		return isElectronMac && !app.isByCS() ? "permission.camera.denied" : "Webcam.Denied.Caption";
 	}
 
 	private String getPermissionDeniedMessageKey() {
-		return isElectronMac && !app.isByCS() ? "permission.request"
-				: "Webcam.Denied.Message";
+		return isElectronMac && !app.isByCS()
+				? "permission.request"
+				: app.getVendorSettings().getMenuLocalizationKey("Webcam.Denied.Message");
 	}
 
 	private void showRequestDialog() {
-		DialogData data = new DialogData(app.getVendorSettings()
-				.getMenuLocalizationKey("Webcam.Request"),
-				null, null);
-		showPermissionDialog(data, app.getVendorSettings()
-				.getMenuLocalizationKey("Webcam.Request.Message"));
+		DialogData data = new DialogData(
+				app.getVendorSettings().getMenuLocalizationKey("Webcam.Request"), null, null);
+		showPermissionDialog(
+				data, app.getVendorSettings().getMenuLocalizationKey("Webcam.Request.Message"));
 	}
 
 	private void showPermissionDeniedDialog() {
 		if (!app.isWhiteboardActive()) {
-			webcamDialog.onCameraError(getPermissionDeniedTitleKey(),
-					getPermissionDeniedMessageKey());
+			webcamDialog.onCameraError(getPermissionDeniedTitleKey(), getPermissionDeniedMessageKey());
 		} else {
-			DialogData data = new DialogData(getPermissionDeniedTitleKey(),
-					null, "OK");
+			DialogData data = new DialogData(getPermissionDeniedTitleKey(), null, "OK");
 			showPermissionDialog(data, getPermissionDeniedMessageKey());
 		}
 	}
 
 	private void showErrorDialog() {
 		if (!app.isWhiteboardActive()) {
-			webcamDialog.onCameraError("Webcam.Problem",
-					"Webcam.Problem.Message");
+			webcamDialog.onCameraError("Webcam.Problem", "Webcam.Problem.Message");
 		} else {
-			DialogData data = new DialogData("Webcam.Problem",
-					null, "OK");
-			showPermissionDialog(data, app.getVendorSettings()
-					.getMenuLocalizationKey("Webcam.Problem.Message"));
+			DialogData data = new DialogData("Webcam.Problem", null, "OK");
+			showPermissionDialog(
+					data, app.getVendorSettings().getMenuLocalizationKey("Webcam.Problem.Message"));
 		}
 	}
 
 	private void showNotSupportedDialog() {
-		DialogData data = new DialogData("Webcam.Notsupported.Caption",
-				null, "OK");
+		DialogData data = new DialogData("Webcam.Notsupported.Caption", null, "OK");
 		showPermissionDialog(data, "Webcam.Notsupported.Message");
 	}
 
@@ -198,21 +208,23 @@ public class WebCamInputPanel extends FlowPanel {
 	 * @param errName - error
 	 */
 	public void onCameraError(String errName) {
-		if ("PermissionDeniedError".equals(errName)
-				|| "NotAllowedError".equals(errName)
-				|| isElectronMac
-				&& "TrackStartError".equals(errName)) {
-			// permission denied by user
-			showPermissionDeniedDialog();
-		} else if ("NotFoundError".equals(errName)
-				|| "DevicesNotFoundError".equals(errName)
-				|| "TrackStartError".equals(errName)
-				|| "NotReadableError".equals(errName)
-				|| "SourceUnavailableError".equals(errName)
-				|| "Error".equals(errName)) {
-			showErrorDialog();
+		switch (errName) {
+			case "PermissionDeniedError", "NotAllowedError" -> showPermissionDeniedDialog();
+			case "TrackStartError" -> {
+				if (isElectronMac) {
+					showPermissionDeniedDialog();
+				} else {
+					showErrorDialog();
+				}
+			}
+			case "NotFoundError",
+					"DevicesNotFoundError",
+					"NotReadableError",
+					"SourceUnavailableError",
+					"AbortError",
+					"Error" -> showErrorDialog();
+			default -> Log.debug("Error from WebCam: " + errName);
 		}
-		Log.debug("Error from WebCam: " + errName);
 	}
 
 	/**
@@ -222,8 +234,7 @@ public class WebCamInputPanel extends FlowPanel {
 		if (app.isWhiteboardActive()) {
 			showRequestDialog();
 		} else {
-			webcamDialog.onCameraError("Webcam.Request",
-					"Webcam.Request.Message");
+			webcamDialog.onCameraError("Webcam.Request", "Webcam.Request.Message");
 		}
 	}
 
@@ -234,8 +245,7 @@ public class WebCamInputPanel extends FlowPanel {
 		if (app.isWhiteboardActive()) {
 			showNotSupportedDialog();
 		} else {
-			webcamDialog.onCameraError("Webcam.Notsupported.Caption",
-					"Webcam.Notsupported.Message");
+			webcamDialog.onCameraError("Webcam.Notsupported.Caption", "Webcam.Notsupported.Message");
 		}
 	}
 }

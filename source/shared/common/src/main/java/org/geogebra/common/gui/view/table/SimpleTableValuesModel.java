@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.table;
 
 import java.util.ArrayList;
@@ -65,9 +81,9 @@ final class SimpleTableValuesModel implements TableValuesModel {
 	}
 
 	private void fillValueList(GeoList values) {
-		double[] range = DoubleUtil.range(settings.getValuesMin(),
-				settings.getValuesMax(), settings.getValuesStep());
-		for (Double d: range) {
+		double[] range = DoubleUtil.range(
+				settings.getValuesMin(), settings.getValuesMax(), settings.getValuesStep());
+		for (Double d : range) {
 			values.add(new GeoNumeric(kernel.getConstruction(), d));
 		}
 	}
@@ -169,8 +185,8 @@ final class SimpleTableValuesModel implements TableValuesModel {
 		if (getEvaluatableIndex(evaluatable) == -1) {
 			collector.startCollection(this);
 			int idx = 0;
-			while (idx < columns.size() && columns.get(idx)
-					.getEvaluatable().getTableColumn() < evaluatable.getTableColumn()) {
+			while (idx < columns.size()
+					&& columns.get(idx).getEvaluatable().getTableColumn() < evaluatable.getTableColumn()) {
 				idx++;
 			}
 			TableValuesColumn column = createColumn(evaluatable);
@@ -310,7 +326,7 @@ final class SimpleTableValuesModel implements TableValuesModel {
 		collector.endCollection(this);
 	}
 
-	public GeoList getValueList() {
+	GeoList getValueList() {
 		if (settings.getValueList() == null) {
 			GeoList xValues = setupXValues(new GeoList(kernel.getConstruction()));
 			settings.setValueList(xValues);
@@ -415,7 +431,7 @@ final class SimpleTableValuesModel implements TableValuesModel {
 	}
 
 	private void forEachListener(Consumer<? super TableValuesListener> action) {
-		listenerStream().forEachOrdered(action);
+		listenerStream().toList().forEach(action);
 	}
 
 	@Override
@@ -509,15 +525,14 @@ final class SimpleTableValuesModel implements TableValuesModel {
 		}
 	}
 
-	public boolean isEvaluatableEmptyList(int column) {
-		return getEvaluatable(column).isGeoList()
-				&& ((GeoList) getEvaluatable(column)).isEmptyList();
+	boolean isEvaluatableEmptyList(int column) {
+		return getEvaluatable(column).isGeoList() && ((GeoList) getEvaluatable(column)).isEmptyList();
 	}
 
 	/**
 	 * Update values column from the settings
 	 */
-	public void updateValuesColumn() {
+	void updateValuesColumn() {
 		TableValuesListColumn element = new TableValuesListColumn(getValueList());
 		columns.set(0, element);
 		element.notifyColumnChanged(this, getValueList(), 0);
@@ -530,7 +545,7 @@ final class SimpleTableValuesModel implements TableValuesModel {
 	 * @param columnNames The user-visible column names (optional, can be null).
 	 */
 	// Data import
-	public void startImport(int nrRows, int nrColumns, String[] columnNames) {
+	void startImport(int nrRows, int nrColumns, String[] columnNames) {
 		if (nrColumns < 1) {
 			return;
 		}
@@ -551,13 +566,13 @@ final class SimpleTableValuesModel implements TableValuesModel {
 	 *               this array, rawValues will have the original string value.
 	 * @param rawValues The original strings behind the values.
 	 */
-	public void importRow(Double[] values, String[] rawValues) {
+	void importRow(Double[] values, String[] rawValues) {
 		if (importColumns == null) {
 			return;
 		}
 		for (int index = 0; index < importColumns.length; index++) {
 			GeoList column = importColumns[index];
-			GeoElement element = null;
+			GeoElement element;
 			if (index < values.length) {
 				if (values[index] != null) {
 					element = new GeoNumeric(kernel.getConstruction(), values[index], false);
@@ -575,7 +590,7 @@ final class SimpleTableValuesModel implements TableValuesModel {
 	/**
 	 * Cancels import, discarding any data accumulated in {@link #importRow(Double[], String[])}.
 	 */
-	public void cancelImport() {
+	void cancelImport() {
 		importColumns = null;
 		columnLabels = null;
 		columnNames = null;
@@ -585,7 +600,7 @@ final class SimpleTableValuesModel implements TableValuesModel {
 	 * Commits the data accumulated in {@link #importRow(Double[], String[])}, creating
 	 * columns, and notifying listeners about the new data.
 	 */
-	public void commitImport() {
+	void commitImport() {
 		importColumns();
 		importColumns = null;
 		columnLabels = null;

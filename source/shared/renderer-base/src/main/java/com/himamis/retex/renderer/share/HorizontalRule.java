@@ -46,7 +46,6 @@
 
 package com.himamis.retex.renderer.share;
 
-import com.himamis.retex.renderer.share.platform.geom.Area;
 import com.himamis.retex.renderer.share.platform.graphics.Graphics2DInterface;
 
 /**
@@ -63,8 +62,7 @@ public class HorizontalRule extends Box {
 		speShift = 0.;
 	}
 
-	public HorizontalRule(double thickness, double width, double s,
-			boolean trueShift) {
+	public HorizontalRule(double thickness, double width, double s, boolean trueShift) {
 		height = thickness;
 		this.width = width;
 		if (trueShift) {
@@ -78,14 +76,7 @@ public class HorizontalRule extends Box {
 
 	@Override
 	public void draw(Graphics2DInterface g2, double x, double y) {
-		g2.fill(geom.createRectangle2D(x, y - height + speShift, width,
-				height));
-	}
-
-	@Override
-	public Area getArea() {
-		return geom.createArea(
-				geom.createRectangle2D(0., -height + speShift, width, height));
+		g2.fill(geom.createRectangle2D(x, y - height + speShift, width, height));
 	}
 
 	@Override

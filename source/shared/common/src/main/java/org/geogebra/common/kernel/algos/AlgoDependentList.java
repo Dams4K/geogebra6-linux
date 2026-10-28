@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -15,6 +19,7 @@ package org.geogebra.common.kernel.algos;
 import java.util.ArrayList;
 
 import org.geogebra.common.euclidian.EuclidianConstants;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.arithmetic.ExpressionNode;
@@ -40,7 +45,7 @@ public class AlgoDependentList extends AlgoElement implements DependentAlgo {
 	/**
 	 * Creates an unlabeled algorithm that takes a list of GeoElements to build
 	 * a Geolist with them.
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param listItems
@@ -48,8 +53,8 @@ public class AlgoDependentList extends AlgoElement implements DependentAlgo {
 	 * @param isCellRange
 	 *            true for A1:A10
 	 */
-	public AlgoDependentList(Construction cons,
-			ArrayList<? extends GeoElementND> listItems, boolean isCellRange) {
+	public AlgoDependentList(
+			Construction cons, ArrayList<? extends GeoElementND> listItems, boolean isCellRange) {
 		super(cons);
 		this.listItems = listItems;
 		this.isCellRange = isCellRange;
@@ -108,12 +113,11 @@ public class AlgoDependentList extends AlgoElement implements DependentAlgo {
 				input[i].remove();
 			}
 		}
-
 	}
 
 	/**
 	 * Returns the list
-	 * 
+	 *
 	 * @return the list as geo
 	 */
 	public GeoList getGeoList() {
@@ -133,13 +137,11 @@ public class AlgoDependentList extends AlgoElement implements DependentAlgo {
 			// if the siblings are of the same type
 
 			AlgoElement algo = input[i].getParentAlgorithm();
-			if (algo != null && algo.getOutputLength() > 1
-					&& algo.hasSingleOutputType()) {
+			if (algo != null && algo.getOutputLength() > 1 && algo.hasSingleOutputType()) {
 				// all siblings have same type: add them all
 				for (int k = 0; k < algo.getOutputLength(); k++) {
 					GeoElement geo = algo.getOutput(k);
-					if ((geo == input[i] || geo.isDefined())
-							&& !geoList.listContains(geo)) {
+					if ((geo == input[i] || geo.isDefined()) && !geoList.listContains(geo)) {
 						geoList.add(geo);
 					}
 				}
@@ -152,7 +154,7 @@ public class AlgoDependentList extends AlgoElement implements DependentAlgo {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		if (geoList.getDefinition() != null) {
 			return geoList.getDefinition().toString(tpl);
 		}
@@ -162,7 +164,7 @@ public class AlgoDependentList extends AlgoElement implements DependentAlgo {
 			sb.setLength(0);
 		}
 
-		tpl.leftCurlyBracket(sb);
+		tpl.leftCurlyBracket(sb, kernel.getLocalization());
 
 		if (input.length > 0) {
 			for (int i = 0; i < input.length - 1; i++) {
@@ -172,7 +174,7 @@ public class AlgoDependentList extends AlgoElement implements DependentAlgo {
 			sb.append(input[input.length - 1].getLabel(tpl));
 		}
 
-		tpl.rightCurlyBracket(sb);
+		tpl.rightCurlyBracket(sb, kernel.getLocalization());
 
 		return sb.toString();
 	}
@@ -183,7 +185,7 @@ public class AlgoDependentList extends AlgoElement implements DependentAlgo {
 	}
 
 	@Override
-	protected void getExpXML(StringTemplate tpl, StringBuilder sb) {
+	protected void getExpXML(StringTemplate tpl, XMLStringBuilder sb) {
 		if (!isDefinedAsEmpty()) {
 			super.getExpXML(tpl, sb);
 		}
@@ -194,5 +196,4 @@ public class AlgoDependentList extends AlgoElement implements DependentAlgo {
 				&& (geoList.getDefinition().unwrap() instanceof MyList)
 				&& ((MyList) geoList.getDefinition().unwrap()).size() == 0;
 	}
-
 }

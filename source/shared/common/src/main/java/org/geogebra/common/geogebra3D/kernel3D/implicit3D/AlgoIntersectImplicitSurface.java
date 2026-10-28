@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.implicit3D;
 
 import org.geogebra.common.geogebra3D.kernel3D.algos.AlgoIntersect3D;
@@ -20,7 +36,7 @@ import org.geogebra.common.plugin.Operation;
 
 /**
  * Find intersection between implicit surface and line
- * 
+ *
  * @author GSoCImplicit2015
  *
  */
@@ -32,7 +48,7 @@ public class AlgoIntersectImplicitSurface extends AlgoIntersect3D {
 	private String[] labels;
 
 	/**
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param surface
@@ -42,8 +58,8 @@ public class AlgoIntersectImplicitSurface extends AlgoIntersect3D {
 	 * @param equation
 	 *            equation
 	 */
-	public AlgoIntersectImplicitSurface(Construction c, String[] labels,
-			GeoImplicitSurfaceND surface, GeoElementND equation) {
+	public AlgoIntersectImplicitSurface(
+			Construction c, String[] labels, GeoImplicitSurfaceND surface, GeoElementND equation) {
 		super(c);
 		this.surface = surface;
 		this.eqn = equation;
@@ -85,17 +101,13 @@ public class AlgoIntersectImplicitSurface extends AlgoIntersect3D {
 		ExpressionNode x = new ExpressionNode(kernel, r.getX());
 		ExpressionNode y = new ExpressionNode(kernel, r.getY());
 		ExpressionNode z = new ExpressionNode(kernel, r.getZ());
-		x = x.plus(new ExpressionNode(kernel, t, Operation.MULTIPLY,
-				new MyDouble(kernel, v.getX())));
-		y = y.plus(new ExpressionNode(kernel, t, Operation.MULTIPLY,
-				new MyDouble(kernel, v.getY())));
-		z = z.plus(new ExpressionNode(kernel, t, Operation.MULTIPLY,
-				new MyDouble(kernel, v.getZ())));
+		x = x.plus(new ExpressionNode(kernel, t, Operation.MULTIPLY, new MyDouble(kernel, v.getX())));
+		y = y.plus(new ExpressionNode(kernel, t, Operation.MULTIPLY, new MyDouble(kernel, v.getY())));
+		z = z.plus(new ExpressionNode(kernel, t, Operation.MULTIPLY, new MyDouble(kernel, v.getZ())));
 		intersectParametric(x, y, z);
 	}
 
-	private void intersectParametric(ExpressionNode x, ExpressionNode y,
-			ExpressionNode z) {
+	private void intersectParametric(ExpressionNode x, ExpressionNode y, ExpressionNode z) {
 		FunctionNVar func = surface.getExpression();
 		FunctionVariable[] vars = func.getFunctionVariables();
 		ExpressionNode exp = func.getExpression().getCopy(getKernel());
@@ -106,9 +118,8 @@ public class AlgoIntersectImplicitSurface extends AlgoIntersect3D {
 		}
 		Function fn = new Function(kernel, exp);
 		fn.initFunction();
-		double[] roots = AlgoRoots.findRoots(fn,
-				kernel.getViewsXMin(surface), kernel.getViewsYMax(surface),
-				SAMPLE_SIZE);
+		double[] roots = AlgoRoots.findRoots(
+				fn, kernel.getViewsXMin(surface), kernel.getViewsYMax(surface), SAMPLE_SIZE);
 		if (roots == null || roots.length == 0) {
 			outputs.adjustOutputSize(0);
 			return;
@@ -140,22 +151,17 @@ public class AlgoIntersectImplicitSurface extends AlgoIntersect3D {
 		input[0] = surface.toGeoElement();
 		input[1] = eqn.toGeoElement();
 
-		outputs = new OutputHandler<>(
-				new ElementFactory<GeoPoint3D>() {
-					@Override
-					public GeoPoint3D newElement() {
-						GeoPoint3D p = new GeoPoint3D(cons);
-						p.setParentAlgorithm(AlgoIntersectImplicitSurface.this);
-						return p;
-					}
-				});
+		outputs = new OutputHandler<>(() -> {
+			GeoPoint3D p = new GeoPoint3D(cons);
+			p.setParentAlgorithm(this);
+			return p;
+		});
 
 		setDependencies();
-
 	}
 
 	/**
-	 * 
+	 *
 	 * @param labels
 	 *            set labels
 	 */
@@ -169,5 +175,4 @@ public class AlgoIntersectImplicitSurface extends AlgoIntersect3D {
 	public GetCommand getClassName() {
 		return Commands.Intersect;
 	}
-
 }

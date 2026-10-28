@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.arithmetic.simplifiers;
 
 import org.geogebra.common.kernel.arithmetic.ExpressionNode;
@@ -37,8 +53,7 @@ public class PlusTagOrder implements SimplifyNode {
 		ExpressionValue left = node.getLeft();
 		ExpressionValue right = node.getRight();
 		double v = left.evaluateDouble();
-		if (left.isLeaf() && v < 0
-				&& node.isOperation(Operation.PLUS) && right.evaluateDouble() >= 0) {
+		if (left.isLeaf() && v < 0 && node.isOperation(Operation.PLUS) && right.evaluateDouble() >= 0) {
 			return utils.newNode(right, Operation.MINUS, utils.newDouble(-v));
 		}
 		return node;

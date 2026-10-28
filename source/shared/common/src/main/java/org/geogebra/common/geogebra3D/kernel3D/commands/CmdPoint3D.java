@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.commands;
 
 import org.geogebra.common.geogebra3D.kernel3D.algos.AlgoPointVector3D;
@@ -25,7 +41,6 @@ public class CmdPoint3D extends CmdPoint {
 	 */
 	public CmdPoint3D(Kernel kernel) {
 		super(kernel);
-
 	}
 
 	@Override
@@ -34,69 +49,59 @@ public class CmdPoint3D extends CmdPoint {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
 
-		switch (n) {
-		case 1:
+		if (n == 1) {
 			arg = resArgs(c, info);
 			GeoElement geo0 = arg[0];
 
-			if (geo0.isGeoElement3D() || (geo0.isGeoList()
-					&& ((GeoList) geo0).containsGeoElement3D())) {
+			if (geo0.isGeoElement3D() || (geo0.isGeoList() && ((GeoList) geo0).containsGeoElement3D())) {
 				if (geo0.isPath()) {
-					GeoElement[] ret = { (GeoElement) kernel.getManager3D()
-							.point3D(c.getLabel(), (Path) geo0, false) };
+					GeoElement[] ret = {
+						(GeoElement) kernel.getManager3D().point3D(c.getLabel(), (Path) geo0, false)
+					};
 					return ret;
 				}
 				// if arg[0] isn't a Path, try to process it as a region (e.g.
 				// GeoPlane3D)
 				if (geo0.isRegion()) {
-					GeoElement[] ret = { (GeoElement) kernel.getManager3D()
-							.point3DIn(c.getLabel(), (Region) arg[0], false) };
+					GeoElement[] ret = {
+						(GeoElement) kernel.getManager3D().point3DIn(c.getLabel(), (Region) arg[0], false)
+					};
 					return ret;
 				}
 
 				throw argErr(c, geo0);
 			} else if (geo0.isRegion3D() && !geo0.isPath()) {
-				GeoElement[] ret = { (GeoElement) kernel.getManager3D()
-						.point3DIn(c.getLabel(), (Region) arg[0], false) };
+				GeoElement[] ret = {
+					(GeoElement) kernel.getManager3D().point3DIn(c.getLabel(), (Region) arg[0], false)
+				};
 				return ret;
-			} else if (arg[0].isGeoList() && arg[0]
-					.getGeoElementForPropertiesDialog().isGeoNumeric()) {
-				if ((((GeoList) arg[0]).get(0).isGeoNumeric()
-						&& ((GeoList) arg[0]).size() == 3)
-						|| (((GeoList) arg[0]).get(0).isGeoList()
-								&& ((GeoList) ((GeoList) arg[0]).get(0))
-										.size() == 3)) {
+			} else if (arg[0].isGeoList() && AlgoPointsFromList.isSupportedList((GeoList) arg[0])) {
+				AlgoPointsFromList algo = new AlgoPointsFromList(
+						cons, c.getLabels(), !cons.isSuppressLabelsActive(), (GeoList) arg[0]);
 
-					AlgoPointsFromList algo = new AlgoPointsFromList(cons,
-							c.getLabels(), !cons.isSuppressLabelsActive(),
-							(GeoList) arg[0]);
+				GeoElement[] ret = algo.getOutputPoints().stream()
+						.map(GeoPointND::toGeoElement)
+						.toArray(GeoElement[]::new);
 
-					GeoElement[] ret = algo.getPoints3D();
-
-					return ret;
-				}
+				return ret;
 			}
 		}
 
 		return super.process(c, info);
-
 	}
 
 	@Override
 	protected GeoElement point(String label, Path path, GeoNumberValue value) {
 
-		if (path.isGeoElement3D() || (path.isGeoList()
-				&& ((GeoList) path).containsGeoElement3D())) {
-			return (GeoElement) kernel.getManager3D().point3D(label, path,
-					value);
+		if (path.isGeoElement3D() || (path.isGeoList() && ((GeoList) path).containsGeoElement3D())) {
+			return (GeoElement) kernel.getManager3D().point3D(label, path, value);
 		}
 
 		return super.point(label, path, value);
 	}
 
 	@Override
-	protected GeoPointND point(String label, GeoPointND point,
-			GeoVectorND vector) {
+	protected GeoPointND point(String label, GeoPointND point, GeoVectorND vector) {
 
 		if (point.isGeoElement3D() || vector.isGeoElement3D()) {
 			AlgoPointVector3D algo = new AlgoPointVector3D(cons, point, vector);
@@ -106,5 +111,4 @@ public class CmdPoint3D extends CmdPoint {
 
 		return super.point(label, point, vector);
 	}
-
 }

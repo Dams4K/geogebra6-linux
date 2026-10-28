@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -30,13 +34,13 @@ public class AlgoConicPartCircumcircle extends AlgoConicPartCircumcircleND
 
 	private BotanaCircleThreePoints botanaParams;
 
-	public AlgoConicPartCircumcircle(Construction cons, String label,
-			GeoPoint A, GeoPoint B, GeoPoint C, int type) {
+	public AlgoConicPartCircumcircle(
+			Construction cons, String label, GeoPoint A, GeoPoint B, GeoPoint C, int type) {
 		super(cons, label, A, B, C, type);
 	}
 
-	public AlgoConicPartCircumcircle(Construction cons, GeoPoint A, GeoPoint B,
-			GeoPoint C, int type) {
+	public AlgoConicPartCircumcircle(
+			Construction cons, GeoPoint A, GeoPoint B, GeoPoint C, int type) {
 		super(cons, A, B, C, type);
 	}
 
@@ -52,31 +56,31 @@ public class AlgoConicPartCircumcircle extends AlgoConicPartCircumcircleND
 
 	/**
 	 * Method for LocusEqu.
-	 * 
+	 *
 	 * @return first point.
 	 */
 	@Override
-	final public GeoPoint getA() {
+	public final GeoPoint getA() {
 		return (GeoPoint) A;
 	}
 
 	/**
 	 * Method for LocusEqu.
-	 * 
+	 *
 	 * @return second point.
 	 */
 	@Override
-	final public GeoPoint getB() {
+	public final GeoPoint getB() {
 		return (GeoPoint) B;
 	}
 
 	/**
 	 * Method for LocusEqu.
-	 * 
+	 *
 	 * @return third point.
 	 */
 	@Override
-	final public GeoPoint getC() {
+	public final GeoPoint getC() {
 		return (GeoPoint) C;
 	}
 
@@ -89,8 +93,7 @@ public class AlgoConicPartCircumcircle extends AlgoConicPartCircumcircleND
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 
 		if (botanaParams == null) {
 			botanaParams = new BotanaCircleThreePoints();
@@ -106,9 +109,7 @@ public class AlgoConicPartCircumcircle extends AlgoConicPartCircumcircleND
 	@Override
 	protected void computeSinglePoint() {
 		GeoPoint midpoint = getA();
-		GeoConic.setSinglePoint((GeoConic) conicPart, midpoint.inhomX,
-				midpoint.inhomY);
+		GeoConic.setSinglePoint((GeoConic) conicPart, midpoint.inhomX, midpoint.inhomY);
 		super.computeSinglePoint();
 	}
-
 }

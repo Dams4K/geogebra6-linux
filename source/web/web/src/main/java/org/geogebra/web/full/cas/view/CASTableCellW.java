@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.cas.view;
 
 import org.geogebra.common.awt.GColor;
@@ -7,6 +23,11 @@ import org.geogebra.common.kernel.geos.GeoCasCell;
 import org.geogebra.common.main.App;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.debug.Log;
+import org.geogebra.editor.share.catalog.TemplateCatalog;
+import org.geogebra.editor.share.io.latex.ParseException;
+import org.geogebra.editor.share.io.latex.Parser;
+import org.geogebra.editor.share.serializer.TeXSerializer;
+import org.geogebra.editor.share.tree.Formula;
 import org.geogebra.web.full.cas.view.InputPanel.InputPanelCanvas;
 import org.geogebra.web.full.cas.view.InputPanel.InputPanelLabel;
 import org.geogebra.web.html5.gui.util.ClickEndHandler;
@@ -15,26 +36,19 @@ import org.gwtproject.canvas.client.Canvas;
 import org.gwtproject.dom.style.shared.Unit;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Label;
-import org.gwtproject.user.client.ui.VerticalPanel;
 import org.gwtproject.user.client.ui.Widget;
-
-import com.himamis.retex.editor.share.io.latex.ParseException;
-import com.himamis.retex.editor.share.io.latex.Parser;
-import com.himamis.retex.editor.share.meta.MetaModel;
-import com.himamis.retex.editor.share.model.MathFormula;
-import com.himamis.retex.editor.share.serializer.TeXSerializer;
 
 /**
  * Graphical representation of CAS cells in Web
- * 
+ *
  * @author Zbynek Konecny
  *
  */
-public class CASTableCellW extends VerticalPanel {
-	private GeoCasCell casCell;
+public final class CASTableCellW extends FlowPanel {
+	private final GeoCasCell casCell;
 	private final InputPanel inputPanel;
 	private final FlowPanel inputWrapper;
-	private FlowPanel outputPanel;
+	private final FlowPanel outputPanel;
 	private String textBeforeEdit;
 	private CASEditorW textField;
 	private String outputText;
@@ -42,7 +56,7 @@ public class CASTableCellW extends VerticalPanel {
 
 	/**
 	 * Creates new graphical representation of CAS cell
-	 * 
+	 *
 	 * @param casCell
 	 *            cas cell value
 	 * @param app
@@ -51,8 +65,7 @@ public class CASTableCellW extends VerticalPanel {
 	public CASTableCellW(GeoCasCell casCell, App app) {
 		this.casCell = casCell;
 		inputPanel = (casCell == null || !casCell.isUseAsText())
-				? new InputPanelCanvas(
-				app)
+				? new InputPanelCanvas(app)
 				: new InputPanelLabel();
 		inputPanel.addStyleName("CAS_inputPanel");
 		if (casCell != null) {
@@ -72,9 +85,8 @@ public class CASTableCellW extends VerticalPanel {
 			if (casCell.getLaTeXOutput() != null && !casCell.isError()) {
 				String eqstring = casCell.getLaTeXOutput();
 
-				canvas = DrawEquationW.paintOnCanvasOutput(casCell, eqstring,
-						null,
-						casCell.getKernel().getApplication().getFontSize() + 1);
+				canvas = DrawEquationW.paintOnCanvasOutput(
+						casCell, eqstring, null, casCell.getKernel().getApplication().getFontSize() + 1);
 			} else {
 				outputLabel = renderPlain();
 			}
@@ -92,9 +104,7 @@ public class CASTableCellW extends VerticalPanel {
 			} else {
 				commentLabel.setText(casCell.getCommandAndComment() + " ");
 			}
-			commentLabel.getElement().getStyle()
-					.setFontSize(app.getFontSize(), Unit.PX);
-			// commentLabel.getElement().getStyle().setColor("gray");
+			commentLabel.getElement().getStyle().setFontSize(app.getFontSize(), Unit.PX);
 			outputPanel.add(commentLabel);
 		}
 		outputPanel.add(canvas == null ? outputLabel : canvas);
@@ -106,8 +116,7 @@ public class CASTableCellW extends VerticalPanel {
 		String ret = casCell.getLaTeXInput();
 		if (ret == null) {
 			try {
-				MathFormula mf = new Parser(new MetaModel())
-						.parse(casCell.getLocalizedInput());
+				Formula mf = new Parser(new TemplateCatalog()).parse(casCell.getLocalizedInput());
 				return new TeXSerializer().serialize(mf);
 			} catch (ParseException e) {
 				Log.debug("Cannot parse cas call input");
@@ -134,8 +143,7 @@ public class CASTableCellW extends VerticalPanel {
 	 * @param asText
 	 *            whether this is plain text mode
 	 */
-	public void startEditing(CASEditorW casEditorW, String newText,
-			boolean asText) {
+	public void startEditing(CASEditorW casEditorW, String newText, boolean asText) {
 		clear();
 		textField = casEditorW;
 		add(textField.asWidget());
@@ -159,6 +167,8 @@ public class CASTableCellW extends VerticalPanel {
 			setInput();
 			inputPanel.setText(textField.getText());
 			inputPanel.setLaTeX(textField.getLaTeX());
+		} else {
+			inputPanel.repaint();
 		}
 		clear();
 		add(inputWrapper);
@@ -223,8 +233,7 @@ public class CASTableCellW extends VerticalPanel {
 	 */
 	public void setColor() {
 		GColor newColor = casCell.getFontColor();
-		inputPanel.getElement().getStyle()
-				.setColor(GColor.getColorString(newColor));
+		inputPanel.getElement().getStyle().setColor(GColor.getColorString(newColor));
 	}
 
 	/**
@@ -232,13 +241,6 @@ public class CASTableCellW extends VerticalPanel {
 	 */
 	public Widget getOutputWidget() {
 		return outputPanel;
-	}
-
-	/**
-	 * @return input in CAS (plain text)
-	 */
-	public String getInputString() {
-		return inputPanel.getText();
 	}
 
 	/**
@@ -250,7 +252,7 @@ public class CASTableCellW extends VerticalPanel {
 
 	/**
 	 * Insert input to currently edited position and start edit mode
-	 * 
+	 *
 	 * @param input
 	 *            input string
 	 */
@@ -273,16 +275,13 @@ public class CASTableCellW extends VerticalPanel {
 				this.outputPanel.clear();
 				if (this.commentLabel != null) {
 					this.commentLabel
-						.getElement()
-						.getStyle()
-						.setFontSize(
-								casCell.getKernel().getApplication()
-										.getFontSize(), Unit.PX);
+							.getElement()
+							.getStyle()
+							.setFontSize(casCell.getKernel().getApplication().getFontSize(), Unit.PX);
 					this.outputPanel.add(this.commentLabel);
 				}
-				this.outputPanel.add(DrawEquationW.paintOnCanvasOutput(casCell,
-						eqstring, null, casCell.getKernel().getApplication()
-								.getFontSize() + 1));
+				this.outputPanel.add(DrawEquationW.paintOnCanvasOutput(
+						casCell, eqstring, null, casCell.getKernel().getApplication().getFontSize() + 1));
 			}
 		}
 		this.inputPanel.setPixelRatio(ratio);

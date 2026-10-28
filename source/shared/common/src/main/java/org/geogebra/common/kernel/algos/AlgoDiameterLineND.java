@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDiameterLine.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -40,7 +38,7 @@ public abstract class AlgoDiameterLineND extends AlgoElement {
 
 	/**
 	 * Creates new algo for Diameter
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -50,8 +48,7 @@ public abstract class AlgoDiameterLineND extends AlgoElement {
 	 * @param g
 	 *            parallel line
 	 */
-	public AlgoDiameterLineND(Construction cons, String label, GeoConicND c,
-			GeoLineND g) {
+	public AlgoDiameterLineND(Construction cons, String label, GeoConicND c, GeoLineND g) {
 		super(cons);
 		this.c = c;
 		this.g = g;
@@ -65,11 +62,11 @@ public abstract class AlgoDiameterLineND extends AlgoElement {
 
 	/**
 	 * create the output needed
-	 * 
+	 *
 	 * @param cons1
 	 *            construction
 	 */
-	abstract protected void createOutput(Construction cons1);
+	protected abstract void createOutput(Construction cons1);
 
 	@Override
 	public Commands getClassName() {
@@ -94,7 +91,7 @@ public abstract class AlgoDiameterLineND extends AlgoElement {
 
 	/**
 	 * Made public for LocusEqu
-	 * 
+	 *
 	 * @return line
 	 */
 	public GeoLineND getLine() {
@@ -103,7 +100,7 @@ public abstract class AlgoDiameterLineND extends AlgoElement {
 
 	/**
 	 * Made public for LocusEqu
-	 * 
+	 *
 	 * @return conic
 	 */
 	public GeoConicND getConic() {
@@ -118,12 +115,14 @@ public abstract class AlgoDiameterLineND extends AlgoElement {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("DiameterOfAConjugateToB",
-				"Diameter of %0 conjugate to %1", c.getLabel(tpl),
-				g.getLabel(tpl));
+		return getLoc()
+				.getPlainDefault(
+						"DiameterOfAConjugateToB",
+						"Diameter of %0 conjugate to %1",
+						c.getLabel(tpl),
+						g.getLabel(tpl));
 	}
-
 }

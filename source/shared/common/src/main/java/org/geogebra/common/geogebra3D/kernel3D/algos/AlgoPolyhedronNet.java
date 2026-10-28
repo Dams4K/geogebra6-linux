@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import java.util.Collection;
@@ -23,7 +39,7 @@ import org.geogebra.common.util.DoubleUtil;
 
 /**
  * Algo that compute the net for a polyhedron
- * 
+ *
  * @author Vincent
  *
  */
@@ -31,7 +47,7 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 
 	protected GeoPolyhedron polyhedron;
 	protected NumberValue v;
-	private GeoNumeric vNum = null;
+	private final GeoNumeric vNum;
 
 	protected OutputHandler<GeoPolyhedronNet> outputNet;
 
@@ -39,6 +55,7 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 
 	/** points generated as output */
 	protected OutputHandler<GeoPoint3D> outputPointsBottom;
+
 	protected OutputHandler<GeoPoint3D> outputPointsSide;
 	protected OutputHandler<GeoPoint3D> outputPointsTop;
 	protected OutputHandler<GeoSegment3D> outputSegmentsBottom;
@@ -58,22 +75,17 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 	 * @param v
 	 *            index
 	 */
-	public AlgoPolyhedronNet(Construction c, String[] labels, GeoPolyhedron p,
-			NumberValue v) {
+	public AlgoPolyhedronNet(Construction c, String[] labels, GeoPolyhedron p, NumberValue v) {
 		super(c);
 		this.polyhedron = p;
 		this.v = v;
 		vNum = ChangeableParent.getGeoNumeric(v);
 
-		outputNet = new OutputHandler<>(
-				new ElementFactory<GeoPolyhedronNet>() {
-					@Override
-					public GeoPolyhedronNet newElement() {
-						GeoPolyhedronNet p1 = new GeoPolyhedronNet(cons);
-						p1.setParentAlgorithm(AlgoPolyhedronNet.this);
-						return p1;
-					}
-				});
+		outputNet = new OutputHandler<>(() -> {
+			GeoPolyhedronNet p1 = new GeoPolyhedronNet(cons);
+			p1.setParentAlgorithm(this);
+			return p1;
+		});
 
 		outputNet.adjustOutputSize(1);
 
@@ -92,7 +104,7 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 		bottomPointsLength = p.getBottomFace().getPointsLength();
 		createNet(bottomPointsLength);
 
-		input = new GeoElement[] { p, (GeoElement) v };
+		input = new GeoElement[] {p, (GeoElement) v};
 		for (int i = 0; i < input.length; i++) {
 			input[i].addAlgorithm(this);
 		}
@@ -107,7 +119,6 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 		update();
 
 		updateOutputSegmentsAndPolygonsParentAlgorithms();
-
 	}
 
 	private void setLabels(String[] labels) {
@@ -131,8 +142,8 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 
 	protected abstract void createNet(int n);
 
-	protected abstract void setOutputSideTop(int n, GeoPolygon3D polygon,
-			int step, GeoSegmentND[] segments);
+	protected abstract void setOutputSideTop(
+			int n, GeoPolygon3D polygon, int step, GeoSegmentND[] segments);
 
 	private void setOutput(int n) {
 
@@ -145,13 +156,11 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 			if (step == 1) { // bottom
 				outputPolygonsBottom.addOutput((GeoPolygon3D) polygon, false);
 				for (int i = 0; i < segments.length; i++) {
-					outputSegmentsBottom.addOutput((GeoSegment3D) segments[i],
-							false);
+					outputSegmentsBottom.addOutput((GeoSegment3D) segments[i], false);
 				}
 
 			} else { // sides and top
 				setOutputSideTop(n, (GeoPolygon3D) polygon, step, segments);
-
 			}
 			step++;
 		}
@@ -160,46 +169,34 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 	}
 
 	private OutputHandler<GeoPoint3D> createOutputPoints() {
-		return new OutputHandler<>(new ElementFactory<GeoPoint3D>() {
-			@Override
-			public GeoPoint3D newElement() {
-				GeoPoint3D p1 = new GeoPoint3D(cons);
-				p1.setCoords(0, 0, 0, 1);
-				p1.setParentAlgorithm(AlgoPolyhedronNet.this);
-				getNet().addPointCreated(p1);
-				p1.setLabelVisible(false);
-				p1.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
-				return p1;
-			}
+		return new OutputHandler<>(() -> {
+			GeoPoint3D p1 = new GeoPoint3D(cons);
+			p1.setCoords(0, 0, 0, 1);
+			p1.setParentAlgorithm(this);
+			getNet().addPointCreated(p1);
+			p1.setLabelVisible(false);
+			p1.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
+			return p1;
 		});
 	}
 
 	private OutputHandler<GeoSegment3D> createOutputSegments() {
-		return new OutputHandler<>(
-				new ElementFactory<GeoSegment3D>() {
-					@Override
-					public GeoSegment3D newElement() {
-						GeoSegment3D s = new GeoSegment3D(cons);
-						s.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
-						return s;
-					}
-				});
+		return new OutputHandler<>(() -> {
+			GeoSegment3D s = new GeoSegment3D(cons);
+			s.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
+			return s;
+		});
 	}
 
 	private OutputHandler<GeoPolygon3D> createOutputPolygons() {
-		return new OutputHandler<GeoPolygon3D>(
-				new ElementFactory<GeoPolygon3D>() {
-					@Override
-					public GeoPolygon3D newElement() {
-						GeoPolygon3D poly = new GeoPolygon3D(cons);
-						setChangeableParent(poly);
-						poly.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
-						return poly;
-					}
-				}) {
+		return new OutputHandler<>(() -> {
+			GeoPolygon3D poly = new GeoPolygon3D(cons);
+			setChangeableParent(poly);
+			poly.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
+			return poly;
+		}) {
 			@Override
-			public void addOutput(GeoPolygon3D polygon,
-					boolean setDependencies) {
+			public void addOutput(GeoPolygon3D polygon, boolean setDependencies) {
 				setChangeableParent(polygon);
 				super.addOutput(polygon, setDependencies);
 			}
@@ -208,7 +205,7 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 
 	/**
 	 * set changeable parent
-	 * 
+	 *
 	 * @param polygon
 	 *            director geo
 	 */
@@ -236,9 +233,16 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 	 * @param test
 	 *            value (XOR)
 	 */
-	protected void rotate(GeoPoint3D point, Coords pointCoords,
-			Coords projectCoords, Coords o, Coords vs, double f, Coords fd,
-			double dist, boolean test) {
+	protected void rotate(
+			GeoPoint3D point,
+			Coords pointCoords,
+			Coords projectCoords,
+			Coords o,
+			Coords vs,
+			double f,
+			Coords fd,
+			double dist,
+			boolean test) {
 
 		Coords v2 = projectCoords.sub(o);
 		double d2 = pointCoords.distLine(o, vs);
@@ -249,8 +253,8 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 			angle = Math.asin(dist / d2);
 		}
 		if (test ^ (v2.crossProduct(vs).dotproduct(fd) < 0)) { // top point is
-																// inside bottom
-																// face
+			// inside bottom
+			// face
 			angle = Math.PI - angle;
 		}
 
@@ -259,7 +263,7 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 
 	/**
 	 * compute with f value for opening, and bottom points
-	 * 
+	 *
 	 * @param f
 	 *            value for opening
 	 * @param bottomPolygon
@@ -267,12 +271,11 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 	 * @param points
 	 *            bottom points
 	 */
-	protected abstract void compute(double f, GeoPolygon bottomPolygon,
-			Coords[] points);
+	protected abstract void compute(double f, GeoPolygon bottomPolygon, Coords[] points);
 
 	/**
 	 * adjust output for n bottom points
-	 * 
+	 *
 	 * @param n
 	 *            new bottom points length
 	 */
@@ -281,23 +284,22 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 		if (n > outputPointsBottom.size()) { // augment output points bottom
 			outputPointsBottom.adjustOutputSize(n, false);
 		}
-
 	}
 
 	/**
 	 * adjust output for n bottom points
-	 * 
+	 *
 	 * @param n
 	 *            new bottom points length
 	 * @param setLabels
 	 *            says if we want to set labels here (must be false on net
 	 *            creation)
 	 */
-	abstract protected void adjustOutputSize(int n, boolean setLabels);
+	protected abstract void adjustOutputSize(int n, boolean setLabels);
 
 	/**
 	 * update bottom face for new length
-	 * 
+	 *
 	 * @param newBottomPointsLength
 	 *            new bottom points length
 	 */
@@ -313,7 +315,6 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 		polygon.modifyInputPoints(points);
 		polygon.setSegments(segments);
 		polygon.calcArea();
-
 	}
 
 	@Override
@@ -355,12 +356,12 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param polygon
 	 *            polygon
 	 * @return 3D coords of all points
 	 */
-	protected static final Coords[] getPointsCoords(GeoPolygon polygon) {
+	protected static Coords[] getPointsCoords(GeoPolygon polygon) {
 		int l = polygon.getPointsLength();
 		Coords[] points = new Coords[l];
 		for (int i = 0; i < l; i++) {
@@ -400,5 +401,4 @@ public abstract class AlgoPolyhedronNet extends AlgoElement3D {
 	public int getRelatedModeID() {
 		return EuclidianConstants.MODE_NET;
 	}
-
 }

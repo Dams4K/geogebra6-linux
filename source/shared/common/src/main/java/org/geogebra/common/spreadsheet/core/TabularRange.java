@@ -1,26 +1,49 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.spreadsheet.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A finite (bounded along both axes), semi-finite (unbounded along one axis),
  * or infinite (unbounded along both axes) rectangular range.
  * <p>
- * Note: End indexes (for finite ranges) are inclusive!
+ * Indexes are zero-based and end indexes are inclusive.
+ * </p>
+ * <p>
+ * This type uses {@code -1} as a sentinel for "all rows" / "all columns":
+ * </p>
+ * <ul>
+ * <li>{@code minRow == maxRow == -1}: range spans all rows (column selection)</li>
+ * <li>{@code minColumn == maxColumn == -1}: range spans all columns (row selection)</li>
+ * <li>{@code minRow == minColumn == -1}: all cells are selected</li>
+ * <li>{@code minRow == maxRow == minColumn == maxColumn == -1}: empty range</li>
+ * </ul>
+ * <p>
+ * {@code anchorRow}/{@code anchorColumn} store the selection start (where the drag started),
+ * while {@code min*}/{@code max*} store normalized bounds. For finite ranges:
+ * {@code min <= anchor <= max} on both axes.
  * </p>
  */
-// TODO This needs more documentation.
-//  - What are anchor column/rows?
-//  - What are the invariants for all indexes?
-//  - What are the possible cases (combinations of -1 and >= 0 values) for min/max rows/columns?
-//  - For example, the conditions in isColumn() is not clear:
-//    > return (anchorRow == -1 || minRow == -1) && anchorColumn != -1;
-//    Why are anchorRow and minRow checked, but not maxRow?
-//    Why is anchorColumn checked, but neither minColumn nor maxColumn?
 public final class TabularRange {
 	private final int anchorColumn;
 	private final int anchorRow;
@@ -37,8 +60,8 @@ public final class TabularRange {
 	 * @param maxRow highest row
 	 * @param maxColumn highest column
 	 */
-	public TabularRange(int anchorRow, int anchorColumn, int minRow, int minColumn,
-			int maxRow, int maxColumn) {
+	public TabularRange(
+			int anchorRow, int anchorColumn, int minRow, int minColumn, int maxRow, int maxColumn) {
 		this.anchorColumn = anchorColumn;
 		this.anchorRow = anchorRow;
 		this.minColumn = minColumn;
@@ -67,6 +90,19 @@ public final class TabularRange {
 		this(anchorRow, anchorColumn, anchorRow, anchorColumn);
 	}
 
+	/**
+	 * @param ranges
+	 *            cell range list to be cloned
+	 * @return copy of given cell range list
+	 */
+	public static List<TabularRange> clone(List<TabularRange> ranges) {
+		List<TabularRange> newList = new ArrayList<>();
+		for (TabularRange range : ranges) {
+			newList.add(range.duplicate());
+		}
+		return newList;
+	}
+
 	public int getMinRow() {
 		return minRow;
 	}
@@ -84,14 +120,24 @@ public final class TabularRange {
 	}
 
 	/**
-	 * @return whether this range consists of one or more columns
+	 * @return whether this range has bounded rows and columns (no unbounded row or column
+	 * selection)
+	 */
+	public boolean isFinite() {
+		return minRow != -1 && maxRow != -1 && minColumn != -1 && maxColumn != -1;
+	}
+
+	/**
+	 * @return whether this range is a contiguous column selection (single or multiple columns),
+	 * where rows are unbounded
 	 */
 	public boolean isContiguousColumns() {
 		return (anchorRow == -1 || minRow == -1) && anchorColumn != -1;
 	}
 
 	/**
-	 * @return whether this range consists of one or more rows
+	 * @return whether this range is a contiguous row selection (single or multiple rows),
+	 * where columns are unbounded
 	 */
 	public boolean isContiguousRows() {
 		return (anchorColumn == -1 || minColumn == -1) && anchorRow != -1;
@@ -104,10 +150,16 @@ public final class TabularRange {
 		return minRow == -1 && minColumn == -1;
 	}
 
+	/**
+	 * @return the number of columns spanned by this range
+	 */
 	public int getWidth() {
 		return maxColumn - minColumn + 1;
 	}
 
+	/**
+	 * @return the number of rows spanned by this range
+	 */
 	public int getHeight() {
 		return maxRow - minRow + 1;
 	}
@@ -158,14 +210,24 @@ public final class TabularRange {
 	 * @return true if cell range is part of a row, but bigger than one cell
 	 */
 	public boolean isPartialRow() {
-		return !isSingleCell() && !isContiguousRows() && (maxRow - minRow == 0);
+		// entire-column selections use -1 for both row bounds, so require a bounded row first
+		return minRow != -1
+				&& maxRow != -1
+				&& !isSingleCell()
+				&& !isContiguousRows()
+				&& (maxRow - minRow == 0);
 	}
 
 	/**
 	 * @return true if cell range is part of a column, but bigger than one cell
 	 */
 	public boolean isPartialColumn() {
-		return !isSingleCell() && !isContiguousColumns() && (maxColumn - minColumn == 0);
+		// entire-row selections use -1 for both column bounds, so require a bounded column first
+		return minColumn != -1
+				&& maxColumn != -1
+				&& !isSingleCell()
+				&& !isContiguousColumns()
+				&& (maxColumn - minColumn == 0);
 	}
 
 	/**
@@ -205,7 +267,9 @@ public final class TabularRange {
 	}
 
 	/**
-	 * @param row wow
+	 * Returns whether the given cell belongs to this range.
+	 *
+	 * @param row row index
 	 * @param column column
 	 * @return Whether this range contains given row and column
 	 */
@@ -260,30 +324,30 @@ public final class TabularRange {
 
 	/** @return true if this range contains no cells */
 	public boolean isEmptyRange() {
-		return minColumn == -1 && maxColumn == -1 && minRow == -1
-				&& maxRow == -1;
+		return minColumn == -1 && maxColumn == -1 && minRow == -1 && maxRow == -1;
 	}
 
 	/**
 	 * @return true if the cell range has valid coordinates for this table
 	 */
 	public boolean isValid() {
-		return (minRow >= -1 && minRow < Spreadsheet.MAX_ROWS)
-				&& (maxRow >= -1
-				&& maxRow < Spreadsheet.MAX_ROWS)
-				&& (minColumn >= -1
-				&& minColumn < Spreadsheet.MAX_COLUMNS)
-				&& (maxColumn >= -1
-				&& maxColumn < Spreadsheet.MAX_COLUMNS);
+		return minRow >= -1
+				&& minRow < Spreadsheet.MAX_ROWS
+				&& maxRow >= -1
+				&& maxRow < Spreadsheet.MAX_ROWS
+				&& minColumn >= -1
+				&& minColumn < Spreadsheet.MAX_COLUMNS
+				&& maxColumn >= -1
+				&& maxColumn < Spreadsheet.MAX_COLUMNS;
 	}
 
 	/**
-	 * @param cr
+	 * @param otherRange
 	 *            other range
 	 * @return whether this has same anchor coords as other range
 	 */
-	public boolean hasSameAnchor(TabularRange cr) {
-		return (cr.anchorRow == anchorRow) && (cr.anchorColumn == anchorColumn);
+	public boolean hasSameAnchor(TabularRange otherRange) {
+		return (otherRange.anchorRow == anchorRow) && (otherRange.anchorColumn == anchorColumn);
 	}
 
 	/**
@@ -340,18 +404,21 @@ public final class TabularRange {
 	 * @param range other range
 	 * @return new range if this and the other range could be merged, null otherwise
 	 */
-	public @CheckForNull TabularRange getRectangularUnion(TabularRange range) {
+	public @Nullable TabularRange getRectangularUnion(TabularRange range) {
 		if (minColumn == range.minColumn && maxColumn == range.maxColumn) {
 			if ((range.minRow >= minRow && range.minRow <= maxRow + 1)
 					|| (minRow >= range.minRow && minRow <= range.maxRow + 1)) {
-				return TabularRange.range(Math.min(minRow, range.minRow),
-						Math.max(maxRow, range.maxRow), minColumn, maxColumn);
+				return TabularRange.range(
+						Math.min(minRow, range.minRow), Math.max(maxRow, range.maxRow), minColumn, maxColumn);
 			}
 		}
 		if (minRow == range.minRow && maxRow == range.maxRow) {
 			if ((range.minColumn >= minColumn && range.minColumn <= maxColumn + 1)
 					|| (minColumn >= range.minColumn && minColumn <= range.maxColumn + 1)) {
-				return TabularRange.range(minRow, maxRow, Math.min(minColumn, range.minColumn),
+				return TabularRange.range(
+						minRow,
+						maxRow,
+						Math.min(minColumn, range.minColumn),
 						Math.max(maxColumn, range.maxColumn));
 			}
 		}
@@ -362,31 +429,35 @@ public final class TabularRange {
 	 * Run action for each (row, column) pair of the range.
 	 * @param action to run for each (row, column).
 	 */
-	public void forEach(@Nonnull TabularRangeAction action) {
-		for (int row = getMinRow(); row <= getMaxRow() ; row++) {
+	public void forEach(@NonNull TabularRangeAction action) {
+		for (int row = getMinRow(); row <= getMaxRow(); row++) {
 			for (int column = getMinColumn(); column <= getMaxColumn(); column++) {
 				action.run(row, column);
 			}
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "(" + minRow + "," + minColumn + ") to (" + maxRow + "," + maxColumn + ")";
-	}
-
 	public int getFromRow() {
 		return anchorRow;
 	}
 
+	/**
+	 * @return anchor column (selection start column)
+	 */
 	public int getFromColumn() {
 		return anchorColumn;
 	}
 
+	/**
+	 * @return row opposite to the anchor within the normalized bounds
+	 */
 	public int getToRow() {
 		return anchorRow == minRow ? maxRow : minRow;
 	}
 
+	/**
+	 * @return column opposite to the anchor within the normalized bounds
+	 */
 	public int getToColumn() {
 		return anchorColumn == minColumn ? maxColumn : minColumn;
 	}
@@ -398,24 +469,49 @@ public final class TabularRange {
 	 * @param columnCount maximum column
 	 * @return restricted range
 	 */
-	public TabularRange restrictTo(int rowCount, int columnCount) {
+	public TabularRange restrictInfiniteRangeTo(int rowCount, int columnCount) {
 		TabularRange ret = this;
-
 		if (ret.getMinRow() == -1) {
-			ret = new TabularRange(0, ret.getMinColumn(),
-					rowCount - 1, ret.getMaxColumn());
+			ret = new TabularRange(0, ret.getMinColumn(), rowCount - 1, ret.getMaxColumn());
 		}
-
 		if (ret.getMinColumn() == -1) {
-			ret = new TabularRange(ret.getMinRow(), 0,
-					ret.getMaxRow(), columnCount - 1);
+			ret = new TabularRange(ret.getMinRow(), 0, ret.getMaxRow(), columnCount - 1);
 		}
 		return ret;
 	}
 
+	/**
+	 * For finite ranges, returns a sub-range restricted to the first column (if present).
+	 * For empty or unbounded ranges, returns {@code null}.
+	 * @return A new range restricted to the first column.
+	 */
+	public @Nullable TabularRange firstColumn() {
+		if (!isFinite() || getWidth() < 1) {
+			return null;
+		}
+		return new TabularRange(getMinRow(), getMinColumn(), getMaxRow(), getMinColumn());
+	}
+
+	/**
+	 * For finite ranges, returns a sub-range restricted to the second column (if present).
+	 * For empty or unbounded ranges, returns {@code null}.
+	 * @return A new range restricted to the second column.
+	 */
+	public @Nullable TabularRange secondColumn() {
+		if (!isFinite() || getWidth() < 2) {
+			return null;
+		}
+		return new TabularRange(getMinRow(), getMinColumn() + 1, getMaxRow(), getMinColumn() + 1);
+	}
+
+	@Override
+	public String toString() {
+		return "(" + minRow + "," + minColumn + ") to (" + maxRow + "," + maxColumn + ")";
+	}
+
 	@Override
 	public int hashCode() {
-		return Arrays.hashCode(new int[]{minColumn, minRow, maxColumn, maxRow});
+		return Arrays.hashCode(new int[] {minColumn, minRow, maxColumn, maxRow});
 	}
 
 	@Override

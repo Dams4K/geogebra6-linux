@@ -1,9 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main.settings.updater;
 
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.settings.FontSettings;
-import org.geogebra.common.util.Util;
 
 import com.google.j2objc.annotations.Weak;
 
@@ -16,6 +31,7 @@ public class FontSettingsUpdater {
 
 	@Weak
 	private App app;
+
 	private FontSettings fontSettings;
 
 	/**
@@ -35,10 +51,7 @@ public class FontSettingsUpdater {
 	 * @see #resetFonts()
 	 */
 	public void setAppFontSize(int fontSize) {
-		if (fontSize == fontSettings.getAppFontSize()) {
-			return;
-		}
-		fontSettings.setAppFontSize(Util.getValidFontSize(fontSize));
+		fontSettings.setAppFontSizeNoFire(fontSize);
 	}
 
 	/**
@@ -46,35 +59,15 @@ public class FontSettingsUpdater {
 	 * @param fontSize font size
 	 */
 	public void setAppFontSizeAndUpdateViews(int fontSize) {
-		setAppFontSize(fontSize);
-		updateEuclidianViews();
+		fontSettings.setAppFontSize(fontSize);
 		resetFonts();
 		app.updateUI();
-	}
-
-	private void updateEuclidianViews() {
-		EuclidianView ev1 = app.getEuclidianView1();
-		if (ev1 != null && ev1.hasStyleBar()) {
-			ev1.getStyleBar().reinit();
-		}
-
-		if (app.hasEuclidianView2(1)) {
-			EuclidianView ev2 = app.getEuclidianView2(1);
-			if (ev2 != null && ev2.hasStyleBar()) {
-				ev2.getStyleBar().reinit();
-			}
-		}
-
-		if (app.isEuclidianView3Dinited() && app.getEuclidianView3D().hasStyleBar()) {
-			app.getEuclidianView3D().getStyleBar().reinit();
-		}
 	}
 
 	/**
 	 * Update font sizes of all components to match current GUI font size
 	 */
 	public void resetFonts() {
-		app.getFontManager().setFontSize(getGUIFontSize());
 		updateEuclidianViewFonts();
 	}
 
@@ -109,8 +102,7 @@ public class FontSettingsUpdater {
 	 *         returned
 	 */
 	public int getGUIFontSize() {
-		int guiFontSize = fontSettings.getGuiFontSize();
-		return guiFontSize == -1 ? fontSettings.getAppFontSize() : guiFontSize;
+		return fontSettings.getGuiFontSizeSafe();
 	}
 
 	protected FontSettings getFontSettings() {

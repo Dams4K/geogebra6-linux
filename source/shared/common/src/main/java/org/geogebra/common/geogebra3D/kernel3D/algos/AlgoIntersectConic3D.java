@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoTangentLine.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -35,7 +33,7 @@ import org.geogebra.common.util.DoubleUtil;
 /**
  *
  * @author mathieu
- * 
+ *
  */
 public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 
@@ -68,7 +66,6 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 		for (int i = 0; i < 2; i++) {
 			points2d[i] = new GeoPoint(cons);
 		}
-
 	}
 
 	AlgoIntersectConic3D(Construction cons, GeoElement firstGeo, GeoConicND c) {
@@ -114,7 +111,7 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return conic input
 	 */
 	GeoConicND getConic() {
@@ -123,24 +120,23 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 
 	@Override
 	public final String toString(StringTemplate tpl) {
-		return getLoc().getPlain("IntersectionPointOfAB", c.getLabel(tpl),
-				firstGeo.getLabel(tpl));
+		return getLoc().getPlain("IntersectionPointOfAB", c.getLabel(tpl), firstGeo.getLabel(tpl));
 	}
 
 	/**
-	 * 
+	 *
 	 * @return start point for first geo
 	 */
 	protected abstract Coords getFirstGeoStartInhomCoords();
 
 	/**
-	 * 
+	 *
 	 * @return direction for first geo
 	 */
 	protected abstract Coords getFirstGeoDirectionInD3();
 
 	/**
-	 * 
+	 *
 	 * @param p
 	 *            point coords
 	 * @return true if coords are in the first geo as limited path
@@ -154,7 +150,7 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 
 	/**
 	 * calc intersection points with the conic
-	 * 
+	 *
 	 * @param conic
 	 *            conic
 	 * @param pts
@@ -171,8 +167,7 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 		if (!DoubleUtil.isZero(dp.getZ())) { // line intersect conic coord sys
 			Coords globalCoords = new Coords(4);
 			Coords inPlaneCoords = new Coords(4);
-			o.projectPlaneThruV(cs.getMatrixOrthonormal(), d, globalCoords,
-					inPlaneCoords);
+			o.projectPlaneThruV(cs.getMatrixOrthonormal(), d, globalCoords, inPlaneCoords);
 			p2d.setX(inPlaneCoords.getX());
 			p2d.setY(inPlaneCoords.getY());
 			p2d.setZ(inPlaneCoords.getW());
@@ -188,8 +183,7 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 			if (!DoubleUtil.isZero(op.getZ())) { // line not included
 				setPointsUndefined(); // TODO infinite points ?
 			} else { // line included
-				g2d.setCoords(dp.getY(), -dp.getX(),
-						-dp.getY() * op.getX() + dp.getX() * op.getY());
+				g2d.setCoords(dp.getY(), -dp.getX(), -dp.getY() * op.getX() + dp.getX() * op.getY());
 				intersectLineIncluded(conic, pts, cs, g2d);
 			}
 		}
@@ -197,7 +191,7 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 
 	/**
 	 * intersect with line included
-	 * 
+	 *
 	 * @param conic
 	 *            conic
 	 * @param points
@@ -207,10 +201,9 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 	 * @param g
 	 *            line
 	 */
-	protected void intersectLineIncluded(GeoConicND conic, GeoPoint3D[] points,
-			CoordSys cs, GeoLine g) {
-		AlgoIntersectLineConic.intersectLineConic(g, conic, points2d,
-				Kernel.STANDARD_PRECISION);
+	protected void intersectLineIncluded(
+			GeoConicND conic, GeoPoint3D[] points, CoordSys cs, GeoLine g) {
+		AlgoIntersectLineConic.intersectLineConic(g, conic, points2d, Kernel.STANDARD_PRECISION);
 		points[0].setCoords(cs.getPoint(points2d[0].x, points2d[0].y), false);
 		checkIsOnFirstGeo(points[0]);
 		checkIsOnConicPart(conic, points2d[0], points[0]);
@@ -219,8 +212,7 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 		checkIsOnConicPart(conic, points2d[1], points[1]);
 	}
 
-	private void checkIsOnConicPart(GeoConicND conic, GeoPoint point,
-			GeoPoint3D p3d) {
+	private void checkIsOnConicPart(GeoConicND conic, GeoPoint point, GeoPoint3D p3d) {
 		if (conic.isGeoConicPart()) {
 			if (!p3d.isDefined()) {
 				return;
@@ -241,7 +233,7 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 
 	/**
 	 * if p is really on first geo
-	 * 
+	 *
 	 * @param p
 	 *            point
 	 */
@@ -251,7 +243,6 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 		for (int i = 0; i < 2; i++) {
 			P[i].setUndefined();
 		}
-
 	}
 
 	/**
@@ -267,7 +258,7 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 	 * (toSceneInhomCoords.getX() - xRW); y = (toSceneInhomCoords.getY() - yRW);
 	 * lengthSqr = x * x + y * y; if (lengthSqr < mindist) { mindist =
 	 * lengthSqr; minIndex = i; } }
-	 * 
+	 *
 	 * return minIndex; }
 	 */
 
@@ -277,7 +268,7 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return first geo
 	 */
 	protected GeoElement getFirstGeo() {
@@ -285,11 +276,11 @@ public abstract class AlgoIntersectConic3D extends AlgoIntersect3D {
 	}
 
 	/*
-	 * 
+	 *
 	 * @param i index (0 or 1)
-	 * 
+	 *
 	 * @return i-th 2D point last computed
-	 * 
+	 *
 	 * public GeoPoint getPoint2D(int i){ return points2d[i]; }
 	 */
 }

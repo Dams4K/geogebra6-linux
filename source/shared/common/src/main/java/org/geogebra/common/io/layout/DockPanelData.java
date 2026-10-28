@@ -1,19 +1,36 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.io.layout;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GDimension;
 import org.geogebra.common.awt.GPoint;
 import org.geogebra.common.awt.GRectangle;
-import org.geogebra.common.factories.AwtFactory;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.main.App;
 import org.geogebra.common.util.debug.Log;
 
 /**
  * A storage container with all information which need to be stored for a
  * DockPanel.
- * 
+ *
  * @author Florian Sonner
  */
-final public class DockPanelData {
+public final class DockPanelData {
 	private int viewId;
 	private boolean isVisible;
 	private boolean openInFrame;
@@ -68,9 +85,16 @@ final public class DockPanelData {
 	 * @param plane
 	 *            Plane that created the view (for EuclidianViewForPlane)
 	 */
-	public DockPanelData(int viewId, String toolbar, boolean isVisible,
-			boolean openInFrame, boolean showStyleBar, GRectangle windowRect,
-			String embeddedDef, int embeddedSize, String plane) {
+	public DockPanelData(
+			int viewId,
+			String toolbar,
+			boolean isVisible,
+			boolean openInFrame,
+			boolean showStyleBar,
+			GRectangle windowRect,
+			String embeddedDef,
+			int embeddedSize,
+			String plane) {
 		this.viewId = viewId;
 		this.toolbarString = toolbar;
 		this.isVisible = isVisible;
@@ -102,11 +126,25 @@ final public class DockPanelData {
 	 * @param embeddedSize
 	 *            The size of the view in the main window.
 	 */
-	public DockPanelData(int viewId, String toolbar, boolean isVisible,
-			boolean openInFrame, boolean showStyleBar, GRectangle windowRect,
-			String embeddedDef, int embeddedSize) {
-		this(viewId, toolbar, isVisible, openInFrame, showStyleBar, windowRect,
-				embeddedDef, embeddedSize, null);
+	public DockPanelData(
+			int viewId,
+			String toolbar,
+			boolean isVisible,
+			boolean openInFrame,
+			boolean showStyleBar,
+			GRectangle windowRect,
+			String embeddedDef,
+			int embeddedSize) {
+		this(
+				viewId,
+				toolbar,
+				isVisible,
+				openInFrame,
+				showStyleBar,
+				windowRect,
+				embeddedDef,
+				embeddedSize,
+				null);
 	}
 
 	/**
@@ -134,14 +172,28 @@ final public class DockPanelData {
 	 * @param embeddedSize
 	 *            The size of the view in the main window.
 	 */
-	public DockPanelData(int viewId, String toolbar, boolean isVisible,
-			boolean inFrame, boolean showStyleBar, int windowX, int windowY,
-			int windowWidth, int windowHeight, String embeddedDef,
+	public DockPanelData(
+			int viewId,
+			String toolbar,
+			boolean isVisible,
+			boolean inFrame,
+			boolean showStyleBar,
+			int windowX,
+			int windowY,
+			int windowWidth,
+			int windowHeight,
+			String embeddedDef,
 			int embeddedSize) {
-		this(viewId, toolbar, isVisible, inFrame, showStyleBar,
-				AwtFactory.getPrototype().newRectangle(windowX, windowY,
-						windowWidth, windowHeight),
-				embeddedDef, embeddedSize, null);
+		this(
+				viewId,
+				toolbar,
+				isVisible,
+				inFrame,
+				showStyleBar,
+				AwtFactory.getPrototype().newRectangle(windowX, windowY, windowWidth, windowHeight),
+				embeddedDef,
+				embeddedSize,
+				null);
 	}
 
 	/**
@@ -165,14 +217,28 @@ final public class DockPanelData {
 	 * @param embeddedSize
 	 *            The size of the view in the main window.
 	 */
-	public DockPanelData(int viewId, String toolbar, boolean isVisible,
-			boolean inFrame, boolean showStyleBar, GPoint windowLoc,
-			GDimension windowSize, String embeddedDef, int embeddedSize) {
-		this(viewId, toolbar, isVisible, inFrame, showStyleBar,
-				AwtFactory.getPrototype().newRectangle(windowLoc.getX(),
-						windowLoc.getY(), windowSize.getWidth(),
-						windowSize.getHeight()),
-				embeddedDef, embeddedSize, null);
+	public DockPanelData(
+			int viewId,
+			String toolbar,
+			boolean isVisible,
+			boolean inFrame,
+			boolean showStyleBar,
+			GPoint windowLoc,
+			GDimension windowSize,
+			String embeddedDef,
+			int embeddedSize) {
+		this(
+				viewId,
+				toolbar,
+				isVisible,
+				inFrame,
+				showStyleBar,
+				AwtFactory.getPrototype()
+						.newRectangle(
+								windowLoc.getX(), windowLoc.getY(), windowSize.getWidth(), windowSize.getHeight()),
+				embeddedDef,
+				embeddedSize,
+				null);
 	}
 
 	/**
@@ -184,7 +250,7 @@ final public class DockPanelData {
 
 	/**
 	 * set the view id
-	 * 
+	 *
 	 * @param id
 	 *            id
 	 */
@@ -201,7 +267,7 @@ final public class DockPanelData {
 
 	/**
 	 * Set the toolbar string of this view (or an empty string).
-	 * 
+	 *
 	 * @param toolbar
 	 *            toolbar string
 	 */
@@ -253,7 +319,7 @@ final public class DockPanelData {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the plane creator
 	 */
 	public String getPlane() {
@@ -261,7 +327,7 @@ final public class DockPanelData {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return view id for XML
 	 */
 	private int getViewIdForXML() {
@@ -272,36 +338,27 @@ final public class DockPanelData {
 	 * Appends XML representation of the data stored in this class.
 	 * @param sb builder
 	 */
-	public void getXml(StringBuilder sb) {
-		sb.append("<view id=\"");
-		sb.append(getViewIdForXML());
+	public void getXml(XMLStringBuilder sb) {
+		sb.startTag("view").attr("id", getViewIdForXML());
 		if (getToolbarString() != null) {
-			sb.append("\" toolbar=\"");
-			sb.append(getToolbarString());
+			sb.attrRaw("toolbar", getToolbarString());
 		}
-		sb.append("\" visible=\"");
-		sb.append(isVisible());
-		sb.append("\" inframe=\"");
-		sb.append(isOpenInFrame());
-		sb.append("\" stylebar=\"");
-		sb.append(showStyleBar());
-		sb.append("\" location=\"");
-		sb.append(getEmbeddedDef());
-		sb.append("\" size=\"");
-		sb.append(getEmbeddedSize());
+		sb.attr("visible", isVisible());
+		sb.attr("inframe", isOpenInFrame());
+		sb.attr("stylebar", showStyleBar());
+		sb.attrRaw("location", getEmbeddedDef());
+		sb.attr("size", getEmbeddedSize());
 		if (viewId == App.VIEW_ALGEBRA) {
-			sb.append("\" tab=\"");
-			sb.append(tabId.name());
+			sb.attr("tab", tabId);
 		}
-		sb.append("\" window=\"");
-		appendBounds(sb);
+		StringBuilder boundsSb = new StringBuilder();
+		appendBounds(boundsSb);
+		sb.attrRaw("window", boundsSb);
 
 		if (plane != null) {
-			sb.append("\" plane=\"");
-			sb.append(getPlane());
+			sb.attr("plane", getPlane());
 		}
-		sb.append("\" />\n");
-
+		sb.endTag();
 	}
 
 	private void appendBounds(StringBuilder sb) {
@@ -316,7 +373,7 @@ final public class DockPanelData {
 
 	/**
 	 * Maybe false for non-visible views from plane
-	 * 
+	 *
 	 * @return true if will be stored in XML
 	 */
 	public boolean storeXml() {
@@ -326,12 +383,20 @@ final public class DockPanelData {
 	/**
 	 * Clone this object. Required as dock panels would change the loaded
 	 * perspective automatically otherwise.
-	 * 
+	 *
 	 * @return clone
 	 */
 	public DockPanelData duplicate() {
-		return new DockPanelData(viewId, toolbarString, isVisible, openInFrame,
-				showStyleBar, frameBounds, embeddedDef, embeddedSize, plane);
+		return new DockPanelData(
+				viewId,
+				toolbarString,
+				isVisible,
+				openInFrame,
+				showStyleBar,
+				frameBounds,
+				embeddedDef,
+				embeddedSize,
+				plane);
 	}
 
 	/**
@@ -356,7 +421,6 @@ final public class DockPanelData {
 	 */
 	public void setLocation(String s) {
 		this.embeddedDef = s;
-
 	}
 
 	/**
@@ -416,7 +480,7 @@ final public class DockPanelData {
 
 		// We insert this panel at the left by default
 		if (locations.length == 0) {
-			locations = new int[] { 3 };
+			locations = new int[] {3};
 		}
 		return locations;
 	}

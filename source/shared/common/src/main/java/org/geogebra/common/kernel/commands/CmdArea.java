@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.kernel.Construction;
@@ -19,7 +35,7 @@ public class CmdArea extends CommandProcessor {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -28,7 +44,7 @@ public class CmdArea extends CommandProcessor {
 	}
 
 	@Override
-	final public GeoElement[] process(Command c, EvalInfo info) throws MyError {
+	public final GeoElement[] process(Command c, EvalInfo info) throws MyError {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
 
@@ -37,17 +53,15 @@ public class CmdArea extends CommandProcessor {
 
 			// area of conic
 			if (arg[0].isGeoConic()) {
-				GeoElement[] ret = { getAlgoDispatcher().area(c.getLabel(),
-						(GeoConicND) arg[0]) };
+				GeoElement[] ret = {getAlgoDispatcher().area(c.getLabel(), (GeoConicND) arg[0])};
 				return ret;
 			}
 			// area of polygon = polygon variable
 			else if (arg[0].isGeoPolygon()) {
 
-				AlgoAreaPolygon algo = new AlgoAreaPolygon(cons,
-						(GeoPolygon) arg[0]);
+				AlgoAreaPolygon algo = new AlgoAreaPolygon(cons, (GeoPolygon) arg[0]);
 				algo.getArea().setLabel(c.getLabel());
-				GeoElement[] ret = { algo.getArea() };
+				GeoElement[] ret = {algo.getArea()};
 				return ret;
 			} else {
 				throw argErr(c, arg[0]);
@@ -71,10 +85,9 @@ public class CmdArea extends CommandProcessor {
 			}
 			// everything ok
 
-			AlgoAreaPoints algo = getAlgoAreaPoints(cons, points,
-					is3D);
+			AlgoAreaPoints algo = getAlgoAreaPoints(cons, points, is3D);
 			algo.getArea().setLabel(c.getLabel());
-			GeoElement[] ret = { algo.getArea() };
+			GeoElement[] ret = {algo.getArea()};
 			return ret;
 		} else {
 			throw argNumErr(c);
@@ -82,7 +95,7 @@ public class CmdArea extends CommandProcessor {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cons1
 	 *            construction
 	 * @param points
@@ -91,8 +104,8 @@ public class CmdArea extends CommandProcessor {
 	 *            if there is a 3D point
 	 * @return algo
 	 */
-	protected AlgoAreaPoints getAlgoAreaPoints(Construction cons1,
-			GeoPointND[] points, boolean is3D) {
+	protected AlgoAreaPoints getAlgoAreaPoints(
+			Construction cons1, GeoPointND[] points, boolean is3D) {
 		return new AlgoAreaPoints(cons1, points);
 	}
 }

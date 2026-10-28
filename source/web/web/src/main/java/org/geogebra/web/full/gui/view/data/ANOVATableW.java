@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.data;
 
 import org.geogebra.common.gui.view.data.ANOVAStatTableModel;
@@ -8,7 +24,7 @@ import org.geogebra.web.html5.main.AppW;
 /**
  * ANOVA table for Web
  */
-public class ANOVATableW extends BasicStatTableW {
+public final class ANOVATableW extends BasicStatTableW {
 	private static final int ROW_COUNT = 3;
 	private static final int COLUMN_COUNT = 6;
 
@@ -22,14 +38,12 @@ public class ANOVATableW extends BasicStatTableW {
 		super(app, statDialog, false);
 		setModel(new ANOVAStatTableModel(app, this));
 		setStyleName("daANNOVA");
-		
 	}
 
 	@Override
 	protected void initStatTable() {
 		statTable = new StatTableW();
-		statTable.setStatTable(ROW_COUNT, getModel().getRowNames(),
-				COLUMN_COUNT, getColumnNames());
+		statTable.setStatTable(ROW_COUNT, getModel().getRowNames(), COLUMN_COUNT, getColumnNames());
 		clear();
 		add(statTable);
 	}
@@ -46,8 +60,7 @@ public class ANOVATableW extends BasicStatTableW {
 	@Override
 	public void updatePanel() {
 		GeoList dataList = daView.getController().getDataSelected();
-		statTable.setStatTable(ROW_COUNT, getModel().getRowNames(),
-				COLUMN_COUNT, getColumnNames());
+		statTable.setStatTable(ROW_COUNT, getModel().getRowNames(), COLUMN_COUNT, getColumnNames());
 
 		AnovaStats stats = ANOVAStatTableModel.getStatsSilent(dataList);
 		if (stats != null) {
@@ -72,5 +85,4 @@ public class ANOVATableW extends BasicStatTableW {
 			statTable.setValueAt(daView.format(stats.getP()), 0, 5);
 		}
 	}
-
 }

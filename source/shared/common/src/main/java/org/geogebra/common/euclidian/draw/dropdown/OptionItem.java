@@ -1,11 +1,27 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw.dropdown;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GDimension;
 import org.geogebra.common.awt.GFont;
 import org.geogebra.common.awt.GRectangle;
 import org.geogebra.common.awt.font.GTextLayout;
 import org.geogebra.common.euclidian.draw.CanvasDrawable;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoList;
@@ -20,7 +36,7 @@ class OptionItem {
 	private boolean latex;
 	private GRectangle rect;
 
-	public OptionItem(GeoList list, CanvasDrawable drawable, int idx) {
+	OptionItem(GeoList list, CanvasDrawable drawable, int idx) {
 		this.list = list;
 		this.drawable = drawable;
 		index = idx;
@@ -28,7 +44,7 @@ class OptionItem {
 		rect = null;
 	}
 
-	public void update(GFont font) {
+	void update(GFont font) {
 		this.font = font;
 		if (hasText()) {
 			calculateDimensions();
@@ -38,19 +54,16 @@ class OptionItem {
 	}
 
 	private void setDimension(double width, double height) {
-		dimension = AwtFactory.getPrototype().newDimension(
-				(int) width, (int) height);
+		dimension = AwtFactory.getPrototype().newDimension((int) width, (int) height);
 	}
 
 	private void formatText(GeoList list, int idx) {
 		GeoElement geoItem = list.get(idx);
 		if (GeoList.needsLatex(geoItem)) {
-			text = geoItem.toLaTeXString(false,
-					StringTemplate.latexTemplate);
+			text = geoItem.toLaTeXString(false, StringTemplate.latexTemplate);
 			latex = true;
 		} else {
-			text = list.getItemDisplayString(geoItem,
-					StringTemplate.defaultTemplate);
+			text = list.getItemDisplayString(geoItem, StringTemplate.defaultTemplate);
 			latex = CanvasDrawable.isLatexString(text);
 		}
 	}
@@ -69,37 +82,36 @@ class OptionItem {
 
 	private void calculateDimensionsOfLayout() {
 		GTextLayout layout = drawable.getLayout(text, font);
-		setDimension(Math.round(layout.getBounds().getWidth()),
-				 Math.round(layout.getBounds().getHeight()));
+		setDimension(
+				Math.round(layout.getBounds().getWidth()), Math.round(layout.getBounds().getHeight()));
 	}
 
 	private void calculateDimensionsForLatex() {
-		dimension = CanvasDrawable.measureLatex(list.getApp(),
-				font, text, CanvasDrawable.shouldBeSerif(text, list.get(index),
-						false));
+		dimension = CanvasDrawable.measureLatex(
+				list.getApp(), font, text, CanvasDrawable.shouldBeSerif(text, list.get(index), false));
 	}
 
-	public int getWidth() {
+	int getWidth() {
 		return dimension.getWidth();
 	}
 
-	public int getHeight() {
+	int getHeight() {
 		return dimension.getHeight();
 	}
 
-	public GRectangle getRect() {
+	GRectangle getRect() {
 		return rect;
 	}
 
-	public int getIndex() {
+	int getIndex() {
 		return index;
 	}
 
-	public String getText() {
+	String getText() {
 		return text;
 	}
 
-	public boolean isLatex() {
+	boolean isLatex() {
 		return latex;
 	}
 
@@ -108,46 +120,46 @@ class OptionItem {
 	 * @param item to compare.
 	 * @return if equal.
 	 */
-	public boolean isEqual(OptionItem item) {
+	boolean isEqual(OptionItem item) {
 		if (item == null) {
 			return false;
 		}
 		return index == item.index;
 	}
 
-	public boolean isHit(int x, int y) {
+	boolean isHit(int x, int y) {
 		return rect != null && rect.contains(x, y - OptionTableDimension.VERTICAL_PADDING);
 	}
 
-	public void setRect(GRectangle rect) {
+	void setRect(GRectangle rect) {
 		this.rect = rect;
 	}
 
-	public int getLeft() {
+	int getLeft() {
 		return (int) rect.getBounds().getX();
 	}
 
-	public int getTop() {
+	int getTop() {
 		return (int) rect.getBounds().getY() + OptionTableDimension.VERTICAL_PADDING;
 	}
 
-	public int getBottom() {
+	int getBottom() {
 		return getTop() + (int) rect.getBounds().getHeight();
 	}
 
-	public boolean hasNoBounds() {
+	boolean hasNoBounds() {
 		return rect == null;
 	}
 
-	public double getBoundsWidth() {
+	double getBoundsWidth() {
 		return rect.getWidth();
 	}
 
-	public double getBoundsHeight() {
+	double getBoundsHeight() {
 		return rect.getHeight();
 	}
 
-	public boolean intersects(GRectangle rectangle) {
+	boolean intersects(GRectangle rectangle) {
 		return rect.intersects(rectangle);
 	}
 }

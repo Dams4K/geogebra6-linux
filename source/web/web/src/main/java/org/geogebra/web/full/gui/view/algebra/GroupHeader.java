@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import org.geogebra.common.main.SelectionManager;
@@ -8,18 +24,19 @@ import org.gwtproject.user.client.ui.TreeItem;
 /**
  * AV group header
  */
-public class GroupHeader extends FlowPanel {
-	
+public final class GroupHeader extends FlowPanel {
+
 	/**
 	 * label
 	 */
-	protected GroupNameLabel il;
+	private final GroupNameLabel il;
 
 	/**
 	 * +/- button
 	 */
-	protected OpenButton open;
-	private String label;
+	private final OpenButton open;
+
+	private final String label;
 
 	/**
 	 * @param selection
@@ -35,12 +52,17 @@ public class GroupHeader extends FlowPanel {
 	 * @param hiddenUrl
 	 *            image when collapsed
 	 */
-	public GroupHeader(SelectionManager selection, TreeItem parent,
-			String label, String key, SafeUri showUrl, SafeUri hiddenUrl) {
-		
+	public GroupHeader(
+			SelectionManager selection,
+			TreeItem parent,
+			String label,
+			String key,
+			SafeUri showUrl,
+			SafeUri hiddenUrl) {
+
 		this.setStyleName("elemHeading");
 		this.label = key;
-		
+
 		add(open = new OpenButton(showUrl, hiddenUrl, parent, "algebraOpenButton"));
 		add(il = new GroupNameLabel(selection, parent, label));
 	}

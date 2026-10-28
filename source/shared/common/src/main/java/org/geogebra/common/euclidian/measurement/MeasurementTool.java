@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.measurement;
 
 import java.util.List;
@@ -26,15 +42,17 @@ public final class MeasurementTool {
 	 * @param rotCenterRatioX the x-position of the rotation point as ratio of the image height
 	 * @param rotCenterRatioY the y-position of the rotation point as ratio of the image height
 	 */
-	public MeasurementTool(MeasurementToolId id, String fileName,
-			double rotCenterRatioX, double rotCenterRatioY, CreateToolImage toolImageFactory,
+	public MeasurementTool(
+			MeasurementToolId id,
+			String fileName,
+			double rotCenterRatioX,
+			double rotCenterRatioY,
+			CreateToolImage toolImageFactory,
 			PenTransformer transformer) {
 		this.id = id;
 		this.fileName = fileName;
 		weights = new double[] {
-				rotCenterRatioY - rotCenterRatioX,
-				rotCenterRatioX,
-				1 - rotCenterRatioY,
+			rotCenterRatioY - rotCenterRatioX, rotCenterRatioX, 1 - rotCenterRatioY,
 		};
 		this.transformer = transformer;
 		this.toolImageFactory = toolImageFactory;
@@ -85,13 +103,11 @@ public final class MeasurementTool {
 		GPoint2D p1 = points.get(1);
 		GPoint2D p2 = points.get(2);
 
-		return new GPoint2D(getRotatedCoord(p0.x, p1.x, p2.x),
-				getRotatedCoord(p0.y, p1.y, p2.y));
+		return new GPoint2D(getRotatedCoord(p0.x, p1.x, p2.x), getRotatedCoord(p0.y, p1.y, p2.y));
 	}
 
 	private List<GPoint2D> getProtractorPoints(EuclidianView view) {
-		DrawImageResizable drawable =
-				(DrawImageResizable) view.getDrawableFor(image);
+		DrawImageResizable drawable = (DrawImageResizable) view.getDrawableFor(image);
 		return drawable != null ? drawable.toPoints() : null;
 	}
 
@@ -111,5 +127,4 @@ public final class MeasurementTool {
 	public String toString() {
 		return id.toString();
 	}
-
 }

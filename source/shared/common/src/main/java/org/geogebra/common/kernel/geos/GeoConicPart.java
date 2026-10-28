@@ -1,21 +1,22 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
-/* 
- * Created on 03.12.2004
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.geos;
 
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.PathMover;
@@ -48,12 +49,11 @@ import org.geogebra.common.util.ExtendedBoolean;
 
 /**
  * GeoCirclePart for
- * 
+ *
  * @author Markus Hohenwarter
- * 
+ *
  */
-public class GeoConicPart extends GeoConic
-		implements GeoConicPartND, LimitedPath, GeoNumberValue {
+public class GeoConicPart extends GeoConic implements GeoConicPartND, LimitedPath, GeoNumberValue {
 
 	// parameters (e.g. angles) for arc
 	private GeoConicPartParameters parameters;
@@ -64,7 +64,7 @@ public class GeoConicPart extends GeoConic
 
 	/**
 	 * GeoCirclePart is constructed by AlgoCirclePart...
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param type
@@ -78,7 +78,7 @@ public class GeoConicPart extends GeoConic
 
 	/**
 	 * Copy constructor
-	 * 
+	 *
 	 * @param conic
 	 *            conic to copy
 	 */
@@ -95,21 +95,20 @@ public class GeoConicPart extends GeoConic
 	@Override
 	public String getTypeString() {
 		switch (parameters.conicPartType) {
-		case CONIC_PART_ARC:
-			return "Arc";
+			case CONIC_PART_ARC:
+				return "Arc";
 
-		case CONIC_PART_SECTOR:
-			return "Sector";
+			case CONIC_PART_SECTOR:
+				return "Sector";
 
-		default:
-			return super.getTypeString();
+			default:
+				return super.getTypeString();
 		}
 	}
 
 	@Override
 	public GeoElement copyInternal(Construction construction) {
-		GeoConicPart ret = new GeoConicPart(construction,
-				parameters.conicPartType);
+		GeoConicPart ret = new GeoConicPart(construction, parameters.conicPartType);
 		ret.set(this);
 		return ret;
 	}
@@ -133,18 +132,17 @@ public class GeoConicPart extends GeoConic
 
 		if (geo.isGeoConicPart()) {
 			GeoConicPartND cp = (GeoConicPartND) geo;
-			parameters.allowOutlyingIntersections = cp
-					.getParameters().allowOutlyingIntersections;
+			parameters.allowOutlyingIntersections = cp.getParameters().allowOutlyingIntersections;
 		}
 	}
 
 	/**
 	 * Sector or arc
-	 * 
+	 *
 	 * @return CONIC_PART_ARC or CONIC_PART_SECTOR
 	 */
 	@Override
-	final public int getConicPartType() {
+	public final int getConicPartType() {
 		if (parameters == null) { // for default settings
 			return GeoConicNDConstants.CONIC_PART_ARC;
 		}
@@ -155,7 +153,7 @@ public class GeoConicPart extends GeoConic
 	 * @return start parameter
 	 */
 	@Override
-	final public double getParameterStart() {
+	public final double getParameterStart() {
 		return parameters.paramStart;
 	}
 
@@ -163,7 +161,7 @@ public class GeoConicPart extends GeoConic
 	 * @return end parameter
 	 */
 	@Override
-	final public double getParameterEnd() {
+	public final double getParameterEnd() {
 		return parameters.paramEnd;
 	}
 
@@ -171,7 +169,7 @@ public class GeoConicPart extends GeoConic
 	 * @return end parameter - start parameter
 	 */
 	@Override
-	final public double getParameterExtent() {
+	public final double getParameterExtent() {
 		return parameters.paramExtent;
 	}
 
@@ -179,7 +177,7 @@ public class GeoConicPart extends GeoConic
 	 * @return start parameter
 	 */
 	@Override
-	final public boolean positiveOrientation() {
+	public final boolean positiveOrientation() {
 		return parameters.posOrientation;
 	}
 
@@ -188,7 +186,7 @@ public class GeoConicPart extends GeoConic
 	 */
 	// Michael Borcherds 2008-05-01
 	@Override
-	final public ExtendedBoolean isEqualExtended(GeoElementND geo) {
+	public final ExtendedBoolean isEqualExtended(GeoElementND geo) {
 		if (!geo.isGeoConicPart()) {
 			return ExtendedBoolean.FALSE;
 		}
@@ -205,7 +203,7 @@ public class GeoConicPart extends GeoConic
 	 * Sets parameters and calculates this object's value. For type
 	 * CONIC_PART_ARC the value is the length, for CONIC_PART_SECTOR the value
 	 * is an area. This method should only be called by the parent algorithm
-	 * 
+	 *
 	 * @param start
 	 *            start param
 	 * @param end
@@ -214,16 +212,13 @@ public class GeoConicPart extends GeoConic
 	 *            true for positive orientation
 	 */
 	@Override
-	final public void setParameters(double start, double end,
-			boolean positiveOrientation) {
+	public final void setParameters(double start, double end, boolean positiveOrientation) {
 
-		parameters.setParameters(super.isDefined(), start, end,
-				positiveOrientation);
-
+		parameters.setParameters(super.isDefined(), start, end, positiveOrientation);
 	}
 
 	@Override
-	final public boolean isDefined() {
+	public final boolean isDefined() {
 		return parameters.isValueDefined();
 	}
 
@@ -234,35 +229,35 @@ public class GeoConicPart extends GeoConic
 
 	/**
 	 * Returns arc length / area as appropriate
-	 * 
+	 *
 	 * @return arc length / area as appropriate
 	 */
-	final public double getValue() {
+	public final double getValue() {
 		return parameters.getValue();
 	}
 
 	/**
 	 * Returns arc length
-	 * 
+	 *
 	 * @return arc length
 	 */
 	@Override
-	final public double getArcLength() {
+	public final double getArcLength() {
 		return parameters.getArcLength();
 	}
 
 	/**
 	 * Returns the area
-	 * 
+	 *
 	 * @return area
 	 */
 	@Override
-	final public double getArea() {
+	public final double getArea() {
 		return parameters.getArea();
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(" = ");
@@ -271,7 +266,7 @@ public class GeoConicPart extends GeoConic
 	}
 
 	@Override
-	final public String toValueString(StringTemplate tpl) {
+	public final String toValueString(StringTemplate tpl) {
 		if (parameters.isValueDefined()) {
 			return kernel.format(parameters.value, tpl);
 		}
@@ -299,7 +294,7 @@ public class GeoConicPart extends GeoConic
 	}
 
 	@Override
-	final public boolean isLimitedPath() {
+	public final boolean isLimitedPath() {
 		return true;
 	}
 
@@ -332,31 +327,30 @@ public class GeoConicPart extends GeoConic
 		// if it is in [0, 1]
 
 		// remember the old values
-		double px = P.x, py = P.y, pz = P.z;
+		final double px = P.x, py = P.y, pz = P.z;
 		PathParameter tempParam = getTempPathParameter();
 		PathParameter pPP = P.getPathParameter();
 		tempParam.set(pPP);
 
 		switch (type) {
-		case CONIC_CIRCLE:
-		case CONIC_ELLIPSE:
-			parameters.setEllipseParameter(P.getCoordsInD2(getCoordSys()),
-					P.getPathParameter());
-			break;
+			case CONIC_CIRCLE:
+			case CONIC_ELLIPSE:
+				parameters.setEllipseParameter(P.getCoordsInD2(getCoordSys()), P.getPathParameter());
+				break;
 
-		// degenerate case: two rays or one segment
-		case CONIC_PARALLEL_LINES:
-			if (parameters.posOrientation) {
-				// segment
-				lines[0].pointChanged(P);
-			} else {
-				// two rays: no point should lie on them
-				P.getPathParameter().t = -1;
-			}
-			break;
+			// degenerate case: two rays or one segment
+			case CONIC_PARALLEL_LINES:
+				if (parameters.posOrientation) {
+					// segment
+					lines[0].pointChanged(P);
+				} else {
+					// two rays: no point should lie on them
+					P.getPathParameter().t = -1;
+				}
+				break;
 
-		default:
-			pPP.t = -1;
+			default:
+				pPP.t = -1;
 		}
 
 		// adapt eps for very large circles (almost line)
@@ -397,40 +391,40 @@ public class GeoConicPart extends GeoConic
 		parameter.setPathType(type);
 
 		switch (type) {
-		case CONIC_CIRCLE:
-		case CONIC_ELLIPSE:
-			parameters.setEllipseParameter(pt, parameter);
-			parameters.clipEllipseParameter(pt, parameter);
-			break;
+			case CONIC_CIRCLE:
+			case CONIC_ELLIPSE:
+				parameters.setEllipseParameter(pt, parameter);
+				parameters.clipEllipseParameter(pt, parameter);
+				break;
 
-		// degenerate case: two rays or one segment
-		case CONIC_PARALLEL_LINES:
-			if (parameters.posOrientation) {
-				// segment
-				lines[0].doPointChanged(pt, parameter);
+			// degenerate case: two rays or one segment
+			case CONIC_PARALLEL_LINES:
+				if (parameters.posOrientation) {
+					// segment
+					lines[0].doPointChanged(pt, parameter);
 
-				// make sure we don't get outside [0,1]
-				if (parameter.t < 0) {
-					parameter.t = 0;
-					pathChanged(pt, parameter);
-				} else if (parameter.t > 1) {
-					parameter.t = 1;
-					pathChanged(pt, parameter);
+					// make sure we don't get outside [0,1]
+					if (parameter.t < 0) {
+						parameter.t = 0;
+						pathChanged(pt, parameter);
+					} else if (parameter.t > 1) {
+						parameter.t = 1;
+						pathChanged(pt, parameter);
+					}
+				} else {
+					// two rays
+					// we take point at infinity
+					/*
+					 * P.x = -lines[0].y; P.y = lines[0].x; P.z = 0.0;
+					 */
+					pt.setX(-lines[0].y);
+					pt.setY(lines[0].x);
+					pt.setZ(0);
 				}
-			} else {
-				// two rays
-				// we take point at infinity
-				/*
-				 * P.x = -lines[0].y; P.y = lines[0].x; P.z = 0.0;
-				 */
-				pt.setX(-lines[0].y);
-				pt.setY(lines[0].x);
-				pt.setZ(0);
-			}
-			break;
+				break;
 
-		default:
-			parameter.t = Double.NaN;
+			default:
+				parameter.t = Double.NaN;
 		}
 	}
 
@@ -453,45 +447,44 @@ public class GeoConicPart extends GeoConic
 
 		// handle conic types
 		switch (type) {
-		case CONIC_CIRCLE:
-		case CONIC_ELLIPSE:
-			// if type of path changed (other conic) then we
-			// have to recalc the parameter with pointChanged()
-			if (pp.getPathType() != type) {
-				pointChanged(P, pp);
-				return;
-			}
-
-			// calc Point on conic using this parameter (in eigenvector space)
-			double t = parameters.posOrientation ? pp.t : 1.0 - pp.t;
-			double angle = parameters.paramStart + t * parameters.paramExtent;
-
-			P.setX(halfAxes[0] * Math.cos(angle));
-			P.setY(halfAxes[1] * Math.sin(angle));
-			P.setZ(1);
-			coordsEVtoRW(P);
-			break;
-
-		case CONIC_PARALLEL_LINES:
-			if (parameters.posOrientation) { // segment
+			case CONIC_CIRCLE:
+			case CONIC_ELLIPSE:
 				// if type of path changed (other conic) then we
 				// have to recalc the parameter with pointChanged()
 				if (pp.getPathType() != type) {
 					pointChanged(P, pp);
-				} else {
-					lines[0].pathChanged(P, pp);
+					return;
 				}
-			} else {
-				// two rays
-				// we take point at infinity
-				P.setX(-lines[0].y);
-				P.setY(lines[0].x);
-				P.setZ(0);
 
-			}
-			break;
+				// calc Point on conic using this parameter (in eigenvector space)
+				double t = parameters.posOrientation ? pp.t : 1.0 - pp.t;
+				double angle = parameters.paramStart + t * parameters.paramExtent;
 
-		default:
+				P.setX(halfAxes[0] * Math.cos(angle));
+				P.setY(halfAxes[1] * Math.sin(angle));
+				P.setZ(1);
+				coordsEVtoRW(P);
+				break;
+
+			case CONIC_PARALLEL_LINES:
+				if (parameters.posOrientation) { // segment
+					// if type of path changed (other conic) then we
+					// have to recalc the parameter with pointChanged()
+					if (pp.getPathType() != type) {
+						pointChanged(P, pp);
+					} else {
+						lines[0].pathChanged(P, pp);
+					}
+				} else {
+					// two rays
+					// we take point at infinity
+					P.setX(-lines[0].y);
+					P.setY(lines[0].x);
+					P.setZ(0);
+				}
+				break;
+
+			default:
 			// unsupported arc type
 		}
 	}
@@ -499,52 +492,52 @@ public class GeoConicPart extends GeoConic
 	/**
 	 * Returns the smallest possible parameter value for this path (may be
 	 * Double.NEGATIVE_INFINITY)
-	 * 
+	 *
 	 */
 	@Override
 	public double getMinParameter() {
 		switch (type) {
-		case CONIC_CIRCLE:
-		case CONIC_ELLIPSE:
-			return 0;
-
-		// degenerate case: two rays or one segment
-		case CONIC_PARALLEL_LINES:
-			if (parameters.posOrientation) {
-				// segment
+			case CONIC_CIRCLE:
+			case CONIC_ELLIPSE:
 				return 0;
-			}
-			// two rays
-			return Double.NEGATIVE_INFINITY;
 
-		default:
-			return Double.NaN;
+			// degenerate case: two rays or one segment
+			case CONIC_PARALLEL_LINES:
+				if (parameters.posOrientation) {
+					// segment
+					return 0;
+				}
+				// two rays
+				return Double.NEGATIVE_INFINITY;
+
+			default:
+				return Double.NaN;
 		}
 	}
 
 	/**
 	 * Returns the largest possible parameter value for this path (may be
 	 * Double.POSITIVE_INFINITY)
-	 * 
+	 *
 	 */
 	@Override
 	public double getMaxParameter() {
 		switch (type) {
-		case CONIC_CIRCLE:
-		case CONIC_ELLIPSE:
-			return 1;
-
-		// degenerate case: two rays or one segment
-		case CONIC_PARALLEL_LINES:
-			if (parameters.posOrientation) {
-				// segment
+			case CONIC_CIRCLE:
+			case CONIC_ELLIPSE:
 				return 1;
-			}
-			// two rays
-			return Double.POSITIVE_INFINITY;
 
-		default:
-			return Double.NaN;
+			// degenerate case: two rays or one segment
+			case CONIC_PARALLEL_LINES:
+				if (parameters.posOrientation) {
+					// segment
+					return 1;
+				}
+				// two rays
+				return Double.POSITIVE_INFINITY;
+
+			default:
+				return Double.NaN;
 		}
 	}
 
@@ -557,7 +550,7 @@ public class GeoConicPart extends GeoConic
 	 * returns all class-specific xml tags for saveXML
 	 */
 	@Override
-	protected void getStyleXML(StringBuilder sb) {
+	protected void getStyleXML(XMLStringBuilder sb) {
 		super.getStyleXML(sb);
 		parameters.getLimitedPathXML(sb);
 	}
@@ -571,7 +564,7 @@ public class GeoConicPart extends GeoConic
 	}
 
 	@Override
-	final public double getDouble() {
+	public final double getDouble() {
 		return getValue();
 	}
 
@@ -586,8 +579,7 @@ public class GeoConicPart extends GeoConic
 	}
 
 	@Override
-	public GeoElement[] createTransformedObject(Transform t,
-			String transformedLabel) {
+	public GeoElement[] createTransformedObject(Transform t, String transformedLabel) {
 		if (parameters.keepTypeOnGeometricTransform) {
 			algoParent = getParentAlgorithm();
 		}
@@ -598,131 +590,129 @@ public class GeoConicPart extends GeoConic
 		if (algoParent instanceof AlgoConicPartCircle) {
 			// transform points
 			AlgoConicPartCircle algo = (AlgoConicPartCircle) algoParent;
-			GeoPointND[] points = { algo.getCenter(), algo.getStartPoint(),
-					algo.getEndPoint() };
+			GeoPointND[] points = {algo.getCenter(), algo.getStartPoint(), algo.getEndPoint()};
 
 			// create circle with center through startPoint
-			AlgoCircleTwoPoints algoCircle = new AlgoCircleTwoPoints(cons,
-					(GeoPoint) points[0], (GeoPoint) points[1]);
+			AlgoCircleTwoPoints algoCircle =
+					new AlgoCircleTwoPoints(cons, (GeoPoint) points[0], (GeoPoint) points[1]);
 			cons.removeFromConstructionList(algoCircle);
 			GeoConic circle = algoCircle.getCircle();
 
 			// transform points and circle
 			points = t.transformPoints(points);
 			GeoConicND transformedCircle = t.getTransformedConic(circle);
-			cons.removeFromConstructionList(
-					transformedCircle.getParentAlgorithm());
+			cons.removeFromConstructionList(transformedCircle.getParentAlgorithm());
 
 			// create a new arc from the transformed circle using startPoint and
 			// endPoint
 			AlgoConicPartConicPoints algoResult = new AlgoConicPartConicPoints(
-					cons, transformedLabel, transformedCircle, points[1],
-					points[2], conic_part_type);
+					cons, transformedLabel, transformedCircle, points[1], points[2], conic_part_type);
 			GeoConicPart conicPart = algoResult.getConicPart();
 			conicPart.setVisualStyleForTransformations(this);
-			GeoElement[] geos = { conicPart, (GeoElement) points[0],
-					(GeoElement) points[2], (GeoElement) points[1] };
+			GeoElement[] geos = {
+				conicPart, (GeoElement) points[0], (GeoElement) points[2], (GeoElement) points[1]
+			};
 
 			return geos;
 		} else if (algoParent instanceof AlgoConicPartCircumcircle) {
-			GeoPointND[] points = { (GeoPoint) algoParent.input[0],
-					(GeoPoint) algoParent.input[1],
-					(GeoPoint) algoParent.input[2] };
+			GeoPointND[] points = {
+				(GeoPoint) algoParent.input[0],
+				(GeoPoint) algoParent.input[1],
+				(GeoPoint) algoParent.input[2]
+			};
 			points = t.transformPoints(points);
 
-			AlgoConicPartCircumcircle algo = new AlgoConicPartCircumcircle(cons,
-					transformedLabel, (GeoPoint) points[0],
-					(GeoPoint) points[1], (GeoPoint) points[2],
+			AlgoConicPartCircumcircle algo = new AlgoConicPartCircumcircle(
+					cons,
+					transformedLabel,
+					(GeoPoint) points[0],
+					(GeoPoint) points[1],
+					(GeoPoint) points[2],
 					conic_part_type);
 			GeoConicPart res = algo.getConicPart();
 			res.setLabel(transformedLabel);
 			res.setVisualStyleForTransformations(this);
-			GeoElement[] geos = { res, (GeoElement) points[1],
-					(GeoElement) points[2], (GeoElement) points[0] };
+			GeoElement[] geos = {
+				res, (GeoElement) points[1], (GeoElement) points[2], (GeoElement) points[0]
+			};
 			return geos;
 		} else if (algoParent instanceof AlgoConicPartConicParameters) {
 			AlgoConicPartConicParameters algo = (AlgoConicPartConicParameters) algoParent;
 
 			GeoConicND transformedConic = t.getTransformedConic(algo.conic);
-			cons.removeFromConstructionList(
-					transformedConic.getParentAlgorithm());
+			cons.removeFromConstructionList(transformedConic.getParentAlgorithm());
 
-			algo = new AlgoConicPartConicParameters(cons, transformedLabel,
-					transformedConic, algo.startParam, algo.endParam,
+			algo = new AlgoConicPartConicParameters(
+					cons,
+					transformedLabel,
+					transformedConic,
+					algo.startParam,
+					algo.endParam,
 					conic_part_type);
 			GeoElement ret = algo.getConicPart();
 			ret.setVisualStyleForTransformations(this);
-			GeoElement[] geos = { ret };
+			GeoElement[] geos = {ret};
 			return geos;
 		} else if (algoParent instanceof AlgoConicPartConicPoints) {
 			AlgoConicPartConicPoints algo = (AlgoConicPartConicPoints) algoParent;
-			GeoPointND[] points = { algo.getStartPoint(), algo.getEndPoint() };
+			GeoPointND[] points = {algo.getStartPoint(), algo.getEndPoint()};
 			points = t.transformPoints(points);
 			GeoConicND orgConic = algo.getConic();
 
 			GeoConicND transformedConic = t.getTransformedConic(orgConic);
-			cons.removeFromConstructionList(
-					transformedConic.getParentAlgorithm());
+			cons.removeFromConstructionList(transformedConic.getParentAlgorithm());
 
-			algo = new AlgoConicPartConicPoints(cons, transformedLabel,
-					transformedConic, points[0], points[1], conic_part_type);
+			algo = new AlgoConicPartConicPoints(
+					cons, transformedLabel, transformedConic, points[0], points[1], conic_part_type);
 			GeoConicPart conicPart = algo.getConicPart();
 			conicPart.setVisualStyleForTransformations(this);
-			GeoElement[] geos = { conicPart, (GeoPoint) points[0],
-					(GeoPoint) points[1] };
+			GeoElement[] geos = {conicPart, (GeoPoint) points[0], (GeoPoint) points[1]};
 			return geos;
 		} else if (algoParent instanceof AlgoSemicircle) {
 			AlgoElement algo = algoParent;
-			GeoPointND[] points = { ((AlgoSemicircle) algo).getA(),
-					((AlgoSemicircle) algo).getB() };
+			GeoPointND[] points = {((AlgoSemicircle) algo).getA(), ((AlgoSemicircle) algo).getB()};
 			points = t.transformPoints(points);
 
 			GeoConic semCirc;
 			if (t instanceof TransformMirror && t.changesOrientation()) {
-				semCirc = kernel.getAlgoDispatcher().semicircle(
-						transformedLabel, (GeoPoint) points[1],
-						(GeoPoint) points[0]);
+				semCirc = kernel
+						.getAlgoDispatcher()
+						.semicircle(transformedLabel, (GeoPoint) points[1], (GeoPoint) points[0]);
 			} else if (t.isSimilar()) {
-				semCirc = kernel.getAlgoDispatcher().semicircle(
-						transformedLabel, (GeoPoint) points[0],
-						(GeoPoint) points[1]);
+				semCirc = kernel
+						.getAlgoDispatcher()
+						.semicircle(transformedLabel, (GeoPoint) points[0], (GeoPoint) points[1]);
 			} else {
 
 				GeoConic orgConic = ((AlgoSemicircle) algo).getConic();
 				GeoConicND transformedConic = t.getTransformedConic(orgConic);
-				cons.removeFromConstructionList(
-						transformedConic.getParentAlgorithm());
+				cons.removeFromConstructionList(transformedConic.getParentAlgorithm());
 				if (t.changesOrientation()) {
-					algo = new AlgoConicPartConicPoints(cons, transformedLabel,
-							transformedConic, points[0], points[1],
-							conic_part_type);
+					algo = new AlgoConicPartConicPoints(
+							cons, transformedLabel, transformedConic, points[0], points[1], conic_part_type);
 				} else {
-					algo = new AlgoConicPartConicPoints(cons, transformedLabel,
-							transformedConic, points[1], points[0],
-							conic_part_type);
+					algo = new AlgoConicPartConicPoints(
+							cons, transformedLabel, transformedConic, points[1], points[0], conic_part_type);
 				}
-				GeoConicPart conicPart = ((AlgoConicPartConicPoints) algo)
-						.getConicPart();
+				GeoConicPart conicPart = ((AlgoConicPartConicPoints) algo).getConicPart();
 				conicPart.setVisualStyleForTransformations(this);
-				GeoElement[] geos = { conicPart, (GeoElement) points[0],
-						(GeoElement) points[1] };
+				GeoElement[] geos = {conicPart, (GeoElement) points[0], (GeoElement) points[1]};
 				return geos;
 			}
 			semCirc.setVisualStyleForTransformations(this);
-			GeoElement[] geos = { semCirc, (GeoElement) points[0],
-					(GeoElement) points[1] };
+			GeoElement[] geos = {semCirc, (GeoElement) points[0], (GeoElement) points[1]};
 			return geos;
 		} else {
 			// create CONIC
 			GeoConicND transformedConic = t.getTransformedConic(this);
 			transformedConic.setLabel(transformedLabel);
-			GeoElement[] ret = { transformedConic };
+			GeoElement[] ret = {transformedConic};
 			return ret;
 		}
 	}
 
 	@Override
-	final public GeoElement copy() {
+	public final GeoElement copy() {
 		return new GeoConicPart(this);
 	}
 
@@ -739,7 +729,7 @@ public class GeoConicPart extends GeoConic
 	@Override
 	protected void moveBackToRegion(GeoPointND pi, RegionParameters rp) {
 		Coords coords = pi.getCoordsInD2(getCoordSys());
-		PathParameter pp = pi.getPathParameter();
+		final PathParameter pp = pi.getPathParameter();
 
 		// try to find the nearest point in the conic part
 		CoordNearest nearestPoint = new CoordNearest(coords);
@@ -755,36 +745,31 @@ public class GeoConicPart extends GeoConic
 		Coords ev1 = new Coords(3);
 		ev1.set(getEigenvec(1));
 
-		Coords firstPoint = midPoint.copy()
-				.addInsideMul(ev0,
-						getHalfAxis(0) * Math.cos(parameters.paramStart))
-				.addInsideMul(ev1,
-						getHalfAxis(1) * Math.sin(parameters.paramStart));
+		Coords firstPoint = midPoint
+				.copy()
+				.addInsideMul(ev0, getHalfAxis(0) * Math.cos(parameters.paramStart))
+				.addInsideMul(ev1, getHalfAxis(1) * Math.sin(parameters.paramStart));
 		nearestPoint.check(firstPoint);
-		Coords secondPoint = midPoint.copy()
-				.addInsideMul(ev0,
-						getHalfAxis(0) * Math.cos(parameters.paramEnd))
-				.addInsideMul(ev1,
-						getHalfAxis(1) * Math.sin(parameters.paramEnd));
+		Coords secondPoint = midPoint
+				.copy()
+				.addInsideMul(ev0, getHalfAxis(0) * Math.cos(parameters.paramEnd))
+				.addInsideMul(ev1, getHalfAxis(1) * Math.sin(parameters.paramEnd));
 		nearestPoint.check(secondPoint);
 
 		// check project points on segments edges
 		if (getConicPartType() == CONIC_PART_SECTOR) {
-			coords.projectLineSub(midPoint, firstPoint, tmpCoords,
-					tmpParameters);
+			coords.projectLineSub(midPoint, firstPoint, tmpCoords, tmpParameters);
 			if (tmpParameters[0] > 0 && tmpParameters[0] < 1) {
 				// check if the projected point is on the segment
 				nearestPoint.check(tmpCoords);
 			}
-			coords.projectLineSub(midPoint, secondPoint, tmpCoords,
-					tmpParameters);
+			coords.projectLineSub(midPoint, secondPoint, tmpCoords, tmpParameters);
 			if (tmpParameters[0] > 0 && tmpParameters[0] < 1) {
 				// check if the projected point is on the segment
 				nearestPoint.check(tmpCoords);
 			}
 		} else {
-			coords.projectLineSub(firstPoint, secondPoint, tmpCoords,
-					tmpParameters);
+			coords.projectLineSub(firstPoint, secondPoint, tmpCoords, tmpParameters);
 			// check if the projected point is on the segment
 			if (tmpParameters[0] > 0 && tmpParameters[0] < 1) {
 				nearestPoint.check(tmpCoords);
@@ -812,8 +797,7 @@ public class GeoConicPart extends GeoConic
 
 		// if kernel doesn't use path/region parameters, do as if point changed
 		// its coords
-		if (!getKernel().usePathAndRegionParameters(PI)
-				|| PI.getRegionParameters().isNaN()) {
+		if (!getKernel().usePathAndRegionParameters(PI) || PI.getRegionParameters().isNaN()) {
 			pointChangedForRegion(PI);
 			return;
 		}
@@ -837,10 +821,8 @@ public class GeoConicPart extends GeoConic
 			return false;
 		}
 		if (algo instanceof AlgoConicPartConicPoints) {
-			return ((AlgoConicPartConicPoints) algo).getStartPoint()
-					.isLabelSet()
-					&& ((AlgoConicPartConicPoints) algo).getEndPoint()
-							.isLabelSet();
+			return ((AlgoConicPartConicPoints) algo).getStartPoint().isLabelSet()
+					&& ((AlgoConicPartConicPoints) algo).getEndPoint().isLabelSet();
 		}
 		if (algo instanceof AlgoConicPartCircumcircle) {
 			return algo.getInput()[0].isLabelSet()
@@ -883,7 +865,6 @@ public class GeoConicPart extends GeoConic
 	public void setParametersToSinglePoint() {
 		parameters.value = 0;
 		parameters.setValueDefined(true);
-
 	}
 
 	/**

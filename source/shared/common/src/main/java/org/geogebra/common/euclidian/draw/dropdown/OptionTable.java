@@ -1,12 +1,28 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw.dropdown;
 
 import static org.geogebra.common.euclidian.draw.dropdown.DrawOptions.MARGIN;
 import static org.geogebra.common.gui.util.DropDownList.BOX_ROUND;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GDimension;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.GRectangle;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.main.GeoGebraColorConstants;
 
 class OptionTable {
@@ -21,9 +37,7 @@ class OptionTable {
 	private static final int VERTICAL_MARGIN = 1;
 	private static final int BORDER_WIDTH = 1;
 
-	OptionTable(DropDownModel model,
-			DrawItems drawItems,
-			OptionScroller scroller) {
+	OptionTable(DropDownModel model, DrawItems drawItems, OptionScroller scroller) {
 		this.model = model;
 		this.drawItems = drawItems;
 		this.scroller = scroller;
@@ -47,10 +61,8 @@ class OptionTable {
 		model.setFontSize(fontSize);
 		items.update(model);
 		packItems();
-		OptionTableDimension optionDimension =
-				new OptionTableDimension(model, items.getMaxDimension(),
-						scroller.getDownArrowHeight(),
-						scroller.isActive());
+		OptionTableDimension optionDimension = new OptionTableDimension(
+				model, items.getMaxDimension(), scroller.getDownArrowHeight(), scroller.isActive());
 
 		dimension = optionDimension.compute();
 
@@ -58,17 +70,15 @@ class OptionTable {
 			model.setLeft(model.viewWidth() - getWidth());
 		}
 
-		bounds = AwtFactory.getPrototype().newRectangle(model.getLeft(),
-				model.getTop() + MARGIN, getWidth(), getHeight());
+		bounds = AwtFactory.getPrototype()
+				.newRectangle(model.getLeft(), model.getTop() + MARGIN, getWidth(), getHeight());
 
-		scroller.update(model.getLeft(), model.getTop(),
-				getHeight(), items.getMaxDimension());
+		scroller.update(model.getLeft(), model.getTop(), getHeight(), items.getMaxDimension());
 	}
 
 	boolean wrapItems() {
 		items.update(model);
-		int maxRows = ((model.viewHeight() - 2 * MARGIN)
-				/ items.getMaxHeight()) + 1;
+		int maxRows = ((model.viewHeight() - 2 * MARGIN) / items.getMaxHeight()) + 1;
 		int maxCols = model.viewWidth() / items.getMaxWidth();
 		int maxItems = items.size();
 		if (maxItems < maxRows) {
@@ -109,8 +119,7 @@ class OptionTable {
 	 */
 	private boolean getScrollSettings() {
 		getOneColumnSettings();
-		int visibleItems = ((model.viewHeight() - (2 * MARGIN))
-				/ items.getMaxHeight()) - 1;
+		int visibleItems = ((model.viewHeight() - (2 * MARGIN)) / items.getMaxHeight()) - 1;
 
 		if (visibleItems > items.size()) {
 			// can't display more than this
@@ -147,12 +156,22 @@ class OptionTable {
 		g2.setPaint(model.getBackgroundColor());
 		int x = model.getLeft() - HORIZONTAL_MARGIN;
 		int y = model.getTop() - VERTICAL_MARGIN;
-		g2.fillRoundRect(x, y, getWidth() + 2 * HORIZONTAL_MARGIN,
-				getHeight() + 2 * VERTICAL_MARGIN, BOX_ROUND, BOX_ROUND);
+		g2.fillRoundRect(
+				x,
+				y,
+				getWidth() + 2 * HORIZONTAL_MARGIN,
+				getHeight() + 2 * VERTICAL_MARGIN,
+				BOX_ROUND,
+				BOX_ROUND);
 
 		g2.setPaint(GeoGebraColorConstants.NEUTRAL_500);
 		g2.setStroke(AwtFactory.getPrototype().newBasicStroke(BORDER_WIDTH));
-		g2.drawRoundRect(x, y, getWidth() + 2 * HORIZONTAL_MARGIN,
-				getHeight() + 2 * VERTICAL_MARGIN, BOX_ROUND, BOX_ROUND);
+		g2.drawRoundRect(
+				x,
+				y,
+				getWidth() + 2 * HORIZONTAL_MARGIN,
+				getHeight() + 2 * VERTICAL_MARGIN,
+				BOX_ROUND,
+				BOX_ROUND);
 	}
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbarpanel;
 
 import org.geogebra.common.io.layout.DockPanelData;
@@ -8,6 +24,7 @@ import org.geogebra.web.full.gui.view.algebra.AlgebraCanvasExporter;
 import org.geogebra.web.full.gui.view.algebra.AlgebraViewW;
 import org.geogebra.web.full.gui.view.algebra.RadioTreeItem;
 import org.geogebra.web.full.util.CustomScrollbar;
+import org.geogebra.web.html5.gui.util.AriaHelper;
 import org.geogebra.web.html5.gui.util.MathKeyboardListener;
 import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.event.dom.client.ClickEvent;
@@ -19,13 +36,14 @@ import elemental2.dom.CanvasRenderingContext2D;
 /**
  * Algebra tab of tool panel
  */
-public class AlgebraTab extends ToolbarTab {
+public final class AlgebraTab extends ToolbarTab {
 
-	final private App app;
+	private final App app;
 	private final ToolbarPanel toolbarPanel;
 	private FlowPanel wrapper;
 	/** Algebra view **/
 	AlgebraViewW aview = null;
+
 	private final LogoAndName logo;
 
 	private final AlgebraViewScroller scroller;
@@ -55,6 +73,7 @@ public class AlgebraTab extends ToolbarTab {
 				remove(wrapper);
 			}
 			wrapper = new FlowPanel();
+			AriaHelper.setRole(wrapper, "application");
 			aview = av;
 			aview.resetInputItemHeader();
 			wrapper.add(aview);
@@ -77,18 +96,17 @@ public class AlgebraTab extends ToolbarTab {
 	 * @param evt
 	 *            click event
 	 */
-	protected void emptyAVclicked(ClickEvent evt) {
+	private void emptyAVclicked(ClickEvent evt) {
 		int bt = wrapper.getAbsoluteTop() + wrapper.getOffsetHeight();
 		if (evt.getClientY() > bt && aview != null) {
-			app.getSelectionManager()
-					.clearSelectedGeos();
+			app.getSelectionManager().clearSelectedGeos();
 			aview.resetItems(true);
 		}
 	}
 
 	@Override
 	public void open() {
-		toolbarPanel.openAlgebra(true);
+		toolbarPanel.openAlgebra(toolbarPanel.isOpen());
 	}
 
 	@Override
@@ -104,7 +122,6 @@ public class AlgebraTab extends ToolbarTab {
 		DockPanelDecorator decorator = getDecorator();
 		decorator.onResize(aview, getTabHeight());
 		resizeAlgebraView(tabWidth);
-
 	}
 
 	private void resizeAlgebraView(int tabWidth) {
@@ -112,11 +129,14 @@ public class AlgebraTab extends ToolbarTab {
 			return;
 		}
 		aview.setUserWidth(tabWidth);
-		aview.resize(tabWidth);
+		aview.resize(getDecorator().getAlgebraViewWidth(tabWidth));
 		logo.onResize(aview, getTabHeight());
 		scrollToActiveItem();
 	}
 
+	/**
+	 * @return the height of the tab
+	 */
 	public int getTabHeight() {
 		return getDecorator().getTabHeight(toolbarPanel.getTabHeight());
 	}
@@ -137,7 +157,7 @@ public class AlgebraTab extends ToolbarTab {
 
 	/**
 	 * Give focus to AV Input.
-	 * 
+	 *
 	 * @return if focusing was successful.
 	 */
 	public boolean focusInput() {
@@ -175,10 +195,9 @@ public class AlgebraTab extends ToolbarTab {
 	}
 
 	@Override
-	public void paintToCanvas(CanvasRenderingContext2D context2d,
-			ViewCounter counter, int left, int top) {
-		AlgebraCanvasExporter exporter = new AlgebraCanvasExporter(aview, context2d,
-				getOffsetWidth());
+	public void paintToCanvas(
+			CanvasRenderingContext2D context2d, ViewCounter counter, int left, int top) {
+		AlgebraCanvasExporter exporter = new AlgebraCanvasExporter(aview, context2d, getOffsetWidth());
 		exporter.paintToCanvas(left, top);
 		if (counter != null) {
 			counter.decrement();

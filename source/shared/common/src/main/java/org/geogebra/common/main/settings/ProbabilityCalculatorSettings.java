@@ -1,6 +1,20 @@
-package org.geogebra.common.main.settings;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-//import geogebra.gui.view.probcalculator.ProbabilityManager;
+package org.geogebra.common.main.settings;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -14,7 +28,8 @@ import org.geogebra.common.kernel.geos.GeoNumeric;
 /**
  * Settings for the probability calculator view.
  */
-public class ProbabilityCalculatorSettings extends AbstractSettings {
+public class ProbabilityCalculatorSettings extends AbstractSettings<ProbabilityCalculatorSettings> {
+
 	/** distributions */
 	public enum Dist {
 		/** normal */
@@ -62,7 +77,9 @@ public class ProbabilityCalculatorSettings extends AbstractSettings {
 		 */
 		public static Dist forInverse(Commands command) {
 			return Arrays.stream(values())
-					.filter(s -> s.inverse == command).findFirst().orElse(null);
+					.filter(s -> s.inverse == command)
+					.findFirst()
+					.orElse(null);
 		}
 
 		/**
@@ -71,18 +88,21 @@ public class ProbabilityCalculatorSettings extends AbstractSettings {
 		 */
 		public static Dist forCommand(Commands command) {
 			return Arrays.stream(values())
-					.filter(s -> s.command == command).findFirst().orElse(null);
+					.filter(s -> s.command == command)
+					.findFirst()
+					.orElse(null);
 		}
 	}
 
 	/** number of distributions */
 	public static final int distCount = Dist.values().length;
 
-	private GeoNumeric[] parameters = { };
+	private boolean enabled = true;
+	private GeoNumeric[] parameters = {};
 	private Dist distributionType = Dist.NORMAL;
 	private boolean isCumulative = false;
 	private boolean intervalSet = false;
-	private boolean  isOverlayActive = false;
+	private boolean isOverlayActive = false;
 
 	private int probMode;
 
@@ -97,7 +117,7 @@ public class ProbabilityCalculatorSettings extends AbstractSettings {
 	 *            listeners
 	 */
 	public ProbabilityCalculatorSettings(
-			LinkedList<SettingListener> listeners) {
+			LinkedList<SettingListener<ProbabilityCalculatorSettings>> listeners) {
 		super(listeners);
 	}
 
@@ -110,7 +130,7 @@ public class ProbabilityCalculatorSettings extends AbstractSettings {
 
 	/**
 	 * Sets the parameter array
-	 * 
+	 *
 	 * @param parameters
 	 *            distribution parameters
 	 */
@@ -128,7 +148,7 @@ public class ProbabilityCalculatorSettings extends AbstractSettings {
 
 	/**
 	 * Sets the distribution type
-	 * 
+	 *
 	 * @param distributionType
 	 *            dist type
 	 */
@@ -150,7 +170,7 @@ public class ProbabilityCalculatorSettings extends AbstractSettings {
 
 	/**
 	 * Sets the cumulative flag
-	 * 
+	 *
 	 * @param isCumulative
 	 *            cumulative flag
 	 */
@@ -226,6 +246,14 @@ public class ProbabilityCalculatorSettings extends AbstractSettings {
 	 */
 	public void setCollection(StatisticsCollection stats) {
 		this.stats = stats;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public boolean isEnabled() {
+		return this.enabled;
 	}
 
 	/**

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.euclidian;
 
 import java.awt.event.FocusEvent;
@@ -17,15 +33,16 @@ import org.geogebra.common.euclidian.TextRendererSettings;
 import org.geogebra.common.euclidian.draw.DrawInputBox;
 import org.geogebra.common.kernel.geos.GeoInputBox;
 import org.geogebra.common.main.App;
+import org.geogebra.common.util.CommandSyntaxLookupImpl;
 import org.geogebra.common.util.SyntaxAdapterImpl;
 import org.geogebra.desktop.awt.GColorD;
 import org.geogebra.desktop.awt.GGraphics2DD;
 import org.geogebra.desktop.awt.GRectangleD;
 import org.geogebra.desktop.gui.inputfield.AutoCompleteTextFieldD;
+import org.geogebra.editor.desktop.MathFieldD;
+import org.geogebra.editor.share.editor.MathFieldInternal;
+import org.geogebra.editor.share.serializer.ScreenReaderSerializer;
 
-import com.himamis.retex.editor.desktop.MathFieldD;
-import com.himamis.retex.editor.share.editor.MathFieldInternal;
-import com.himamis.retex.editor.share.serializer.ScreenReaderSerializer;
 import com.himamis.retex.renderer.share.TeXFont;
 
 public class SymbolicEditorD extends SymbolicEditor {
@@ -39,6 +56,10 @@ public class SymbolicEditorD extends SymbolicEditor {
 		box = Box.createHorizontalBox();
 
 		mathField = new MathFieldD(new SyntaxAdapterImpl(app.getKernel()), view::repaintView);
+		mathField
+				.getInternal()
+				.getInputController()
+				.setCommandSyntaxLookup(new CommandSyntaxLookupImpl(app));
 
 		mathField.getInternal().addMathFieldListener(this);
 		mathField.setVisible(true);
@@ -87,12 +108,15 @@ public class SymbolicEditorD extends SymbolicEditor {
 		setInputBox(geoInputBox);
 		getDrawInputBox().setEditing(true);
 
-		mathField.getInternal().setType(getGeoInputBox().isSerifContent()
-				? TeXFont.SERIF : TeXFont.SANSSERIF);
+		mathField
+				.getInternal()
+				.setType(getGeoInputBox().isSerifContent() ? TeXFont.SERIF : TeXFont.SANSSERIF);
 		resetChanges();
 		mathField.setBounds(GRectangleD.getAWTRectangle(bounds));
-		mathField.getInternal().setSize(geoInputBox.getFontSizeMultiplier()
-				* (app.getSettings().getFontSettings().getAppFontSize() + 3));
+		mathField
+				.getInternal()
+				.setSize(geoInputBox.getFontSizeMultiplier()
+						* (app.getSettings().getFontSettings().getAppFontSize() + 3));
 
 		setBaseline(bounds.getY() + bounds.getHeight() / 2);
 
@@ -107,13 +131,14 @@ public class SymbolicEditorD extends SymbolicEditor {
 	@Override
 	public void repaintBox(GGraphics2D g) {
 		GColor bgColor = getGeoInputBox().getBackgroundColor() != null
-				? getInputBoxBackgroundColor() : view.getBackgroundCommon();
+				? getInputBoxBackgroundColor()
+				: view.getBackgroundCommon();
 
 		g.saveTransform();
 		int boxY = (int) computeTop(box.getHeight());
 		int boxX = box.getX();
-		AutoCompleteTextFieldD.drawBounds(g, bgColor, boxX, boxY,
-				box.getWidth(), box.getHeight(), getDrawInputBox());
+		AutoCompleteTextFieldD.drawBounds(
+				g, bgColor, boxX, boxY, box.getWidth(), box.getHeight(), getDrawInputBox());
 
 		mathField.setForeground(GColorD.getAwtColor(getGeoInputBox().getObjectColor()));
 		box.setBorder(null);
@@ -127,7 +152,8 @@ public class SymbolicEditorD extends SymbolicEditor {
 	}
 
 	private GColor getInputBoxBackgroundColor() {
-		return getGeoInputBox().hasError() ? GColor.ERROR_RED_BACKGROUND
+		return getGeoInputBox().hasError()
+				? GColor.ERROR_RED_BACKGROUND
 				: getGeoInputBox().getBackgroundColor();
 	}
 
@@ -135,10 +161,13 @@ public class SymbolicEditorD extends SymbolicEditor {
 	public void onKeyTyped(String key) {
 		addDegree(key, mathField.getInternal());
 		String text = texSerializer.serialize(getMathFieldInternal().getFormula());
-		GDimension equationSize = app.getDrawEquation().measureEquation(app, text,
-				getDrawInputBox().getTextFont(text), false);
+		GDimension equationSize = app.getDrawEquation()
+				.measureEquation(app, text, getDrawInputBox().getTextFont(text), false);
 		double currentHeight = equationSize.getHeight() + 2 * DrawInputBox.TF_MARGIN_VERTICAL;
-		box.setBounds(box.getX(), box.getY(), box.getWidth(),
+		box.setBounds(
+				box.getX(),
+				box.getY(),
+				box.getWidth(),
 				Math.max((int) currentHeight, DrawInputBox.SYMBOLIC_MIN_HEIGHT));
 		dispatchKeyTypeEvent(key);
 		box.revalidate();
@@ -148,12 +177,6 @@ public class SymbolicEditorD extends SymbolicEditor {
 	@Override
 	public boolean onArrowKeyPressed(int keyCode) {
 		view.repaintView();
-		return false;
-	}
-
-	@Override
-	public boolean onEscape() {
-		applyAndHide();
 		return false;
 	}
 
@@ -171,6 +194,6 @@ public class SymbolicEditorD extends SymbolicEditor {
 	@Override
 	public String getDescription() {
 		return ScreenReaderSerializer.fullDescription(
-				mathField.getInternal().getEditorState().getRootComponent(), null);
+				mathField.getInternal().getEditorState().getRootNode(), null);
 	}
 }

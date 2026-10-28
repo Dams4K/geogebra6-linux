@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -44,11 +48,10 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * Algorithm to invoke a specific macro.
- * 
+ *
  * @author Markus
  */
-public class AlgoMacro extends AlgoElement
-		implements AlgoMacroInterface, FixedPathRegionAlgo {
+public class AlgoMacro extends AlgoElement implements AlgoMacroInterface, FixedPathRegionAlgo {
 
 	private Macro macro;
 
@@ -62,15 +65,15 @@ public class AlgoMacro extends AlgoElement
 	// all keys of macroToAlgoMap that are not part of macroInput
 	private ArrayList<GeoElementND> macroOutputAndReferencedGeos;
 	private ArrayList<GeoElementND> algoOutputAndReferencedGeos; // for
-																	// efficiency,
-																	// see
-																	// getMacroConstructionState()
+	// efficiency,
+	// see
+	// getMacroConstructionState()
 
 	private boolean locked;
 
 	/**
 	 * Creates a new algorithm that applies a macro to the given input objects.
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param labels
@@ -82,8 +85,8 @@ public class AlgoMacro extends AlgoElement
 	 * @param add
 	 *            add to construction?
 	 */
-	public AlgoMacro(Construction cons, String[] labels, Macro macro,
-			GeoElement[] input, boolean add) {
+	public AlgoMacro(
+			Construction cons, String[] labels, Macro macro, GeoElement[] input, boolean add) {
 		super(cons, add);
 
 		this.input = input;
@@ -158,7 +161,7 @@ public class AlgoMacro extends AlgoElement
 
 	/**
 	 * The CopyPaste class needs a list of used macros to work perfectly
-	 * 
+	 *
 	 * @return Macro macro
 	 */
 	public Macro getMacro() {
@@ -166,7 +169,7 @@ public class AlgoMacro extends AlgoElement
 	}
 
 	@Override
-	final public void compute() {
+	public final void compute() {
 		try {
 			// set macro geos to algo geos state
 			setMacroConstructionState();
@@ -181,8 +184,7 @@ public class AlgoMacro extends AlgoElement
 					GeoPointND P = (GeoPointND) getOutput(i);
 					double t = P.getPathParameter().getT();
 					Path path = ((GeoPointND) geoPoint).getPath();
-					PathParameter pp = ((GeoPointND) geoPoint)
-							.getPathParameter();
+					PathParameter pp = ((GeoPointND) geoPoint).getPathParameter();
 					pp.setT(t);
 
 					path.pathChanged(P);
@@ -258,8 +260,7 @@ public class AlgoMacro extends AlgoElement
 				boolean oldVisible = algoGeo.isSetEuclidianVisible();
 				if (drawAlgo instanceof DrawInformationAlgo) {
 					((GeoNumeric) algoGeo).setDrawable(true, oldVisible);
-					algoGeo.setDrawAlgorithm(
-							((DrawInformationAlgo) drawAlgo).copy());
+					algoGeo.setDrawAlgorithm(((DrawInformationAlgo) drawAlgo).copy());
 				}
 
 			} else {
@@ -386,37 +387,36 @@ public class AlgoMacro extends AlgoElement
 	 * GeoElement objects. We need to make sure that algoGeo only reference
 	 * objects in its own construction.
 	 */
-	private void initSpecialReferences(GeoElement macroGeo,
-			GeoElement algoGeo) {
+	private void initSpecialReferences(GeoElement macroGeo, GeoElement algoGeo) {
 
 		switch (macroGeo.getGeoClassType()) {
-		case FUNCTION:
-			initFunction(((GeoFunction) algoGeo).getFunction());
-			break;
+			case FUNCTION:
+				initFunction(((GeoFunction) algoGeo).getFunction());
+				break;
 
-		case LIST:
-			initList((GeoList) macroGeo, (GeoList) algoGeo);
-			break;
+			case LIST:
+				initList((GeoList) macroGeo, (GeoList) algoGeo);
+				break;
 
-		case LINE:
-			initLine((GeoLine) macroGeo, (GeoLine) algoGeo);
-			break;
+			case LINE:
+				initLine((GeoLine) macroGeo, (GeoLine) algoGeo);
+				break;
 
-		case POLYGON:
-			initPolygon((GeoPolygon) macroGeo, (GeoPolygon) algoGeo);
-			break;
+			case POLYGON:
+				initPolygon((GeoPolygon) macroGeo, (GeoPolygon) algoGeo);
+				break;
 
-		case CONIC:
-			initConic((GeoConic) macroGeo, (GeoConic) algoGeo);
-			break;
+			case CONIC:
+				initConic((GeoConic) macroGeo, (GeoConic) algoGeo);
+				break;
 
-		case TEXT:
-		case VECTOR:
-		case IMAGE:
-			initLocateable((Locateable) macroGeo, (Locateable) algoGeo);
-			break;
+			case TEXT:
+			case VECTOR:
+			case IMAGE:
+				initLocateable((Locateable) macroGeo, (Locateable) algoGeo);
+				break;
 
-		default:
+			default:
 			// no special treatment necessary at the moment
 			// case ANGLE:
 			// case BOOLEAN:
@@ -462,8 +462,7 @@ public class AlgoMacro extends AlgoElement
 	/**
 	 * Makes sure that the start points of locateable are in its construction.
 	 */
-	private void initLocateable(Locateable macroLocateable,
-			Locateable locateable) {
+	private void initLocateable(Locateable macroLocateable, Locateable locateable) {
 		int startPointCount = macroLocateable.getStartPointCount();
 
 		try {
@@ -507,14 +506,14 @@ public class AlgoMacro extends AlgoElement
 	/**
 	 * Makes sure that all referenced GeoElements of geoList are in its
 	 * construction.
-	 * 
+	 *
 	 * @param macroList
 	 *            GeoList of macro geos
 	 * @param geoList
 	 *            GeoList of construction geos
 	 */
 	@Override
-	final public void initList(GeoList macroList, GeoList geoList) {
+	public final void initList(GeoList macroList, GeoList geoList) {
 		// make sure all referenced GeoElements are from the algo-construction
 
 		int size = macroList.size();
@@ -528,12 +527,12 @@ public class AlgoMacro extends AlgoElement
 	/**
 	 * Makes sure that all referenced GeoElements of fun are in this algorithm's
 	 * construction.
-	 * 
+	 *
 	 * @param fun
 	 *            function
 	 */
 	@Override
-	final public void initFunction(FunctionNVar fun) {
+	public final void initFunction(FunctionNVar fun) {
 		// geoFun was created as a copy of macroFun,
 		// make sure all referenced GeoElements are from the algo-construction
 		fun.getExpression().traverse(this::replaceReferencedMacroObjects);
@@ -560,12 +559,10 @@ public class AlgoMacro extends AlgoElement
 		int myIndex = 0, otherIndex = 0;
 		for (int i = 0; i < this.getOutputLength(); i++) {
 			if (this.algoOutputAndReferencedGeos.get(i) == geoElement) {
-				myIndex = this.macroOutputAndReferencedGeos.get(i)
-						.getConstructionIndex();
+				myIndex = this.macroOutputAndReferencedGeos.get(i).getConstructionIndex();
 			}
 			if (this.algoOutputAndReferencedGeos.get(i) == other) {
-				otherIndex = this.macroOutputAndReferencedGeos.get(i)
-						.getConstructionIndex();
+				otherIndex = this.macroOutputAndReferencedGeos.get(i).getConstructionIndex();
 			}
 		}
 		return myIndex - otherIndex;
@@ -606,8 +603,7 @@ public class AlgoMacro extends AlgoElement
 		macro.getMacroConstruction().updateAllAlgorithms();
 
 		// set algo geos to macro geos state
-		for (Entry<GeoElementND, GeoElement> entry : macroToAlgoMap
-				.entrySet()) {
+		for (Entry<GeoElementND, GeoElement> entry : macroToAlgoMap.entrySet()) {
 			GeoElementND me = entry.getKey();
 			if (entry.getValue() == geoPoint) {
 				GeoPoint mp = (GeoPoint) me;
@@ -619,20 +615,16 @@ public class AlgoMacro extends AlgoElement
 		}
 		macro.getMacroConstruction().updateAllAlgorithms();
 		getMacroConstructionState();
-		ArrayList<GeoElement> outputList = new ArrayList<>(
-				getOutputLength());
+		ArrayList<GeoElement> outputList = new ArrayList<>(getOutputLength());
 		for (int i = 0; i < getOutputLength(); i++) {
 			outputList.add(getOutput(i));
 		}
-		GeoElement.updateCascade(outputList, new TreeSet<AlgoElement>(), true);
+		GeoElement.updateCascade(outputList, new TreeSet<>(), true);
 		kernel.notifyRepaint();
-
 	}
 
 	@Override
 	public int getRelatedModeID() {
-		return kernel.getMacroID(macro)
-				+ EuclidianConstants.MACRO_MODE_ID_OFFSET;
+		return kernel.getMacroID(macro) + EuclidianConstants.MACRO_MODE_ID_OFFSET;
 	}
-
 }

@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
-*/
-
 /*
- * PolynomialUtils.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 17.08.2011, 13:05
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.implicit;
@@ -35,7 +33,7 @@ public class PolynomialUtils {
 
 	/**
 	 * calculates the quotient of p/d (no calculation of the remainder is done)
-	 * 
+	 *
 	 * @param cp
 	 *            coefficients of dividend
 	 * @param cd
@@ -43,9 +41,7 @@ public class PolynomialUtils {
 	 * @return quotient of cp/cd
 	 */
 	public static double[] polynomialDivision(double[] cp, double[] cd) {
-		double[] cq;
-		double[] cpclone;
-		cpclone = new double[cp.length];
+		double[] cpclone = new double[cp.length];
 		for (int i = 0; i < cp.length; i++) {
 			cpclone[i] = cp[i];
 		}
@@ -57,9 +53,9 @@ public class PolynomialUtils {
 			throw new ArithmeticException("divide by zero polynomial");
 		}
 		if (cpclone.length - 1 < degD) {
-			return new double[] { 0 };
+			return new double[] {0};
 		}
-		cq = new double[cpclone.length - degD];
+		double[] cq = new double[cpclone.length - degD];
 		double lcd = cd[degD];
 		int k = cpclone.length - 1;
 		for (int i = cq.length - 1; i >= 0; i--) {
@@ -74,17 +70,15 @@ public class PolynomialUtils {
 
 	/**
 	 * calculates the quotient of p/d (no calculation of the remainder is done)
-	 * 
+	 *
 	 * @param p
 	 *            dividend
 	 * @param d
 	 *            divisor
 	 * @return quotient of p/d
 	 */
-	public static PolynomialFunction polynomialDivision(PolynomialFunction p,
-			PolynomialFunction d) {
-		return new PolynomialFunction(
-				polynomialDivision(p.getCoefficients(), d.getCoefficients()));
+	public static PolynomialFunction polynomialDivision(PolynomialFunction p, PolynomialFunction d) {
+		return new PolynomialFunction(polynomialDivision(p.getCoefficients(), d.getCoefficients()));
 	}
 
 	/**
@@ -184,7 +178,7 @@ public class PolynomialUtils {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param pair
 	 *            starting value for Newton's-Algorithm
 	 * @param p1
@@ -193,13 +187,12 @@ public class PolynomialUtils {
 	 *            defined by line[0]+x*line[1]+y*line[2]=0
 	 * @return whether a common root of the polynomial and the line was found
 	 */
-	public static boolean rootPolishing(double[] pair, GeoImplicit p1,
-			double[] line) {
+	public static boolean rootPolishing(double[] pair, GeoImplicit p1, double[] line) {
 		return rootPolishing(pair, p1, null, line);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param pair
 	 *            starting value for Newton's-Algorithm
 	 * @param p1
@@ -208,13 +201,12 @@ public class PolynomialUtils {
 	 *            other polynomial
 	 * @return whether a common root of the polynomials was found
 	 */
-	public static boolean rootPolishing(double[] pair, GeoImplicit p1,
-			GeoImplicit p2) {
+	public static boolean rootPolishing(double[] pair, GeoImplicit p1, GeoImplicit p2) {
 		return rootPolishing(pair, p1, p2, null);
 	}
 
-	private static boolean rootPolishing(double[] pair, GeoImplicit p1,
-			GeoImplicit p2, double[] line) {
+	private static boolean rootPolishing(
+			double[] pair, GeoImplicit p1, GeoImplicit p2, double[] line) {
 		double x = pair[0], y = pair[1];
 		double p, q;
 		if (p1 == null) {
@@ -233,8 +225,7 @@ public class PolynomialUtils {
 		double err = Math.abs(p) + Math.abs(q);
 		int n = 0;
 		int MAX_ITERATIONS = 20;
-		while (err < 10 * lastErr && err > Kernel.STANDARD_PRECISION
-				&& ++n < MAX_ITERATIONS) {
+		while (err < 10 * lastErr && err > Kernel.STANDARD_PRECISION && ++n < MAX_ITERATIONS) {
 			double px, py;
 			double qx, qy;
 			px = p1.derivativeX(x, y);
@@ -273,22 +264,18 @@ public class PolynomialUtils {
 	 *            whether to replace by evaluation
 	 * @return whether all values are numeric
 	 */
-	public static boolean checkNumericCoeff(ExpressionValue[][] coeff,
-			boolean simplify) {
+	public static boolean checkNumericCoeff(ExpressionValue[][] coeff, boolean simplify) {
 		for (int i = 0; i < coeff.length; i++) {
 			for (int j = 0; j < coeff[i].length; j++) {
 				if (coeff[i][j] != null) {
 					// find constant parts of input and evaluate them right now
-					if (simplify && !coeff[i][j]
-							.any(Inspecting::isDynamicGeoElement)) {
-						coeff[i][j] = coeff[i][j]
-								.evaluate(StringTemplate.defaultTemplate);
+					if (simplify && !coeff[i][j].any(Inspecting::isDynamicGeoElement)) {
+						coeff[i][j] = coeff[i][j].evaluate(StringTemplate.defaultTemplate);
 					}
 
 					// check that coefficient is a number: this may throw an
 					// exception
-					ExpressionValue eval = coeff[i][j]
-							.evaluate(StringTemplate.defaultTemplate);
+					ExpressionValue eval = coeff[i][j].evaluate(StringTemplate.defaultTemplate);
 
 					// needed for GWT (ClassCastException not thrown)
 					if (!(eval instanceof NumberValue)) {
@@ -298,7 +285,5 @@ public class PolynomialUtils {
 			}
 		}
 		return true;
-
 	}
-
 }

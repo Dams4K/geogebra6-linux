@@ -1,7 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.geogebra3D.web.gui.layout.panels;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.euclidian.EuclidianView;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.gui.toolbar.ToolBar;
 import org.geogebra.common.io.layout.DockPanelData;
 import org.geogebra.common.main.App;
@@ -20,8 +36,8 @@ import org.gwtproject.user.client.ui.Widget;
  * Dock panel for view for plane
  *
  */
-public class EuclidianDockPanelForPlaneW extends EuclidianDockPanelWAbstract
-        implements EuclidianPanelWAbstract {
+public final class EuclidianDockPanelForPlaneW extends EuclidianDockPanelWAbstract
+		implements EuclidianPanelWAbstract {
 
 	/**
 	 * default width of this panel
@@ -38,18 +54,19 @@ public class EuclidianDockPanelForPlaneW extends EuclidianDockPanelWAbstract
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param viewId
 	 *            view ID
-	 * 
+	 *
 	 */
 	public EuclidianDockPanelForPlaneW(App app, int viewId) {
-		super(viewId, // view id
-			ToolBar.getAllToolsNoMacrosForPlane(), // toolbar string
-			true, // style bar?
-			false);
+		super(
+				viewId, // view id
+				ToolBar.getAllToolsNoMacrosForPlane(), // toolbar string
+				true, // style bar?
+				false);
 
 		this.app = (AppWFull) app;
 		this.setEmbeddedSize(DEFAULT_WIDTH);
@@ -62,7 +79,7 @@ public class EuclidianDockPanelForPlaneW extends EuclidianDockPanelWAbstract
 
 	/**
 	 * set the view attached
-	 * 
+	 *
 	 * @param view
 	 *            euclidian view
 	 */
@@ -91,7 +108,7 @@ public class EuclidianDockPanelForPlaneW extends EuclidianDockPanelWAbstract
 	}
 
 	/**
-	 * 
+	 *
 	 * @return view attached in this panel
 	 */
 	public EuclidianViewForPlaneW getView() {
@@ -115,13 +132,20 @@ public class EuclidianDockPanelForPlaneW extends EuclidianDockPanelWAbstract
 
 	@Override
 	public DockPanelData createInfo() {
-		return new DockPanelData(id, getToolbarString(), visible,
-				false, showStyleBar, new Rectangle(frameBounds),
-				embeddedDef, embeddedSize, view.getFromPlaneString());
+		return new DockPanelData(
+				id,
+				getToolbarString(),
+				visible,
+				false,
+				showStyleBar,
+				new Rectangle(frameBounds),
+				embeddedDef,
+				embeddedSize,
+				view.getFromPlaneString());
 	}
 
 	@Override
-    public ResourcePrototype getIcon() {
+	public ResourcePrototype getIcon() {
 		return getResources().menu_icon_graphics_extra();
 	}
 
@@ -133,19 +157,14 @@ public class EuclidianDockPanelForPlaneW extends EuclidianDockPanelWAbstract
 	@Override
 	public void calculateEnvironment() {
 		view.getEuclidianController().calculateEnvironment();
-
 	}
 
 	@Override
 	public void resizeView(int width, int height) {
 
-		final EuclidianSettings settings = app.getSettings()
-				.getEuclidianForPlane(
-						view.getCompanion().getPlane()
-								.getLabelSimple());
-		settings.setPreferredSize(
-				AwtFactory.getPrototype()
-				.newDimension(width, height));
+		final EuclidianSettings settings =
+				app.getSettings().getEuclidianForPlane(view.getCompanion().getPlane().getLabelSimple());
+		settings.setPreferredSize(AwtFactory.getPrototype().newDimension(width, height));
 
 		view.synCanvasSize();
 		view.doRepaint2();
@@ -155,5 +174,4 @@ public class EuclidianDockPanelForPlaneW extends EuclidianDockPanelWAbstract
 	protected ResourcePrototype getViewIcon() {
 		return null;
 	}
-
 }

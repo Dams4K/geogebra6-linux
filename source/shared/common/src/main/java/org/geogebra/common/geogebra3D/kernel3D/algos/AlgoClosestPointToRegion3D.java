@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -26,8 +30,7 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
  * Finds a point in given region closest to a given point.
  *
  */
-public class AlgoClosestPointToRegion3D extends AlgoElement3D
-		implements FixedPathRegionAlgo {
+public class AlgoClosestPointToRegion3D extends AlgoElement3D implements FixedPathRegionAlgo {
 
 	private Region r;
 	private GeoPointND P;
@@ -44,8 +47,7 @@ public class AlgoClosestPointToRegion3D extends AlgoElement3D
 	 * @param P
 	 *            source point
 	 */
-	public AlgoClosestPointToRegion3D(Construction c, String label, Region r,
-			GeoPointND P) {
+	public AlgoClosestPointToRegion3D(Construction c, String label, Region r, GeoPointND P) {
 		super(c);
 		this.r = r;
 		this.P = P;
@@ -105,5 +107,4 @@ public class AlgoClosestPointToRegion3D extends AlgoElement3D
 	public boolean isChangeable(GeoElementND out) {
 		return false;
 	}
-
 }

@@ -48,13 +48,13 @@
 
 package com.himamis.retex.renderer.share;
 
+import org.geogebra.common.awt.GBasicStroke;
+import org.geogebra.common.awt.GColor;
+
 import com.himamis.retex.renderer.share.platform.Geom;
 import com.himamis.retex.renderer.share.platform.Graphics;
-import com.himamis.retex.renderer.share.platform.geom.Area;
 import com.himamis.retex.renderer.share.platform.graphics.BasicStroke;
-import com.himamis.retex.renderer.share.platform.graphics.Color;
 import com.himamis.retex.renderer.share.platform.graphics.Graphics2DInterface;
-import com.himamis.retex.renderer.share.platform.graphics.Stroke;
 
 /**
  * An abstract graphical representation of a formula, that can be painted. All
@@ -75,7 +75,7 @@ import com.himamis.retex.renderer.share.platform.graphics.Stroke;
  */
 public abstract class Box {
 
-	final public static boolean DEBUG = false;
+	public static final boolean DEBUG = false;
 
 	/**
 	 * Factory providing platform independent implementations of forms used for
@@ -95,16 +95,16 @@ public abstract class Box {
 	 * parent will be used. If it has no parent, the foreground color of the
 	 * component on which it will be painted, will be used.
 	 */
-	protected Color foreground;
+	protected GColor foreground;
 
 	/**
 	 * The background color of the whole box. Child boxes can paint a background
 	 * on top of this background. If it's null, no background will be painted.
 	 */
-	protected Color background;
+	protected GColor background;
 
 	// used temporarily in startDraw and endDraw
-	private Color prevColor;
+	private GColor prevColor;
 
 	/**
 	 * The width of this box, i.e. the value that will be used for further
@@ -132,7 +132,7 @@ public abstract class Box {
 
 	protected int type = -1;
 
-	protected Color markForDEBUG;
+	protected GColor markForDEBUG;
 	protected Atom atom;
 
 	/**
@@ -152,23 +152,19 @@ public abstract class Box {
 	 * @param bg
 	 *            the background color
 	 */
-	protected Box(Color fg, Color bg) {
+	protected Box(GColor fg, GColor bg) {
 		foreground = fg;
 		background = bg;
 		geom = new Geom();
 		graphics = new Graphics();
 	}
 
-	public Area getArea() {
-		return null;
-	}
-
-	public Box setBg(Color bg) {
+	public Box setBg(GColor bg) {
 		background = bg;
 		return this;
 	}
 
-	public Box setFg(Color fg) {
+	public Box setFg(GColor fg) {
 		foreground = fg;
 		return this;
 	}
@@ -294,8 +290,7 @@ public abstract class Box {
 		prevColor = g2.getColor();
 		if (background != null) { // draw background
 			g2.setColor(background);
-			g2.fill(geom.createRectangle2D(x, y - height, width,
-					height + depth));
+			g2.fill(geom.createRectangle2D(x, y - height, width, height + depth));
 		}
 		if (foreground == null) {
 			g2.setColor(prevColor); // old foreground color
@@ -305,40 +300,36 @@ public abstract class Box {
 		drawDebug(g2, x, y);
 	}
 
-	protected void drawDebug(Graphics2DInterface g2, double x, double y,
-			boolean showDepth) {
+	protected void drawDebug(Graphics2DInterface g2, double x, double y, boolean showDepth) {
 		if (DEBUG) {
 			double x1 = x;
-			Stroke st = g2.getStroke();
+			GBasicStroke st = g2.getStroke();
 			if (markForDEBUG != null) {
-				Color c = g2.getColor();
+				GColor c = g2.getColor();
 				g2.setColor(markForDEBUG);
-				g2.fill(geom.createRectangle2D(x1, y - height, width,
-						height + depth));
+				g2.fill(geom.createRectangle2D(x1, y - height, width, height + depth));
 				g2.setColor(c);
 			}
 			g2.setStroke(graphics.createBasicStroke(
 					(Math.abs(1 / g2.getTransform().getScaleX())),
-					BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+					BasicStroke.CAP_BUTT,
+					BasicStroke.JOIN_MITER));
 			if (width < 0) {
 				x1 += width;
 				width = -width;
 			}
-			g2.draw(geom.createRectangle2D(x1, y - height, width,
-					height + depth));
+			g2.draw(geom.createRectangle2D(x1, y - height, width, height + depth));
 			if (showDepth) {
-				Color c = g2.getColor();
-				g2.setColor(Colors.RED);
+				GColor c = g2.getColor();
+				g2.setColor(GColor.RED);
 				if (depth > 0) {
 					g2.fill(geom.createRectangle2D(x1, y, width, depth));
 					g2.setColor(c);
 					g2.draw(geom.createRectangle2D(x1, y, width, depth));
 				} else if (depth < 0) {
-					g2.fill(geom.createRectangle2D(x1, y + depth, width,
-							-depth));
+					g2.fill(geom.createRectangle2D(x1, y + depth, width, -depth));
 					g2.setColor(c);
-					g2.draw(geom.createRectangle2D(x1, y + depth, width,
-							-depth));
+					g2.draw(geom.createRectangle2D(x1, y + depth, width, -depth));
 				} else {
 					g2.setColor(c);
 				}
@@ -365,8 +356,7 @@ public abstract class Box {
 
 	@Override
 	public String toString() {
-		return super.toString() + ": w=" + width + ";h=" + height + ";d="
-				+ depth + ";s=" + shift;
+		return super.toString() + ": w=" + width + ";h=" + height + ";d=" + depth + ";s=" + shift;
 	}
 
 	public Box setAtom(final Atom atom) {

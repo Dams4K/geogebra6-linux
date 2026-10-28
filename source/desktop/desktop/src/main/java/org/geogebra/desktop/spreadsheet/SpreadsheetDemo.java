@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.spreadsheet;
 
 import java.awt.Color;
@@ -20,7 +36,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.annotation.Nonnull;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -45,21 +60,19 @@ import org.geogebra.common.spreadsheet.core.SpreadsheetCellEditor;
 import org.geogebra.common.spreadsheet.core.SpreadsheetControlsDelegate;
 import org.geogebra.common.spreadsheet.kernel.DefaultSpreadsheetCellDataSerializer;
 import org.geogebra.common.spreadsheet.kernel.DefaultSpreadsheetCellProcessor;
-import org.geogebra.common.spreadsheet.kernel.GeoElementCellRendererFactory;
-import org.geogebra.common.spreadsheet.kernel.KernelTabularDataAdapter;
-import org.geogebra.common.spreadsheet.settings.SpreadsheetSettingsAdapter;
+import org.geogebra.common.util.CommandSyntaxLookupImpl;
 import org.geogebra.common.util.MouseCursor;
 import org.geogebra.common.util.SyntaxAdapterImpl;
 import org.geogebra.common.util.debug.Log;
 import org.geogebra.common.util.shape.Point;
 import org.geogebra.common.util.shape.Rectangle;
+import org.geogebra.desktop.awt.AwtFactoryD;
 import org.geogebra.desktop.awt.GGraphics2DD;
 import org.geogebra.desktop.euclidian.CursorMap;
-import org.geogebra.desktop.factories.AwtFactoryD;
-import org.geogebra.desktop.gui.spreadsheet.AwtReTeXGraphicsBridgeD;
+import org.geogebra.editor.desktop.MathFieldD;
+import org.geogebra.editor.share.editor.MathFieldInternal;
+import org.jspecify.annotations.NonNull;
 
-import com.himamis.retex.editor.desktop.MathFieldD;
-import com.himamis.retex.editor.share.editor.MathFieldInternal;
 import com.himamis.retex.renderer.desktop.FactoryProviderDesktop;
 
 public class SpreadsheetDemo {
@@ -73,21 +86,21 @@ public class SpreadsheetDemo {
 			Dimension preferredSize = new Dimension(800, 600);
 			frame.setPreferredSize(preferredSize);
 			AppCommon appCommon = new AppCommon(new LocalizationCommon(3), new AwtFactoryD());
-			KernelTabularDataAdapter tabularDataAdapter = new KernelTabularDataAdapter(appCommon);
-			Spreadsheet spreadsheet = new Spreadsheet(tabularDataAdapter,
-					new GeoElementCellRendererFactory(new AwtReTeXGraphicsBridgeD()), null);
-			new SpreadsheetSettingsAdapter(spreadsheet, appCommon).registerListeners();
-
+			appCommon.forceSpreadsheetEnabled = true;
+			Spreadsheet spreadsheet = appCommon.getSpreadsheet();
+			if (spreadsheet == null) {
+				return;
+			}
 			FactoryProviderDesktop.setInstance(new FactoryProviderDesktop());
+
 			spreadsheet.setWidthForColumns(60, 0, 10);
 			spreadsheet.setHeightForRows(20, 0, 10);
 
 			spreadsheet.setWidthForColumns(90, 2, 4);
 			spreadsheet.setHeightForRows(40, 3, 5);
 			SpreadsheetPanel spreadsheetPanel = new SpreadsheetPanel(spreadsheet, appCommon, frame);
-			appCommon.getKernel().attach(tabularDataAdapter);
 			/*appCommon.getGgbApi().evalCommand(String.join("\n", "C4=7", "C5=8",
-					"A1=4", "B2=true", "B3=Button()", "B4=sqrt(x)"));*/
+			"A1=4", "B2=true", "B3=Button()", "B4=sqrt(x)"));*/
 			appCommon.setXML(readDemoFile(), true);
 			spreadsheetPanel.setPreferredSize(preferredSize);
 			initParentPanel(frame, spreadsheetPanel);
@@ -101,8 +114,9 @@ public class SpreadsheetDemo {
 	}
 
 	private static String readDemoFile() throws URISyntaxException, IOException {
-		return Files.readString(Paths.get(SpreadsheetDemo.class
-				.getResource("spreadsheet.xml").toURI()), StandardCharsets.UTF_8);
+		return Files.readString(
+				Paths.get(SpreadsheetDemo.class.getResource("spreadsheet.xml").toURI()),
+				StandardCharsets.UTF_8);
 	}
 
 	private static void initParentPanel(JFrame frame, SpreadsheetPanel spreadsheetPanel) {
@@ -153,26 +167,30 @@ public class SpreadsheetDemo {
 		});
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
+			@SuppressWarnings("PMD.DoNotTerminateVM")
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
 		});
 	}
 
-	private static class SpreadsheetPanel extends JPanel {
+	private static final class SpreadsheetPanel extends JPanel {
 		private final Spreadsheet spreadsheet;
 		private final MathFieldD mathField;
 		private final Box editorBox = Box.createHorizontalBox();
 		private final JPopupMenu contextMenu = new JPopupMenu();
-		public JPanel editorOverlay;
+		private JPanel editorOverlay;
 
 		private int scrollX;
 		private int scrollY;
 
-		public SpreadsheetPanel(Spreadsheet spreadsheet, AppCommon app, JFrame frame) {
+		private SpreadsheetPanel(Spreadsheet spreadsheet, AppCommon app, JFrame frame) {
 			this.spreadsheet = spreadsheet;
-			this.mathField = new MathFieldD(new SyntaxAdapterImpl(app.getKernel()),
-					editorBox::repaint);
+			this.mathField = new MathFieldD(new SyntaxAdapterImpl(app.getKernel()), editorBox::repaint);
+			mathField
+					.getInternal()
+					.getInputController()
+					.setCommandSyntaxLookup(new CommandSyntaxLookupImpl(app));
 			editorBox.setBorder(new BevelBorder(BevelBorder.RAISED));
 			editorBox.add(mathField);
 			mathField.setBounds(0, 0, 200, 200);
@@ -182,15 +200,13 @@ public class SpreadsheetDemo {
 			addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseReleased(MouseEvent event) {
-					spreadsheet.handlePointerUp(event.getX(), event.getY(),
-							getModifiers(event));
+					spreadsheet.handlePointerUp(event.getX(), event.getY(), getModifiers(event));
 					repaint();
 				}
 
 				@Override
 				public void mousePressed(MouseEvent event) {
-					spreadsheet.handlePointerDown(event.getX(), event.getY(),
-							getModifiers(event));
+					spreadsheet.handlePointerDown(event.getX(), event.getY(), getModifiers(event));
 					repaint();
 				}
 			});
@@ -216,9 +232,8 @@ public class SpreadsheetDemo {
 
 				@Override
 				public void keyPressed(KeyEvent e) {
-					spreadsheet.handleKeyPressed(e.getKeyCode(),
-							e.getKeyChar() + "", getModifiers(e));
-                    repaint();
+					spreadsheet.handleKeyPressed(e.getKeyCode(), e.getKeyChar() + "", getModifiers(e));
+					repaint();
 				}
 
 				@Override
@@ -227,25 +242,23 @@ public class SpreadsheetDemo {
 				}
 			});
 
-			spreadsheet.setControlsDelegate(new SpreadsheetControlsDelegate() {
+			spreadsheet.setControlsDelegate(new SpreadsheetControlsDelegate<>() {
 
-				private final SpreadsheetCellEditor editor = new DesktopSpreadsheetCellEditor(frame,
-						app);
+				private final SpreadsheetCellEditor editor = new DesktopSpreadsheetCellEditor(frame, app);
 
 				private ClipboardInterface clipboard = new ClipboardD();
 
 				@Override
-				public @Nonnull SpreadsheetCellEditor getCellEditor() {
+				public @NonNull SpreadsheetCellEditor getCellEditor() {
 					return editor;
 				}
 
 				@Override
-				public void showContextMenu(
-						@Nonnull List<ContextMenuItem> items, @Nonnull Point position) {
-					contextMenu.show(editorOverlay,
-							(int) Math.round(position.x), (int) Math.round(position.y));
+				public void showContextMenu(@NonNull List<ContextMenuItem> items, @NonNull Point position) {
+					contextMenu.show(
+							editorOverlay, (int) Math.round(position.x), (int) Math.round(position.y));
 					contextMenu.removeAll();
-					for (ContextMenuItem item: items) {
+					for (ContextMenuItem item : items) {
 						String localizationKey = item.getLocalizationKey();
 						JMenuItem btn = new JMenuItem(localizationKey);
 						if (item instanceof ActionableItem) {
@@ -275,7 +288,7 @@ public class SpreadsheetDemo {
 
 				@Override
 				public void showAutoCompleteSuggestions(
-						@Nonnull String input, @Nonnull Rectangle editorBounds) {
+						@NonNull String input, @NonNull Rectangle editorBounds) {
 					// Not needed
 				}
 
@@ -295,24 +308,31 @@ public class SpreadsheetDemo {
 				}
 
 				@Override
-				public void showSnackbar(@Nonnull String messageKey) {
+				public void showSnackbar(@NonNull String messageKey) {
 					// Not needed
+				}
+
+				@Override
+				public void showProperties(@NonNull List<@NonNull Object> objects) {
+					// not needed
 				}
 			});
 		}
 
 		private Modifiers getModifiers(MouseEvent event) {
-			return new Modifiers(event.isAltDown(), event.isControlDown(), event.isShiftDown(),
-					event.getButton() == 3);
+			return new Modifiers(
+					event.isAltDown(), event.isControlDown(), event.isShiftDown(), event.getButton() == 3);
 		}
 
 		private Modifiers getModifiers(KeyEvent event) {
-			return new Modifiers(event.isAltDown(),
+			return new Modifiers(
+					event.isAltDown(),
 					event.isControlDown() || event.isMetaDown(), // looks like Meta == Cmd on Mac
-					event.isShiftDown(), false);
+					event.isShiftDown(),
+					false);
 		}
 
-		public Rectangle getViewport() {
+		private Rectangle getViewport() {
 			return new Rectangle(scrollX, scrollX + 500, scrollY, scrollY + 400);
 		}
 
@@ -334,7 +354,13 @@ public class SpreadsheetDemo {
 			}
 
 			@Override
-			public void show(@Nonnull Rectangle editorBounds, @Nonnull Rectangle viewport, int textAlignment) {
+			public double getFittingContentWidth() {
+				return mathField.getPreferredSize().width;
+			}
+
+			@Override
+			public void show(
+					@NonNull Rectangle editorBounds, @NonNull Rectangle viewport, int textAlignment) {
 				if (!frame.getContentPane().isAncestorOf(editorBox)) {
 					frame.getContentPane().add(editorBox);
 				}
@@ -344,13 +370,14 @@ public class SpreadsheetDemo {
 			}
 
 			@Override
-			public void updatePosition(@Nonnull Rectangle editorBounds, @Nonnull Rectangle viewport) {
+			public void updatePosition(@NonNull Rectangle editorBounds, @NonNull Rectangle viewport) {
 				java.awt.Point locationInWindow = getParent().getLocation();
-				editorBox.setBounds((int) editorBounds.getMinX() + locationInWindow.x,
+				editorBox.setBounds(
+						(int) editorBounds.getMinX() + locationInWindow.x,
 						(int) editorBounds.getMinY() + locationInWindow.y,
-						(int) editorBounds.getWidth(), (int) editorBounds.getHeight());
-				mathField.setBounds(0, 0,
-						(int) editorBounds.getWidth(), (int) editorBounds.getHeight());
+						(int) editorBounds.getWidth(),
+						(int) editorBounds.getHeight());
+				mathField.setBounds(0, 0, (int) editorBounds.getWidth(), (int) editorBounds.getHeight());
 			}
 
 			@Override
@@ -361,17 +388,17 @@ public class SpreadsheetDemo {
 			}
 
 			@Override
-			public @Nonnull MathFieldInternal getMathField() {
+			public @NonNull MathFieldInternal getMathField() {
 				return mathField.getInternal();
 			}
 
 			@Override
-			public @Nonnull DefaultSpreadsheetCellProcessor getCellProcessor() {
+			public @NonNull DefaultSpreadsheetCellProcessor getCellProcessor() {
 				return new DefaultSpreadsheetCellProcessor(app.getKernel().getAlgebraProcessor());
 			}
 
 			@Override
-			public @Nonnull SpreadsheetCellDataSerializer getCellDataSerializer() {
+			public @NonNull SpreadsheetCellDataSerializer getCellDataSerializer() {
 				return new DefaultSpreadsheetCellDataSerializer();
 			}
 		}

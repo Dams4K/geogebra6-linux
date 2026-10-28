@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -21,10 +37,8 @@ public class CmdConeInfinite extends CmdCone {
 	}
 
 	@Override
-	protected GeoElement[] conePointPointRadius(Command c, GeoPointND p1,
-			GeoPointND p2, GeoNumberValue r) {
-		return new GeoElement[] {
-				kernel.getManager3D().cone(c.getLabel(), p1, p2, r) };
+	protected GeoElement[] conePointPointRadius(
+			Command c, GeoPointND p1, GeoPointND p2, GeoNumberValue r) {
+		return new GeoElement[] {kernel.getManager3D().cone(c.getLabel(), p1, p2, r)};
 	}
-
 }

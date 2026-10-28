@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.layout.panels;
 
 import org.geogebra.common.cas.view.CASTableCellEditor;
@@ -15,7 +31,7 @@ import org.gwtproject.user.client.ui.Widget;
  * Top level GUI for the CAS view
  *
  */
-public class CASDockPanelW extends NavigableDockPanelW {
+public final class CASDockPanelW extends NavigableDockPanelW {
 
 	private CASViewW casView;
 
@@ -48,8 +64,7 @@ public class CASDockPanelW extends NavigableDockPanelW {
 
 	@Override
 	protected Widget loadStyleBar() {
-		return ((CASViewW) app.getGuiManager().getCasView())
-				.getCASStyleBar();
+		return app.getGuiManager().getCasView().getCASStyleBar();
 	}
 
 	@Override
@@ -59,8 +74,7 @@ public class CASDockPanelW extends NavigableDockPanelW {
 
 	@Override
 	public MathKeyboardListener getKeyboardListener() {
-		return ((CASViewW) app.getGuiManager().getCasView())
-				.getEditor();
+		return app.getGuiManager().getCasView().getEditor();
 	}
 
 	@Override
@@ -70,7 +84,7 @@ public class CASDockPanelW extends NavigableDockPanelW {
 
 	@Override
 	protected Panel getViewPanel() {
-		casView = (CASViewW) app.getGuiManager().getCasView();
+		casView = app.getGuiManager().getCasView();
 		if (!app.supportsView(App.VIEW_CAS)) {
 			return new FlowPanel();
 		}
@@ -83,12 +97,10 @@ public class CASDockPanelW extends NavigableDockPanelW {
 		if (casView == null) {
 			return;
 		}
-		boolean oldFocus = ((CASTableCellEditor) casView.getEditor())
-				.hasFocus();
+		boolean oldFocus = ((CASTableCellEditor) casView.getEditor()).hasFocus();
 		super.onResize();
 		if (oldFocus) {
 			casView.getEditor().setFocus(true);
 		}
-
 	}
 }

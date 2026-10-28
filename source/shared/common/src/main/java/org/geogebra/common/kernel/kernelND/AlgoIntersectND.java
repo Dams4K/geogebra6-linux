@@ -1,14 +1,18 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
-*/
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
 package org.geogebra.common.kernel.kernelND;
 
@@ -53,8 +57,7 @@ public abstract class AlgoIntersectND extends AlgoIntersectAbstract {
 	 */
 	protected void avoidDoubleTangentPoint() {
 		GeoPointND[] points = getIntersectionPoints();
-		if (!points[1].isLabelSet()
-				&& points[0].isEqual(points[1])) {
+		if (!points[1].isLabelSet() && points[0].isEqual(points[1])) {
 			points[1].setUndefined();
 		}
 	}
@@ -106,7 +109,7 @@ public abstract class AlgoIntersectND extends AlgoIntersectAbstract {
 	 * Sets the index-th intersection point to the coords of p. This is needed
 	 * when loading constructions from a file to make sure the intersection
 	 * points remain at their saved positions.
-	 * 
+	 *
 	 * @param index
 	 *            index
 	 * @param p
@@ -157,35 +160,36 @@ public abstract class AlgoIntersectND extends AlgoIntersectAbstract {
 
 	/**
 	 * set destination coords equals to source coords
-	 * 
+	 *
 	 * @param destination
 	 *            destination point
 	 * @param source
 	 *            source point
 	 */
-	abstract protected void setCoords(GeoPointND destination,
-			GeoPointND source);
+	protected abstract void setCoords(GeoPointND destination, GeoPointND source);
 	// points[index].setCoords(p);
 
 	/**
 	 * Returns true if setIntersectionPoint was called for index-th point.
-	 * 
+	 *
 	 * @param index
 	 *            index of point
 	 * @return true if setIntersectionPoint was called for index-th point.
 	 */
 	protected boolean didSetIntersectionPoint(int index) {
-		return didSetIntersectionPointArray != null
-				&& didSetIntersectionPointArray[index];
+		return didSetIntersectionPointArray != null && didSetIntersectionPointArray[index];
 	}
 
 	@Override
 	public String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("IntersectionPointOfAB",
-				"Intersection point of %0, %1",
-				input[0].getLabel(tpl), input[1].getLabel(tpl));
+		return getLoc()
+				.getPlainDefault(
+						"IntersectionPointOfAB",
+						"Intersection point of %0, %1",
+						input[0].getLabel(tpl),
+						input[1].getLabel(tpl));
 	}
 
 	@Override
@@ -207,5 +211,4 @@ public abstract class AlgoIntersectND extends AlgoIntersectAbstract {
 			setPrintedInXML(false);
 		}
 	}
-
 }

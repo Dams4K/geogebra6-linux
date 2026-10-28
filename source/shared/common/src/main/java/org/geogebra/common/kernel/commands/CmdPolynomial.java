@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -20,7 +36,7 @@ public class CmdPolynomial extends CommandProcessor {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -29,57 +45,52 @@ public class CmdPolynomial extends CommandProcessor {
 	}
 
 	@Override
-	final public GeoElement[] process(Command c, EvalInfo info) throws MyError {
+	public final GeoElement[] process(Command c, EvalInfo info) throws MyError {
 		int n = c.getArgumentNumber();
 
 		GeoElement[] arg;
 		arg = resArgs(c, info);
 
 		switch (n) {
-		case 1:
-			if (arg[0].isRealValuedFunction()) {
+			case 1:
+				if (arg[0].isRealValuedFunction()) {
 
-				AlgoPolynomialFromFunction algo = new AlgoPolynomialFromFunction(
-						cons, c.getLabel(),
-						(GeoFunctionable) arg[0]);
+					AlgoPolynomialFromFunction algo =
+							new AlgoPolynomialFromFunction(cons, c.getLabel(), (GeoFunctionable) arg[0]);
 
-				GeoElement[] ret = { algo.getPolynomial() };
-				return ret;
-			} else if (arg[0].isGeoFunctionNVar()) {
-				AlgoPolynomialFromFunctionNVar algo = new AlgoPolynomialFromFunctionNVar(
-						cons, c.getLabel(),
-						(GeoFunctionNVar) arg[0]);
-				GeoElement[] ret = { algo.getPolynomial() };
-				return ret;
-			}
-			// PolynomialFromCoordinates
-			else if (arg[0].isGeoList()) {
-				GeoElement[] ret = {
-						polynomialFunction(c.getLabel(), (GeoList) arg[0]) };
-				return ret;
-			} else {
-				throw argErr(c, arg[0]);
-			}
+					GeoElement[] ret = {algo.getPolynomial()};
+					return ret;
+				} else if (arg[0].isGeoFunctionNVar()) {
+					AlgoPolynomialFromFunctionNVar algo =
+							new AlgoPolynomialFromFunctionNVar(cons, c.getLabel(), (GeoFunctionNVar) arg[0]);
+					GeoElement[] ret = {algo.getPolynomial()};
+					return ret;
+				}
+				// PolynomialFromCoordinates
+				else if (arg[0].isGeoList()) {
+					GeoElement[] ret = {polynomialFunction(c.getLabel(), (GeoList) arg[0])};
+					return ret;
+				} else {
+					throw argErr(c, arg[0]);
+				}
 
 			// more than one argument
-		default:
-			// try to create list of points
-			GeoList list = wrapInList(kernel, arg, arg.length, GeoClass.POINT);
-			if (list != null) {
-				GeoElement[] ret = { polynomialFunction(c.getLabel(), list) };
-				return ret;
-			}
-			throw argNumErr(c);
+			default:
+				// try to create list of points
+				GeoList list = wrapInList(kernel, arg, arg.length, GeoClass.POINT);
+				if (list != null) {
+					GeoElement[] ret = {polynomialFunction(c.getLabel(), list)};
+					return ret;
+				}
+				throw argNumErr(c);
 		}
 	}
 
 	/**
-	 * Fits a polynomial exactly to a list of coordinates Michael Borcherds
-	 * 2008-01-22
+	 * Fits a polynomial exactly to a list of coordinates.
 	 */
-	final private GeoFunction polynomialFunction(String label, GeoList list) {
-		AlgoPolynomialFromCoordinates algo = new AlgoPolynomialFromCoordinates(
-				cons, label, list);
+	private GeoFunction polynomialFunction(String label, GeoList list) {
+		AlgoPolynomialFromCoordinates algo = new AlgoPolynomialFromCoordinates(cons, label, list);
 		return algo.getPolynomial();
 	}
 }

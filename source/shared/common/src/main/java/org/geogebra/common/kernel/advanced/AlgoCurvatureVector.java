@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.advanced;
 
 import org.geogebra.common.kernel.CircularDefinitionException;
@@ -14,11 +30,10 @@ import org.geogebra.common.kernel.geos.GeoVector;
 /**
  * @author Victor Franco Espino
  * @version 11-02-2007
- * 
+ *
  *          Calculate Curvature Vector for function: c(x) =
  *          (1/T^4)*(-f'*f'',f''), T = sqrt(1+(f')^2)
  */
-
 public class AlgoCurvatureVector extends AlgoElement {
 
 	private GeoPoint A; // input
@@ -47,7 +62,7 @@ public class AlgoCurvatureVector extends AlgoElement {
 		v = new GeoVector(cons);
 		try {
 			v.setStartPoint(A);
-		} catch (CircularDefinitionException e) {
+		} catch (CircularDefinitionException ignored) {
 			// can't happen with new vectors
 		}
 		EvalInfo info = new EvalInfo(false);
@@ -94,7 +109,7 @@ public class AlgoCurvatureVector extends AlgoElement {
 			double t = Math.sqrt(1 + f1eval * f1eval);
 			double t4 = t * t * t * t;
 
-			v.x = - (f1eval * f2eval) / t4;
+			v.x = -(f1eval * f2eval) / t4;
 			v.y = f2eval / t4;
 			v.z = 0.0;
 		} catch (Exception e) {
@@ -114,5 +129,4 @@ public class AlgoCurvatureVector extends AlgoElement {
 		A.removeAlgorithm(algoCAS2);
 		f.removeAlgorithm(algoCAS2);
 	}
-
 }

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -27,7 +31,7 @@ import org.geogebra.common.kernel.geos.GeoPoint;
 /**
  * Finds intersection points of two polynomials (using the roots of their
  * difference)
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class AlgoIntersectFunctionsNewton extends AlgoRootNewton {
@@ -49,8 +53,8 @@ public class AlgoIntersectFunctionsNewton extends AlgoRootNewton {
 	 * @param startPoint
 	 *            initial point for Newton method
 	 */
-	public AlgoIntersectFunctionsNewton(Construction cons, GeoFunctionable f,
-			GeoFunctionable g, GeoPoint startPoint) {
+	public AlgoIntersectFunctionsNewton(
+			Construction cons, GeoFunctionable f, GeoFunctionable g, GeoPoint startPoint) {
 		super(cons);
 		this.f = f;
 		this.g = g;
@@ -76,8 +80,8 @@ public class AlgoIntersectFunctionsNewton extends AlgoRootNewton {
 	 * @param startPoint
 	 *            initial point for Newton method
 	 */
-	public AlgoIntersectFunctionsNewton(Construction cons, String label,
-			GeoFunctionable f, GeoFunctionable g, GeoPoint startPoint) {
+	public AlgoIntersectFunctionsNewton(
+			Construction cons, String label, GeoFunctionable f, GeoFunctionable g, GeoPoint startPoint) {
 		this(cons, f, g, startPoint);
 		rootPoint.setLabel(label);
 	}
@@ -122,8 +126,7 @@ public class AlgoIntersectFunctionsNewton extends AlgoRootNewton {
 			rootPoint.setUndefined();
 		} else {
 			// get difference f - g
-			Function.difference(f.getFunction(), g.getFunction(),
-					diffFunction);
+			Function.difference(f.getFunction(), g.getFunction(), diffFunction);
 			double x = calcRoot(diffFunction, startPoint.inhomX);
 
 			// check if x and g(x) are defined
@@ -143,16 +146,14 @@ public class AlgoIntersectFunctionsNewton extends AlgoRootNewton {
 			// labeled,
 			// i.e. not visible on screen (and was probably created by clicking
 			// on an intersection)
-			if (!startPoint.isLabelSet() && startPoint.isIndependent()
-					&& rootPoint.isDefined()) {
+			if (!startPoint.isLabelSet() && startPoint.isIndependent() && rootPoint.isDefined()) {
 				startPoint.setCoords(rootPoint);
 			}
 		}
 	}
 
 	private static boolean isBooleanFunction(GeoFunctionable f2) {
-		return f2 instanceof GeoFunction
-				&& ((GeoFunction) f2).isBooleanFunction();
+		return f2 instanceof GeoFunction && ((GeoFunction) f2).isBooleanFunction();
 	}
 
 	private void computeRootBoolean(GeoFunction bool, GeoFunctionable real) {
@@ -179,8 +180,10 @@ public class AlgoIntersectFunctionsNewton extends AlgoRootNewton {
 			}
 		}
 
-		double x = Double.isNaN(higher) || (startPoint.getInhomX()
-				- lower < higher - startPoint.getInhomX()) ? lower : higher;
+		double x =
+				Double.isNaN(higher) || (startPoint.getInhomX() - lower < higher - startPoint.getInhomX())
+						? lower
+						: higher;
 		rootPoint.setCoords(x, real.value(x), 1);
 	}
 
@@ -192,14 +195,15 @@ public class AlgoIntersectFunctionsNewton extends AlgoRootNewton {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-31
 		// simplified to allow better translation
-		return getLoc().getPlainDefault(
-				"IntersectionPointOfABWithInitialValueC",
-				"Intersection of %0 and %1 with initial value %2",
-				input[0].getLabel(tpl), input[1].getLabel(tpl),
-				startPoint.getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault(
+						"IntersectionPointOfABWithInitialValueC",
+						"Intersection of %0 and %1 with initial value %2",
+						input[0].getLabel(tpl),
+						input[1].getLabel(tpl),
+						startPoint.getLabel(tpl));
 	}
 }

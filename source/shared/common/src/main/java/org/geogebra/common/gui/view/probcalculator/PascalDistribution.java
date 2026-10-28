@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.probcalculator;
 
 import static org.geogebra.common.gui.view.probcalculator.ProbabilityCalculatorView.nearlyOne;
@@ -38,13 +54,12 @@ public class PascalDistribution extends CachingDiscreteDistribution {
 		GeoNumberValue nGeo = parameters.at(0);
 		GeoNumberValue pGeo = parameters.at(1);
 
-		AlgoInversePascal n2 = new AlgoInversePascal(cons, nGeo, pGeo,
-				new GeoNumeric(cons, nearlyOne));
+		AlgoInversePascal n2 = new AlgoInversePascal(cons, nGeo, pGeo, new GeoNumeric(cons, nearlyOne));
 		cons.removeFromConstructionList(n2);
 		GeoElementND n2Geo = n2.getOutput(0);
 
-		AlgoSequenceRange algoSeq = new AlgoSequenceRange(cons, new GeoNumeric(cons, 0.0),
-				(GeoNumberValue) n2Geo, null);
+		AlgoSequenceRange algoSeq =
+				new AlgoSequenceRange(cons, new GeoNumeric(cons, 0.0), (GeoNumberValue) n2Geo, null);
 		cons.removeFromAlgorithmList(algoSeq);
 		GeoList values = (GeoList) algoSeq.getOutput(0);
 
@@ -52,19 +67,26 @@ public class PascalDistribution extends CachingDiscreteDistribution {
 		AlgoListElement algo = new AlgoListElement(cons, values, k);
 		cons.removeFromConstructionList(algo);
 
-		AlgoPascal algoPascal = new AlgoPascal(cons, nGeo, pGeo,
+		AlgoPascal algoPascal = new AlgoPascal(
+				cons,
+				nGeo,
+				pGeo,
 				(GeoNumberValue) algo.getOutput(0),
 				new GeoBoolean(cons, parameters.isCumulative));
 		cons.removeFromConstructionList(algoPascal);
 
-		ExpressionNode nPlusOne = new ExpressionNode(kernel, n2Geo, Operation.PLUS,
-				new MyDouble(kernel, 1.0));
+		ExpressionNode nPlusOne =
+				new ExpressionNode(kernel, n2Geo, Operation.PLUS, new MyDouble(kernel, 1.0));
 		AlgoDependentNumber plusOneAlgo = new AlgoDependentNumber(cons, nPlusOne, false);
 		cons.removeFromConstructionList(plusOneAlgo);
 
-		AlgoSequence algoSeq2 = new AlgoSequence(cons, algoPascal.getOutput(0), k,
+		AlgoSequence algoSeq2 = new AlgoSequence(
+				cons,
+				algoPascal.getOutput(0),
+				k,
 				new GeoNumeric(cons, 1.0),
-				(GeoNumberValue) plusOneAlgo.getOutput(0), null);
+				(GeoNumberValue) plusOneAlgo.getOutput(0),
+				null);
 		cons.removeFromConstructionList(algoSeq2);
 
 		GeoList probs = (GeoList) algoSeq2.getOutput(0);

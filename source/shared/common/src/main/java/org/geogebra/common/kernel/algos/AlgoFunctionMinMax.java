@@ -1,13 +1,17 @@
 /*
-GeoGebra - Dynamic Mathematics for Schools
-Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -22,24 +26,23 @@ import org.geogebra.common.kernel.optimization.ExtremumFinderI;
 
 /**
  * Command: Min[&lt;function&gt;,left-x,right-x]
- * 
+ *
  * Numerically calculates Extremum point for &lt;function&gt; in closed interval
  * [left-x,right-x] without being dependent on being able to find the derivate
  * of &lt;function&gt;.
- * 
+ *
  * Restrictions for use: &lt;function&gt; should be continuous and only have one
  * extremum in the interval [left-x,right-x]
- * 
+ *
  * Breaking restrictions will give unpredictable results: -Will usually find the
  * first minimum if more than one extremums -Unpredictable results if
  * discontinuous in interval
- * 
+ *
  * Uses Brent's algorithm in geogebra.kernel.optimization.ExtremumFinder;
- * 
+ *
  * @author Hans-Petter Ulven
  * @version 2011-02.20
  */
-
 public class AlgoFunctionMinMax extends AlgoElement {
 
 	private GeoFunctionable f;
@@ -51,7 +54,7 @@ public class AlgoFunctionMinMax extends AlgoElement {
 
 	/**
 	 * Constructor for Extremum[f,l,r]
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -65,8 +68,12 @@ public class AlgoFunctionMinMax extends AlgoElement {
 	 * @param isMin
 	 *            true for min, false for max
 	 */
-	public AlgoFunctionMinMax(Construction cons, String label,
-			GeoFunctionable function, GeoNumberValue left, GeoNumberValue right,
+	public AlgoFunctionMinMax(
+			Construction cons,
+			String label,
+			GeoFunctionable function,
+			GeoNumberValue left,
+			GeoNumberValue right,
 			boolean isMin) {
 		super(cons);
 		this.f = function;
@@ -75,7 +82,7 @@ public class AlgoFunctionMinMax extends AlgoElement {
 		this.isMin = isMin;
 
 		E = new GeoPoint(cons); // Put an extremum point in the user interface
-								// from the very start
+		// from the very start
 		E.setCoords(0.0, 0.0, 1.0);
 
 		setInputOutput();
@@ -114,7 +121,8 @@ public class AlgoFunctionMinMax extends AlgoElement {
 		double l = left.getDouble();
 		double r = right.getDouble();
 
-		if (!f.toGeoElement().isDefined() || !left.isDefined()
+		if (!f.toGeoElement().isDefined()
+				|| !left.isDefined()
 				|| !right.isDefined()
 				|| (right.getDouble() <= left.getDouble())) {
 			E.setUndefined();
@@ -124,12 +132,10 @@ public class AlgoFunctionMinMax extends AlgoElement {
 		// Brent's algorithm
 		extrFinder = kernel.getExtremumFinder();
 
-		double min = isMin ? extrFinder.findMinimum(l, r, f, 5.0E-8)
-				: extrFinder.findMaximum(l, r, f, 5.0E-8);
+		double min =
+				isMin ? extrFinder.findMinimum(l, r, f, 5.0E-8) : extrFinder.findMaximum(l, r, f, 5.0E-8);
 
 		E.setCoords(min, f.value(min), 1.0);
 		E.updateRepaint();
-
 	}
-
 }

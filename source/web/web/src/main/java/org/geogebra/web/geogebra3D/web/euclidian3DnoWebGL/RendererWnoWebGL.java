@@ -1,7 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.geogebra3D.web.euclidian3DnoWebGL;
 
 import org.geogebra.common.awt.GBufferedImage;
-import org.geogebra.common.geogebra3D.euclidian3D.draw.DrawLabel3D;
+import org.geogebra.common.geogebra3D.euclidian3D.draw.DrawableTexture3D;
 import org.geogebra.common.util.debug.Log;
 import org.geogebra.web.geogebra3D.web.euclidian3D.EuclidianView3DW;
 import org.geogebra.web.geogebra3D.web.euclidian3D.openGL.RendererWithImplW;
@@ -9,15 +25,15 @@ import org.gwtproject.canvas.client.Canvas;
 
 /**
  * (dummy) renderer for 3D view, for browsers that don't support webGL
- * 
+ *
  * @author mathieu
  *
  */
-public class RendererWnoWebGL extends RendererWithImplW {
+public final class RendererWnoWebGL extends RendererWithImplW {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param view
 	 *            3D view
 	 */
@@ -39,7 +55,7 @@ public class RendererWnoWebGL extends RendererWithImplW {
 	}
 
 	@Override
-	public void createAlphaTexture(DrawLabel3D label, GBufferedImage bimg) {
+	public void createAlphaTexture(DrawableTexture3D label, GBufferedImage img) {
 		// no webGL context here...
 	}
 
@@ -77,5 +93,4 @@ public class RendererWnoWebGL extends RendererWithImplW {
 	public void createDummyTexture() {
 		// no webGL context here...
 	}
-
 }

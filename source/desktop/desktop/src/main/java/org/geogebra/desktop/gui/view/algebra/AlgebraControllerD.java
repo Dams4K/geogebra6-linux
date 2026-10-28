@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
-/**
- * AlgebraController.java
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 05. September 2001, 09:11
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.desktop.gui.view.algebra;
@@ -34,8 +32,6 @@ import java.awt.dnd.DragSourceListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-
 import org.geogebra.common.awt.GPoint;
 import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.euclidian.EuclidianViewInterfaceCommon;
@@ -45,6 +41,7 @@ import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.desktop.euclidian.event.MouseEventUtil;
 import org.geogebra.desktop.gui.util.GeoGebraIconD;
 import org.geogebra.desktop.main.AppD;
+import org.geogebra.desktop.main.ScaledIcon;
 
 /**
  * Event handlers fro AV
@@ -53,10 +50,11 @@ public class AlgebraControllerD extends AlgebraTreeController
 		implements DragGestureListener, DragSourceListener {
 
 	private DragSource ds;
+	private ArrayList<String> geoLabelList;
 
 	/**
 	 * Creates new Algebra controller
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -113,8 +111,8 @@ public class AlgebraControllerD extends AlgebraTreeController
 	 */
 	protected void enableDnD() {
 		ds = new DragSource();
-		ds.createDefaultDragGestureRecognizer((AlgebraViewD) getView(),
-				DnDConstants.ACTION_COPY_OR_MOVE, this);
+		ds.createDefaultDragGestureRecognizer(
+				(AlgebraViewD) getView(), DnDConstants.ACTION_COPY_OR_MOVE, this);
 	}
 
 	// =====================================================
@@ -146,13 +144,11 @@ public class AlgebraControllerD extends AlgebraTreeController
 		// only handle dragGestureRecognized
 	}
 
-	private ArrayList<String> geoLabelList;
-
 	@Override
 	public void dragGestureRecognized(DragGestureEvent dge) {
 
 		if (geoLabelList == null) {
-			geoLabelList = new ArrayList<String>();
+			geoLabelList = new ArrayList<>();
 		} else {
 			geoLabelList.clear();
 		}
@@ -163,12 +159,16 @@ public class AlgebraControllerD extends AlgebraTreeController
 			return;
 		}
 
-		ImageIcon ic = GeoGebraIconD.createLatexIcon((AppD) app, latex,
-				((AppD) app).getPlainFont(), Color.DARK_GRAY, null);
+		ScaledIcon ic = GeoGebraIconD.createScaledLatexIcon(
+				(AppD) app, latex, ((AppD) app).getPlainFont(), Color.DARK_GRAY);
 
 		// start drag
-		ds.startDrag(dge, DragSource.DefaultCopyDrop, ic.getImage(),
-				new Point(-5, -30), new TransferableAlgebraView(geoLabelList),
+		ds.startDrag(
+				dge,
+				DragSource.DefaultCopyDrop,
+				ic.getImage(),
+				new Point(-5, -30),
+				new TransferableAlgebraView(geoLabelList),
 				this);
 	}
 
@@ -181,17 +181,17 @@ public class AlgebraControllerD extends AlgebraTreeController
 		/**
 		 * For dragging from AV
 		 */
-		public final DataFlavor algebraViewFlavor = new DataFlavor(
-				AlgebraViewD.class, "geoLabel list");
-		private final DataFlavor[] supportedFlavors = { algebraViewFlavor };
+		final DataFlavor algebraViewFlavor = new DataFlavor(AlgebraViewD.class, "geoLabel list");
 
-		private ArrayList<String> geoLabelList;
+		private final DataFlavor[] supportedFlavors = {algebraViewFlavor};
+
+		private final ArrayList<String> geoLabelList;
 
 		/**
 		 * @param geoLabelList
 		 *            list of dragged geos
 		 */
-		public TransferableAlgebraView(ArrayList<String> geoLabelList) {
+		TransferableAlgebraView(ArrayList<String> geoLabelList) {
 			this.geoLabelList = geoLabelList;
 		}
 
@@ -202,15 +202,11 @@ public class AlgebraControllerD extends AlgebraTreeController
 
 		@Override
 		public boolean isDataFlavorSupported(DataFlavor flavor) {
-			if (flavor.equals(algebraViewFlavor)) {
-				return true;
-			}
-			return false;
+			return flavor.equals(algebraViewFlavor);
 		}
 
 		@Override
-		public Object getTransferData(DataFlavor flavor)
-				throws UnsupportedFlavorException {
+		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
 			if (flavor.equals(algebraViewFlavor)) {
 				return geoLabelList;
 			}
@@ -219,12 +215,10 @@ public class AlgebraControllerD extends AlgebraTreeController
 	}
 
 	@Override
-	protected void euclidianViewClick(EuclidianViewInterfaceCommon ev,
-			GeoElement geo, MouseEvent e) {
+	protected void euclidianViewClick(EuclidianViewInterfaceCommon ev, GeoElement geo, MouseEvent e) {
 		// let euclidianView know about the click
-		AbstractEvent event = org.geogebra.desktop.euclidian.event.MouseEventD
-				.wrapEvent(e);
-		ev.clickedGeo(geo, app.isControlDown(event));
+		AbstractEvent event = org.geogebra.desktop.euclidian.event.MouseEventD.wrapEvent(e);
+		ev.clickedGeo(geo, event.isControlDown());
 		event.release();
 	}
 
@@ -238,8 +232,7 @@ public class AlgebraControllerD extends AlgebraTreeController
 	}
 
 	@Override
-	protected void highlight(EuclidianViewInterfaceCommon ev,
-			ArrayList<GeoElement> geos) {
+	protected void highlight(EuclidianViewInterfaceCommon ev, ArrayList<GeoElement> geos) {
 		if (EuclidianConstants.isMoveOrSelectionMode(ev.getMode())) {
 			super.highlight(ev, geos);
 		} else {
@@ -252,16 +245,16 @@ public class AlgebraControllerD extends AlgebraTreeController
 
 		int mode = app.getActiveEuclidianView().getMode();
 		if ((mode == EuclidianConstants.MODE_MOVE
-				|| mode == EuclidianConstants.MODE_SELECT
-				|| mode == EuclidianConstants.MODE_SELECTION_LISTENER
-				|| geo == null) && !AppD.isControlDown(e) && !e.isShiftDown()) {
+						|| mode == EuclidianConstants.MODE_SELECT
+						|| mode == EuclidianConstants.MODE_SELECTION_LISTENER
+						|| geo == null)
+				&& !AppD.isControlDown(e)
+				&& !e.isShiftDown()) {
 			if (!setSelectedGeo(geo)) {
 				return true;
 			}
-
 		}
 		return false;
-
 	}
 
 	@Override

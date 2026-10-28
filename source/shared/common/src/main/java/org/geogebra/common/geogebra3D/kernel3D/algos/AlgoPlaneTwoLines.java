@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoPlane3D;
@@ -12,9 +28,9 @@ import org.geogebra.common.kernel.matrix.Coords;
 import org.geogebra.common.util.DoubleUtil;
 
 /**
- * 
+ *
  * Plane containing the two lines, if possible
- * 
+ *
  * @author mathieu
  *
  */
@@ -25,11 +41,12 @@ public class AlgoPlaneTwoLines extends AlgoElement3D {
 
 	/** 3D lines */
 	private GeoLineND a;
+
 	private GeoLineND b;
 
 	/**
 	 * create a plane joining lines, with label.
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param label
@@ -39,8 +56,7 @@ public class AlgoPlaneTwoLines extends AlgoElement3D {
 	 * @param b
 	 *            second point
 	 */
-	public AlgoPlaneTwoLines(Construction c, String label, GeoLineND a,
-			GeoLineND b) {
+	public AlgoPlaneTwoLines(Construction c, String label, GeoLineND a, GeoLineND b) {
 		super(c);
 
 		this.a = a;
@@ -49,8 +65,8 @@ public class AlgoPlaneTwoLines extends AlgoElement3D {
 		cs = new GeoPlane3D(c);
 
 		// set input and output
-		setInputOutput(new GeoElement[] { (GeoElement) a, (GeoElement) b },
-				new GeoElement[] { (GeoElement) cs });
+		setInputOutput(
+				new GeoElement[] {(GeoElement) a, (GeoElement) b}, new GeoElement[] {(GeoElement) cs});
 
 		compute();
 
@@ -104,7 +120,7 @@ public class AlgoPlaneTwoLines extends AlgoElement3D {
 
 	/**
 	 * return the cs
-	 * 
+	 *
 	 * @return the cs
 	 */
 	public GeoCoordSys2D getCoordSys() {
@@ -117,10 +133,7 @@ public class AlgoPlaneTwoLines extends AlgoElement3D {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
-		return getLoc().getPlain("PlaneThroughAB", a.getLabel(tpl),
-				b.getLabel(tpl));
-
+	public final String toString(StringTemplate tpl) {
+		return getLoc().getPlain("PlaneThroughAB", a.getLabel(tpl), b.getLabel(tpl));
 	}
-
 }

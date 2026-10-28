@@ -1,6 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.resources;
 
 import org.geogebra.gwtutil.DOMParser;
+import org.geogebra.gwtutil.JsObject;
 import org.geogebra.gwtutil.XMLSerializer;
 import org.gwtproject.safehtml.shared.SafeUri;
 import org.gwtproject.safehtml.shared.UriUtils;
@@ -15,16 +32,10 @@ import jsinterop.base.Js;
  */
 public class SVGResourcePrototype implements SVGResource {
 
-	public static final SVGResource EMPTY = new SVGResourcePrototype("empty",
-			"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1\" height=\"1\"/>");
-	private static DOMParser parser;
-
-	private static XMLSerializer serializer;
-
-	static {
-		parser = new DOMParser();
-		serializer = new XMLSerializer();
-	}
+	public static final SVGResource EMPTY = new SVGResourcePrototype(
+			"empty", "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1\" height=\"1\"/>");
+	private static final DOMParser parser = new DOMParser();
+	private static final XMLSerializer serializer = new XMLSerializer();
 
 	private String svg;
 	private String name;
@@ -63,8 +74,7 @@ public class SVGResourcePrototype implements SVGResource {
 	 */
 	public static String createFilled(String color, String svg) {
 		Document doc = parser.parseFromString(svg, "image/svg+xml");
-		CSSStyleDeclaration style = Js.uncheckedCast(Js.asPropertyMap(doc)
-				.nestedGet("rootElement.style"));
+		CSSStyleDeclaration style = Js.uncheckedCast(JsObject.of(doc).nestedGet("rootElement.style"));
 		if (style != null) {
 			style.setProperty("fill", color);
 		}
@@ -76,6 +86,9 @@ public class SVGResourcePrototype implements SVGResource {
 		return svg;
 	}
 
+	/**
+	 * @return data URL of this image
+	 */
 	public String getUrl() {
 		return "data:image/svg+xml;base64," + DomGlobal.btoa(svg);
 	}

@@ -1,11 +1,27 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.printer3D;
 
 import org.geogebra.common.util.StringUtil;
 
 /**
  * adapted from three.js loading collada example (MIT licence)
- * 
- * 
+ *
+ *
  *
  */
 public class FormatColladaHTML extends FormatCollada {
@@ -38,8 +54,7 @@ public class FormatColladaHTML extends FormatCollada {
 		sb.append("<body>\n");
 		sb.append("<div id='container'></div>\n");
 		sb.append("<button onclick='svgSnapshot()'>Export SVG</button>\n");
-		sb.append(
-				"<a href='javascript:void(0)' id='dlbtn'><button>Export STL</button></a>\n");
+		sb.append("<a href='javascript:void(0)' id='dlbtn'><button>Export STL</button></a>\n");
 
 		sb.append("<div style='display: none;' id='svg'></div>\n");
 		sb.append("<img id='svg2'></img>\n");
@@ -97,8 +112,7 @@ public class FormatColladaHTML extends FormatCollada {
 		sb.append(");\n");
 		sb.append("camera.lookAt( new THREE.Vector3(0,0,0) );\n");
 		sb.append("group = new THREE.Group();\n");
-		sb.append(
-				"var loadingManager = new THREE.LoadingManager( function() {\n");
+		sb.append("var loadingManager = new THREE.LoadingManager( function() {\n");
 		sb.append("scene.add( group );\n");
 		sb.append("group.add( ggbExport );\n");
 		sb.append("ggbExport.translateX(");
@@ -117,23 +131,19 @@ public class FormatColladaHTML extends FormatCollada {
 		sb.append("ggbExport = collada.scene;\n");
 		sb.append("} );\n");
 
-		sb.append(
-				"var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );\n");
+		sb.append("var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );\n");
 		sb.append("scene.add( ambientLight );\n");
-		sb.append(
-				"var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );\n");
+		sb.append("var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );\n");
 		sb.append("directionalLight.position.set( 1, 1, 0 ).normalize();\n");
 		sb.append("scene.add( directionalLight );\n");
 
 		sb.append("renderer = new THREE.WebGLRenderer();\n");
 		sb.append("renderer.setClearColor( 0xffffff, 1);\n");
 		sb.append("renderer.setPixelRatio( window.devicePixelRatio );\n");
-		sb.append(
-				"renderer.setSize( window.innerWidth, window.innerHeight );\n");
+		sb.append("renderer.setSize( window.innerWidth, window.innerHeight );\n");
 		sb.append("container.appendChild( renderer.domElement );\n");
 
-		sb.append(
-				"controls = new THREE.OrbitControls( camera, renderer.domElement );\n");
+		sb.append("controls = new THREE.OrbitControls( camera, renderer.domElement );\n");
 		// controls.addEventListener( 'change', render ); // call this only in
 		// static scenes (i.e., if there is no animation loop)
 		// an animation loop is required when either damping or auto-rotation
@@ -264,5 +274,4 @@ public class FormatColladaHTML extends FormatCollada {
 	protected void appendLightInCollada(StringBuilder sb) {
 		// light added in three.js
 	}
-
 }

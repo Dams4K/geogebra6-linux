@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -33,7 +37,7 @@ public class AlgoFoldFunctions extends AlgoElement {
 	/**
 	 * Creates labeled function sum algo for truncated list (or whole list if
 	 * truncate == null)
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -47,8 +51,13 @@ public class AlgoFoldFunctions extends AlgoElement {
 	 * @param foldComputer
 	 *            fold helper
 	 */
-	public AlgoFoldFunctions(Construction cons, String label, GeoList geoList,
-			GeoNumeric truncate, Operation op, FoldComputer foldComputer) {
+	public AlgoFoldFunctions(
+			Construction cons,
+			String label,
+			GeoList geoList,
+			GeoNumeric truncate,
+			Operation op,
+			FoldComputer foldComputer) {
 		super(cons);
 		this.geoList = geoList;
 		this.truncate = truncate;
@@ -78,7 +87,7 @@ public class AlgoFoldFunctions extends AlgoElement {
 
 	/**
 	 * Returns result
-	 * 
+	 *
 	 * @return sum of functions
 	 */
 	public GeoElement getResult() {
@@ -90,8 +99,7 @@ public class AlgoFoldFunctions extends AlgoElement {
 		// Sum[{x^2,x^3}]
 		int n = truncate == null ? geoList.size() : (int) truncate.getDouble();
 
-		if (n <= 0 || n > geoList.size()
-				|| !foldComputer.check(geoList.get(0))) {
+		if (n <= 0 || n > geoList.size() || !foldComputer.check(geoList.get(0))) {
 			resultFun.setUndefined();
 			return;
 		}
@@ -113,5 +121,4 @@ public class AlgoFoldFunctions extends AlgoElement {
 	public Commands getClassName() {
 		return op == Operation.PLUS ? Commands.Sum : Commands.Product;
 	}
-
 }

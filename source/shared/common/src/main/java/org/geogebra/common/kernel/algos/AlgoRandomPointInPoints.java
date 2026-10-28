@@ -1,18 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * Random point in a polygon created by P[0],....,P[n]
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -28,6 +27,9 @@ import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.plugin.GeoClass;
 
+/**
+ * Random point in a polygon created by P[0],....,P[n].
+ */
 public class AlgoRandomPointInPoints extends AlgoElement implements SetRandomValue {
 
 	protected GeoPointND[] points; // input
@@ -74,7 +76,7 @@ public class AlgoRandomPointInPoints extends AlgoElement implements SetRandomVal
 	@Override
 	protected void setInputOutput() {
 		if (list != null) {
-			input = new GeoElement[] { list };
+			input = new GeoElement[] {list};
 		} else {
 			input = new GeoElement[points.length];
 			for (int i = 0; i < points.length; i++) {
@@ -115,8 +117,10 @@ public class AlgoRandomPointInPoints extends AlgoElement implements SetRandomVal
 			double x = p.getInhomX();
 			double y = p.getInhomY();
 
-			if (p.isGeoElement3D() || Double.isInfinite(x)
-					|| Double.isInfinite(y) || Double.isNaN(x)
+			if (p.isGeoElement3D()
+					|| Double.isInfinite(x)
+					|| Double.isInfinite(y)
+					|| Double.isNaN(x)
 					|| Double.isNaN(y)) {
 				randomPoint.setUndefined();
 				return;
@@ -144,10 +148,8 @@ public class AlgoRandomPointInPoints extends AlgoElement implements SetRandomVal
 		double xRandom, yRandom;
 
 		while (!foundRandom) {
-			xRandom = xMin
-					+ (xMax - xMin) * cons.getApplication().getRandomNumber();
-			yRandom = yMin
-					+ (yMax - yMin) * cons.getApplication().getRandomNumber();
+			xRandom = xMin + (xMax - xMin) * kernel.randomNumberGenerator.getRandomNumber();
+			yRandom = yMin + (yMax - yMin) * kernel.randomNumberGenerator.getRandomNumber();
 
 			if (GeoPolygon.isInRegion(xRandom, yRandom, points)) {
 				randomPoint.setCoords(xRandom, yRandom, 1);
@@ -170,7 +172,6 @@ public class AlgoRandomPointInPoints extends AlgoElement implements SetRandomVal
 		for (int i = 0; i < size; i++) {
 			points[i] = (GeoPointND) list.get(i);
 		}
-
 	}
 
 	@Override

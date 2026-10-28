@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.scripting;
 
 import org.geogebra.common.kernel.Kernel;
@@ -23,7 +39,7 @@ public abstract class CmdTurtleCommand extends CmdScripting {
 
 	/**
 	 * Return the turtle in the command
-	 * 
+	 *
 	 * @param args
 	 *            the resolved command args
 	 * @return the first arg as a GeoTurtle
@@ -35,7 +51,7 @@ public abstract class CmdTurtleCommand extends CmdScripting {
 
 	/**
 	 * Return the second arg of the command as a double
-	 * 
+	 *
 	 * @param c
 	 *            the command
 	 * @param args
@@ -44,8 +60,7 @@ public abstract class CmdTurtleCommand extends CmdScripting {
 	 * @throws MyError
 	 *             thrown can't be done
 	 */
-	protected final double getNumArg(Command c, GeoElement[] args)
-			throws MyError {
+	protected final double getNumArg(Command c, GeoElement[] args) throws MyError {
 		if (args.length != 2) {
 			throw argNumErr(c);
 		}
@@ -57,7 +72,7 @@ public abstract class CmdTurtleCommand extends CmdScripting {
 
 	/**
 	 * Actually perform the command on the turtle
-	 * 
+	 *
 	 * @param c
 	 *            the command
 	 * @param args
@@ -65,8 +80,7 @@ public abstract class CmdTurtleCommand extends CmdScripting {
 	 * @throws MyError
 	 *             possible error
 	 */
-	protected abstract void performTurtleCommand(Command c,
-			GeoElement[] args) throws MyError;
+	protected abstract void performTurtleCommand(Command c, GeoElement[] args) throws MyError;
 
 	@Override
 	public final GeoElement[] perform(Command c) throws MyError {

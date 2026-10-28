@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.barycentric;
 
 import org.geogebra.common.kernel.Construction;
@@ -11,11 +27,10 @@ import org.geogebra.common.kernel.matrix.Coords;
 /**
  * @author Darko Drakulic
  * @version 17-10-2011
- * 
+ *
  *          This class make point with given weights respevt to given polygon.
- * 
+ *
  */
-
 public class AlgoBarycenter extends AlgoElement {
 
 	private GeoList poly; // input
@@ -23,7 +38,7 @@ public class AlgoBarycenter extends AlgoElement {
 	private GeoPointND point; // output
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -33,8 +48,7 @@ public class AlgoBarycenter extends AlgoElement {
 	 * @param B
 	 *            list of weights
 	 */
-	public AlgoBarycenter(Construction cons, String label, GeoList A,
-			GeoList B) {
+	public AlgoBarycenter(Construction cons, String label, GeoList A, GeoList B) {
 		super(cons);
 		this.poly = A;
 		this.list = B;
@@ -69,7 +83,7 @@ public class AlgoBarycenter extends AlgoElement {
 
 	/**
 	 * Returns the resulting point
-	 * 
+	 *
 	 * @return the resulting point
 	 */
 	public GeoPointND getResult() {
@@ -96,17 +110,13 @@ public class AlgoBarycenter extends AlgoElement {
 
 		int numberOfVertices = poly.size();
 		double sum = list.get(0).evaluateDouble();
-		Coords sumCoords = ((GeoPointND) poly.get(0)).getInhomCoordsInD3()
-				.copy().mulInside(sum);
+		Coords sumCoords = ((GeoPointND) poly.get(0)).getInhomCoordsInD3().copy().mulInside(sum);
 		for (int i = 1; i < numberOfVertices; i++) {
 			double w = list.get(i).evaluateDouble();
-			sumCoords.addInsideMul(
-					((GeoPointND) poly.get(i)).getInhomCoordsInD3(), w);
+			sumCoords.addInsideMul(((GeoPointND) poly.get(i)).getInhomCoordsInD3(), w);
 			sum += w;
-
 		}
 
 		point.setCoords(sumCoords.mulInside(1 / sum), false);
 	}
-
 }

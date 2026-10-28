@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.data;
 
 import org.geogebra.common.gui.view.data.TwoVarStatModel;
@@ -15,17 +31,17 @@ import org.gwtproject.user.client.ui.ListBox;
  * The two data sets are taken from the current collection of data provided by a
  * MultiVar StatDialog. JComboBoxes for choosing data sets are embedded in the
  * table.
- * 
+ *
  * @author G. Sturr
- * 
+ *
  */
-public class TwoVarStatPanelW extends StatTableW implements TwoVarStatListener {
+public final class TwoVarStatPanelW extends StatTableW implements TwoVarStatListener {
 	private AppW app;
 	private DataAnalysisViewW statDialog;
 	private StatDataTable statTable;
 	private TwoVarStatModel model;
 	private TwoVarInferencePanelW listener;
-	
+
 	/**
 	 * @param app
 	 *            application
@@ -36,8 +52,11 @@ public class TwoVarStatPanelW extends StatTableW implements TwoVarStatListener {
 	 * @param listener
 	 *            listener
 	 */
-	public TwoVarStatPanelW(AppW app, DataAnalysisViewW statDialog,
-			boolean isPairedData, TwoVarInferencePanelW listener) {
+	public TwoVarStatPanelW(
+			AppW app,
+			DataAnalysisViewW statDialog,
+			boolean isPairedData,
+			TwoVarInferencePanelW listener) {
 		super();
 		model = new TwoVarStatModel(app, isPairedData, this);
 		this.app = app;
@@ -46,36 +65,33 @@ public class TwoVarStatPanelW extends StatTableW implements TwoVarStatListener {
 		this.listener = listener;
 
 		setTable(isPairedData);
-
 	}
 
 	/**
 	 * Update the table.
-	 * 
+	 *
 	 * @param isPairedData
 	 *            whether to use paired data
 	 */
 	public void setTable(boolean isPairedData) {
 
 		model.setPairedData(isPairedData);
-		setStatTable(model.getRowCount(), model.getRowNames(),
-				model.getColumnCount(), model.getColumnNames());
+		setStatTable(
+				model.getRowCount(), model.getRowNames(), model.getColumnCount(), model.getColumnNames());
 
 		// create an array of data titles for the table cell comboboxes
 		// the array includes and extra element to store the combo box label
 		String[] titles = statDialog.getDataTitles();
 		Localization loc = app.getLocalization();
-		createListBoxCell(0, 0, loc.getMenu("Sample1"), titles,
-				model.getSelectedDataIndex0());
-		createListBoxCell(1, 0, loc.getMenu("Sample2"), titles,
-				model.getSelectedDataIndex1());
+		createListBoxCell(0, 0, loc.getMenu("Sample1"), titles, model.getSelectedDataIndex0());
+		createListBoxCell(1, 0, loc.getMenu("Sample2"), titles, model.getSelectedDataIndex1());
 	}
 
-	private void createListBoxCell(final int row, final int col, String title, String[] items,
-			int selectedIdx) {
+	private void createListBoxCell(
+			final int row, final int col, String title, String[] items, int selectedIdx) {
 		Label label = new Label(title);
 		final ListBox listBox = new ListBox();
-		for (String item: items) {
+		for (String item : items) {
 			listBox.addItem(item);
 		}
 
@@ -93,13 +109,13 @@ public class TwoVarStatPanelW extends StatTableW implements TwoVarStatListener {
 
 	/**
 	 * Update model when a listbox in given row changes.
-	 * 
+	 *
 	 * @param row
 	 *            row
 	 * @param idx
 	 *            selected index
 	 */
-	protected void listboxChange(int row, int idx) {
+	private void listboxChange(int row, int idx) {
 		if (row == 0) {
 			model.setSelectedDataIndex0(idx);
 		} else {
@@ -119,7 +135,6 @@ public class TwoVarStatPanelW extends StatTableW implements TwoVarStatListener {
 	@Override
 	public void setValueAt(String value, int row, int col) {
 		statTable.setValueAt(value, row, col);
-
 	}
 
 	@Override
@@ -138,5 +153,4 @@ public class TwoVarStatPanelW extends StatTableW implements TwoVarStatListener {
 	public Integer[] getSelectedDataIndex() {
 		return model.getSelectedDataIndex();
 	}
-
 }

@@ -1,11 +1,27 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.editor;
 
 import org.geogebra.common.GeoGebraConstants;
+import org.geogebra.editor.share.serializer.SolverSerializer;
+import org.geogebra.editor.share.serializer.TeXSerializer;
+import org.geogebra.editor.web.MathFieldW;
 import org.geogebra.keyboard.web.TabbedKeyboard;
 
-import com.himamis.retex.editor.share.serializer.SolverSerializer;
-import com.himamis.retex.editor.share.serializer.TeXSerializer;
-import com.himamis.retex.editor.web.MathFieldW;
 import com.himamis.retex.renderer.share.TeXFormula;
 import com.himamis.retex.renderer.share.serialize.TeXAtomSerializer;
 
@@ -16,7 +32,7 @@ import jsinterop.base.Js;
 import jsinterop.base.JsPropertyMap;
 
 @JsType
-public class EditorApi {
+public final class EditorApi {
 	private final MathFieldW mathField;
 	private final TabbedKeyboard kb;
 	private final EditorListener listener;
@@ -27,8 +43,7 @@ public class EditorApi {
 	 * @param listener editor input listener
 	 */
 	@JsIgnore
-	public EditorApi(MathFieldW mathField, TabbedKeyboard kb,
-			EditorListener listener) {
+	public EditorApi(MathFieldW mathField, TabbedKeyboard kb, EditorListener listener) {
 		this.mathField = mathField;
 		this.kb = kb;
 		this.listener = listener;
@@ -76,10 +91,9 @@ public class EditorApi {
 	 * @param callback called with {svg: base64 encoded SVG,
 	 *             baseline: relative baseline position} or error
 	 */
-	public void exportImage(JsPropertyMap<String> options,
-			MathFieldExporter.ImageConsumer callback) {
-		new MathFieldExporter(mathField).export(options.get("type"),
-				Js.isTruthy(options.get("transparent")), callback);
+	public void exportImage(JsPropertyMap<String> options, MathFieldExporter.ImageConsumer callback) {
+		new MathFieldExporter(mathField)
+				.export(options.get("type"), Js.isTruthy(options.get("transparent")), callback);
 	}
 
 	/**
@@ -109,5 +123,4 @@ public class EditorApi {
 	public String getVersion() {
 		return GeoGebraConstants.VERSION_STRING;
 	}
-
 }

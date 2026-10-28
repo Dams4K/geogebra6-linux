@@ -1,27 +1,47 @@
-package org.geogebra.common.kernel.arithmetic3D.vector;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
+package org.geogebra.common.kernel.arithmetic3D.vector;
 
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.printing.printable.vector.PrintableVector;
 import org.geogebra.common.kernel.printing.printer.Printer;
+import org.geogebra.common.main.Localization;
 import org.geogebra.common.main.settings.GeneralSettings;
+import org.jspecify.annotations.Nullable;
 
 class CartesianPrinter3D implements Printer {
 
-	private final @CheckForNull GeneralSettings settings;
+	private final @Nullable GeneralSettings settings;
 
-	public CartesianPrinter3D(@CheckForNull GeneralSettings settings) {
+	CartesianPrinter3D(@Nullable GeneralSettings settings) {
 		this.settings = settings;
 	}
 
 	@Override
-	public String print(String xCoord, String yCoord, String zCoord,
-			PrintableVector vector, StringTemplate tpl) {
+	public String print(
+			String xCoord,
+			String yCoord,
+			String zCoord,
+			PrintableVector vector,
+			StringTemplate tpl,
+			Localization loc) {
 		if (tpl.getStringType().isGiac()) {
 			boolean vectorNot3dPoint = vector.isCASVector();
-			return (vectorNot3dPoint
-					? "ggbvect[" : "point(")
+			return (vectorNot3dPoint ? "ggbvect[" : "point(")
 					+ xCoord
 					+ ','
 					+ yCoord
@@ -30,21 +50,15 @@ class CartesianPrinter3D implements Printer {
 					+ (vectorNot3dPoint ? "]" : ")");
 		}
 		if (tpl.usePointTemplate()) {
-			return "$point("
-					+ xCoord
-					+ ','
-					+ yCoord
-					+ ','
-					+ zCoord
-					+ ')';
+			return "$point(" + xCoord + ',' + yCoord + ',' + zCoord + ')';
 		}
 		String delimiter = tpl.getCartesianDelimiter(settings);
-		return tpl.leftBracket()
+		return tpl.leftBracket(loc)
 				+ xCoord
 				+ delimiter
 				+ yCoord
 				+ delimiter
 				+ zCoord
-				+ tpl.rightBracket();
+				+ tpl.rightBracket(loc);
 	}
 }

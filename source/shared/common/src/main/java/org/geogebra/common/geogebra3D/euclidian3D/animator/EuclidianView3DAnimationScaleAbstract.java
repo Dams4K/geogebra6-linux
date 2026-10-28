@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.animator;
 
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
@@ -7,7 +23,7 @@ import org.geogebra.common.geogebra3D.euclidian3D.animator.EuclidianView3DAnimat
  * animation for scale
  *
  */
-abstract public class EuclidianView3DAnimationScaleAbstract extends EuclidianView3DAnimation {
+public abstract class EuclidianView3DAnimationScaleAbstract extends EuclidianView3DAnimation {
 
 	protected double xScaleStart;
 	protected double yScaleStart;
@@ -27,12 +43,11 @@ abstract public class EuclidianView3DAnimationScaleAbstract extends EuclidianVie
 	private static final double TIME_SHIFT = 0.2;
 
 	/**
-	 * 
+	 *
 	 * @param view3D 3D view
 	 * @param animator animator
 	 */
-	EuclidianView3DAnimationScaleAbstract(EuclidianView3D view3D,
-			EuclidianView3DAnimator animator) {
+	EuclidianView3DAnimationScaleAbstract(EuclidianView3D view3D, EuclidianView3DAnimator animator) {
 		super(view3D, animator);
 	}
 
@@ -49,8 +64,7 @@ abstract public class EuclidianView3DAnimationScaleAbstract extends EuclidianVie
 			t = 1;
 			ending = true;
 		} else {
-			t = (getMillisecondTime() - animatedScaleTimeStart)
-					* animatedScaleTimeFactor;
+			t = (getMillisecondTime() - animatedScaleTimeStart) * animatedScaleTimeFactor;
 			t += TIME_SHIFT;
 
 			if (t >= 1) {
@@ -58,13 +72,16 @@ abstract public class EuclidianView3DAnimationScaleAbstract extends EuclidianVie
 				ending = true;
 			}
 		}
-		view3D.setScale(xScaleStart * (1 - t) + xScaleEnd * t,
-				yScaleStart * (1 - t) + yScaleEnd * t, zScaleStart * (1 - t) + zScaleEnd * t);
+		view3D.setScale(
+				xScaleStart * (1 - t) + xScaleEnd * t,
+				yScaleStart * (1 - t) + yScaleEnd * t,
+				zScaleStart * (1 - t) + zScaleEnd * t);
 		view3D.setXZero(animatedScaleStartX * (1 - t) + animatedScaleEndX * t);
 		view3D.setYZero(animatedScaleStartY * (1 - t) + animatedScaleEndY * t);
 		view3D.setZZero(animatedScaleStartZ * (1 - t) + animatedScaleEndZ * t);
-		view3D.getSettings().updateOriginFromView(view3D.getXZero(), view3D.getYZero(),
-				view3D.getZZero());
+		view3D
+				.getSettings()
+				.updateOriginFromView(view3D.getXZero(), view3D.getYZero(), view3D.getZZero());
 
 		view3D.updateMatrix();
 		view3D.setViewChangedByZoom();
@@ -74,5 +91,4 @@ abstract public class EuclidianView3DAnimationScaleAbstract extends EuclidianVie
 			end();
 		}
 	}
-
 }

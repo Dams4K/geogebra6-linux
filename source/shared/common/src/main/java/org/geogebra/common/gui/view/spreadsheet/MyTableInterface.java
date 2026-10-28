@@ -1,8 +1,26 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.spreadsheet;
 
-import org.geogebra.common.annotation.MissingDoc;
+import java.util.List;
+
 import org.geogebra.common.main.App;
 import org.geogebra.common.spreadsheet.core.SelectionType;
+import org.geogebra.common.spreadsheet.core.TabularRange;
 import org.geogebra.common.spreadsheet.style.CellFormatInterface;
 
 /**
@@ -13,7 +31,7 @@ public interface MyTableInterface extends HasTableSelection {
 	/**
 	 * @return parent application
 	 */
-	public App getApplication();
+	App getApplication();
 
 	/**
 	 * Open editor for cell at given coordinates.
@@ -21,20 +39,22 @@ public interface MyTableInterface extends HasTableSelection {
 	 * @param selectedColumn column
 	 * @return success
 	 */
-	public boolean editCellAt(int selectedRow, int selectedColumn);
+	boolean editCellAt(int selectedRow, int selectedColumn);
 
 	/**
 	 * @return cell format handler
 	 */
-	public CellFormatInterface getCellFormatHandler();
+	CellFormatInterface getCellFormatHandler();
 
 	/**
 	 * @return selection type
 	 */
-	public SelectionType getSelectionType();
+	SelectionType getSelectionType();
 
-	@MissingDoc
-	public void selectionChanged();
+	/**
+	 * Called when selection changed.
+	 */
+	void selectionChanged();
 
 	/**
 	 * Select cell at given coordinates.
@@ -42,27 +62,27 @@ public interface MyTableInterface extends HasTableSelection {
 	 * @param j column
 	 * @return success
 	 */
-	public boolean setSelection(int i, int j);
+	boolean setSelection(int i, int j);
 
 	/**
 	 * @return number of columns
 	 */
-	public int getColumnCount();
+	int getColumnCount();
 
 	/**
 	 * @return number of rows
 	 */
-	public int getRowCount();
+	int getRowCount();
 
 	/**
 	 * @return whether special editors (dropdowns, checkboxes) are allowed
 	 */
-	public boolean allowSpecialEditor();
+	boolean allowSpecialEditor();
 
 	/**
 	 * @return cell range processor
 	 */
-	public CellRangeProcessor getCellRangeProcessor();
+	CellRangeProcessor getCellRangeProcessor();
 
 	/**
 	 * Update cell value
@@ -70,11 +90,10 @@ public interface MyTableInterface extends HasTableSelection {
 	 * @param row row
 	 * @param column column
 	 */
-	public void updateTableCellValue(Object value, int row, int column);
+	void updateTableCellValue(Object value, int row, int column);
 
 	/**
-	 * Repaint the table.
+	 * @return selected ranges
 	 */
-	public void repaintAll();
-
+	List<TabularRange> getSelectedRanges();
 }

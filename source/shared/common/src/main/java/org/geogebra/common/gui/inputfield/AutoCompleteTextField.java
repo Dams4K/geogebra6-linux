@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.inputfield;
 
 import org.geogebra.common.annotation.MissingDoc;
@@ -15,8 +31,7 @@ import org.geogebra.common.util.TextObject;
 /**
  * Text input component with autocompletion.
  */
-public interface AutoCompleteTextField
-		extends TextObject {
+public interface AutoCompleteTextField extends TextObject {
 
 	/**
 	 * Show or hide button for symbols popup or virtual keyboard
@@ -123,8 +138,7 @@ public interface AutoCompleteTextField
 	 * @deprecated use the Rectangle variant instead
 	 */
 	@Deprecated
-	void drawBounds(GGraphics2D g2, GColor bgColor, int left, int top,
-			int width, int height);
+	void drawBounds(GGraphics2D g2, GColor bgColor, int left, int top, int width, int height);
 
 	@MissingDoc
 	String getCommand();
@@ -144,7 +158,7 @@ public interface AutoCompleteTextField
 
 	/**
 	 * Set text for screen readers.
-	 * 
+	 *
 	 * @param text to read.
 	 */
 	void setAuralText(String text);

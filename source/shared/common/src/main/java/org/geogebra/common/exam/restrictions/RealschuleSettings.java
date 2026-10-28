@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.exam.restrictions;
 
 import java.util.HashMap;
@@ -25,7 +41,7 @@ public class RealschuleSettings implements RestorableSettings {
 		String[] axesLabels = euclidian.getAxesLabels();
 		xLabel = axesLabels[0];
 		yLabel = axesLabels[1];
-		for (int index: ConstructionDefaults.POINT_INDICES) {
+		for (int index : ConstructionDefaults.POINT_INDICES) {
 			GeoPointND point = (GeoPointND) defaults.getDefaultGeo(index);
 			if (point != null) {
 				pointStyles.put(index, point.getPointStyle());
@@ -42,7 +58,7 @@ public class RealschuleSettings implements RestorableSettings {
 		euclidian.setGridType(gridType);
 		euclidian.setAxisLabel(0, xLabel);
 		euclidian.setAxisLabel(1, yLabel);
-		for (Map.Entry<Integer, Integer> entry: pointStyles.entrySet()) {
+		for (Map.Entry<Integer, Integer> entry : pointStyles.entrySet()) {
 			GeoPointND defaultGeo = (GeoPointND) defaults.getDefaultGeo(entry.getKey());
 			if (defaultGeo != null) {
 				defaultGeo.setPointStyle(entry.getValue());

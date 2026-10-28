@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.spreadsheet;
 
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -14,7 +30,7 @@ public class CopyPasteAdapter {
 
 	/**
 	 * @param app application
-	 * @param tableModel classic spreadsheet model (optional)
+	 * @param tableModel spreadsheet model -- used for cell lookup
 	 */
 	public CopyPasteAdapter(App app, SpreadsheetTableModel tableModel) {
 		this.app = app;
@@ -47,8 +63,7 @@ public class CopyPasteAdapter {
 		// maybe overflow a bit)
 		for (int c = tiledRange.getMinColumn(); c <= tiledRange.getMaxColumn(); c += columnStep) {
 			for (int r = tiledRange.getMinRow(); r <= tiledRange.getMaxRow(); r += rowStep) {
-				succ = succ && pasteExternal(data, c, r, tiledRange.getMaxColumn(),
-						tiledRange.getMaxRow());
+				succ = succ && pasteExternal(data, c, r, tiledRange.getMaxColumn(), tiledRange.getMaxRow());
 			}
 		}
 
@@ -65,16 +80,14 @@ public class CopyPasteAdapter {
 	 * @param maxRow max row (inclusive)
 	 * @return success
 	 */
-	public boolean pasteExternal(String[][] data, int minColumn, int minRow,
-			int maxColumn, int maxRow) {
+	public boolean pasteExternal(
+			String[][] data, int minColumn, int minRow, int maxColumn, int maxRow) {
 		app.setWaitCursor();
 		boolean success = false;
-
 		try {
 			if (tableModel != null && tableModel.getRowCount() < minRow + data.length) {
 				tableModel.setRowCount(minRow + data.length);
 			}
-			GeoElementND[][] values = new GeoElement[data.length][];
 			int maxLen = -1;
 			RelativeCopy relativeCopy = new RelativeCopy(app.getKernel());
 			for (int row = minRow; row < minRow + data.length; ++row) {
@@ -82,16 +95,13 @@ public class CopyPasteAdapter {
 					continue;
 				}
 				int relY = row - minRow;
-				values[relY] = new GeoElement[data[relY].length];
 				if (maxLen < data[relY].length) {
 					maxLen = data[relY].length;
 				}
-				if (tableModel != null
-						&& tableModel.getColumnCount() < minColumn + data[relY].length) {
+				if (tableModel != null && tableModel.getColumnCount() < minColumn + data[relY].length) {
 					tableModel.setColumnCount(minColumn + data[relY].length);
 				}
-				for (int column = minColumn; column < minColumn
-						+ data[relY].length; ++column) {
+				for (int column = minColumn; column < minColumn + data[relY].length; ++column) {
 					if (column < 0 || column > maxColumn) {
 						continue;
 					}
@@ -101,19 +111,17 @@ public class CopyPasteAdapter {
 					}
 					data[relY][relX] = data[relY][relX].trim();
 					if (data[relY][relX].isEmpty()) {
-						GeoElement value0 = RelativeCopy.getValue(app, column,
-								row);
+						GeoElement value0 = RelativeCopy.getValue(tableModel, column, row);
 						if (value0 != null) {
 							value0.removeOrSetUndefinedIfHasFixedDescendent();
 						}
 					} else {
-						GeoElement value0 = RelativeCopy.getValue(app, column,
-								row);
-						values[relY][relX] = relativeCopy
-								.prepareAddingValueToTableNoStoringUndoInfo(
-										data[relY][relX], value0, column, row, true);
-						values[relY][relX].setAuxiliaryObject(true);
-
+						GeoElement value0 = RelativeCopy.getValue(tableModel, column, row);
+						GeoElementND created = relativeCopy.prepareAddingValueToTableNoStoringUndoInfo(
+								data[relY][relX], value0, column, row, true);
+						if (created != null) {
+							created.setAuxiliaryObject(true);
+						}
 					}
 				}
 			}

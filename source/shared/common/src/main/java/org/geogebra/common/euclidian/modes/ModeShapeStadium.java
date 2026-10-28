@@ -1,11 +1,27 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.modes;
 
 import java.util.ArrayList;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GGeneralPath;
 import org.geogebra.common.awt.GPoint2D;
 import org.geogebra.common.euclidian.plot.interval.EuclidianViewBounds;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.MyPoint;
 import org.geogebra.common.kernel.algos.AlgoStadium;
@@ -15,8 +31,7 @@ import org.geogebra.common.kernel.geos.GeoPoint;
 import org.geogebra.common.kernel.geos.GeoStadium;
 
 public class ModeShapeStadium {
-	private final GGeneralPath gpPreview = AwtFactory.getPrototype()
-			.newGeneralPath();
+	private final GGeneralPath gpPreview = AwtFactory.getPrototype().newGeneralPath();
 	private final EuclidianViewBounds bounds;
 	private GPoint2D rwStartPoint = new GPoint2D();
 	private AlgoStadium previewAlgo;
@@ -50,8 +65,7 @@ public class ModeShapeStadium {
 		ArrayList<MyPoint> points = previewAlgo.getPoints();
 		gpPreview.reset();
 		MyPoint firstPoint = points.get(0);
-		gpPreview.moveTo(bounds.toScreenCoordXd(firstPoint.x),
-				bounds.toScreenCoordYd(firstPoint.y));
+		gpPreview.moveTo(bounds.toScreenCoordXd(firstPoint.x), bounds.toScreenCoordYd(firstPoint.y));
 		for (MyPoint p : points) {
 			gpPreview.lineTo(bounds.toScreenCoordXd(p.x), bounds.toScreenCoordYd(p.y));
 		}
@@ -110,7 +124,6 @@ public class ModeShapeStadium {
 	 * @param sy y in screen coordinates
 	 */
 	public void setStartPoint(int sx, int sy) {
-		rwStartPoint.setLocation(bounds.toRealWorldCoordX(sx),
-				bounds.toRealWorldCoordY(sy));
+		rwStartPoint.setLocation(bounds.toRealWorldCoordX(sx), bounds.toRealWorldCoordY(sy));
 	}
 }

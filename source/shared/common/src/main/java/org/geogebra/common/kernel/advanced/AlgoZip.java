@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.advanced;
@@ -25,7 +29,7 @@ import org.geogebra.common.util.debug.Log;
 /**
  * Algorithm for the Zip[ expression of var, var, list, var, list, ... ]
  * command.
- * 
+ *
  * @author Zbynek Konecny
  */
 public class AlgoZip extends AlgoElement {
@@ -48,10 +52,10 @@ public class AlgoZip extends AlgoElement {
 
 	/**
 	 * Creates a new algorithm to create a sequence of objects that form a list.
-	 * 
+	 *
 	 * @param cons
 	 *            construction
-	 * 
+	 *
 	 * @param label
 	 *            label for the list
 	 * @param expression
@@ -61,8 +65,8 @@ public class AlgoZip extends AlgoElement {
 	 * @param over
 	 *            lists from which the variables should be taken
 	 */
-	public AlgoZip(Construction cons, String label, GeoElement expression,
-			GeoElement[] vars, GeoList[] over) {
+	public AlgoZip(
+			Construction cons, String label, GeoElement expression, GeoElement[] vars, GeoList[] over) {
 
 		this(cons, expression, vars, over);
 		list.setLabel(label);
@@ -70,7 +74,7 @@ public class AlgoZip extends AlgoElement {
 
 	/**
 	 * Creates a new algorithm to create a sequence of objects that form a list.
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param expression
@@ -80,8 +84,7 @@ public class AlgoZip extends AlgoElement {
 	 * @param over
 	 *            lists from which the variables should be taken
 	 */
-	AlgoZip(Construction cons, GeoElement expression, GeoElement[] vars,
-			GeoList[] over) {
+	AlgoZip(Construction cons, GeoElement expression, GeoElement[] vars, GeoList[] over) {
 		super(cons);
 
 		this.expression = expression;
@@ -118,7 +121,7 @@ public class AlgoZip extends AlgoElement {
 		}
 		setOnlyOutput(list);
 
-		list.setTypeStringForXML(expression.getXMLtypeString());
+		list.setTypeStringForXML(expression.getXMLTypeString());
 
 		setDependencies(); // done by AlgoElement
 	}
@@ -139,7 +142,7 @@ public class AlgoZip extends AlgoElement {
 
 	/**
 	 * Returns list of all contained elements.
-	 * 
+	 *
 	 * @return list of elements
 	 */
 	GeoList getList() {
@@ -240,7 +243,7 @@ public class AlgoZip extends AlgoElement {
 
 	private void addElement(int i) {
 		// only add new objects
-		GeoElement listElement = null;
+		GeoElement listElement;
 		int cacheListSize = list.getCacheSize();
 		if (i < cacheListSize) {
 			// we reuse existing list element from cache
@@ -325,8 +328,7 @@ public class AlgoZip extends AlgoElement {
 				listElement.set(expression);
 				if (listElement.isGeoList()) {
 					for (int j = 0; j < varCount; j++) {
-						((GeoList) listElement)
-								.replaceChildrenByValues(vars[j]);
+						((GeoList) listElement).replaceChildrenByValues(vars[j]);
 					}
 				}
 			} else {
@@ -341,20 +343,16 @@ public class AlgoZip extends AlgoElement {
 
 	private void copyDrawAlgo(GeoElement listElement) {
 		AlgoElement drawAlgo = expression.getDrawAlgorithm();
-		if (listElement instanceof GeoNumeric
-				&& drawAlgo instanceof DrawInformationAlgo) {
-			DrawInformationAlgo algoCopy = ((DrawInformationAlgo) drawAlgo)
-					.copy();
+		if (listElement instanceof GeoNumeric && drawAlgo instanceof DrawInformationAlgo) {
+			DrawInformationAlgo algoCopy = ((DrawInformationAlgo) drawAlgo).copy();
 			if (algoCopy instanceof ReplaceChildrenByValues) {
 				for (int j = 0; j < varCount; j++) {
-					((ReplaceChildrenByValues) algoCopy)
-							.replaceChildrenByValues(vars[j]);
+					((ReplaceChildrenByValues) algoCopy).replaceChildrenByValues(vars[j]);
 				}
 			}
 			listElement.setDrawAlgorithm(algoCopy);
 			listElement.setEuclidianVisible(true);
 		}
-
 	}
 
 	private int minOverSize() {
@@ -391,5 +389,4 @@ public class AlgoZip extends AlgoElement {
 			expressionParentAlgo.update();
 		}
 	}
-
 }

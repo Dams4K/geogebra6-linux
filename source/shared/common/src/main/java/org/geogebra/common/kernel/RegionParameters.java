@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel;
@@ -32,6 +36,7 @@ public class RegionParameters {
 	 * says if the point is on the path defined by the frontier of the region
 	 */
 	private boolean isOnPath = false;
+
 	private int regionType = GeoQuadricNDConstants.QUADRIC_NOT_CLASSIFIED;
 
 	/**
@@ -43,7 +48,7 @@ public class RegionParameters {
 
 	/**
 	 * Creates new region parameters
-	 * 
+	 *
 	 * @param t1
 	 *            first parameter
 	 * @param t2
@@ -57,14 +62,13 @@ public class RegionParameters {
 		regionType = GeoQuadricNDConstants.QUADRIC_NOT_CLASSIFIED;
 
 		normal = new Coords(0, 0, 1, 0); // z-direction by default
-
 	}
 
 	/**
 	 * @param rp
 	 *            copy parameters from given RegionParameters
 	 */
-	final public void set(RegionParameters rp) {
+	public final void set(RegionParameters rp) {
 		setT1(rp.t1);
 		setT2(rp.t2);
 		this.regionType = rp.regionType;
@@ -133,7 +137,7 @@ public class RegionParameters {
 
 	/**
 	 * set if the point is on the path defined by the frontier of the region
-	 * 
+	 *
 	 * @param isOnPath
 	 *            true if the point is on the frontier
 	 */
@@ -143,7 +147,7 @@ public class RegionParameters {
 
 	/**
 	 * says if the point in on the path defined by the frontier of the region
-	 * 
+	 *
 	 * @return true if the point in on the path defined by the frontier of the
 	 *         region
 	 */
@@ -152,7 +156,7 @@ public class RegionParameters {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if at least one of the parameters is NaN
 	 */
 	public boolean isNaN() {
@@ -173,5 +177,4 @@ public class RegionParameters {
 	public final void setRegionType(int regionType) {
 		this.regionType = regionType;
 	}
-
 }

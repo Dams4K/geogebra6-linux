@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
 import org.apache.commons.math3.complex.Complex;
@@ -110,8 +126,7 @@ public class MyMath2 {
 	 *            x
 	 * @return beta(a,b,x)
 	 */
-	public static double betaIncompleteRegularized(double a, double b,
-			double x) {
+	public static double betaIncompleteRegularized(double a, double b, double x) {
 
 		try {
 			return Beta.regularizedBeta(x, a, b);
@@ -126,7 +141,7 @@ public class MyMath2 {
 	 * Factorial function of x. If x is an integer value x! is returned,
 	 * otherwise gamma(x + 1) will be returned. For x &lt; 0 Double.NaN is
 	 * returned.
-	 * 
+	 *
 	 * @param x
 	 *            real number
 	 * @return factorial
@@ -169,8 +184,7 @@ public class MyMath2 {
 		if (x >= 0) {
 			return Math.exp(Gamma.logGamma(x));
 		}
-		return -Math.PI
-				/ (x * Math.exp(Gamma.logGamma(-x)) * Math.sin(Math.PI * x));
+		return -Math.PI / (x * Math.exp(Gamma.logGamma(-x)) * Math.sin(Math.PI * x));
 	}
 
 	/**
@@ -182,8 +196,7 @@ public class MyMath2 {
 	 *            real number
 	 * @return erf(x) for given distribution
 	 */
-	public static double erf(double mean, double standardDeviation,
-			double x) {
+	public static double erf(double mean, double standardDeviation, double x) {
 
 		try {
 			return Erf.erf((x - mean) / standardDeviation);
@@ -224,33 +237,28 @@ public class MyMath2 {
 	public static double polyGamma(NumberValue order, double x) {
 		int o = (int) order.getDouble();
 		switch (o) {
-		case 0:
-			return Gamma.digamma(x);
-		case 1:
-			return Gamma.trigamma(x);
-		// case 2:
-		// return PolyGamma.tetragamma(x);
-		// case 3:
-		// return PolyGamma.pentagamma(x);
-		// default:
-		// return PolyGamma.psigamma(x, o);
-		default:
-			return Double.NaN;
+			case 0:
+				return Gamma.digamma(x);
+			case 1:
+				return Gamma.trigamma(x);
+			// case 2:
+			// return PolyGamma.tetragamma(x);
+			// case 3:
+			// return PolyGamma.pentagamma(x);
+			// default:
+			// return PolyGamma.psigamma(x, o);
+			default:
+				return Double.NaN;
 		}
 	}
 
 	private static Complex cisi(double a2) {
-
-		int i, k;
-		boolean odd;
-		double a, err, fact, sign, sum, sumc, sums, t, term;
 		Complex h, b, c, d, del, one, two;
 		one = new Complex(1, 0);
 		two = new Complex(2, 0);
-		t = Math.abs(a2);
+		double t = Math.abs(a2);
 		if (t == 0.0) {
 			return new Complex(Double.NEGATIVE_INFINITY, 0);
-
 		}
 		double tMin = 2.0;
 		if (t > tMin) {
@@ -259,8 +267,8 @@ public class MyMath2 {
 			d = one.divide(b);
 			h = one.divide(b);
 
-			for (i = 2; i <= MAXIT; i++) {
-				a = -(i - 1) * (i - 1);
+			for (int i = 2; i <= MAXIT; i++) {
+				double a = -(i - 1) * (i - 1);
 				b = b.add(two);
 				// dinv = a*d+b
 				// d=1/dinv; Denominators cannot be zero.
@@ -271,8 +279,7 @@ public class MyMath2 {
 				// del = c*d
 				h = h.multiply(del);
 
-				if (Math.abs(del.getReal() - 1.0)
-						+ Math.abs(del.getImaginary()) < Kernel.MIN_PRECISION) {
+				if (Math.abs(del.getReal() - 1.0) + Math.abs(del.getImaginary()) < Kernel.MIN_PRECISION) {
 					break;
 				}
 			}
@@ -281,16 +288,17 @@ public class MyMath2 {
 			// h = (cos(t)-isin(t))*h
 			h = h.multiply(new Complex(Math.cos(t), -Math.sin(t)));
 
-			return new Complex(-h.getReal(),
-					Math.signum(a2) * (Kernel.PI_HALF + h.getImaginary()));
+			return new Complex(-h.getReal(), Math.signum(a2) * (Kernel.PI_HALF + h.getImaginary()));
 		}
+		double err, fact, sign, sum, sumc, sums, term;
 		if (t < Math.sqrt(Kernel.STANDARD_PRECISION)) {
 			sumc = 0.0;
 			sums = t;
 		} else {
 			sum = sums = sumc = 0.0;
 			sign = fact = 1.0;
-			odd = true;
+			boolean odd = true;
+			int k;
 			for (k = 1; k <= MAXIT; k++) {
 				fact *= t / k;
 				term = fact / k;
@@ -314,15 +322,13 @@ public class MyMath2 {
 			}
 		}
 
-		return new Complex(sumc + Math.log(t) + MyDouble.EULER_GAMMA,
-				Math.signum(a2) * sums);
-
+		return new Complex(sumc + Math.log(t) + MyDouble.EULER_GAMMA, Math.signum(a2) * sums);
 	}
 
 	/**
 	 * Returns cosine integral of given number, for negative values returns
 	 * undefined
-	 * 
+	 *
 	 * @param a
 	 *            number
 	 * @return cosine integral of given number
@@ -337,7 +343,7 @@ public class MyMath2 {
 	/**
 	 * Returns sine integral of given number, for negative values returns
 	 * undefined
-	 * 
+	 *
 	 * @param a
 	 *            number
 	 * @return sine integral of given number
@@ -376,7 +382,7 @@ public class MyMath2 {
 
 	/**
 	 * Riemann zeta function (for reals)
-	 * 
+	 *
 	 * @param val
 	 *            argument
 	 * @return Riemann zeta of val
@@ -386,7 +392,7 @@ public class MyMath2 {
 			return 0;
 		}
 
-		double[] s = { val, 0 };
+		double[] s = {val, 0};
 		return Riemann.zeta(s)[0];
 	}
 }

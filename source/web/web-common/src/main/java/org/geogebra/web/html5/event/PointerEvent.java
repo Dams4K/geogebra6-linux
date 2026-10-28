@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.event;
 
 import java.util.LinkedList;
@@ -19,9 +35,9 @@ import jsinterop.base.Js;
 
 /**
  * Base implementation of AbstractEvent.
- * 
+ *
  * @author Thomas Krismayer
- * 
+ *
  */
 public class PointerEvent extends AbstractEvent {
 
@@ -50,8 +66,7 @@ public class PointerEvent extends AbstractEvent {
 	 * @param off
 	 *            coordinate system
 	 */
-	public PointerEvent(double x, double y, PointerEventType type,
-			HasOffsets off) {
+	public PointerEvent(double x, double y, PointerEventType type, HasOffsets off) {
 		this.off = off;
 		this.point = new GPoint((int) Math.round(x), (int) Math.round(y));
 		this.type = type;
@@ -110,7 +125,7 @@ public class PointerEvent extends AbstractEvent {
 
 	/**
 	 * set is (or isn't) right click
-	 * 
+	 *
 	 * @param flag
 	 *            value
 	 */
@@ -135,8 +150,8 @@ public class PointerEvent extends AbstractEvent {
 		return this.type;
 	}
 
-	private static PointerEvent wrapEvent(int x, int y, PointerEventType type,
-	        HasOffsets h, LinkedList<PointerEvent> pool) {
+	private static PointerEvent wrapEvent(
+			int x, int y, PointerEventType type, HasOffsets h, LinkedList<PointerEvent> pool) {
 		if (!pool.isEmpty()) {
 			PointerEvent wrap = pool.getLast();
 			wrap.point = new GPoint(x, y);
@@ -148,13 +163,11 @@ public class PointerEvent extends AbstractEvent {
 		return new PointerEvent(x, y, type, h);
 	}
 
-	private static void setProperties(PointerEvent destination,
-			MouseEvent<?> source) {
+	private static void setProperties(PointerEvent destination, MouseEvent<?> source) {
 		destination.nativeEvent = source;
 		destination.alt = source.isAltKeyDown();
 		destination.control = source.isControlKeyDown();
-		destination.clickCount = "dblclick".equals(source.getNativeEvent()
-				.getType()) ? 2 : 1;
+		destination.clickCount = "dblclick".equals(source.getNativeEvent().getType()) ? 2 : 1;
 		destination.meta = source.isMetaKeyDown();
 		elemental2.dom.MouseEvent nativeEvt = Js.uncheckedCast(source.getNativeEvent());
 		destination.setButton(nativeEvt.button);
@@ -175,7 +188,7 @@ public class PointerEvent extends AbstractEvent {
 
 	/**
 	 * Wraps the event taking the relative coordinates of the event.
-	 * 
+	 *
 	 * @param event
 	 *            event to wrap
 	 * @param off
@@ -183,27 +196,26 @@ public class PointerEvent extends AbstractEvent {
 	 * @return wrapped event
 	 */
 	public static PointerEvent wrapEvent(MouseEvent<?> event, HasOffsets off) {
-		PointerEvent evt = wrapEvent(event.getX(), event.getY(),
-				off.getDefaultEventType(), off, off.getMouseEventPool());
+		PointerEvent evt =
+				wrapEvent(event.getX(), event.getY(), PointerEventType.MOUSE, off, off.getMouseEventPool());
 		setProperties(evt, event);
 		return evt;
 	}
 
 	/**
 	 * Wraps the event taking the absolute coordinates of the event.
-	 * 
+	 *
 	 * @param event
 	 *            event to wrap
 	 * @param off
 	 *            offsets
 	 * @return wrapped event
 	 */
-	public static PointerEvent wrapEventAbsolute(MouseEvent<?> event,
-	        HasOffsets off) {
+	public static PointerEvent wrapEventAbsolute(MouseEvent<?> event, HasOffsets off) {
 		int clientX = event.getClientX();
 		int clientY = event.getClientY();
-		PointerEvent evt = wrapEvent(clientX, clientY,
-				off.getDefaultEventType(), off, off.getMouseEventPool());
+		PointerEvent evt =
+				wrapEvent(clientX, clientY, off.getDefaultEventType(), off, off.getMouseEventPool());
 		setProperties(evt, event);
 		return evt;
 	}
@@ -211,7 +223,7 @@ public class PointerEvent extends AbstractEvent {
 	/**
 	 * Creates a wrapped event, based on the touch coordinates, with a relative
 	 * element.
-	 * 
+	 *
 	 * @param touch
 	 *            touch
 	 * @param off
@@ -220,8 +232,7 @@ public class PointerEvent extends AbstractEvent {
 	 *            event relative to element
 	 * @return wrapped event
 	 */
-	public static PointerEvent wrapEvent(Touch touch, HasOffsets off,
-	        Element relativeElement) {
+	public static PointerEvent wrapEvent(Touch touch, HasOffsets off, Element relativeElement) {
 		PointerEvent event = wrapEvent(touch, off);
 		event.relativeElement = relativeElement;
 		return event;
@@ -229,7 +240,7 @@ public class PointerEvent extends AbstractEvent {
 
 	/**
 	 * Creates a wrapped event, based on the touch coordinates.
-	 * 
+	 *
 	 * @param touch
 	 *            touch
 	 * @param off
@@ -237,13 +248,17 @@ public class PointerEvent extends AbstractEvent {
 	 * @return wrapped event
 	 */
 	public static PointerEvent wrapEvent(Touch touch, HasOffsets off) {
-		return wrapEvent(touch.getClientX(), touch.getClientY(),
-		        PointerEventType.TOUCH, off, off.getTouchEventPool());
+		return wrapEvent(
+				touch.getClientX(),
+				touch.getClientY(),
+				PointerEventType.TOUCH,
+				off,
+				off.getTouchEventPool());
 	}
 
 	/**
 	 * Wraps a single touch event.
-	 * 
+	 *
 	 * @param event
 	 *            event
 	 * @param off
@@ -251,7 +266,7 @@ public class PointerEvent extends AbstractEvent {
 	 * @return wrapped event
 	 */
 	public static PointerEvent wrapEvent(TouchEvent<?> event, HasOffsets off) {
-		JsArray<Touch> touches = null;
+		JsArray<Touch> touches;
 		int index = 0;
 		if (event instanceof TouchStartEvent) {
 			touches = event.getTargetTouches();
@@ -276,7 +291,7 @@ public class PointerEvent extends AbstractEvent {
 	/**
 	 * This field is only set when the event was created with
 	 * {@link PointerEvent#wrapEvent(Touch, HasOffsets, Element)}.
-	 * 
+	 *
 	 * @return the event relative to the element
 	 */
 	public Element getRelativeElement() {
@@ -285,7 +300,7 @@ public class PointerEvent extends AbstractEvent {
 
 	/**
 	 * Returns the event that was wrapped.
-	 * 
+	 *
 	 * @return native event
 	 */
 	public HumanInputEvent<?> getWrappedEvent() {
@@ -315,5 +330,4 @@ public class PointerEvent extends AbstractEvent {
 	public void setAlt(boolean alt) {
 		this.alt = alt;
 	}
-
 }

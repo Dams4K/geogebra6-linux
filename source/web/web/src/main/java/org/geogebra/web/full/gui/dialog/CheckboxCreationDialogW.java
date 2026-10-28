@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.web.full.gui.dialog;
@@ -40,8 +44,8 @@ import org.gwtproject.user.client.ui.ListBox;
  * Dialog to create a GeoBoolean object (checkbox) that determines the
  * visibility of a list of objects.
  */
-public class CheckboxCreationDialogW extends ComponentDialog implements
-		GeoElementSelectionListener, HasKeyboardPopup {
+public final class CheckboxCreationDialogW extends ComponentDialog
+		implements GeoElementSelectionListener, HasKeyboardPopup {
 	private ComponentInputField tfCaption;
 	private final List<GeoElement> availableObjects = new ArrayList<>();
 	private final List<String> availableObjectNames = new ArrayList<>();
@@ -56,18 +60,18 @@ public class CheckboxCreationDialogW extends ComponentDialog implements
 
 		private final List<GeoElement> geos;
 
-		public GeoAttachedListBox() {
+		GeoAttachedListBox() {
 			super();
 			setMultipleSelect(false);
 			geos = new ArrayList<>();
 			setVisibleItemCount(MAX_VISIBLE_ROWS);
 		}
 
-		public void add(GeoElement geo) {
+		void add(GeoElement geo) {
 			if (contains(geo)) {
 				return;
 			}
-			
+
 			if (geo.isEuclidianVisible()) {
 				addItem(getDescription(geo));
 				geos.add(geo);
@@ -76,19 +80,19 @@ public class CheckboxCreationDialogW extends ComponentDialog implements
 			}
 		}
 
-		public GeoElement getGeoAt(int index) {
+		GeoElement getGeoAt(int index) {
 			return geos.get(index);
 		}
 
-		public GeoElement getSelectedGeo() {
+		GeoElement getSelectedGeo() {
 			return getGeoAt(getSelectedIndex());
 		}
 
-		protected boolean contains(GeoElement geo) {
+		private boolean contains(GeoElement geo) {
 			return geos.contains(geo);
 		}
 
-		public void remove(GeoElement geo) {
+		void remove(GeoElement geo) {
 			int idx = geos.lastIndexOf(geo);
 			if (idx >= 0) {
 				removeItem(idx);
@@ -97,12 +101,11 @@ public class CheckboxCreationDialogW extends ComponentDialog implements
 		}
 	}
 
-	protected static String getDescription(GeoElement geo) {
+	private static String getDescription(GeoElement geo) {
 		String text = geo.getLongDescription();
 		if (text.length() < 100) {
 			return text;
-		}
-		else {
+		} else {
 			return geo.getNameDescription();
 		}
 	}
@@ -111,8 +114,7 @@ public class CheckboxCreationDialogW extends ComponentDialog implements
 	 * Input Dialog for a GeoBoolean object Make this *not* modal to allow
 	 * adding geos by clicking in EV
 	 */
-	public CheckboxCreationDialogW(AppW app, DialogData data,
-			GPoint loc2, GeoBoolean geoBoolean) {
+	public CheckboxCreationDialogW(AppW app, DialogData data, GPoint loc2, GeoBoolean geoBoolean) {
 		super(app, data, false, false);
 		addStyleName("Checkbox");
 		this.location = loc2;
@@ -132,8 +134,8 @@ public class CheckboxCreationDialogW extends ComponentDialog implements
 	private void initLists() {
 		// fill combo box with all geos
 
-		TreeSet<GeoElement> sortedSet = app.getKernel().getConstruction()
-				.getGeoSetNameDescriptionOrder();
+		TreeSet<GeoElement> sortedSet =
+				app.getKernel().getConstruction().getGeoSetNameDescriptionOrder();
 
 		// lists for combo boxes to select input and output objects
 		// fill combobox models
@@ -143,10 +145,9 @@ public class CheckboxCreationDialogW extends ComponentDialog implements
 			}
 		}
 		availableObjectNames.add("");
-		gbObjects = new ComponentDropDown((AppW) app, "Tool.SelectObjects",
-				availableObjectNames, -1);
+		gbObjects = new ComponentDropDown((AppW) app, "Tool.SelectObjects", availableObjectNames, -1);
 		rebuildNames();
-	
+
 		// fill list with all selected geos
 		gbList = new GeoAttachedListBox();
 
@@ -155,7 +156,7 @@ public class CheckboxCreationDialogW extends ComponentDialog implements
 		for (GeoElement geo : selectedGeos) {
 			gbList.add(geo);
 		}
-		
+
 		gbObjects.addChangeHandler(() -> {
 			GeoElement geo = availableObjects.get(gbObjects.getSelectedIndex());
 			if (geo != null) {
@@ -167,7 +168,8 @@ public class CheckboxCreationDialogW extends ComponentDialog implements
 	private void rebuildNames() {
 		availableObjectNames.clear();
 		availableObjects.stream()
-				.map(CheckboxCreationDialogW::getDescription).forEach(availableObjectNames::add);
+				.map(CheckboxCreationDialogW::getDescription)
+				.forEach(availableObjectNames::add);
 		gbObjects.setSelectedIndex(-1);
 		gbObjects.setLabels();
 		gbObjects.setDisabled(availableObjects.isEmpty());
@@ -180,22 +182,21 @@ public class CheckboxCreationDialogW extends ComponentDialog implements
 		}
 	}
 
-	protected void buildContent() {
+	private void buildContent() {
 		// create caption panel
-		String initString = geoBoolean == null ? ""
-				: geoBoolean.getCaption(StringTemplate.defaultTemplate);
+		String initString =
+				geoBoolean == null ? "" : geoBoolean.getCaption(StringTemplate.defaultTemplate);
 
-		tfCaption = new ComponentInputField((AppW) app, null, "Button.Caption",
-				null, initString);
-		tfCaption.getTextField().getTextComponent().setAutoComplete(false);
+		tfCaption = new ComponentInputField((AppW) app, null, "Button.Caption", null, initString, null);
+		tfCaption.getTextWidget().setAutoComplete(false);
 
 		FlowPanel listPanel = new FlowPanel();
 		listPanel.add(gbObjects);
 		gbList.getElement().addClassName("cbCreationList");
-		StandardButton btnRemove = new StandardButton(MaterialDesignResources
-				.INSTANCE.delete_black(), 20);
+		StandardButton btnRemove =
+				new StandardButton(MaterialDesignResources.INSTANCE.delete_black(), 20);
 		listPanel.add(LayoutUtilW.panelRow(gbList, btnRemove));
-		
+
 		btnRemove.addFastClickHandler(event -> {
 			GeoElement geo = gbList.getSelectedGeo();
 			if (geo != null) {

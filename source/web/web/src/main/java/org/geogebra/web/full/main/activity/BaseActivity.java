@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.main.activity;
 
 import org.geogebra.common.gui.view.table.ScientificDataTableController;
@@ -64,8 +80,8 @@ public class BaseActivity implements GeoGebraActivity {
 	}
 
 	@Override
-	public ErrorHandler createAVErrorHandler(RadioTreeItem radioTreeItem, boolean valid,
-			boolean allowSliders, boolean withSliders) {
+	public ErrorHandler createAVErrorHandler(
+			RadioTreeItem radioTreeItem, boolean valid, boolean allowSliders, boolean withSliders) {
 		return new AVErrorHandler(radioTreeItem, valid, allowSliders, withSliders);
 	}
 
@@ -78,11 +94,6 @@ public class BaseActivity implements GeoGebraActivity {
 	public SVGResource getIcon() {
 		// default implementation: classic and suite
 		return MaterialDesignResources.INSTANCE.geogebra_color();
-	}
-
-	@Override
-	public boolean useValidInput() {
-		return true;
 	}
 
 	@Override

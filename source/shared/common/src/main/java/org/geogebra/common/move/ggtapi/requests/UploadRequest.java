@@ -1,6 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.move.ggtapi.requests;
 
 import org.geogebra.common.GeoGebraConstants;
+import org.geogebra.common.main.settings.config.AppConfigDefault;
 import org.geogebra.common.move.ggtapi.models.ClientInfo;
 import org.geogebra.common.move.ggtapi.models.Material;
 import org.geogebra.common.move.ggtapi.models.Material.MaterialType;
@@ -16,9 +33,9 @@ import org.geogebra.common.util.debug.Log;
  */
 public class UploadRequest implements Request {
 
-	private final static String API = "1.0.0";
-	private final static String GGB = "geogebra";
-	private final static String TASK = "upload";
+	private static final String API = "1.0.0";
+	private static final String GGB = "geogebra";
+	private static final String TASK = "upload";
 	private final String type;
 	private final String consTitle;
 	private String uniqueID;
@@ -28,12 +45,12 @@ public class UploadRequest implements Request {
 
 	/**
 	 * Used to upload the actual opened application to GeoGebraTube
-	 * 
+	 *
 	 * @param tubeID
 	 *            tube ID
 	 * @param visibility
 	 *            visibility
-	 * 
+	 *
 	 * @param consTitle
 	 *            title of construction
 	 * @param base64
@@ -41,8 +58,13 @@ public class UploadRequest implements Request {
 	 * @param type
 	 *            material type
 	 */
-	UploadRequest(String tubeID, String visibility, String consTitle,
-			String base64, MaterialType type, Material parent) {
+	UploadRequest(
+			String tubeID,
+			String visibility,
+			String consTitle,
+			String base64,
+			MaterialType type,
+			Material parent) {
 		this.consTitle = consTitle;
 		this.type = typeString(type);
 		this.uniqueID = tubeID;
@@ -60,7 +82,7 @@ public class UploadRequest implements Request {
 
 	/**
 	 * Used for local files. Files are saved as "private"
-	 * 
+	 *
 	 * @param mat
 	 *            Material
 	 */
@@ -76,7 +98,7 @@ public class UploadRequest implements Request {
 
 	/**
 	 * UploadRequest to rename files
-	 * 
+	 *
 	 * @param newTitle
 	 *            String
 	 * @param id
@@ -84,13 +106,13 @@ public class UploadRequest implements Request {
 	 */
 	UploadRequest(String newTitle, int id) {
 		this.consTitle = newTitle;
-		this.uniqueID = id + "";
+		this.uniqueID = String.valueOf(id);
 		this.type = "applet"; // TODO can this be ignored
 	}
 
 	/**
 	 * to upload active construction
-	 * 
+	 *
 	 * @param tubeID
 	 *            tube material ID
 	 * @param visibility
@@ -106,15 +128,19 @@ public class UploadRequest implements Request {
 	 *            parent material
 	 * @return the upload XML as JSON String
 	 */
-	public static UploadRequest getRequestElement(String tubeID, String visibility,
-			String filename, String base64, MaterialType type, Material parent) {
-		return new UploadRequest(tubeID, visibility, filename, base64, type,
-				parent);
+	public static UploadRequest getRequestElement(
+			String tubeID,
+			String visibility,
+			String filename,
+			String base64,
+			MaterialType type,
+			Material parent) {
+		return new UploadRequest(tubeID, visibility, filename, base64, type, parent);
 	}
 
 	/**
 	 * to upload local files
-	 * 
+	 *
 	 * @param mat
 	 *            {@link Material}
 	 * @return the upload XML as JSON String
@@ -138,8 +164,7 @@ public class UploadRequest implements Request {
 
 	@Override
 	public String toJSONString(ClientInfo client) {
-		if (client.getModel() == null
-				|| client.getModel().getLoggedInUser() == null) {
+		if (client.getModel() == null || client.getModel().getLoggedInUser() == null) {
 			Log.warn("No user.");
 			return null;
 		}
@@ -152,8 +177,7 @@ public class UploadRequest implements Request {
 			// login
 			JSONObject login = new JSONObject();
 			login.put("-type", UploadRequest.GGB);
-			login.put("-token",
-					client.getModel().getLoggedInUser().getLoginToken());
+			login.put("-token", client.getModel().getLoggedInUser().getLoginToken());
 			api.put("login", login);
 
 			// task
@@ -200,17 +224,16 @@ public class UploadRequest implements Request {
 				settings.put("-stylebar", parent.getAllowStylebar());
 				settings.put("-zoombuttons", parent.getShowZoomButtons());
 			} else {
-				boolean isNotesOrAssign
-						= GeoGebraConstants.NOTES_APPCODE.equals(client.getAppName())
-						|| client.isAssign();
+				boolean showUI = AppConfigDefault.isUnbundledOrNotes(client.getAppName());
+				boolean isNotes = GeoGebraConstants.NOTES_APPCODE.equals(client.getAppName());
 				settings.put("-undoredo", true);
 				settings.put("-reseticon", false);
-				settings.put("-toolbar", isNotesOrAssign);
+				settings.put("-toolbar", showUI);
 				settings.put("-menubar", false);
-				settings.put("-inputbar", client.isAssign());
-				settings.put("-stylebar", isNotesOrAssign);
-				settings.put("-rightclick", isNotesOrAssign);
-				settings.put("-zoombuttons", isNotesOrAssign);
+				settings.put("-inputbar", showUI && !isNotes);
+				settings.put("-stylebar", showUI);
+				settings.put("-rightclick", showUI);
+				settings.put("-zoombuttons", showUI);
 			}
 			task.put("settings", settings);
 
@@ -232,7 +255,6 @@ public class UploadRequest implements Request {
 			Log.debug("problem building request: " + e.getMessage());
 			return null;
 		}
-
 	}
 
 	private static void addPhoneTag(JSONObject task, ClientInfo client) {

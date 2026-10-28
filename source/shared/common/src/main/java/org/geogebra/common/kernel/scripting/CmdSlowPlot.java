@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.scripting;
 
 import org.geogebra.common.kernel.Kernel;
@@ -23,7 +39,7 @@ import org.geogebra.common.util.debug.Log;
 public class CmdSlowPlot extends CmdScripting {
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -42,63 +58,61 @@ public class CmdSlowPlot extends CmdScripting {
 		int repeat = 1;
 
 		switch (n) {
-		case 2:
-			// true -> 1
-			// false -> 0
-			// infinity -> 2147483647
-			// undefined -> 0
-			repeat = (int) arg[1].evaluateDouble();
-			Log.debug("repeat = " + repeat);
-			//$FALL-THROUGH$
-		case 1:
-			if (arg[0].isRealValuedFunction()) {
+			case 2:
+				// true -> 1
+				// false -> 0
+				// infinity -> 2147483647
+				// undefined -> 0
+				repeat = (int) arg[1].evaluateDouble();
+				Log.debug("repeat = " + repeat);
+			// $FALL-THROUGH$
+			case 1:
+				if (arg[0].isRealValuedFunction()) {
 
-				GeoNumeric var = new GeoNumeric(cons, 0.0);
+					GeoNumeric var = new GeoNumeric(cons, 0.0);
 
-				arg[0].setEuclidianVisible(false);
-				arg[0].update();
+					arg[0].setEuclidianVisible(false);
+					arg[0].update();
 
-				var.setLabel(null); // set label to next available
-				var.setEuclidianVisible(true);
-				var.setIntervalMin(0.0);
-				var.setIntervalMax(1.0);
-				var.setAnimating(true);
-				var.setAnimationStep(0.01);
-				var.setAnimationType(
-						repeat == 1 ? GeoElementND.ANIMATION_INCREASING
-								: GeoElementND.ANIMATION_INCREASING_ONCE);
-				var.update();
-				FunctionVariable x = new FunctionVariable(cons.getKernel());
-				GeoElement corner1 = new AlgoDrawingPadCorner(cons,
-						new GeoNumeric(cons, 1), null, 5).getOutput(0);
-				GeoElement corner2 = new AlgoDrawingPadCorner(cons,
-						new GeoNumeric(cons, 2), null, 5).getOutput(0);
-				ExpressionNode exp = x.wrap()
-						.lessThan(var.wrap()
-								.multiply(corner2.wrap().subtract(corner1)
-										.apply(Operation.XCOORD))
-								.plus(corner1.wrap().apply(Operation.XCOORD)))
-						.apply(Operation.IF,
-								arg[0].wrap().apply(Operation.FUNCTION, x));
-				GeoFunction g = cons.getKernel().getAlgoDispatcher()
-						.dependentFunction(new Function(exp, x),
-								new EvalInfo(true));
-				String label = c.getLabel();
-				if (g.validate(label == null)) {
-					g.setLabel(label);
-				} else {
-					var.remove();
-					throw new MyError(loc, Errors.InvalidFunction);
+					var.setLabel(null); // set label to next available
+					var.setEuclidianVisible(true);
+					var.setIntervalMin(0.0);
+					var.setIntervalMax(1.0);
+					var.setAnimating(true);
+					var.setAnimationStep(0.01);
+					var.setAnimationType(
+							repeat == 1
+									? GeoElementND.ANIMATION_INCREASING
+									: GeoElementND.ANIMATION_INCREASING_ONCE);
+					var.update();
+					FunctionVariable x = new FunctionVariable(cons.getKernel());
+					GeoElement corner1 =
+							new AlgoDrawingPadCorner(cons, new GeoNumeric(cons, 1), null, 5).getOutput(0);
+					GeoElement corner2 =
+							new AlgoDrawingPadCorner(cons, new GeoNumeric(cons, 2), null, 5).getOutput(0);
+					ExpressionNode exp = x.wrap()
+							.lessThan(var.wrap()
+									.multiply(corner2.wrap().subtract(corner1).apply(Operation.XCOORD))
+									.plus(corner1.wrap().apply(Operation.XCOORD)))
+							.apply(Operation.IF, arg[0].wrap().apply(Operation.FUNCTION, x));
+					GeoFunction g = cons.getKernel()
+							.getAlgoDispatcher()
+							.dependentFunction(new Function(exp, x), new EvalInfo(true));
+					String label = c.getLabel();
+					if (g.validate(label == null)) {
+						g.setLabel(label);
+					} else {
+						var.remove();
+						throw new MyError(loc, Errors.InvalidFunction);
+					}
+
+					kernel.getAnimationManager().startAnimation();
+					return new GeoElement[] {g};
 				}
+				throw argErr(c, arg[0]);
 
-				kernel.getAnimationManager().startAnimation();
-				return new GeoElement[] { g };
-			}
-			throw argErr(c, arg[0]);
-
-		default:
-			throw argNumErr(c);
+			default:
+				throw argNumErr(c);
 		}
 	}
-
 }

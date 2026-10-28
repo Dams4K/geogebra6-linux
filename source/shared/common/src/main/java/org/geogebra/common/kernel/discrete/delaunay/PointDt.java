@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.discrete.delaunay;
 
 import java.util.Comparator;
@@ -10,20 +26,21 @@ import org.geogebra.common.util.debug.Log;
  * (pointLineTest).
  */
 public class PointDt {
-	public final static int ONSEGMENT = 0;
+	public static final int ONSEGMENT = 0;
 
 	/**
 	 * + <br>
 	 */
-	public final static int LEFT = 1;
+	public static final int LEFT = 1;
 
 	/**
 	 * +
 	 */
-	public final static int RIGHT = 2;
-	public final static int INFRONTOFA = 3;
-	public final static int BEHINDB = 4;
-	public final static int ERROR = 5;
+	public static final int RIGHT = 2;
+
+	public static final int INFRONTOFA = 3;
+	public static final int BEHINDB = 4;
+	public static final int ERROR = 5;
 
 	double x;
 	double y;
@@ -31,7 +48,7 @@ public class PointDt {
 	@Override
 	public int hashCode() {
 
-		double[] tempArray = { x, y };
+		double[] tempArray = {x, y};
 
 		return java.util.Arrays.hashCode(tempArray);
 	}
@@ -46,7 +63,7 @@ public class PointDt {
 
 	/**
 	 * constructs a 3D point with a z value of 0.
-	 * 
+	 *
 	 * @param x
 	 *            x-coord
 	 * @param y
@@ -59,7 +76,7 @@ public class PointDt {
 
 	/**
 	 * simple copy constructor
-	 * 
+	 *
 	 * @param p
 	 *            point
 	 */
@@ -75,7 +92,7 @@ public class PointDt {
 
 	/**
 	 * Sets the x coordinate.
-	 * 
+	 *
 	 * @param x
 	 *            The new x coordinate.
 	 */
@@ -90,7 +107,7 @@ public class PointDt {
 
 	/**
 	 * Sets the y coordinate.
-	 * 
+	 *
 	 * @param y
 	 *            The new y coordinate.
 	 */
@@ -154,8 +171,7 @@ public class PointDt {
 			return false;
 		}
 
-		return ComparePoint.equals(x, ((PointDt) p).x)
-				&& ComparePoint.equals(y, ((PointDt) p).y);
+		return ComparePoint.equals(x, ((PointDt) p).x) && ComparePoint.equals(y, ((PointDt) p).y);
 	}
 
 	/** @return a String in the [x,y,z] format */
@@ -171,8 +187,8 @@ public class PointDt {
 	 */
 	public double distance(PointDt p) {
 		return MyMath.length(p.x() - x, p.y() - y);
-		//double temp = Math.pow(p.x() - x, 2) + Math.pow(p.y() - y, 2);
-		//return Math.sqrt(temp);
+		// double temp = Math.pow(p.x() - x, 2) + Math.pow(p.y() - y, 2);
+		// return Math.sqrt(temp);
 	}
 
 	/**
@@ -199,7 +215,7 @@ public class PointDt {
 	 * tests the relation between this point (as a 2D [x,y] point) and a 2D
 	 * segment a,b (the Z values are ignored), returns one of the following:
 	 * LEFT, RIGHT, INFRONTOFA, BEHINDB, ONSEGMENT
-	 * 
+	 *
 	 * @param a
 	 *            the first point of the segment.
 	 * @param b
@@ -276,15 +292,14 @@ public class PointDt {
 
 	PointDt circumcenter(PointDt a, PointDt b) {
 
-		double u = ((a.x - b.x) * (a.x + b.x) + (a.y - b.y) * (a.y + b.y))
-				/ 2.0f;
+		double u = ((a.x - b.x) * (a.x + b.x) + (a.y - b.y) * (a.y + b.y)) / 2.0f;
 		double v = ((b.x - x) * (b.x + x) + (b.y - y) * (b.y + y)) / 2.0f;
 		double den = (a.x - b.x) * (b.y - y) - (b.x - x) * (a.y - b.y);
 		if (den == 0) {
 			Log.debug("circumcenter, degenerate case");
 		}
-		return new PointDt((u * (b.y - y) - v * (a.y - b.y)) / den,
-				(v * (a.x - b.x) - u * (b.x - x)) / den);
+		return new PointDt(
+				(u * (b.y - y) - v * (a.y - b.y)) / den, (v * (a.x - b.x) - u * (b.x - x)) / den);
 	}
 
 	/**
@@ -295,6 +310,9 @@ public class PointDt {
 		return new ComparePoint(flag);
 	}
 
+	/**
+	 * @return comparator for the default direction
+	 */
 	public static Comparator<PointDt> getComparator() {
 		return new ComparePoint(0);
 	}

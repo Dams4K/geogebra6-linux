@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.layout;
 
 import org.geogebra.web.full.gui.view.algebra.AlgebraViewW;
@@ -52,7 +68,7 @@ public interface DockPanelDecorator {
 
 	/**
 	 * Resizes the table on small screen.
-
+	 *
 	 * @param tabHeight the tab height where the table is on.
 	 */
 	void resizeTableSmallScreen(int tabHeight, StickyTable<?> table);
@@ -66,4 +82,12 @@ public interface DockPanelDecorator {
 	 * @return whether table of values should have shaded columns
 	 */
 	boolean hasShadedColumns();
+
+	/**
+	 * @param panelInnerWidth width of the panel excluding the navigation rail
+	 * @return width usable for AV (in pixels)
+	 */
+	default int getAlgebraViewWidth(int panelInnerWidth) {
+		return panelInnerWidth;
+	}
 }

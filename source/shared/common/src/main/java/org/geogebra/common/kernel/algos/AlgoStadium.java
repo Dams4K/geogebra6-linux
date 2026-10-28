@@ -1,8 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.algos;
 
 import java.util.ArrayList;
-
-import javax.annotation.Nonnull;
 
 import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.euclidian.EuclidianViewInterfaceSlim;
@@ -14,6 +28,7 @@ import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.kernel.geos.GeoPoint;
 import org.geogebra.common.kernel.geos.GeoStadium;
+import org.jspecify.annotations.NonNull;
 
 public final class AlgoStadium extends AlgoElement {
 	private final GeoPoint p;
@@ -48,23 +63,22 @@ public final class AlgoStadium extends AlgoElement {
 
 	@Override
 	protected void setInputOutput() {
-		input = new GeoElement[]{p, q, height};
+		input = new GeoElement[] {p, q, height};
 		setOnlyOutput(stadium);
 		setDependencies();
 	}
 
 	private void updatePoints() {
-		int steps = 50;
-		double angleStep = Math.PI / steps;
 		double radius = height.getValue() / 2.0;
 		points.clear();
 		double dx = q.getX() - p.getX();
 		double dy = q.getY() - p.getY();
-		double baseAngle = Math.atan2(dy, dx);  // rotation angle of segment pq
+		double baseAngle = Math.atan2(dy, dx); // rotation angle of segment pq
 		double pi2 = -Math.PI / 2;
 		addAroundPoint(p, -radius, baseAngle + pi2, SegmentType.MOVE_TO);
 		lineAroundPoint(q, radius, baseAngle - pi2);
-
+		int steps = 50;
+		double angleStep = Math.PI / steps;
 		for (int i = steps; i > 0; i--) {
 			double angle = pi2 + i * angleStep;
 			lineAroundPoint(q, radius, baseAngle + angle);
@@ -74,7 +88,6 @@ public final class AlgoStadium extends AlgoElement {
 		for (int i = steps; i >= 0; i--) {
 			double angle = pi2 + i * angleStep;
 			lineAroundPoint(p, -radius, baseAngle + angle);
-
 		}
 		lineAroundPoint(p, -radius, baseAngle + pi2);
 	}
@@ -87,7 +100,6 @@ public final class AlgoStadium extends AlgoElement {
 		double x = p.getX() + radius * Math.cos(angle);
 		double y = p.getY() + radius * Math.sin(angle);
 		addPoint(x, y, segmentType);
-
 	}
 
 	private void addPoint(double x, double y, SegmentType segmentType) {
@@ -117,7 +129,7 @@ public final class AlgoStadium extends AlgoElement {
 		this.height.set(height);
 	}
 
-	public @Nonnull ArrayList<MyPoint> getPoints() {
+	public @NonNull ArrayList<MyPoint> getPoints() {
 		return points;
 	}
 

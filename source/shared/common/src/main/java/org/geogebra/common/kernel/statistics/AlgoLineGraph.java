@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.statistics;
 
 import org.geogebra.common.kernel.Construction;
@@ -33,8 +49,8 @@ public class AlgoLineGraph extends AlgoElement {
 		this.xValuesCopy = new MyList(c.getKernel());
 		this.yValuesCopy = new MyList(c.getKernel());
 		FunctionVariable var = new FunctionVariable(kernel);
-		ExpressionNode graphExpr = new ExpressionNode(kernel, var, Operation.DATA,
-				new MyNumberPair(kernel, xValuesCopy, yValuesCopy));
+		ExpressionNode graphExpr = new ExpressionNode(
+				kernel, var, Operation.DATA, new MyNumberPair(kernel, xValuesCopy, yValuesCopy));
 		this.graph = new GeoFunction(c, new Function(kernel, graphExpr));
 		setInputOutput();
 		compute();
@@ -42,7 +58,7 @@ public class AlgoLineGraph extends AlgoElement {
 
 	@Override
 	protected void setInputOutput() {
-		input = new GeoElement[]{xValues, yValues};
+		input = new GeoElement[] {xValues, yValues};
 		setOnlyOutput(graph);
 		setDependencies();
 	}
@@ -61,8 +77,8 @@ public class AlgoLineGraph extends AlgoElement {
 		xValues.deepCopyListElements(xValuesCopy);
 		yValues.deepCopyListElements(yValuesCopy);
 		graph.setDefined(true);
-		graph.setInterval(xValues.get(0).evaluateDouble(),
-				xValues.get(xValues.size() - 1).evaluateDouble());
+		graph.setInterval(
+				xValues.get(0).evaluateDouble(), xValues.get(xValues.size() - 1).evaluateDouble());
 	}
 
 	private boolean areXValuesFiniteAndSorted() {

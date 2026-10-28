@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.advanced;
 
 import java.util.HashSet;
@@ -36,8 +52,8 @@ public class AlgoParseToNumberOrFunction extends AlgoElement {
 	 * @param vars function variables (for multivariable)
 	 * @param cmd ParseToNumber or ParseToFunction
 	 */
-	public AlgoParseToNumberOrFunction(Construction cons, GeoText text,
-			GeoList vars, Commands cmd, String label) {
+	public AlgoParseToNumberOrFunction(
+			Construction cons, GeoText text, GeoList vars, Commands cmd, String label) {
 		super(cons);
 		this.cmd = cmd;
 		this.text = text;
@@ -68,8 +84,7 @@ public class AlgoParseToNumberOrFunction extends AlgoElement {
 		AlgebraProcessor ap = kernel.getAlgebraProcessor();
 		String textToParse = text.getTextStringSafe();
 		if (cmd == Commands.ParseToNumber) {
-			EvalInfo evalInfo = new EvalInfo(!cons.isSuppressLabelsActive(), true)
-					.withAutocreate(false);
+			EvalInfo evalInfo = new EvalInfo(!cons.isSuppressLabelsActive(), true).withAutocreate(false);
 			num = ap.evaluateToNumeric(textToParse, ErrorHelper.silent(), evalInfo);
 			if (num != null) {
 				updateReferences(num.getDefinition());
@@ -83,10 +98,10 @@ public class AlgoParseToNumberOrFunction extends AlgoElement {
 				updateReferences(((GeoFunction) num).getFunctionExpression());
 			}
 		} else {
-			vars.elements().filter(GeoElement::isGeoText).forEach(fVar ->
-					cons.registerFunctionVariable(((GeoText) fVar).getTextString()));
-			num = ap.evaluateToFunctionNVar(textToParse,
-							true, false);
+			vars.elements()
+					.filter(GeoElement::isGeoText)
+					.forEach(fVar -> cons.registerFunctionVariable(((GeoText) fVar).getTextString()));
+			num = ap.evaluateToFunctionNVar(textToParse, true, false);
 			if (num != null) {
 				updateReferences(((GeoFunctionNVar) num).getFunctionExpression());
 			}
@@ -115,7 +130,7 @@ public class AlgoParseToNumberOrFunction extends AlgoElement {
 				i++;
 				geo.addToUpdateSetOnly(this);
 				if (result.hasAlgoUpdateSet()) {
-					for (AlgoElement child: result.getAlgoUpdateSet()) {
+					for (AlgoElement child : result.getAlgoUpdateSet()) {
 						geo.addToUpdateSetOnly(child);
 					}
 				}

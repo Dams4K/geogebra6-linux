@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.keyboard.web;
 
 import org.geogebra.common.euclidian.event.PointerEventType;
@@ -28,6 +44,7 @@ public class BaseKeyboardButton extends SimplePanel implements MouseOutHandler {
 	 * the label that is displayed on the button
 	 */
 	protected Label label;
+
 	private String secondaryAction;
 	private final ButtonHandler buttonHandler;
 
@@ -41,8 +58,8 @@ public class BaseKeyboardButton extends SimplePanel implements MouseOutHandler {
 	 * @param handler
 	 *            {@link ClickHandler}
 	 */
-	public BaseKeyboardButton(String caption, String altText, String feedback,
-			ButtonHandler handler) {
+	public BaseKeyboardButton(
+			String caption, String altText, String feedback, ButtonHandler handler) {
 		this(handler);
 		this.label = new Label();
 		setWidget(label);
@@ -63,8 +80,7 @@ public class BaseKeyboardButton extends SimplePanel implements MouseOutHandler {
 	 * @param handler
 	 *            {@link ClickHandler}
 	 */
-	public BaseKeyboardButton(String caption, String feedback,
-			ButtonHandler handler) {
+	public BaseKeyboardButton(String caption, String feedback, ButtonHandler handler) {
 		this(caption, caption, feedback, handler);
 	}
 
@@ -72,7 +88,8 @@ public class BaseKeyboardButton extends SimplePanel implements MouseOutHandler {
 	// these Thai characters need a placeholder added to display nicely
 	private static String checkThai(String str) {
 		if (("\u0E31\u0E33\u0E34\u0E35\u0E36\u0E37\u0E38\u0E39\u0E3A\u0E47"
-				+ "\u0E48\u0E49\u0E4A\u0E4B\u0E4C\u0E4D").contains(str)) {
+						+ "\u0E48\u0E49\u0E4A\u0E4B\u0E4C\u0E4D")
+				.contains(str)) {
 			return "\u25CC" + str;
 		}
 		return str;
@@ -94,7 +111,7 @@ public class BaseKeyboardButton extends SimplePanel implements MouseOutHandler {
 
 	/**
 	 * Constructor for subclass {@link FunctionalKeyboardButton}
-	 * 
+	 *
 	 * @param handler
 	 *            {@link ClickHandler}
 	 */
@@ -151,8 +168,7 @@ public class BaseKeyboardButton extends SimplePanel implements MouseOutHandler {
 			int index = caption.indexOf('^');
 			this.label.setText(caption.substring(0, index));
 			Element sup = Document.get().createElement("sup");
-			sup.appendChild(Document.get().createTextNode(
-					caption.substring(index + 1)));
+			sup.appendChild(Document.get().createTextNode(caption.substring(index + 1)));
 			sup.getStyle().setFontSize(14, Unit.PX);
 			sup.getStyle().setFontStyle(FontStyle.NORMAL);
 			this.label.getElement().appendChild(sup);
@@ -161,8 +177,7 @@ public class BaseKeyboardButton extends SimplePanel implements MouseOutHandler {
 			int index = caption.indexOf('_');
 			this.label.setText(caption.substring(0, index));
 			Element sub = Document.get().createElement("sub");
-			sub.appendChild(Document.get().createTextNode(
-					caption.substring(index + 1)));
+			sub.appendChild(Document.get().createTextNode(caption.substring(index + 1)));
 			sub.getStyle().setFontSize(14, Unit.PX);
 			sub.getStyle().setFontStyle(FontStyle.NORMAL);
 			this.label.getElement().appendChild(sub);

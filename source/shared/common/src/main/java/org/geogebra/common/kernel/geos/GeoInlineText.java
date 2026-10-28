@@ -1,9 +1,28 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.geos;
+
+import static org.geogebra.common.main.GeoGebraColorConstants.NEUTRAL_900;
 
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GFont;
 import org.geogebra.common.awt.GPoint2D;
 import org.geogebra.common.euclidian.draw.HasTextFormat;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.geos.properties.VerticalAlignment;
@@ -18,8 +37,8 @@ import org.geogebra.common.util.debug.Log;
 /**
  * Inline Geo Text element.
  */
-public class GeoInlineText extends GeoInline implements TextStyle, HasTextFormatter,
-		HasVerticalAlignment {
+public class GeoInlineText extends GeoInline
+		implements TextStyle, HasTextFormatter, HasVerticalAlignment {
 
 	public static final int DEFAULT_WIDTH = 250;
 	public static final int DEFAULT_HEIGHT = 36;
@@ -45,6 +64,7 @@ public class GeoInlineText extends GeoInline implements TextStyle, HasTextFormat
 		setLocation(location);
 		setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		setLineThickness(NO_BORDER);
+		setBorderColor(NEUTRAL_900);
 		setContentWidth(DEFAULT_WIDTH);
 		setContentHeight(DEFAULT_HEIGHT);
 	}
@@ -55,14 +75,13 @@ public class GeoInlineText extends GeoInline implements TextStyle, HasTextFormat
 	 */
 	public GeoInlineText(GeoText geoText) {
 		super(geoText.getConstruction());
-		setLocation(new GPoint2D(geoText.getStartPoint().getInhomX(),
-				geoText.getStartPoint().getInhomY()));
+		setLocation(new GPoint2D(
+				geoText.getStartPoint().getInhomX(), geoText.getStartPoint().getInhomY()));
 		setContentFromText(geoText);
 	}
 
 	private int getCurrentFontSize() {
-		return kernel.getApplication().getSettings().getFontSettings()
-				.getAppFontSize();
+		return kernel.getApplication().getSettings().getFontSettings().getAppFontSize();
 	}
 
 	@Override
@@ -104,7 +123,8 @@ public class GeoInlineText extends GeoInline implements TextStyle, HasTextFormat
 
 	@Override
 	public GeoElement copy() {
-		return new GeoInlineText(cons, new GPoint2D(getLocation().getX(), getLocation().getY()));
+		return new GeoInlineText(
+				cons, new GPoint2D(getLocation().getX(), getLocation().getY()));
 	}
 
 	@Override
@@ -147,8 +167,9 @@ public class GeoInlineText extends GeoInline implements TextStyle, HasTextFormat
 			boolean bold = hasTextFormat.getFormat("bold", false);
 			boolean italic = hasTextFormat.getFormat("italic", false);
 			boolean underline = hasTextFormat.getFormat("underline", false);
-			return (bold ? GFont.BOLD : 0) | (italic ? GFont.ITALIC : 0) | (underline
-					? GFont.UNDERLINE : 0);
+			return (bold ? GFont.BOLD : 0)
+					| (italic ? GFont.ITALIC : 0)
+					| (underline ? GFont.UNDERLINE : 0);
 		} catch (RuntimeException e) {
 			Log.warn("No format for " + hasTextFormat + e);
 		}
@@ -200,13 +221,13 @@ public class GeoInlineText extends GeoInline implements TextStyle, HasTextFormat
 				text.put("color", StringUtil.toHtmlColor(geo.getObjectColor()));
 			}
 			setContent(content.toString());
-		} catch (JSONException e) {
+		} catch (JSONException ignored) {
 			// unlikely
 		}
-    }
+	}
 
 	@Override
-	protected void getStyleXML(StringBuilder sb) {
+	protected void getStyleXML(XMLStringBuilder sb) {
 		super.getStyleXML(sb);
 		XMLBuilder.appendBorderAndAlignment(sb, this, verticalAlignment);
 		if (getLineThickness() != 0) {

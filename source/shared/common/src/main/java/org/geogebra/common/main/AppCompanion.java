@@ -1,9 +1,26 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main;
 
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidianForPlane.EuclidianViewForPlaneCompanionInterface;
 import org.geogebra.common.geogebra3D.euclidian3D.printer3D.Format;
 import org.geogebra.common.gui.layout.DockPanel;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.GeoFactory;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.commands.CommandsConstants;
@@ -12,11 +29,12 @@ import org.geogebra.common.kernel.kernelND.ViewCreator;
 import org.geogebra.common.main.settings.Settings;
 import org.geogebra.common.ownership.NonOwning;
 import org.geogebra.common.plugin.Geometry3DGetter;
+import org.jspecify.annotations.NonNull;
 
 import com.google.j2objc.annotations.Weak;
 
 /**
- * 
+ *
  * @author mathieu
  *
  *         Companion for application
@@ -25,20 +43,20 @@ public class AppCompanion {
 	/** application */
 	@NonOwning
 	@Weak
-	protected App app;
+	protected final @NonNull App app;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 */
-	public AppCompanion(App app) {
+	public AppCompanion(@NonNull App app) {
 		this.app = app;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return new kernel
 	 */
 	public Kernel newKernel() {
@@ -48,7 +66,7 @@ public class AppCompanion {
 	/**
 	 * return true if commands of this table should be visible in input bar help
 	 * and autocomplete
-	 * 
+	 *
 	 * @param table
 	 *            table number, see CommandConstants.TABLE_*
 	 * @return true for visible tables
@@ -61,13 +79,13 @@ public class AppCompanion {
 
 	/**
 	 * XML settings for both EVs
-	 * 
+	 *
 	 * @param sb
 	 *            string builder
 	 * @param asPreference
 	 *            whether we need this for preference XML
 	 */
-	public void getEuclidianViewXML(StringBuilder sb, boolean asPreference) {
+	public void getEuclidianViewXML(XMLStringBuilder sb, boolean asPreference) {
 		EuclidianView mainView = app.getEuclidianView1();
 		if (mainView != null) { // in scientific calculator
 			mainView.getXML(sb, asPreference);
@@ -133,7 +151,7 @@ public class AppCompanion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if some view for plane exists
 	 */
 	public boolean hasEuclidianViewForPlane() {
@@ -141,7 +159,7 @@ public class AppCompanion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if some view for plane is visible
 	 */
 	public boolean hasEuclidianViewForPlaneVisible() {
@@ -149,7 +167,7 @@ public class AppCompanion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a visible view for plane if one, or null
 	 */
 	public EuclidianView getViewForPlaneVisible() {
@@ -158,7 +176,7 @@ public class AppCompanion {
 
 	/**
 	 * add to views for plane (if any)
-	 * 
+	 *
 	 * @param geo
 	 *            geo
 	 */
@@ -168,17 +186,17 @@ public class AppCompanion {
 
 	/**
 	 * remove to views for plane (if any)
-	 * 
+	 *
 	 * @param geo
 	 *            geo
 	 */
 	public void removeFromViewsForPlane(GeoElement geo) {
 		// implemented in App3DCompanion
 	}
-	
+
 	/**
 	 * set export will be done on next 3D frame
-	 * 
+	 *
 	 * @param format - export format
 	 * @param showDialog - true if export dialog should be shown, export directly otherwise
 	 */
@@ -187,7 +205,7 @@ public class AppCompanion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param xmin
 	 *            x min
 	 * @param xmax
@@ -212,9 +230,17 @@ public class AppCompanion {
 	 *            z axis tick distance
 	 * @return string describing model in collada (.dae) format
 	 */
-	public String exportCollada(double xmin, double xmax, double ymin,
-			double ymax, double zmin, double zmax, double xyScale,
-			double xzScale, double xTickDistance, double yTickDistance,
+	public String exportCollada(
+			double xmin,
+			double xmax,
+			double ymin,
+			double ymax,
+			double zmin,
+			double zmax,
+			double xyScale,
+			double xzScale,
+			double xTickDistance,
+			double yTickDistance,
 			double zTickDistance) {
 		// implemented in App3DCompanion
 		return null;
@@ -222,10 +248,10 @@ public class AppCompanion {
 
 	/**
 	 * export geometry to getter
-	 * 
+	 *
 	 * @param getter
 	 *            geometry getter
-	 * 
+	 *
 	 * @param xmin
 	 *            x min
 	 * @param xmax
@@ -250,10 +276,19 @@ public class AppCompanion {
 	 *            z axis tick distance
 	 * @return whether successful
 	 */
-	public boolean exportGeometry3D(Geometry3DGetter getter, double xmin,
-			double xmax, double ymin, double ymax, double zmin, double zmax,
-			double xyScale, double xzScale, double xTickDistance,
-			double yTickDistance, double zTickDistance) {
+	public boolean exportGeometry3D(
+			Geometry3DGetter getter,
+			double xmin,
+			double xmax,
+			double ymin,
+			double ymax,
+			double zmin,
+			double zmax,
+			double xyScale,
+			double xzScale,
+			double xTickDistance,
+			double yTickDistance,
+			double zTickDistance) {
 		return false; // implemented in App3DCompanion
 	}
 
@@ -263,5 +298,4 @@ public class AppCompanion {
 	public void updateFonts3D() {
 		// no 3D views to update fonts
 	}
-
 }

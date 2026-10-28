@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.euclidian.EuclidianConstants;
@@ -24,7 +40,7 @@ public class AlgoIntersectSingle3D extends AlgoIntersect3D {
 
 	/**
 	 * intersection point is the (a) nearest to refPoint
-	 * 
+	 *
 	 * @param label
 	 *            output label
 	 * @param algo
@@ -32,8 +48,7 @@ public class AlgoIntersectSingle3D extends AlgoIntersect3D {
 	 * @param refPoint
 	 *            closest point
 	 */
-	AlgoIntersectSingle3D(String label, AlgoIntersect3D algo,
-			GeoPointND refPoint) {
+	AlgoIntersectSingle3D(String label, AlgoIntersect3D algo, GeoPointND refPoint) {
 		super(algo.getConstruction());
 		this.algo = algo;
 		algo.addUser(); // this algorithm is a user of algo
@@ -49,7 +64,7 @@ public class AlgoIntersectSingle3D extends AlgoIntersect3D {
 
 	/**
 	 * intersection point is index-th intersection point of algo
-	 * 
+	 *
 	 * @param label
 	 *            output label
 	 * @param algo
@@ -158,8 +173,7 @@ public class AlgoIntersectSingle3D extends AlgoIntersect3D {
 			}
 		}
 
-		if (input[0].isDefined() && input[1].isDefined()
-				&& index < parentOutput.length) {
+		if (input[0].isDefined() && input[1].isDefined() && index < parentOutput.length) {
 			// get coordinates from helper algorithm
 			point.setCoords(parentOutput[index].getCoords());
 		} else {
@@ -172,5 +186,4 @@ public class AlgoIntersectSingle3D extends AlgoIntersect3D {
 		super.remove();
 		algo.removeUser(); // this algorithm was a user of algo
 	}
-
 }

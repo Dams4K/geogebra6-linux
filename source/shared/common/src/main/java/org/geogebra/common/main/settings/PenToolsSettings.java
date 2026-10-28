@@ -1,12 +1,30 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main.settings;
 
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.euclidian.EuclidianConstants;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.geos.XMLBuilder;
+import org.geogebra.common.main.GeoGebraColorConstants;
 
-public class PenToolsSettings extends AbstractSettings {
+public class PenToolsSettings extends AbstractSettings<PenToolsSettings> {
 
-	private GColor lastSelectedPenColor = GColor.BLACK;
+	private GColor lastSelectedPenColor = GeoGebraColorConstants.NEUTRAL_900;
 	private GColor lastSelectedHighlighterColor = GColor.newColorRGB(0x388C83);
 	private int lastPenThickness = EuclidianConstants.DEFAULT_PEN_SIZE;
 	private int lastHighlighterThickness = EuclidianConstants.DEFAULT_HIGHLIGHTER_SIZE;
@@ -46,14 +64,14 @@ public class PenToolsSettings extends AbstractSettings {
 	}
 
 	/**
-	 * @return last selected size for pen
+	 * @return last selected size for pen, in half-pixels
 	 */
 	public int getLastPenThickness() {
 		return lastPenThickness;
 	}
 
 	/**
-	 * @param lastPenThickness size of pen
+	 * @param lastPenThickness size of pen, in half-pixels
 	 */
 	public void setLastPenThickness(int lastPenThickness) {
 		this.lastPenThickness = lastPenThickness;
@@ -61,14 +79,14 @@ public class PenToolsSettings extends AbstractSettings {
 	}
 
 	/**
-	 * @return last selected size of highlighter
+	 * @return last selected size of highlighter, in half-pixels
 	 */
 	public int getLastHighlighterThickness() {
 		return lastHighlighterThickness;
 	}
 
 	/**
-	 * @param lastHighlighterThickness size of highlighter
+	 * @param lastHighlighterThickness size of highlighter, in half-pixels
 	 */
 	public void setLastHighlighterThickness(int lastHighlighterThickness) {
 		this.lastHighlighterThickness = lastHighlighterThickness;
@@ -103,30 +121,27 @@ public class PenToolsSettings extends AbstractSettings {
 	 * Print pen tool settings to XML
 	 * @param sbxml output string builder
 	 */
-	public void getXML(StringBuilder sbxml) {
+	public void getXML(XMLStringBuilder sbxml) {
 		// size of pen
-		sbxml.append("\t<penSize val=\"");
-		sbxml.append(getLastPenThickness());
-		sbxml.append("\"/>\n");
+		sbxml.startTag("penSize").attr("val", getLastPenThickness() / 2.0).endTag();
 
 		// color of pen
-		sbxml.append("\t<penColor");
+		sbxml.startTag("penColor");
 		XMLBuilder.appendRGB(sbxml, getLastSelectedPenColor());
-		sbxml.append("/>\n");
+		sbxml.endTag();
 
 		// size of highlighter
-		sbxml.append("\t<highlighterSize val=\"");
-		sbxml.append(getLastHighlighterThickness());
-		sbxml.append("\"/>\n");
+		sbxml
+				.startTag("highlighterSize")
+				.attr("val", getLastHighlighterThickness() / 2.0)
+				.endTag();
 
 		// highlighter of pen
-		sbxml.append("\t<highlighterColor");
+		sbxml.startTag("highlighterColor");
 		XMLBuilder.appendRGB(sbxml, getLastSelectedHighlighterColor());
-		sbxml.append("/>\n");
+		sbxml.endTag();
 
 		// size of eraser
-		sbxml.append("\t<eraserSize val=\"");
-		sbxml.append(getDeleteToolSize());
-		sbxml.append("\"/>\n");
+		sbxml.startTag("eraserSize").attr("val", getDeleteToolSize()).endTag();
 	}
 }

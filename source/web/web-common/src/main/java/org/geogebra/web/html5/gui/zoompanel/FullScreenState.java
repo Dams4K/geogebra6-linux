@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.zoompanel;
 
 import java.util.HashMap;
@@ -64,10 +80,8 @@ public class FullScreenState {
 	 * @param value
 	 *            value of property
 	 */
-	public void setContainerProp(Element container, String propName,
-			String value) {
-		containerProps.put(propName,
-				container.getStyle().getProperty(propName));
+	public void setContainerProp(Element container, String propName, String value) {
+		containerProps.put(propName, container.getStyle().getProperty(propName));
 		container.getStyle().setProperty(propName, value);
 	}
 
@@ -79,8 +93,7 @@ public class FullScreenState {
 	}
 
 	protected void store(Element container, AppW app, double scale) {
-		String containerPositionBefore = container.getStyle()
-				.getPosition();
+		String containerPositionBefore = container.getStyle().getPosition();
 		if (StringUtil.empty(containerPositionBefore)) {
 			containerPositionBefore = "static";
 		}
@@ -113,7 +126,7 @@ public class FullScreenState {
 	}
 
 	private void overrideParentTransform() {
-		transformOverride = StyleInjector.injectStyleSheet(
-				"*:not(.ggbTransform){transform: none !important;}");
+		transformOverride =
+				StyleInjector.injectStyleSheet("*:not(.ggbTransform){transform: none !important;}");
 	}
 }

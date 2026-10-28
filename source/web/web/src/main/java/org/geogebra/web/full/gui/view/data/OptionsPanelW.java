@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.data;
 
 import java.util.Arrays;
@@ -27,12 +43,11 @@ import org.gwtproject.user.client.ui.TabPanel;
 
 /**
  * JPanel to display settings options for a ComboStatPanel
- * 
+ *
  * @author G. Sturr
- * 
+ *
  */
-public class OptionsPanelW extends FlowPanel
-		implements StatPanelInterfaceW {
+public final class OptionsPanelW extends FlowPanel implements StatPanelInterfaceW {
 
 	private final AppW app;
 	private final StatPanelSettings settings;
@@ -107,11 +122,11 @@ public class OptionsPanelW extends FlowPanel
 	private ListBox cbLogAxes;
 	private final Localization loc;
 
-	private final static int FIELD_WIDTH = 8;
+	private static final int FIELD_WIDTH = 8;
 
 	/************************************************************
 	 * Constructs an OptionPanel
-	 * 
+	 *
 	 * @param app
 	 *            Application
 	 * @param model
@@ -119,8 +134,7 @@ public class OptionsPanelW extends FlowPanel
 	 * @param dyModel
 	 *            display model
 	 */
-	public OptionsPanelW(AppW app, DataAnalysisModel model,
-			DataDisplayModel dyModel) {
+	public OptionsPanelW(AppW app, DataAnalysisModel model, DataDisplayModel dyModel) {
 
 		this.app = app;
 		this.loc = app.getLocalization();
@@ -152,7 +166,7 @@ public class OptionsPanelW extends FlowPanel
 
 	/**
 	 * Update panel for given plot type.
-	 * 
+	 *
 	 * @param plotType
 	 *            plot type
 	 */
@@ -187,45 +201,43 @@ public class OptionsPanelW extends FlowPanel
 
 		// set visibility for plot-specific panels
 		switch (plotType) {
+			case HISTOGRAM:
+				classesPanel.setVisible(true);
+				histogramPanel.setVisible(true);
+				freqRadioButtonPanel.disableNthRadioButton(2, false);
+				ckOverlayNormal.setVisible(true);
+				ckShowHistogram.setVisible(true);
+				ckCumulative.setVisible(true);
+				ckOverlayPolygon.setVisible(true);
 
-		case HISTOGRAM:
-			classesPanel.setVisible(true);
-			histogramPanel.setVisible(true);
-			freqRadioButtonPanel.disableNthRadioButton(2, false);
-			ckOverlayNormal.setVisible(true);
-			ckShowHistogram.setVisible(true);
-			ckCumulative.setVisible(true);
-			ckOverlayPolygon.setVisible(true);
+				layoutHistogramPanel();
 
-			layoutHistogramPanel();
+				break;
 
-			break;
+			case BOXPLOT:
+			case MULTIBOXPLOT:
+				boxPlotPanel.setVisible(true);
+				break;
 
-		case BOXPLOT:
-		case MULTIBOXPLOT:
-			boxPlotPanel.setVisible(true);
-			break;
+			case BARCHART:
+				barChartPanel.setVisible(true);
+				layoutBarChartPanel();
+				break;
 
-		case BARCHART:
-			barChartPanel.setVisible(true);
-			layoutBarChartPanel();
-			break;
+			case SCATTERPLOT:
+				scatterplotPanel.setVisible(true);
+				break;
 
-		case SCATTERPLOT:
-			scatterplotPanel.setVisible(true);
-			break;
+			// graph tab only
+			case DOTPLOT:
+			case NORMALQUANTILE:
+			case RESIDUAL:
+				showHistogramTab = false;
+				break;
 
-		// graph tab only
-		case DOTPLOT:
-		case NORMALQUANTILE:
-		case RESIDUAL:
-			showHistogramTab = false;
-			break;
-
-		case STEMPLOT:
-			this.setVisible(false);
-			break;
-
+			case STEMPLOT:
+				this.setVisible(false);
+				break;
 		}
 		if (showHistogramTab) {
 			String tabTitle = plotType.getTranslatedKey(loc);
@@ -241,12 +253,11 @@ public class OptionsPanelW extends FlowPanel
 	private void createHistogramPanel() {
 		histogramPanel = new FlowPanel();
 		// create components
-		ckCumulative = new ComponentCheckbox(loc, settings.isCumulative(), "Cumulative",
-				(selected) -> {
-					settings.setCumulative(selected);
-					firePropertyChange();
-					updateGUI(); // make sure Normal Curve is enabled/disabled
-				});
+		ckCumulative = new ComponentCheckbox(loc, settings.isCumulative(), "Cumulative", (selected) -> {
+			settings.setCumulative(selected);
+			firePropertyChange();
+			updateGUI(); // make sure Normal Curve is enabled/disabled
+		});
 
 		lblFreqType = new Label();
 
@@ -262,62 +273,60 @@ public class OptionsPanelW extends FlowPanel
 		lbDimTitle = new Label();
 		lbDimTitle.setStyleName("panelTitle");
 
-		RadioButtonData<Integer> freqData = new RadioButtonData<>("Count",
-				StatPanelSettings.TYPE_COUNT);
-		RadioButtonData<Integer> relData = new RadioButtonData<>("Relative",
-				StatPanelSettings.TYPE_RELATIVE);
-		RadioButtonData<Integer> normData = new RadioButtonData<>("Normalized",
-				StatPanelSettings.TYPE_NORMALIZED);
-		freqRadioButtonPanel = new RadioButtonPanel<>(loc,
-				Arrays.asList(freqData, relData, normData), StatPanelSettings.TYPE_COUNT,
-				(value) -> {
+		RadioButtonData<Integer> freqData =
+				new RadioButtonData<>("Count", StatPanelSettings.TYPE_COUNT);
+		RadioButtonData<Integer> relData =
+				new RadioButtonData<>("Relative", StatPanelSettings.TYPE_RELATIVE);
+		RadioButtonData<Integer> normData =
+				new RadioButtonData<>("Normalized", StatPanelSettings.TYPE_NORMALIZED);
+		freqRadioButtonPanel = new RadioButtonPanel<>(
+				loc, Arrays.asList(freqData, relData, normData), StatPanelSettings.TYPE_COUNT, (value) -> {
 					settings.setFrequencyType(value);
 					firePropertyChange();
 					updateGUI(); // make sure Normal Curve is enabled/disabled
-				}
-		);
+				});
 
 		lblOverlay = new Label();
-		ckOverlayNormal = new ComponentCheckbox(loc, settings.isHasOverlayNormal(), "NormalCurve",
-				(selected) -> {
+		ckOverlayNormal =
+				new ComponentCheckbox(loc, settings.isHasOverlayNormal(), "NormalCurve", (selected) -> {
 					settings.setHasOverlayNormal(selected);
 					firePropertyChange();
 				});
 
-		ckOverlayPolygon = new ComponentCheckbox(loc, settings.isHasOverlayPolygon(),
-				"FrequencyPolygon", (selected) -> {
+		ckOverlayPolygon = new ComponentCheckbox(
+				loc, settings.isHasOverlayPolygon(), "FrequencyPolygon", (selected) -> {
 					settings.setHasOverlayPolygon(selected);
 					firePropertyChange();
 				});
 
-		ckShowFrequencyTable = new ComponentCheckbox(loc, settings.isShowFrequencyTable(),
-				"FrequencyTable", (selected) -> {
+		ckShowFrequencyTable = new ComponentCheckbox(
+				loc, settings.isShowFrequencyTable(), "FrequencyTable", (selected) -> {
 					settings.setShowFrequencyTable(selected);
 					firePropertyChange();
 				});
 
-		ckShowHistogram = new ComponentCheckbox(loc, settings.isShowHistogram(), "Histogram",
-				(selected) -> {
+		ckShowHistogram =
+				new ComponentCheckbox(loc, settings.isShowHistogram(), "Histogram", (selected) -> {
 					settings.setShowHistogram(selected);
 					firePropertyChange();
 				});
 
-		ckManual = new ComponentCheckbox(loc, settings.isUseManualClasses(), "SetClassesManually",
-				(selected) -> {
+		ckManual = new ComponentCheckbox(
+				loc, settings.isUseManualClasses(), "SetClassesManually", (selected) -> {
 					settings.setUseManualClasses(selected);
 					firePropertyChange();
 				});
 
 		lblClassRule = new Label();
-		RadioButtonData<Boolean> rightData = new RadioButtonData<>(
-				SpreadsheetViewInterface.RIGHT_CLASS_RULE, false);
-		RadioButtonData<Boolean> leftData = new RadioButtonData<>(
-				SpreadsheetViewInterface.LEFT_CLASS_RULE, true);
-		classRadioButtonPanel = new RadioButtonPanel<>(loc,
-				Arrays.asList(rightData, leftData), settings.isLeftRule(), (isLeft) -> {
-			settings.setLeftRule(isLeft);
-			firePropertyChange();
-		});
+		RadioButtonData<Boolean> rightData =
+				new RadioButtonData<>(SpreadsheetViewInterface.RIGHT_CLASS_RULE, false);
+		RadioButtonData<Boolean> leftData =
+				new RadioButtonData<>(SpreadsheetViewInterface.LEFT_CLASS_RULE, true);
+		classRadioButtonPanel = new RadioButtonPanel<>(
+				loc, Arrays.asList(rightData, leftData), settings.isLeftRule(), (isLeft) -> {
+					settings.setLeftRule(isLeft);
+					firePropertyChange();
+				});
 
 		// create frequency type panel
 		freqPanel = new FlowPanel();
@@ -365,12 +374,11 @@ public class OptionsPanelW extends FlowPanel
 	}
 
 	private void createBarChartPanel() {
-		ckAutoBarWidth = new ComponentCheckbox(loc, true, "AutoDimension",
-				(selected) -> {
-					settings.setAutomaticBarWidth(selected);
-					firePropertyChange();
-					updateGUI(); // enable bar width
-				});
+		ckAutoBarWidth = new ComponentCheckbox(loc, true, "AutoDimension", (selected) -> {
+			settings.setAutomaticBarWidth(selected);
+			firePropertyChange();
+			updateGUI(); // enable bar width
+		});
 		lblBarWidth = new Label();
 		fldBarWidth = new AutoCompleteTextFieldW(FIELD_WIDTH, app);
 		initHandlers(fldBarWidth);
@@ -381,7 +389,6 @@ public class OptionsPanelW extends FlowPanel
 		barChartWidthPanel.add(LayoutUtilW.panelRow(lblBarWidth, fldBarWidth));
 
 		layoutBarChartPanel();
-
 	}
 
 	private void initHandlers(AutoCompleteTextFieldW input) {
@@ -390,8 +397,8 @@ public class OptionsPanelW extends FlowPanel
 	}
 
 	private void createBoxPlotPanel() {
-		ckShowOutliers = new ComponentCheckbox(loc, settings.isShowOutliers(), "ShowOutliers",
-				(selected) -> {
+		ckShowOutliers =
+				new ComponentCheckbox(loc, settings.isShowOutliers(), "ShowOutliers", (selected) -> {
 					settings.setShowOutliers(selected);
 					firePropertyChange();
 				});
@@ -401,8 +408,8 @@ public class OptionsPanelW extends FlowPanel
 	}
 
 	private void createScatterplotPanel() {
-		ckShowLines = new ComponentCheckbox(loc, settings.isShowScatterplotLine(), "LineGraph",
-				(selected) -> {
+		ckShowLines =
+				new ComponentCheckbox(loc, settings.isShowScatterplotLine(), "LineGraph", (selected) -> {
 					settings.setShowScatterplotLine(selected);
 					firePropertyChange();
 				});
@@ -412,8 +419,8 @@ public class OptionsPanelW extends FlowPanel
 	}
 
 	private void createGraphPanel() {
-		ckAutoWindow = new ComponentCheckbox(loc, settings.isAutomaticWindow(), "AutoDimension",
-				(selected) -> {
+		ckAutoWindow =
+				new ComponentCheckbox(loc, settings.isAutomaticWindow(), "AutoDimension", (selected) -> {
 					settings.setAutomaticWindow(selected);
 					settings.xAxesIntervalAuto = selected;
 					settings.yAxesIntervalAuto = selected;
@@ -421,11 +428,10 @@ public class OptionsPanelW extends FlowPanel
 					updateGUI(); // enable/disable dimension fields
 				});
 
-		ckShowGrid = new ComponentCheckbox(loc, settings.showGrid, "ShowGrid",
-				(selected) -> {
-					settings.showGrid = selected;
-					firePropertyChange();
-				});
+		ckShowGrid = new ComponentCheckbox(loc, settings.showGrid, "ShowGrid", (selected) -> {
+			settings.showGrid = selected;
+			firePropertyChange();
+		});
 
 		lblXMin = new Label();
 		fldXMin = InputPanelW.newTextComponent(app);
@@ -485,7 +491,7 @@ public class OptionsPanelW extends FlowPanel
 		}
 	}
 
-	protected void onComboBoxChange() {
+	private void onComboBoxChange() {
 		int index = cbLogAxes.getSelectedIndex();
 		settings.setCoordMode(StatPanelSettings.CoordMode.values()[index]);
 		this.firePropertyChange();
@@ -553,10 +559,8 @@ public class OptionsPanelW extends FlowPanel
 		ckShowHistogram.setSelected(settings.isShowHistogram());
 
 		if (settings.dataSource != null) {
-			ckManual.setVisible(
-					settings.getDataSource().getGroupType() != GroupType.CLASS);
-			freqPanel.setVisible(settings.getDataSource()
-					.getGroupType() == GroupType.RAWDATA);
+			ckManual.setVisible(settings.getDataSource().getGroupType() != GroupType.CLASS);
+			freqPanel.setVisible(settings.getDataSource().getGroupType() == GroupType.RAWDATA);
 		}
 		// normal overlay
 		ckOverlayNormal.setDisabled(!settings.isOverlayEnabled());
@@ -615,8 +619,7 @@ public class OptionsPanelW extends FlowPanel
 		try {
 			String inputText = source.getText().trim();
 			NumberValue nv;
-			nv = app.getKernel().getAlgebraProcessor()
-					.evaluateToNumeric(inputText, false);
+			nv = app.getKernel().getAlgebraProcessor().evaluateToNumeric(inputText, false);
 			double value = nv.getDouble();
 
 			// TODO better validation
@@ -670,5 +673,4 @@ public class OptionsPanelW extends FlowPanel
 			tabPanel.setWidth(width + "px");
 		}
 	}
-
 }

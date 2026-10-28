@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoJoinPoints.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -52,8 +50,7 @@ public class AlgoJoinPoints extends AlgoElement
 	private PVariable[] botanaVars;
 
 	/** Creates new AlgoJoinPoints */
-	public AlgoJoinPoints(Construction cons, String label, GeoPoint P,
-			GeoPoint Q) {
+	public AlgoJoinPoints(Construction cons, String label, GeoPoint P, GeoPoint Q) {
 		this(cons, P, Q);
 		g.setLabel(label);
 	}
@@ -90,7 +87,7 @@ public class AlgoJoinPoints extends AlgoElement
 
 	/**
 	 * @author Tam
-	 * 
+	 *
 	 *         for special cases of e.g. AlgoIntersectLineConic
 	 */
 	private void addIncidence() {
@@ -142,10 +139,8 @@ public class AlgoJoinPoints extends AlgoElement
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
-		return getLoc().getPlainDefault("LineAB", "Line %0, %1",
-					P.getLabel(tpl), Q.getLabel(tpl));
-
+	public final String toString(StringTemplate tpl) {
+		return getLoc().getPlainDefault("LineAB", "Line %0, %1", P.getLabel(tpl), Q.getLabel(tpl));
 	}
 
 	// Simon Weitzhofer 2012-04-03
@@ -155,32 +150,27 @@ public class AlgoJoinPoints extends AlgoElement
 	}
 
 	@Override
-	public void getFreeVariables(HashSet<PVariable> variables)
-			throws NoSymbolicParametersException {
+	public void getFreeVariables(HashSet<PVariable> variables) throws NoSymbolicParametersException {
 		if (P != null && Q != null) {
 			P.getFreeVariables(variables);
 			Q.getFreeVariables(variables);
 			return;
 		}
 		throw new NoSymbolicParametersException();
-
 	}
 
 	@Override
-	public int[] getDegrees(AbstractProverReciosMethod a)
-			throws NoSymbolicParametersException {
+	public int[] getDegrees(AbstractProverReciosMethod a) throws NoSymbolicParametersException {
 		if (P != null && Q != null) {
 			int[] degree1 = P.getDegrees(a);
 			int[] degree2 = Q.getDegrees(a);
 			return SymbolicParameters.crossDegree(degree1, degree2);
 		}
 		throw new NoSymbolicParametersException();
-
 	}
 
 	@Override
-	public BigInteger[] getExactCoordinates(
-			final HashMap<PVariable, BigInteger> values)
+	public BigInteger[] getExactCoordinates(final HashMap<PVariable, BigInteger> values)
 			throws NoSymbolicParametersException {
 		if (P != null && Q != null) {
 			BigInteger[] coords1 = P.getExactCoordinates(values);
@@ -214,8 +204,7 @@ public class AlgoJoinPoints extends AlgoElement
 	}
 
 	@Override
-	public PVariable[] getBotanaVars(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PVariable[] getBotanaVars(GeoElementND geo) throws NoSymbolicParametersException {
 		if (botanaVars != null) {
 			return botanaVars;
 		}
@@ -224,11 +213,9 @@ public class AlgoJoinPoints extends AlgoElement
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 		// It's OK, polynomials for lines are only created when a third point is
 		// lying on them, too:
 		return null;
 	}
-
 }

@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDependentNumber.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -26,7 +24,7 @@ import org.geogebra.common.kernel.geos.GeoText;
 
 /**
  * Returns the name of a GeoElement as a GeoText.
- * 
+ *
  * @author Markus
  */
 public class AlgoName extends AlgoElement {
@@ -36,7 +34,7 @@ public class AlgoName extends AlgoElement {
 
 	/**
 	 * Creates text containing name of the geo
-	 * 
+	 *
 	 * @param cons
 	 *            Construction
 	 * @param geo
@@ -57,7 +55,7 @@ public class AlgoName extends AlgoElement {
 
 	/**
 	 * Creates text containing name of the geo
-	 * 
+	 *
 	 * @param cons
 	 *            Construction
 	 * @param label
@@ -88,7 +86,7 @@ public class AlgoName extends AlgoElement {
 
 	/**
 	 * Returns the text element
-	 * 
+	 *
 	 * @return text element containing the name
 	 */
 	public GeoText getGeoText() {
@@ -104,7 +102,6 @@ public class AlgoName extends AlgoElement {
 			AlgoListElement algo = (AlgoListElement) geo.getParentAlgorithm();
 
 			returnLabel = algo.getLabel();
-
 		}
 		if (returnLabel == null) {
 			returnLabel = geo.getLabel(StringTemplate.realTemplate);
@@ -114,9 +111,7 @@ public class AlgoName extends AlgoElement {
 			text.setTextString(returnLabel);
 		} else {
 			// eg Name[a+3]
-			text.setTextString(
-					geo.getFormulaString(StringTemplate.realTemplate, false));
+			text.setTextString(geo.getFormulaString(StringTemplate.realTemplate, false));
 		}
 	}
-
 }

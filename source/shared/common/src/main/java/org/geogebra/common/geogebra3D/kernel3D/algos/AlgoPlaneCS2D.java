@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoPlane3D;
@@ -10,7 +26,7 @@ import org.geogebra.common.kernel.matrix.CoordSys;
 
 /**
  * Create a plane containing a 2D coord sys
- * 
+ *
  * @author ggb3D
  *
  */
@@ -36,9 +52,7 @@ public class AlgoPlaneCS2D extends AlgoElement3D {
 		cs = new GeoPlane3D(c);
 
 		// set input and output
-		setInputOutput(new GeoElement[] { (GeoElement) csInput },
-				new GeoElement[] { (GeoElement) cs });
-
+		setInputOutput(new GeoElement[] {(GeoElement) csInput}, new GeoElement[] {(GeoElement) cs});
 	}
 
 	@Override
@@ -58,12 +72,11 @@ public class AlgoPlaneCS2D extends AlgoElement3D {
 		if (coordsys.isDefined()) {
 			coordsys.makeEquationVector();
 		}
-
 	}
 
 	/**
 	 * return the cs
-	 * 
+	 *
 	 * @return the cs
 	 */
 	public GeoCoordSys2D getCoordSys() {
@@ -76,10 +89,7 @@ public class AlgoPlaneCS2D extends AlgoElement3D {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
-		return getLoc().getPlain("PlaneContainingA",
-				csInput.getLabel(tpl));
-
+	public final String toString(StringTemplate tpl) {
+		return getLoc().getPlain("PlaneContainingA", csInput.getLabel(tpl));
 	}
-
 }

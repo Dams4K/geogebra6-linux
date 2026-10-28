@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.dialog;
 
 import org.geogebra.common.util.StringUtil;
@@ -9,11 +25,11 @@ import org.gwtproject.core.client.Scheduler;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Label;
 
-public class MediaInputPanel extends FlowPanel implements ProcessInput {
+public final class MediaInputPanel extends FlowPanel implements ProcessInput {
 	private final AppW app;
 	private final ComponentDialog parentDialog;
 	private final boolean required;
-	protected ComponentInputField inputField;
+	final ComponentInputField inputField;
 	private Label infoLabel;
 
 	/**
@@ -26,14 +42,14 @@ public class MediaInputPanel extends FlowPanel implements ProcessInput {
 	 * @param required
 	 *         whether nonempty string is expected
 	 */
-	public MediaInputPanel(AppW app, ComponentDialog parentDialog,
-			String labelTransKey, boolean required) {
+	public MediaInputPanel(
+			AppW app, ComponentDialog parentDialog, String labelTransKey, boolean required) {
 		this.app = app;
 		this.parentDialog = parentDialog;
 		this.required = required;
 
-		inputField = new ComponentInputField(app, "", app.getLocalization().getMenu(labelTransKey),
-				"", "");
+		inputField = new ComponentInputField(
+				app, "", app.getLocalization().getMenu(labelTransKey), "", "", null);
 		inputField.addInputHandler(this);
 		add(inputField);
 	}
@@ -42,7 +58,7 @@ public class MediaInputPanel extends FlowPanel implements ProcessInput {
 	 * Set focus the text field of the input panel
 	 */
 	public void focusDeferred() {
-		Scheduler.get().scheduleDeferred(() -> inputField.focusDeferred());
+		Scheduler.get().scheduleDeferred(inputField::focusDeferred);
 	}
 
 	/**
@@ -50,8 +66,7 @@ public class MediaInputPanel extends FlowPanel implements ProcessInput {
 	 * @param placeholder localized placeholder string
 	 */
 	public void addPlaceholder(String placeholder) {
-		inputField.getTextField().getTextComponent().getTextBox().getElement()
-				.setAttribute("placeholder", placeholder);
+		inputField.getTextWidget().getTextBox().getElement().setAttribute("placeholder", placeholder);
 	}
 
 	/**
@@ -84,8 +99,8 @@ public class MediaInputPanel extends FlowPanel implements ProcessInput {
 	 * @param msg error message to show
 	 */
 	public void showError(String msg) {
-		inputField.setError(app.getLocalization().getMenu("Error") + ": "
-						+ app.getLocalization().getError(msg));
+		inputField.setError(
+				app.getLocalization().getMenu("Error") + ": " + app.getLocalization().getError(msg));
 		parentDialog.setPosBtnDisabled(true);
 	}
 

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.accessibility;
 
 import java.util.Arrays;
@@ -39,8 +55,8 @@ public class AccessibleDropDown implements AccessibleWidget {
 	 * @param view view
 	 * @param widgetFactory widget factory
 	 */
-	public AccessibleDropDown(GeoList geo, AppW app, AccessibilityView view,
-			BaseWidgetFactory widgetFactory) {
+	public AccessibleDropDown(
+			GeoList geo, AppW app, AccessibilityView view, BaseWidgetFactory widgetFactory) {
 		this.list = geo;
 		this.app = app;
 		this.view = view;
@@ -60,15 +76,17 @@ public class AccessibleDropDown implements AccessibleWidget {
 		button.getElement().setAttribute("aria-labelledby", labelId + " " + buttonId);
 
 		options.setVisible(false);
-		button.addDomHandler(e -> {
-			toggle();
-			if (options.isVisible()) {
-				options.getElement().focus();
-				setHoverIndex(list.getSelectedIndex());
-			} else {
-				button.getElement().focus();
-			}
-		}, ClickEvent.getType());
+		button.addDomHandler(
+				e -> {
+					toggle();
+					if (options.isVisible()) {
+						options.getElement().focus();
+						setHoverIndex(list.getSelectedIndex());
+					} else {
+						button.getElement().focus();
+					}
+				},
+				ClickEvent.getType());
 		update();
 	}
 
@@ -115,12 +133,14 @@ public class AccessibleDropDown implements AccessibleWidget {
 			option.setText(list.getItemDisplayString(i, StringTemplate.screenReaderAscii));
 			option.getElement().setAttribute("role", "option");
 			final int idx = i;
-			option.addDomHandler(e -> {
+			option.addDomHandler(
+					e -> {
 						list.setSelectedIndexUpdate(idx);
 						updateText();
 						button.getElement().focus();
 						toggle();
-					}, ClickEvent.getType());
+					},
+					ClickEvent.getType());
 			option.addDomHandler(e -> setHoverIndex(idx), FocusEvent.getType());
 			options.add(option);
 		}

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -19,7 +35,7 @@ public class CmdLocus extends CommandProcessor {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -28,54 +44,50 @@ public class CmdLocus extends CommandProcessor {
 	}
 
 	@Override
-	final public GeoElement[] process(Command c, EvalInfo info) throws MyError {
+	public final GeoElement[] process(Command c, EvalInfo info) throws MyError {
 		int n = c.getArgumentNumber();
 		boolean[] ok = new boolean[n];
 		GeoElement[] arg;
 
 		switch (n) {
-		case 2:
-			arg = resArgs(c, info);
-			if ((ok[0] = (arg[0] instanceof FunctionalNVar)
-					|| arg[0].isGeoLocus()) && (ok[1] = arg[1].isGeoPoint())) {
+			case 2:
+				arg = resArgs(c, info);
+				if ((ok[0] = (arg[0] instanceof FunctionalNVar) || arg[0].isGeoLocus())
+						&& (ok[1] = arg[1].isGeoPoint())) {
 
-				AlgoIntegralODE algo = new AlgoIntegralODE(cons, c.getLabel(),
-						arg[0], (GeoPoint) arg[1]);
+					AlgoIntegralODE algo = new AlgoIntegralODE(cons, c.getLabel(), arg[0], (GeoPoint) arg[1]);
 
-				GeoElement[] ret = { algo.getResult() }; // var
-				return ret;
-			}
-
-			// second argument has to be point on path
-			else if ((ok[0] = arg[0].isGeoPoint())
-					&& (ok[1] = arg[1].isGeoPoint())) {
-
-				GeoPointND p1 = (GeoPointND) arg[0];
-				GeoPointND p2 = (GeoPointND) arg[1];
-
-				if (p2.isPointOnPath()) {
-
-					GeoElement[] ret = { locus(c.getLabel(), p1, p2) };
+					GeoElement[] ret = {algo.getResult()}; // var
 					return ret;
 				}
-				GeoElement[] ret = { locus(c.getLabel(), p2, p1) };
-				return ret;
-			} else if ((ok[0] = arg[0].isGeoPoint())
-					&& (ok[1] = arg[1].isGeoNumeric()
-							&& AlgoDispatcher.locusCheck((GeoPointND) arg[0],
-									(GeoNumeric) arg[1]))) {
-				GeoPointND p1 = (GeoPointND) arg[0];
-				GeoNumeric p2 = (GeoNumeric) arg[1];
 
-				GeoElement[] ret = { locus(c.getLabel(), p1, p2) };
-				return ret;
-			} else {
-				throw argErr(c, getBadArg(ok, arg));
+				// second argument has to be point on path
+				else if ((ok[0] = arg[0].isGeoPoint()) && (ok[1] = arg[1].isGeoPoint())) {
 
-			}
+					GeoPointND p1 = (GeoPointND) arg[0];
+					GeoPointND p2 = (GeoPointND) arg[1];
 
-		default:
-			throw argNumErr(c);
+					if (p2.isPointOnPath()) {
+
+						GeoElement[] ret = {locus(c.getLabel(), p1, p2)};
+						return ret;
+					}
+					GeoElement[] ret = {locus(c.getLabel(), p2, p1)};
+					return ret;
+				} else if ((ok[0] = arg[0].isGeoPoint())
+						&& (ok[1] = arg[1].isGeoNumeric()
+								&& AlgoDispatcher.locusCheck((GeoPointND) arg[0], (GeoNumeric) arg[1]))) {
+					GeoPointND p1 = (GeoPointND) arg[0];
+					GeoNumeric p2 = (GeoNumeric) arg[1];
+
+					GeoElement[] ret = {locus(c.getLabel(), p1, p2)};
+					return ret;
+				} else {
+					throw argErr(c, getBadArg(ok, arg));
+				}
+
+			default:
+				throw argNumErr(c);
 		}
 	}
 
@@ -104,5 +116,4 @@ public class CmdLocus extends CommandProcessor {
 	protected GeoElement locus(String label, GeoPointND p, GeoNumeric slider) {
 		return getAlgoDispatcher().locus(label, p, slider);
 	}
-
 }

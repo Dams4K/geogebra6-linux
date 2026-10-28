@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoVertex.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 11. November 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -28,7 +26,7 @@ import org.geogebra.common.kernel.geos.GeoPoly;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
 
 /**
- * 
+ *
  * @author Zbynek
  */
 public class AlgoVertexPolygon extends AlgoElement {
@@ -40,7 +38,7 @@ public class AlgoVertexPolygon extends AlgoElement {
 
 	/**
 	 * Creates new vertex algo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param labels
@@ -48,7 +46,6 @@ public class AlgoVertexPolygon extends AlgoElement {
 	 * @param p
 	 *            polygon or polyline
 	 */
-
 	public AlgoVertexPolygon(Construction cons, String[] labels, GeoPoly p) {
 
 		this(cons, p);
@@ -71,8 +68,7 @@ public class AlgoVertexPolygon extends AlgoElement {
 	 * @param v
 	 *            vertex index
 	 */
-	public AlgoVertexPolygon(Construction cons, String label, GeoPoly p,
-			GeoNumberValue v) {
+	public AlgoVertexPolygon(Construction cons, String label, GeoPoly p, GeoNumberValue v) {
 
 		this(cons, p, v);
 		oneVertex.setLabel(label);
@@ -81,7 +77,7 @@ public class AlgoVertexPolygon extends AlgoElement {
 	/**
 	 * Creates algo for Vertex[poly] (many output points) Creates new unlabeled
 	 * vertex algo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param p
@@ -98,7 +94,7 @@ public class AlgoVertexPolygon extends AlgoElement {
 
 	/**
 	 * Creates algo for Vertex[poly,n] (one output)
-	 * 
+	 *
 	 * @param cons
 	 *            construction or polyline
 	 * @param p
@@ -146,7 +142,7 @@ public class AlgoVertexPolygon extends AlgoElement {
 
 	/**
 	 * Returns the polygon
-	 * 
+	 *
 	 * @return input polygon
 	 */
 	public GeoPoly getPolygon() {
@@ -204,7 +200,7 @@ public class AlgoVertexPolygon extends AlgoElement {
 
 	/**
 	 * set the point to the i-th of the polygon
-	 * 
+	 *
 	 * @param point
 	 *            point
 	 * @param i
@@ -216,14 +212,12 @@ public class AlgoVertexPolygon extends AlgoElement {
 
 	@Override
 	public final String toString(StringTemplate tpl) {
-		return getLoc().getPlainDefault("VertexOfA", "Vertex of %0",
-				p.getLabel(tpl));
-
+		return getLoc().getPlainDefault("VertexOfA", "Vertex of %0", p.getLabel(tpl));
 	}
 
 	/**
 	 * Returns list of the vertices
-	 * 
+	 *
 	 * @return list of the vertices
 	 */
 	public GeoElement[] getVertex() {
@@ -246,15 +240,11 @@ public class AlgoVertexPolygon extends AlgoElement {
 	}
 
 	protected OutputHandler<GeoElement> createOutputPoints() {
-		return new OutputHandler<>(new ElementFactory<GeoElement>() {
-			@Override
-			public GeoPoint newElement() {
-				GeoPoint pt = new GeoPoint(cons);
-				pt.setCoords(0, 0, 1);
-				pt.setParentAlgorithm(AlgoVertexPolygon.this);
-				return pt;
-			}
+		return new OutputHandler<>(() -> {
+			GeoPoint pt = new GeoPoint(cons);
+			pt.setCoords(0, 0, 1);
+			pt.setParentAlgorithm(this);
+			return pt;
 		});
 	}
-
 }

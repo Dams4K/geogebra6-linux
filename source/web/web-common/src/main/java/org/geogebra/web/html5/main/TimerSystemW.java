@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.main;
 
 import org.gwtproject.timer.client.Timer;
@@ -10,20 +26,20 @@ public class TimerSystemW {
 	/**
 	 * delay between two timer performs
 	 */
-	final public static int MAIN_LOOP_DELAY = 16;
+	public static final int MAIN_LOOP_DELAY = 16;
 
 	/**
 	 * loops to wait before performing a repaint
 	 */
-	final public static int EUCLIDIAN_LOOPS = 0; // no wait, repaint every loop
+	public static final int EUCLIDIAN_LOOPS = 0; // no wait, repaint every loop
 
-	final public static int ALGEBRA_LOOPS = 5;
+	public static final int ALGEBRA_LOOPS = 5;
 
-	final public static int SPREADSHEET_LOOPS = ALGEBRA_LOOPS;
+	public static final int SPREADSHEET_LOOPS = ALGEBRA_LOOPS;
 
-	final public static int REPAINT_FLAG = 0;
+	public static final int REPAINT_FLAG = 0;
 
-	final public static int SLEEPING_FLAG = -1;
+	public static final int SLEEPING_FLAG = -1;
 
 	/*
 	 * public static int euclidianMillis = 34; // = 30 FPS, half of screen Hz
@@ -41,7 +57,7 @@ public class TimerSystemW {
 
 	/**
 	 * Create new timer system
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 */
@@ -75,7 +91,7 @@ public class TimerSystemW {
 
 	/**
 	 * suggests views to repaint
-	 * 
+	 *
 	 * @return whether at least one view needed repaint
 	 */
 	boolean suggestRepaint() {
@@ -101,7 +117,6 @@ public class TimerSystemW {
 			} else if (browserSkipped == 0) {
 				browserSkipped = time;
 			}
-
 		}
 	}
 

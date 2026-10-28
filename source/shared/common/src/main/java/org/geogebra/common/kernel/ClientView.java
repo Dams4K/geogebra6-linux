@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel;
 
 import java.util.ArrayList;
@@ -8,7 +24,6 @@ import org.geogebra.common.kernel.geos.GeoElement;
  * Interface for views that need more info from the kernel
  *
  */
-
 public interface ClientView extends View {
 	/**
 	 * Notify the client that all updates related to renaming an object are
@@ -24,7 +39,7 @@ public interface ClientView extends View {
 
 	/**
 	 * Notify the client that a new polygon is complete.
-	 * 
+	 *
 	 * @param polygon
 	 *            The fully defined, new polygon
 	 */
@@ -39,7 +54,7 @@ public interface ClientView extends View {
 
 	/**
 	 * Update the client with the new location of the objects
-	 * 
+	 *
 	 * @param elms
 	 *            The list of GeoElements that were moved.
 	 */
@@ -50,7 +65,7 @@ public interface ClientView extends View {
 	 * that get deleted when and object with dependents is deleted. It also
 	 * notifies when only one elm is deleted, so it can be a full replacement
 	 * for the View's remove api.
-	 * 
+	 *
 	 * @param elms
 	 *            The full list of elms that were removed due to an object with
 	 *            dependents being deleted.
@@ -59,7 +74,7 @@ public interface ClientView extends View {
 
 	/**
 	 * Notify client that objects are about to pasted into the construction.
-	 * 
+	 *
 	 * @param pasteXml
 	 *            XML of pasted construction
 	 */
@@ -68,7 +83,7 @@ public interface ClientView extends View {
 	/**
 	 * Provide the full list of pasted elms to the client, in their finished
 	 * state (e.g. no temporary MAGIC_STRING labels)
-	 * 
+	 *
 	 * @param pastedElms
 	 *            The full list of pasted elms, in their finished state.
 	 */

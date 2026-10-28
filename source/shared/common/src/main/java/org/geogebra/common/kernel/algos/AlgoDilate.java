@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoRotatePoint.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 24. September 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -32,7 +30,7 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.kernel.matrix.Coords;
 
 /**
- * 
+ *
  * @author Markus
  */
 public class AlgoDilate extends AlgoTransformation {
@@ -44,7 +42,7 @@ public class AlgoDilate extends AlgoTransformation {
 
 	/**
 	 * Creates new labeled enlarge geo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -56,15 +54,14 @@ public class AlgoDilate extends AlgoTransformation {
 	 * @param S
 	 *            dilation center
 	 */
-	AlgoDilate(Construction cons, String label, GeoElement A, GeoNumberValue r,
-			GeoPointND S) {
+	AlgoDilate(Construction cons, String label, GeoElement A, GeoNumberValue r, GeoPointND S) {
 		this(cons, A, r, S);
 		outGeo.setLabel(label);
 	}
 
 	/**
 	 * Creates new unlabeled enlarge geo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param A
@@ -74,8 +71,7 @@ public class AlgoDilate extends AlgoTransformation {
 	 * @param S
 	 *            dilation center
 	 */
-	public AlgoDilate(Construction cons, GeoElement A, GeoNumberValue r,
-			GeoPointND S) {
+	public AlgoDilate(Construction cons, GeoElement A, GeoNumberValue r, GeoPointND S) {
 		super(cons);
 		this.r = r;
 		this.S = S;
@@ -118,7 +114,7 @@ public class AlgoDilate extends AlgoTransformation {
 
 	/**
 	 * Returns the resulting GeoElement
-	 * 
+	 *
 	 * @return the resulting GeoElement
 	 */
 	@Override
@@ -156,19 +152,21 @@ public class AlgoDilate extends AlgoTransformation {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		String sLabel = S == null ? cons.getOrigin().toValueString(tpl)
-				: S.getLabel(tpl);
-		return getLoc().getPlainDefault("ADilatedByFactorBfromC",
-				"%0 dilated by factor %1 from %2", inGeo.getLabel(tpl),
-				rgeo.getLabel(tpl), sLabel);
-
+		String sLabel = S == null ? cons.getOrigin().toValueString(tpl) : S.getLabel(tpl);
+		return getLoc()
+				.getPlainDefault(
+						"ADilatedByFactorBfromC",
+						"%0 dilated by factor %1 from %2",
+						inGeo.getLabel(tpl),
+						rgeo.getLabel(tpl),
+						sLabel);
 	}
 
 	/**
-	 * 
+	 *
 	 * @return point coords for dilate
 	 */
 	protected Coords getPointCoords() {
@@ -186,12 +184,10 @@ public class AlgoDilate extends AlgoTransformation {
 		} else {
 			super.transformLimitedConic(a, b);
 		}
-
 	}
 
 	@Override
 	public double getAreaScaleFactor() {
 		return r.getDouble() * r.getDouble();
 	}
-
 }

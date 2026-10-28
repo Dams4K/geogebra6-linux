@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import org.geogebra.common.euclidian.DrawableND;
@@ -7,7 +23,7 @@ import org.geogebra.common.kernel.geos.GeoElement;
 
 /**
  * Class for storing 3D drawables includes in a DrawList
- * 
+ *
  * @author mathieu
  *
  */
@@ -19,14 +35,13 @@ public class DrawList3DArray extends DrawListArray {
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param view
 	 *            view
 	 * @param drawList3D
 	 *            drawable for the list calling
 	 */
-	public DrawList3DArray(EuclidianViewInterfaceCommon view,
-			DrawComposite3D drawList3D) {
+	public DrawList3DArray(EuclidianViewInterfaceCommon view, DrawComposite3D drawList3D) {
 		super(view);
 		this.drawList3D = drawList3D;
 	}
@@ -38,7 +53,6 @@ public class DrawList3DArray extends DrawListArray {
 			d.setWaitForUpdate();
 		}
 		d.update();
-
 	}
 
 	@Override
@@ -66,13 +80,11 @@ public class DrawList3DArray extends DrawListArray {
 	 * have to free all the resources ManagerShaders has allocated for this one
 	 */
 	@Override
-	protected DrawableND getDrawable(DrawableND oldDrawable,
-			GeoElement listElement, DrawableND drawList) {
-		if (oldDrawable instanceof Drawable3D
-				&& oldDrawable.createdByDrawList()) {
+	protected DrawableND getDrawable(
+			DrawableND oldDrawable, GeoElement listElement, DrawableND drawList) {
+		if (oldDrawable instanceof Drawable3D && oldDrawable.createdByDrawList()) {
 			((Drawable3D) oldDrawable).removeFromGL();
 		}
 		return super.getDrawable(oldDrawable, listElement, drawList);
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.gwtutil;
 
 import org.geogebra.web.resources.StyleInjector;
@@ -11,7 +27,9 @@ import jsinterop.base.Js;
 /**
  * Injects scripts into parent document
  */
-public class JavaScriptInjector {
+public final class JavaScriptInjector {
+
+	private JavaScriptInjector() {}
 
 	/**
 	 * @param scriptResource
@@ -44,8 +62,7 @@ public class JavaScriptInjector {
 	}
 
 	private static HTMLScriptElement createScriptElement(String id) {
-		HTMLScriptElement script = Js.uncheckedCast(DomGlobal.document
-				.createElement("script"));
+		HTMLScriptElement script = Js.uncheckedCast(DomGlobal.document.createElement("script"));
 		script.id = id;
 		script.className = StyleInjector.CLASSNAME;
 		return script;

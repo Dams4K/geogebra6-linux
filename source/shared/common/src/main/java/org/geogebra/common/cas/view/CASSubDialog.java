@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.cas.view;
 
 import java.util.ArrayList;
@@ -14,7 +30,7 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * Common class for substitution dialogs
- * 
+ *
  * @author balazs.bencze
  *
  */
@@ -46,55 +62,6 @@ public abstract class CASSubDialog {
 	protected Vector<Vector<String>> data;
 
 	/**
-	 * Class containing row information
-	 */
-	protected static class SubstituteValue {
-		private String variable;
-		private String value;
-
-		/**
-		 * @param var
-		 *            old expression
-		 * @param val
-		 *            new expression
-		 */
-		public SubstituteValue(String var, String val) {
-			variable = var;
-			value = val;
-		}
-
-		/**
-		 * @return old expression
-		 */
-		public String getVariable() {
-			return variable;
-		}
-
-		/**
-		 * @param var
-		 *            variable
-		 */
-		public void setVariable(String var) {
-			variable = var;
-		}
-
-		/**
-		 * @return new expression
-		 */
-		public String getValue() {
-			return value;
-		}
-
-		/**
-		 * @param val
-		 *            value
-		 */
-		public void setValue(String val) {
-			value = val;
-		}
-	}
-
-	/**
 	 * @param prefix
 	 *            before selection, not effected by the substitution
 	 * @param evalText
@@ -104,8 +71,7 @@ public abstract class CASSubDialog {
 	 * @param editRow
 	 *            row to edit
 	 */
-	public CASSubDialog(String prefix, String evalText, String postfix,
-			int editRow) {
+	public CASSubDialog(String prefix, String evalText, String postfix, int editRow) {
 		this.prefix = prefix;
 		this.evalText = evalText;
 		this.postfix = postfix;
@@ -123,10 +89,8 @@ public abstract class CASSubDialog {
 	 */
 	protected void initData(GeoCasCell cell) {
 		HashSet<GeoElement> vars = new HashSet<>();
-		if (cell.getInputVE().getVariables(
-				SymbolicMode.NONE) != null) {
-			for (GeoElement var : cell.getInputVE().getVariables(
-					SymbolicMode.NONE)) {
+		if (cell.getInputVE().getVariables(SymbolicMode.NONE) != null) {
+			for (GeoElement var : cell.getInputVE().getVariables(SymbolicMode.NONE)) {
 				addVariables(var, vars);
 			}
 		}
@@ -141,14 +105,13 @@ public abstract class CASSubDialog {
 			row = new Vector<>(2);
 			GeoElement var = iter.next();
 			String nextVar = var.getLabel(StringTemplate.defaultTemplate);
-			int i = 0;
+			int i;
 			for (i = 0; i < data.size(); i++) {
 				if (data.get(i).firstElement().compareTo(nextVar) >= 0) {
 					break;
 				}
 			}
-			if (i == data.size()
-					|| !data.get(i).firstElement().equals(nextVar)) {
+			if (i == data.size() || !data.get(i).firstElement().equals(nextVar)) {
 				row.add(nextVar);
 				boolean added = false;
 				if (substList != null && !substList.isEmpty()) {
@@ -193,9 +156,6 @@ public abstract class CASSubDialog {
 	 * @return true iff any substitution applied
 	 */
 	protected boolean apply(String actionCommand) {
-
-		CASTable table = getCASView().getConsoleTable();
-
 		// create substitution list
 		StringBuilder substList = new StringBuilder("{");
 		StringBuilder substComment = new StringBuilder();
@@ -203,13 +163,12 @@ public abstract class CASSubDialog {
 		for (int i = 0; i < data.size(); i++) {
 			String fromExpr = data.get(i).get(0).trim();
 			String toExpr = data.get(i).get(1).trim();
-			if (!"".equals(fromExpr) && !"".equals(toExpr)) {
+			if (!fromExpr.isEmpty() && !toExpr.isEmpty()) {
 				if (substList.length() > 1) {
 					substList.append(',');
 					substComment.append(',');
 				}
-				fromExpr = getCASView().resolveCASrowReferences(fromExpr,
-						editRow);
+				fromExpr = getCASView().resolveCASrowReferences(fromExpr, editRow);
 				toExpr = getCASView().resolveCASrowReferences(toExpr, editRow);
 				substList.append(fromExpr);
 				substList.append('=');
@@ -238,6 +197,7 @@ public abstract class CASSubDialog {
 		}
 
 		try {
+			CASTable table = getCASView().getConsoleTable();
 			GeoCasCell currCell = table.getGeoCasCell(editRow);
 			StringBuilder oldXML = currCell.getConstruction().getCurrentUndoXML(false);
 			currCell.setProcessingInformation(prefix, subCmd, postfix);
@@ -255,5 +215,4 @@ public abstract class CASSubDialog {
 			return false;
 		}
 	}
-
 }

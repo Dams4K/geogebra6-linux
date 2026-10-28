@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.accessibility;
 
 import java.util.Arrays;
@@ -6,13 +22,12 @@ import java.util.List;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoInputBox;
 import org.geogebra.common.main.Localization;
+import org.geogebra.editor.share.util.GWTKeycodes;
 import org.geogebra.web.html5.gui.textbox.GTextBox;
 import org.geogebra.web.html5.gui.util.Dom;
 import org.geogebra.web.html5.gui.util.FormLabel;
 import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.user.client.ui.Widget;
-
-import com.himamis.retex.editor.share.util.GWTKeycodes;
 
 public class AccessibleInputBox implements AccessibleWidget {
 	private final GeoInputBox geo;
@@ -67,8 +82,8 @@ public class AccessibleInputBox implements AccessibleWidget {
 	 * @return message for syntax error
 	 */
 	public static String getErrorText(Localization loc) {
-		return loc.getMenuDefault("InputContainsSyntaxError",
-				"The input you entered contains a syntax error");
+		return loc.getMenuDefault(
+				"InputContainsSyntaxError", "The input you entered contains a syntax error");
 	}
 
 	@Override

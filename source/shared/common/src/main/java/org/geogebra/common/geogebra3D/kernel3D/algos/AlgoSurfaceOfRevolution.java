@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDependentNumber.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -44,7 +42,7 @@ import org.geogebra.common.kernel.matrix.Coords;
 /**
  * Cartesian curve: Curve[ x-expression in var, y-expression in var, var, from,
  * to]
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class AlgoSurfaceOfRevolution extends AlgoElement {
@@ -67,13 +65,12 @@ public class AlgoSurfaceOfRevolution extends AlgoElement {
 	 * @param angle
 	 *            max angle
 	 */
-	public AlgoSurfaceOfRevolution(Construction cons,
-			Parametrizable function, GeoNumberValue angle) {
+	public AlgoSurfaceOfRevolution(Construction cons, Parametrizable function, GeoNumberValue angle) {
 		this(cons, function, angle, null);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param path
@@ -83,15 +80,14 @@ public class AlgoSurfaceOfRevolution extends AlgoElement {
 	 * @param line
 	 *            rotation axis
 	 */
-	public AlgoSurfaceOfRevolution(Construction cons, Path path,
-			GeoNumberValue angle, GeoLineND line) {
+	public AlgoSurfaceOfRevolution(
+			Construction cons, Path path, GeoNumberValue angle, GeoLineND line) {
 
 		super(cons);
 		if (path instanceof ParametricCurve) {
 			this.function = (ParametricCurve) path;
 		} else {
-			GeoCurveCartesianND gc = kernel.getGeoFactory()
-					.newCurve(path.isGeoElement3D() ? 3 : 2, cons);
+			GeoCurveCartesianND gc = kernel.getGeoFactory().newCurve(path.isGeoElement3D() ? 3 : 2, cons);
 			this.function = gc;
 		}
 
@@ -111,15 +107,13 @@ public class AlgoSurfaceOfRevolution extends AlgoElement {
 		fun[2] = new FunctionNVar(funVar[0].wrap(), funVar);
 		surface = createSurface(cons, fun);
 
-		if (path instanceof ParametricCurve
-				&& ((ParametricCurve) path).isFunctionInX()) {
+		if (path instanceof ParametricCurve && ((ParametricCurve) path).isFunctionInX()) {
 			surface.setIsSurfaceOfRevolutionAroundOx(true);
 		}
 		GeoNumeric changeableAngle = ChangeableParent.getGeoNumeric(angle);
 		if (changeableAngle != null) {
 			ChangeableParent changeableParent = new ChangeableParent(
-					changeableAngle, this.line,
-					new RotationConverter(this.line), surface);
+					changeableAngle, this.line, new RotationConverter(this.line), surface);
 			surface.setChangeableParent(changeableParent);
 		}
 
@@ -133,15 +127,14 @@ public class AlgoSurfaceOfRevolution extends AlgoElement {
 
 	/**
 	 * creates a surface
-	 * 
+	 *
 	 * @param cons1
 	 *            construction
 	 * @param fun
 	 *            functions
 	 * @return a curve
 	 */
-	protected GeoSurfaceCartesian3D createSurface(Construction cons1,
-			FunctionNVar[] fun) {
+	protected GeoSurfaceCartesian3D createSurface(Construction cons1, FunctionNVar[] fun) {
 		return new GeoSurfaceCartesian3D(cons1, null, fun);
 	}
 
@@ -172,8 +165,7 @@ public class AlgoSurfaceOfRevolution extends AlgoElement {
 	@Override
 	public final void compute() {
 		if (path instanceof Parametrizable) {
-			((Parametrizable) path)
-					.toGeoCurveCartesian((GeoCurveCartesianND) function);
+			((Parametrizable) path).toGeoCurveCartesian((GeoCurveCartesianND) function);
 		}
 		if (function.isDefined() && angle.isDefined()) {
 			surface.setDefined(true);
@@ -192,11 +184,12 @@ public class AlgoSurfaceOfRevolution extends AlgoElement {
 			transform(function, coeffs, fun, line.getStartInhomCoords());
 		}
 
-		String var = function.getFunctionVariables()[0] + "";
+		String var = function.getFunctionVariables()[0].getSetVarString();
 		for (int i = 0; i < 3; i++) {
 			fun[i].getExpression().replaceVariables(var, funVar[0]);
-			fun[i].getExpression().replaceVariables(
-					funVar[1].toString(StringTemplate.defaultTemplate), funVar[1]);
+			fun[i]
+					.getExpression()
+					.replaceVariables(funVar[1].toString(StringTemplate.defaultTemplate), funVar[1]);
 		}
 		min[0] = function.getMinParameter();
 		max[0] = function.getMaxParameter();
@@ -208,13 +201,12 @@ public class AlgoSurfaceOfRevolution extends AlgoElement {
 		surface.setIntervals(min, max);
 	}
 
-	private void transform(ParametricCurve curve, ExpressionValue[][] m,
-			FunctionNVar[] fun1, Coords startPoint) {
+	private void transform(
+			ParametricCurve curve, ExpressionValue[][] m, FunctionNVar[] fun1, Coords startPoint) {
 		// current expressions
 		ExpressionNode[] expr = new ExpressionNode[3];
 		for (int i = 0; i < 3; i++) {
-			expr[i] = curve.getFun(i).deepCopy(kernel).getExpression()
-					.subtract(startPoint.get(i + 1));
+			expr[i] = curve.getFun(i).deepCopy(kernel).getExpression().subtract(startPoint.get(i + 1));
 		}
 
 		for (int row = 0; row < 3; row++) {
@@ -229,8 +221,8 @@ public class AlgoSurfaceOfRevolution extends AlgoElement {
 		}
 	}
 
-	private static final void rotation4x4(Coords u, ExpressionValue angle,
-			ExpressionValue[][] m, Kernel kernel) {
+	private static void rotation4x4(
+			Coords u, ExpressionValue angle, ExpressionValue[][] m, Kernel kernel) {
 
 		double ux = u.getX();
 		double uy = u.getY();
@@ -262,11 +254,9 @@ public class AlgoSurfaceOfRevolution extends AlgoElement {
 		m[3][3] = new ExpressionNode(kernel, 1);
 	}
 
-	private static ExpressionValue diagonalCoeff(double ux, ExpressionNode c,
-			Kernel kernel) {
+	private static ExpressionValue diagonalCoeff(double ux, ExpressionNode c, Kernel kernel) {
 		// use plus(ExpressionValue) rather than plus(double) to make sure
 		// zeros are canceled
 		return c.multiply(1 - ux * ux).plus(new MyDouble(kernel, ux * ux));
 	}
-
 }

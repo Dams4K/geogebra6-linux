@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.plot.implicit;
 
 import org.geogebra.common.kernel.arithmetic.Splittable;
@@ -5,14 +21,17 @@ import org.geogebra.common.kernel.arithmetic.bernstein.BernsteinPolynomial2D;
 import org.geogebra.common.kernel.implicit.MarchingConfig;
 
 /**
- * BernsteinPlotCell is the basic building block of the algorithm.
- * A cell consists of a bounding box, a Bernstein polynomial limited to that bounding box.
- * The algo splits the screen into these cells, decides if there might be a solution in
- * that cell, and if there might be, splits it further until a given box size. If that minimal size
- * is reached, we declare that there is a solution in that cell.
+ * Represents a cell in the Bernstein-plot implicit-curve algorithm.
  *
+ * <p>A cell combines a bounding box with the corresponding Bernstein
+ * polynomial restricted to that region. The algorithm recursively
+ * subdivides cells until the box size falls below a given threshold.</p>
+ *
+ * <p>Once the minimum size is reached, the cell is considered to contain
+ * a solution of the implicit curve equation.</p>
  */
 public class BernsteinPlotCell implements Splittable<BernsteinPlotCell> {
+	/** Cell kind. */
 	enum BernsteinPlotCellKind {
 		CELL0,
 		CELL1,
@@ -48,7 +67,7 @@ public class BernsteinPlotCell implements Splittable<BernsteinPlotCell> {
 			return BernsteinPlotCellKind.CELL2;
 		}
 
-		if (polynomial.onlyOnePartialDerivateHasSolution()) {
+		if (polynomial.onlyOnePartialDerivativeHasSolution()) {
 			return BernsteinPlotCellKind.CELL1;
 		}
 
@@ -79,8 +98,7 @@ public class BernsteinPlotCell implements Splittable<BernsteinPlotCell> {
 		return cells;
 	}
 
-	private BernsteinPlotCell createCell(BernsteinBoundingBox box,
-			BernsteinPolynomial2D polynomial) {
+	private BernsteinPlotCell createCell(BernsteinBoundingBox box, BernsteinPolynomial2D polynomial) {
 		if (polynomial == null) {
 			return null;
 		}

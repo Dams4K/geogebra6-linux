@@ -1,18 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoCommonTangents.java, dsun48 [6/26/2011]
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -57,9 +56,7 @@ public class AlgoCommonTangents3D extends AlgoCommonTangentsND {
 	 * @param d
 	 *            second conic
 	 */
-	public AlgoCommonTangents3D(Construction cons, String[] labels,
-			GeoConicND c,
-			GeoConicND d) {
+	public AlgoCommonTangents3D(Construction cons, String[] labels, GeoConicND c, GeoConicND d) {
 		super(cons);
 		this.c = c;
 		this.d = d;
@@ -75,7 +72,6 @@ public class AlgoCommonTangents3D extends AlgoCommonTangentsND {
 		setInputOutput();
 		compute();
 		LabelManager.setLabels(labels, getOutput());
-
 	}
 
 	/**
@@ -91,18 +87,16 @@ public class AlgoCommonTangents3D extends AlgoCommonTangentsND {
 		// c.polarPoint(tangents[i], (GeoPoint) algoIntersect.getOutput(i));
 		// }
 		algoIntersect.initForNearToRelationship();
-
 	}
 
 	@Override
 	protected void setInputOutput() {
-		input = new GeoElement[] { c.toGeoElement(), d.toGeoElement() };
+		input = new GeoElement[] {c.toGeoElement(), d.toGeoElement()};
 		setOutputLength(4);
 		for (int i = 0; i < 4; i++) {
 			setOutput(i, tangents[i]);
 		}
 		setDependencies();
-
 	}
 
 	@Override
@@ -122,8 +116,7 @@ public class AlgoCommonTangents3D extends AlgoCommonTangentsND {
 		for (int i = 0; i < 4; i++) {
 			tangents[i].setUndefined();
 		}
-		Coords cross = c.getCoordSys().getNormal()
-				.crossProduct(d.getCoordSys().getNormal());
+		Coords cross = c.getCoordSys().getNormal().crossProduct(d.getCoordSys().getNormal());
 		if (!cross.equalsForKernel(0, Kernel.MIN_PRECISION)) {
 			return;
 		}
@@ -141,7 +134,6 @@ public class AlgoCommonTangents3D extends AlgoCommonTangentsND {
 				outer++;
 			}
 		}
-
 	}
 
 	private void polarLine(GeoPoint output) {
@@ -150,13 +142,12 @@ public class AlgoCommonTangents3D extends AlgoCommonTangentsND {
 		if (!DoubleUtil.isZero(polar.x)) {
 			currentTangent.setCoord(
 					c.getCoordSys().getPoint(-polar.z / polar.x, 0),
-				c.getCoordSys().getVector(-polar.y, polar.x));
+					c.getCoordSys().getVector(-polar.y, polar.x));
 		} else {
 			currentTangent.setCoord(
 					c.getCoordSys().getPoint(0, -polar.z / polar.y),
 					c.getCoordSys().getVector(-polar.y, polar.x));
 		}
-
 	}
 
 	private boolean isInner(GeoLine currentTangent2) {
@@ -178,5 +169,4 @@ public class AlgoCommonTangents3D extends AlgoCommonTangentsND {
 		d.polarPoint(line, ret);
 		return ret;
 	}
-
 }

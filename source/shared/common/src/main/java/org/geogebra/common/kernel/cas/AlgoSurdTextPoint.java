@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.cas;
@@ -21,8 +25,7 @@ import org.geogebra.common.kernel.geos.GeoText;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.kernel.matrix.Coords;
 import org.geogebra.common.util.DoubleUtil;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 /**
  * Algorithm for SurdText(Point)
@@ -66,7 +69,7 @@ public class AlgoSurdTextPoint extends AlgoSurdText {
 		if (p.isLabelSet()) {
 			try {
 				text.setStartPoint(p, 0);
-			} catch (CircularDefinitionException e) {
+			} catch (CircularDefinitionException ignored) {
 				// should never happen
 			}
 		}
@@ -106,8 +109,7 @@ public class AlgoSurdTextPoint extends AlgoSurdText {
 			}
 
 			int coordMode = p.getToStringMode();
-			if (coordMode == Kernel.COORD_CARTESIAN_3D
-					|| coordMode == Kernel.COORD_SPHERICAL) {
+			if (coordMode == Kernel.COORD_CARTESIAN_3D || coordMode == Kernel.COORD_SPHERICAL) {
 				// we want 3D coords
 				Coords coords = p.getInhomCoordsInD3();
 				append3dCoords(coords);
@@ -188,7 +190,6 @@ public class AlgoSurdTextPoint extends AlgoSurdText {
 					sbp.append("\\right)");
 				}
 				sbp.append(Unicode.IMAGINARY);
-
 			}
 
 		} else {
@@ -199,14 +200,14 @@ public class AlgoSurdTextPoint extends AlgoSurdText {
 	}
 
 	private static boolean bracketsNeeded(String str0) {
-		
+
 		String str = str0.trim();
 
 		// everything surrounded in \frac{...}
 		if (str.startsWith("\\frac{") && str.endsWith("}")) {
 			return false;
 		}
-		
+
 		// -sqrt(2) but not -sqrt(2)+1
 		if (str.lastIndexOf("+") < 1 && str.lastIndexOf("-") < 1) {
 			return false;
@@ -221,5 +222,4 @@ public class AlgoSurdTextPoint extends AlgoSurdText {
 	private void append(double value) {
 		pslqAppendQuadratic(sbp, value, text.getStringTemplate());
 	}
-
 }

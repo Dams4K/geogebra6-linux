@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.javax.swing;
 
 import java.util.ArrayList;
@@ -7,24 +23,28 @@ import org.geogebra.common.euclidian.draw.HasTextFormat;
 import org.geogebra.common.kernel.geos.GeoInline;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.undo.UpdateContentActionStore;
-import org.geogebra.web.full.css.MaterialDesignResources;
+import org.geogebra.web.html5.gui.util.Dom;
 import org.geogebra.web.html5.gui.util.FastClickHandler;
-import org.geogebra.web.html5.gui.util.ToggleButton;
-import org.geogebra.web.resources.SVGResource;
+import org.geogebra.web.html5.gui.view.IconSpec;
+import org.geogebra.web.html5.gui.view.button.StandardButton;
+import org.geogebra.web.html5.main.AppW;
+import org.geogebra.web.html5.main.general.GeneralIcon;
+import org.geogebra.web.html5.main.general.GeneralIconResource;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Widget;
 
 /**
  * Menu item that acts like a toolbar.
  */
-public class InlineTextToolbar implements FastClickHandler {
+public final class InlineTextToolbar implements FastClickHandler {
 	private final App app;
-	private List<HasTextFormat> formatters;
+	private final List<HasTextFormat> formatters;
 	private FlowPanel panel;
-	private ToggleButton subScriptBtn;
-	private ToggleButton superScriptBtn;
-	private ToggleButton bulletListBtn;
-	private ToggleButton numberedListBtn;
+	private StandardButton subScriptBtn;
+	private StandardButton superScriptBtn;
+	private StandardButton bulletListBtn;
+	private StandardButton numberedListBtn;
+	private final GeneralIconResource generalIconResource;
 
 	/**
 	 * Constructor of special context menu item holding the
@@ -35,6 +55,7 @@ public class InlineTextToolbar implements FastClickHandler {
 	public InlineTextToolbar(List<HasTextFormat> formatters, App app) {
 		this.formatters = formatters;
 		this.app = app;
+		this.generalIconResource = ((AppW) app).getGeneralIconResource();
 
 		createGui();
 		setTooltips();
@@ -43,7 +64,7 @@ public class InlineTextToolbar implements FastClickHandler {
 	/**
 	 * Creates the toolbar gui
 	 */
-	protected void createGui() {
+	private void createGui() {
 		panel = new FlowPanel();
 		createSubscriptBtn();
 		createSuperscriptBtn();
@@ -53,39 +74,40 @@ public class InlineTextToolbar implements FastClickHandler {
 	}
 
 	private void createSubscriptBtn() {
-		subScriptBtn = createButton(MaterialDesignResources.INSTANCE.format_subscript());
+		subScriptBtn = createButton(generalIconResource.getImageResource(GeneralIcon.X_2));
 		add(subScriptBtn);
 	}
 
 	private void createSuperscriptBtn() {
-		superScriptBtn = createButton(MaterialDesignResources.INSTANCE.format_superscript());
+		superScriptBtn = createButton(generalIconResource.getImageResource(GeneralIcon.X_SQUARE));
 		add(superScriptBtn);
 	}
 
 	private void createBulletListBtn() {
-		bulletListBtn = createButton(MaterialDesignResources.INSTANCE.bulletList());
+		bulletListBtn = createButton(generalIconResource.getImageResource(GeneralIcon.BULLET_LIST));
 		add(bulletListBtn);
 	}
 
 	private void createNumberedListBtn() {
-		numberedListBtn = createButton(MaterialDesignResources.INSTANCE.numberedList());
+		numberedListBtn = createButton(generalIconResource.getImageResource(GeneralIcon.NUMBERED_LIST));
 		add(numberedListBtn);
 	}
 
 	private void updateState() {
-		subScriptBtn.setSelected("sub".equals(getScriptFormat()));
-		superScriptBtn.setSelected("super".equals(getScriptFormat()));
-		bulletListBtn.setSelected("bullet".equals(getListStyle()));
-		numberedListBtn.setSelected("number".equals(getListStyle()));
+		Dom.toggleClass(subScriptBtn, "selected", "sub".equals(getScriptFormat()));
+		Dom.toggleClass(superScriptBtn, "selected", "super".equals(getScriptFormat()));
+		Dom.toggleClass(bulletListBtn, "selected", "bullet".equals(getListStyle()));
+		Dom.toggleClass(numberedListBtn, "selected", "number".equals(getListStyle()));
 	}
 
-	private ToggleButton createButton(SVGResource resource) {
-		ToggleButton button = new ToggleButton(resource);
+	private StandardButton createButton(IconSpec icon) {
+		StandardButton button = new StandardButton(icon, "", 24, 24);
+		button.addStyleName("ToggleButton");
 		button.addFastClickHandler(this);
 		return button;
 	}
 
-	protected String getScriptFormat() {
+	private String getScriptFormat() {
 		if (formatters.isEmpty()) {
 			return "";
 		}
@@ -104,7 +126,7 @@ public class InlineTextToolbar implements FastClickHandler {
 		return format;
 	}
 
-	protected String getListStyle() {
+	private String getListStyle() {
 		if (formatters.isEmpty()) {
 			return "";
 		}
@@ -123,9 +145,7 @@ public class InlineTextToolbar implements FastClickHandler {
 	}
 
 	private String getListStyle(HasTextFormat formatter) {
-		return formatter.getListStyle() != null
-				? formatter.getListStyle()
-				: "";
+		return formatter.getListStyle() != null ? formatter.getListStyle() : "";
 	}
 
 	/**
@@ -138,10 +158,11 @@ public class InlineTextToolbar implements FastClickHandler {
 
 	@Override
 	public void onClick(Widget source) {
+
 		if (subScriptBtn == source) {
-			setSubscript(subScriptBtn.isSelected());
+			setSubscript(!subScriptBtn.getStyleName().contains("selected"));
 		} else if (superScriptBtn == source) {
-			setSuperscript(superScriptBtn.isSelected());
+			setSuperscript(!superScriptBtn.getStyleName().contains("selected"));
 		} else if (bulletListBtn == source) {
 			switchListTo("bullet");
 		} else if (numberedListBtn == source) {
@@ -160,7 +181,7 @@ public class InlineTextToolbar implements FastClickHandler {
 	}
 
 	private void formatScript(String type, Boolean value) {
-		ArrayList<GeoInline> geosToStore = new ArrayList();
+		ArrayList<GeoInline> geosToStore = new ArrayList<>();
 		for (HasTextFormat formatter : formatters) {
 			geosToStore.add(formatter.getInline());
 		}
@@ -183,7 +204,7 @@ public class InlineTextToolbar implements FastClickHandler {
 	/**
 	 * Sets the tooltips
 	 */
-	protected void setTooltips() {
+	private void setTooltips() {
 		subScriptBtn.setTitle(app.getLocalization().getMenu("Subscript"));
 		superScriptBtn.setTitle(app.getLocalization().getMenu("Superscript"));
 		bulletListBtn.setTitle(app.getLocalization().getMenu("bulletList"));

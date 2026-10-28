@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.functioninspector;
 
 import java.util.ArrayList;
@@ -30,7 +46,7 @@ import org.gwtproject.user.client.ui.TabBar;
 import org.gwtproject.user.client.ui.TabPanel;
 import org.gwtproject.user.client.ui.Widget;
 
-public class FunctionInspectorW extends FunctionInspector {
+public final class FunctionInspectorW extends FunctionInspector {
 
 	private static final int PADDING_RIGHT = 45;
 	// color constants
@@ -39,7 +55,7 @@ public class FunctionInspectorW extends FunctionInspector {
 	private static final GColor EVEN_ROW_COLOR = GColor.newColor(241, 245, 250);
 	private static final GColor TABLE_GRID_COLOR = GColor.GRAY;
 	private static final int TAB_INTERVAL_IDX = 0;
-	private static final String[] DEFAULT_XY_HEADERS = { "x", "y(x)" };
+	private static final String[] DEFAULT_XY_HEADERS = {"x", "y(x)"};
 	private static final int HEADER_PADDING = 44;
 
 	private FlowPanel mainPanel;
@@ -123,8 +139,7 @@ public class FunctionInspectorW extends FunctionInspector {
 	}
 
 	@Override
-	public void updateInterval(ArrayList<String> property,
-	        ArrayList<String> value) {
+	public void updateInterval(ArrayList<String> property, ArrayList<String> value) {
 		modelInterval.removeAll();
 		modelInterval.setHeaders(getModel().getIntervalColumnNames());
 		for (int i = 0; i < property.size(); i++) {
@@ -187,21 +202,21 @@ public class FunctionInspectorW extends FunctionInspector {
 	public GColor getColor(Colors id) {
 		GColor color;
 		switch (id) {
-		case EVEN_ROW:
-			color = EVEN_ROW_COLOR;
-			break;
-		case GEO:
-			color = DISPLAY_GEO_COLOR;
-			break;
-		case GEO2:
-			color = DISPLAY_GEO2_COLOR;
-			break;
-		case GRID:
-			color = TABLE_GRID_COLOR;
-			break;
-		default:
-			color = GColor.BLACK;
-			break;
+			case EVEN_ROW:
+				color = EVEN_ROW_COLOR;
+				break;
+			case GEO:
+				color = DISPLAY_GEO_COLOR;
+				break;
+			case GEO2:
+				color = DISPLAY_GEO2_COLOR;
+				break;
+			case GRID:
+				color = TABLE_GRID_COLOR;
+				break;
+			default:
+				color = GColor.BLACK;
+				break;
 		}
 		return color;
 	}
@@ -223,13 +238,11 @@ public class FunctionInspectorW extends FunctionInspector {
 
 	@Override
 	protected void buildHelpPanel() {
-		btnHelp = new StandardButton(SharedResources.INSTANCE.icon_help_black(),
-				null, 24);
+		btnHelp = new StandardButton(SharedResources.INSTANCE.icon_help_black(), null, 24);
 		btnHelp.addStyleName("IconButton");
 		btnHelp.addStyleName("fiButton");
-		btnHelp.addFastClickHandler(
-				source -> ((GuiManagerInterfaceW) app.getGuiManager())
-						.openHelp(ManualPage.FUNCTION_INSPECTOR_TOOL, null));
+		btnHelp.addFastClickHandler(source -> ((GuiManagerInterfaceW) app.getGuiManager())
+				.openHelp(ManualPage.FUNCTION_INSPECTOR_TOOL, null));
 	}
 
 	@Override
@@ -338,21 +351,25 @@ public class FunctionInspectorW extends FunctionInspector {
 	}
 
 	private void createBtnAddColumn() {
-		btnAddColumn = new PopupMenuButtonW((AppW) app,
-		        ImageOrText.convert(getModel().getColumnNames()), -1, 1,
-				org.geogebra.common.gui.util.SelectionTable.MODE_TEXT) {
-			@Override
-			public void handlePopupActionEvent() {
-				super.handlePopupActionEvent();
-				getModel().addColumn(getSelectedIndex());
-				btnAddColumn.setSelectedIndex(-1);
-			}
+		btnAddColumn =
+				new PopupMenuButtonW(
+						(AppW) app,
+						ImageOrText.convert(getModel().getColumnNames()),
+						-1,
+						1,
+						org.geogebra.common.gui.util.SelectionTable.MODE_TEXT) {
+					@Override
+					public void handlePopupActionEvent() {
+						super.handlePopupActionEvent();
+						getModel().addColumn(getSelectedIndex());
+						btnAddColumn.setSelectedIndex(-1);
+					}
 
-			@Override
-			public ImageOrText getButtonIcon() {
-				return new ImageOrText(MaterialDesignResources.INSTANCE.add_black(), 24);
-			}
-		};
+					@Override
+					public ImageOrText getButtonIcon() {
+						return new ImageOrText(MaterialDesignResources.INSTANCE.add_black(), 24);
+					}
+				};
 		btnAddColumn.setKeepVisible(false);
 		btnAddColumn.setSelectedIndex(-1);
 	}
@@ -408,9 +425,12 @@ public class FunctionInspectorW extends FunctionInspector {
 	@Override
 	protected void updatePointsTab() {
 		Log.debug("UPDATE POINTS TAB");
-		getModel().updatePoints(btnTangent.isSelected(),
-				btnOscCircle.isSelected(), btnXYSegments.isSelected(),
-				btnTable.isSelected());
+		getModel()
+				.updatePoints(
+						btnTangent.isSelected(),
+						btnOscCircle.isSelected(),
+						btnXYSegments.isSelected(),
+						btnTable.isSelected());
 	}
 
 	@Override
@@ -457,14 +477,16 @@ public class FunctionInspectorW extends FunctionInspector {
 
 	@Override
 	protected void createOptionsButton() {
-		ImageOrText[] strOptions = new ImageOrText[] { new ImageOrText(
-				app.getLocalization().getMenu("CopyToSpreadsheet")) };
-		btnOptions = new PopupMenuButtonW((AppW) app, strOptions,
-				strOptions.length, 1,
+		ImageOrText[] strOptions =
+				new ImageOrText[] {new ImageOrText(app.getLocalization().getMenu("CopyToSpreadsheet"))};
+		btnOptions = new PopupMenuButtonW(
+				(AppW) app,
+				strOptions,
+				strOptions.length,
+				1,
 				org.geogebra.common.gui.util.SelectionTable.MODE_TEXT);
 
-		ImageOrText icon = new ImageOrText(
-				GuiResources.INSTANCE.menu_icon_tools());
+		ImageOrText icon = new ImageOrText(GuiResources.INSTANCE.menu_icon_tools());
 		btnOptions.setFixedIcon(icon);
 		btnOptions.setSelectedIndex(-1);
 		btnOptions.addPopupHandler(index -> {
@@ -478,8 +500,7 @@ public class FunctionInspectorW extends FunctionInspector {
 		if (isIntervalTabSelected()) {
 			getModel().copyIntervalsToSpreadsheet(2, 9); // modelInterval.getColumnCount(),
 		} else {
-			getModel().copyPointsToSpreadsheet(modelXY.getColumnCount(),
-					modelXY.getRowCount());
+			getModel().copyPointsToSpreadsheet(modelXY.getColumnCount(), modelXY.getRowCount());
 		}
 	}
 
@@ -511,17 +532,16 @@ public class FunctionInspectorW extends FunctionInspector {
 		btnAddColumn.setTitle(loc.getPlainTooltip("fncInspector.addColumn"));
 		btnRemoveColumn.setTitle(loc.getPlainTooltip("fncInspector.removeColumn"));
 
-		btnOptions.getMyTable().updateText(
-				new ImageOrText[] { new ImageOrText(app.getLocalization()
-						.getMenu("CopyToSpreadsheet")) });
+		btnOptions.getMyTable().updateText(new ImageOrText[] {
+			new ImageOrText(app.getLocalization().getMenu("CopyToSpreadsheet"))
+		});
 
 		modelInterval.setHeaders(getModel().getIntervalColumnNames());
 	}
 
 	void onResize() {
 		if (mainPanel.getOffsetHeight() != 0) {
-			tabPanel.setHeight(mainPanel.getOffsetHeight()
-					- HEADER_PADDING + "px");
+			tabPanel.setHeight(mainPanel.getOffsetHeight() - HEADER_PADDING + "px");
 			int width = Math.max(mainPanel.getOffsetWidth() - PADDING_RIGHT, 0);
 			intervalTab.setWidth(width + "px");
 			pointsTab.setWidth(width + "px");

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.smallscreen;
 
 import java.util.ArrayList;
@@ -5,9 +21,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GRectangle;
 import org.geogebra.common.euclidian.EuclidianView;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.geos.AbsoluteScreenLocateable;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoImage;
@@ -19,7 +35,7 @@ import org.geogebra.common.util.MyMath;
 /**
  * Adjusts position of absolutely positioned elements (texts, buttons, lists,
  * images, checkboxes)
- * 
+ *
  * @author Laszlo
  *
  */
@@ -30,25 +46,21 @@ public class LayoutAbsoluteGeos {
 	private List<AbsoluteScreenLocateable> all = new ArrayList<>();
 	private List<AbsoluteScreenLocateable> moveable = new ArrayList<>();
 	private final EuclidianView view;
-	private final static AbsoluteGeoComparator comparatorX = new AbsoluteGeoComparator(
-			false);
-	private final static AbsoluteGeoComparator comparatorY = new AbsoluteGeoComparator(
-			true);
+	private static final AbsoluteGeoComparator comparatorX = new AbsoluteGeoComparator(false);
+	private static final AbsoluteGeoComparator comparatorY = new AbsoluteGeoComparator(true);
 
 	// Buttons should be collected only once.
 	private boolean collected = false;
 
-	private static class AbsoluteGeoComparator
-			implements Comparator<AbsoluteScreenLocateable> {
-		private boolean vertical;
+	private static final class AbsoluteGeoComparator implements Comparator<AbsoluteScreenLocateable> {
+		private final boolean vertical;
 
-		public AbsoluteGeoComparator(boolean vertical) {
+		private AbsoluteGeoComparator(boolean vertical) {
 			this.vertical = vertical;
 		}
 
 		@Override
-		public int compare(AbsoluteScreenLocateable o1,
-				AbsoluteScreenLocateable o2) {
+		public int compare(AbsoluteScreenLocateable o1, AbsoluteScreenLocateable o2) {
 			if (vertical) {
 				int y1 = o1.getAbsoluteScreenLocY();
 				int y2 = o2.getAbsoluteScreenLocY();
@@ -64,7 +76,6 @@ public class LayoutAbsoluteGeos {
 				return 0;
 			}
 			return DoubleUtil.isGreater(x1, x2) ? -1 : 1;
-
 		}
 	}
 
@@ -177,8 +188,7 @@ public class LayoutAbsoluteGeos {
 			final int x = absGeo.getAbsoluteScreenLocX();
 			int geoHeight = absGeo.getTotalHeight(view);
 			int geoWidth = absGeo.getTotalWidth(view);
-			int y = maxUnusedY(usedPositions, x, x + geoWidth,
-					view.getHeight());
+			int y = maxUnusedY(usedPositions, x, x + geoWidth, view.getHeight());
 			y -= geoHeight + Y_GAP;
 			int yCorner;
 			if (bottomAnchor(absGeo)) {
@@ -192,8 +202,7 @@ public class LayoutAbsoluteGeos {
 			if (moveNeeded) {
 				y = Math.min(absGeo.getAbsoluteScreenLocY(), yCorner);
 				setAbsoluteScreenLoc(absGeo, x, y);
-				usedPositions.add(AwtFactory.getPrototype().newRectangle(x, y,
-						geoWidth, geoHeight));
+				usedPositions.add(AwtFactory.getPrototype().newRectangle(x, y, geoWidth, geoHeight));
 				absGeo.update();
 			}
 		}
@@ -215,8 +224,7 @@ public class LayoutAbsoluteGeos {
 		boolean moveNeeded = false;
 		for (AbsoluteScreenLocateable absGeo : moveable) {
 			final int y = absGeo.getAbsoluteScreenLocY();
-			int x = maxUnusedX(usedPositions, y,
-					y + absGeo.getTotalHeight(view), view.getWidth());
+			int x = maxUnusedX(usedPositions, y, y + absGeo.getTotalHeight(view), view.getWidth());
 			x -= absGeo.getTotalWidth(view) + X_GAP;
 			if (x < absGeo.getAbsoluteScreenLocX() + X_GAP) {
 				moveNeeded = true;
@@ -224,26 +232,22 @@ public class LayoutAbsoluteGeos {
 			if (moveNeeded) {
 				x = Math.min(absGeo.getAbsoluteScreenLocX(), x);
 				setAbsoluteScreenLoc(absGeo, x, y);
-				usedPositions.add(AwtFactory.getPrototype().newRectangle(x, y,
-						absGeo.getTotalWidth(view),
-						absGeo.getTotalHeight(view)));
+				usedPositions.add(AwtFactory.getPrototype()
+						.newRectangle(x, y, absGeo.getTotalWidth(view), absGeo.getTotalHeight(view)));
 				absGeo.update();
 			}
-
 		}
 	}
 
-	private static void setAbsoluteScreenLoc(AbsoluteScreenLocateable absGeo,
-			int x, int y) {
-			absGeo.setAbsoluteScreenLoc(x, y);
+	private static void setAbsoluteScreenLoc(AbsoluteScreenLocateable absGeo, int x, int y) {
+		absGeo.setAbsoluteScreenLoc(x, y);
 	}
 
-	private static int maxUnusedX(ArrayList<GRectangle> usedPositions, int yTop,
-			int yBottom, int max0) {
+	private static int maxUnusedX(
+			ArrayList<GRectangle> usedPositions, int yTop, int yBottom, int max0) {
 		int max = max0;
 		for (GRectangle rect : usedPositions) {
-			if (MyMath.intervalsIntersect(rect.getMinY(), rect.getMaxY(), yTop,
-					yBottom)) {
+			if (MyMath.intervalsIntersect(rect.getMinY(), rect.getMaxY(), yTop, yBottom)) {
 				if (max > rect.getMinX()) {
 					max = (int) rect.getMinX();
 				}
@@ -252,13 +256,11 @@ public class LayoutAbsoluteGeos {
 		return max;
 	}
 
-	private static int maxUnusedY(ArrayList<GRectangle> usedPositions,
-			int xLeft,
-			int xRight, int max0) {
+	private static int maxUnusedY(
+			ArrayList<GRectangle> usedPositions, int xLeft, int xRight, int max0) {
 		int max = max0;
 		for (GRectangle rect : usedPositions) {
-			if (MyMath.intervalsIntersect(rect.getMinX(), rect.getMaxX(), xLeft,
-					xRight)) {
+			if (MyMath.intervalsIntersect(rect.getMinX(), rect.getMaxX(), xLeft, xRight)) {
 				if (max > rect.getMinY()) {
 					max = (int) rect.getMinY();
 				}
@@ -274,7 +276,6 @@ public class LayoutAbsoluteGeos {
 				moveable.add(absGeo);
 			}
 		}
-
 	}
 
 	private void divideY() {
@@ -284,9 +285,7 @@ public class LayoutAbsoluteGeos {
 			if (isVerticallyOnScreen(absGeo)) {
 				moveable.add(absGeo);
 			}
-
 		}
-
 	}
 
 	private boolean isHorizontallyOnScreen(AbsoluteScreenLocateable absGeo) {
@@ -300,8 +299,7 @@ public class LayoutAbsoluteGeos {
 		int y = absGeo.getAbsoluteScreenLocY();
 		int height = absGeo.getTotalHeight(view);
 		return view.getSettings().getFileHeight() == 0
-				|| y + (bottomAnchor(absGeo) ? 0 : height) < view.getSettings()
-						.getFileHeight();
+				|| y + (bottomAnchor(absGeo) ? 0 : height) < view.getSettings().getFileHeight();
 	}
 
 	/**
@@ -323,7 +321,7 @@ public class LayoutAbsoluteGeos {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param geo
 	 *            to check.
 	 * @return if geo can be handled with this class or not.
@@ -334,13 +332,12 @@ public class LayoutAbsoluteGeos {
 		}
 		return geo.isGeoButton()
 				|| (geo.isGeoBoolean() && geo.isEuclidianShowable())
-				|| (geo.isGeoText() && geo.isVisible()
-						&& ((AbsoluteScreenLocateable) geo)
-								.isAbsoluteScreenLocActive())
+				|| (geo.isGeoText()
+						&& geo.isVisible()
+						&& ((AbsoluteScreenLocateable) geo).isAbsoluteScreenLocActive())
 				|| (geo.isGeoList() && ((GeoList) geo).drawAsComboBox())
-				|| (geo.isGeoImage() && ((AbsoluteScreenLocateable) geo)
-						.isAbsoluteScreenLocActive()
+				|| (geo.isGeoImage()
+						&& ((AbsoluteScreenLocateable) geo).isAbsoluteScreenLocActive()
 						&& !((GeoImage) geo).isInBackground());
 	}
-
 }

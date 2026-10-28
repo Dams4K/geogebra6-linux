@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options;
 
 import java.util.ArrayList;
@@ -22,7 +38,7 @@ public class OptionsObject {
 
 	/**
 	 * update geo just added
-	 * 
+	 *
 	 * @param geo
 	 *            geo
 	 */
@@ -39,7 +55,7 @@ public class OptionsObject {
 
 	/**
 	 * consume last added geo
-	 * 
+	 *
 	 * @return last added geo
 	 */
 	public GeoElement consumeGeoAdded() {
@@ -49,7 +65,7 @@ public class OptionsObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param loc
 	 *            localization
 	 * @return description for selection
@@ -61,13 +77,11 @@ public class OptionsObject {
 			GeoElement geo = getSelection().get(0);
 			sb.setLength(0);
 			sb.append("<html>");
-			sb.append(loc.getPlain("PropertiesOfA",
-					geo.getNameDescriptionHTML(false, false)));
+			sb.append(loc.getPlain("PropertiesOfA", geo.getNameDescriptionHTML(false, false)));
 			sb.append("</html>");
 			return sb.toString();
 		} else {
-			return loc.getPlain("PropertiesOfA",
-					loc.getMenu("Selection"));
+			return loc.getPlain("PropertiesOfA", loc.getMenu("Selection"));
 		}
 	}
 
@@ -78,5 +92,4 @@ public class OptionsObject {
 	protected void setSelection(ArrayList<GeoElement> selection) {
 		this.selection = selection;
 	}
-
 }

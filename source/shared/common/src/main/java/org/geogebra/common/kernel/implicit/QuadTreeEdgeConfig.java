@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.implicit;
 
 import java.util.HashMap;
@@ -6,6 +22,9 @@ import java.util.Map;
 import org.geogebra.common.kernel.MyPoint;
 import org.geogebra.common.kernel.SegmentType;
 
+/**
+ * Type of square in the quad tree.
+ */
 public enum QuadTreeEdgeConfig implements MarchingConfig {
 	/**
 	 * All corners are inside / outside
@@ -18,13 +37,16 @@ public enum QuadTreeEdgeConfig implements MarchingConfig {
 	T0001(1) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{new MyPoint(r.x1(),
-					GeoImplicitCurve.interpolate(r.bottomLeft(), r.topLeft(), r.y2(),
-							r.y1()), SegmentType.MOVE_TO),
-					new MyPoint(
-							GeoImplicitCurve.interpolate(r.bottomLeft(), r.bottomRight(), r.x1(),
-									r.x2()),
-							r.y2(), SegmentType.LINE_TO)};
+			return new MyPoint[] {
+				new MyPoint(
+						r.x1(),
+						GeoImplicitCurve.interpolate(r.bottomLeft(), r.topLeft(), r.y2(), r.y1()),
+						SegmentType.MOVE_TO),
+				new MyPoint(
+						GeoImplicitCurve.interpolate(r.bottomLeft(), r.bottomRight(), r.x1(), r.x2()),
+						r.y2(),
+						SegmentType.LINE_TO)
+			};
 		}
 
 		@Override
@@ -44,13 +66,16 @@ public enum QuadTreeEdgeConfig implements MarchingConfig {
 	T0010(2) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{new MyPoint(r.x2(),
-					GeoImplicitCurve.interpolate(r.bottomRight(), r.topRight(), r.y2(),
-							r.y1()), SegmentType.MOVE_TO),
-					new MyPoint(
-							GeoImplicitCurve.interpolate(r.bottomRight(), r.bottomLeft(), r.x2(),
-									r.x1()),
-							r.y2(), SegmentType.LINE_TO)};
+			return new MyPoint[] {
+				new MyPoint(
+						r.x2(),
+						GeoImplicitCurve.interpolate(r.bottomRight(), r.topRight(), r.y2(), r.y1()),
+						SegmentType.MOVE_TO),
+				new MyPoint(
+						GeoImplicitCurve.interpolate(r.bottomRight(), r.bottomLeft(), r.x2(), r.x1()),
+						r.y2(),
+						SegmentType.LINE_TO)
+			};
 		}
 
 		@Override
@@ -70,13 +95,16 @@ public enum QuadTreeEdgeConfig implements MarchingConfig {
 	T0011(3) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{new MyPoint(r.x1(),
-					GeoImplicitCurve.interpolate(r.topLeft(), r.bottomLeft(), r.y1(),
-							r.y2()), SegmentType.MOVE_TO),
-					new MyPoint(r.x2(),
-							GeoImplicitCurve.interpolate(r.topRight(), r.bottomRight(), r.y1(),
-									r.y2()),
-							SegmentType.LINE_TO)};
+			return new MyPoint[] {
+				new MyPoint(
+						r.x1(),
+						GeoImplicitCurve.interpolate(r.topLeft(), r.bottomLeft(), r.y1(), r.y2()),
+						SegmentType.MOVE_TO),
+				new MyPoint(
+						r.x2(),
+						GeoImplicitCurve.interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2()),
+						SegmentType.LINE_TO)
+			};
 		}
 
 		@Override
@@ -96,13 +124,15 @@ public enum QuadTreeEdgeConfig implements MarchingConfig {
 	T0100(4) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{
-					new MyPoint(r.x2(),
-							GeoImplicitCurve.interpolate(r.topRight(), r.bottomRight(), r.y1(),
-									r.y2()), SegmentType.MOVE_TO),
-					new MyPoint(
-							GeoImplicitCurve.interpolate(r.topRight(), r.topLeft(), r.x2(), r.x1()),
-							r.y1(), SegmentType.LINE_TO)
+			return new MyPoint[] {
+				new MyPoint(
+						r.x2(),
+						GeoImplicitCurve.interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2()),
+						SegmentType.MOVE_TO),
+				new MyPoint(
+						GeoImplicitCurve.interpolate(r.topRight(), r.topLeft(), r.x2(), r.x1()),
+						r.y1(),
+						SegmentType.LINE_TO)
 			};
 		}
 
@@ -129,11 +159,16 @@ public enum QuadTreeEdgeConfig implements MarchingConfig {
 	T0110(6) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{new MyPoint(
-					GeoImplicitCurve.interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()),
-					r.y1(), SegmentType.MOVE_TO),
-					new MyPoint(GeoImplicitCurve.interpolate(r.bottomLeft(), r.bottomRight(),
-							r.x1(), r.x2()), r.y2(), SegmentType.LINE_TO)};
+			return new MyPoint[] {
+				new MyPoint(
+						GeoImplicitCurve.interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()),
+						r.y1(),
+						SegmentType.MOVE_TO),
+				new MyPoint(
+						GeoImplicitCurve.interpolate(r.bottomLeft(), r.bottomRight(), r.x1(), r.x2()),
+						r.y2(),
+						SegmentType.LINE_TO)
+			};
 		}
 
 		@Override
@@ -153,11 +188,16 @@ public enum QuadTreeEdgeConfig implements MarchingConfig {
 	T0111(7) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{new MyPoint(r.x1(),
-					GeoImplicitCurve.interpolate(r.topLeft(), r.bottomLeft(), r.y1(), r.y2()),
-					SegmentType.MOVE_TO),
-					new MyPoint(GeoImplicitCurve.interpolate(r.topLeft(), r.topRight(), r.x1(),
-							r.x2()), r.y1(), SegmentType.LINE_TO)};
+			return new MyPoint[] {
+				new MyPoint(
+						r.x1(),
+						GeoImplicitCurve.interpolate(r.topLeft(), r.bottomLeft(), r.y1(), r.y2()),
+						SegmentType.MOVE_TO),
+				new MyPoint(
+						GeoImplicitCurve.interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()),
+						r.y1(),
+						SegmentType.LINE_TO)
+			};
 		}
 
 		@Override
@@ -247,5 +287,4 @@ public enum QuadTreeEdgeConfig implements MarchingConfig {
 	private static double minAbs(double a, double b) {
 		return Math.min(Math.abs(a), Math.abs(b));
 	}
-
 }

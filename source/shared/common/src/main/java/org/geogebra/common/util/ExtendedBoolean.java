@@ -1,15 +1,33 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
 /**
  * Boolean with added unknown value.
  */
 public enum ExtendedBoolean {
-	TRUE, FALSE, UNKNOWN;
+	TRUE,
+	FALSE,
+	UNKNOWN;
 
 	/**
 	 * @return boolean value, default false
 	 */
-	final public boolean boolVal() {
+	public boolean boolVal() {
 		return this == TRUE;
 	}
 
@@ -28,9 +46,12 @@ public enum ExtendedBoolean {
 	public ExtendedBoolean negate() {
 		switch (this) {
 			case UNKNOWN:
-			default: return UNKNOWN;
-			case TRUE: return FALSE;
-			case FALSE: return TRUE;
+			default:
+				return UNKNOWN;
+			case TRUE:
+				return FALSE;
+			case FALSE:
+				return TRUE;
 		}
 	}
 
@@ -39,10 +60,13 @@ public enum ExtendedBoolean {
 	 */
 	public ExtendedBoolean and(ExtendedBoolean other) {
 		switch (this) {
-		case UNKNOWN:
-		default: return other == FALSE ? FALSE : UNKNOWN;
-		case TRUE: return other;
-		case FALSE: return FALSE;
+			case UNKNOWN:
+			default:
+				return other == FALSE ? FALSE : UNKNOWN;
+			case TRUE:
+				return other;
+			case FALSE:
+				return FALSE;
 		}
 	}
 
@@ -54,6 +78,9 @@ public enum ExtendedBoolean {
 		return negate().and(other.negate()).negate();
 	}
 
+	/**
+	 * @return whether this value is TRUE or FALSE (not UNKNOWN)
+	 */
 	public boolean isDefined() {
 		return this != UNKNOWN;
 	}

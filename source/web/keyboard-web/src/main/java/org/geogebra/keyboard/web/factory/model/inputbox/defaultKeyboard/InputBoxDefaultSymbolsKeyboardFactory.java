@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.keyboard.web.factory.model.inputbox.defaultKeyboard;
 
 import static org.geogebra.keyboard.base.model.impl.factory.Characters.AMPERSAND;
@@ -62,10 +78,8 @@ public class InputBoxDefaultSymbolsKeyboardFactory implements KeyboardModelFacto
 		addInputButton(row, buttonFactory, SUBSET_OF);
 		addInputButton(row, buttonFactory, SUBSET_OF_OR_EQUAL_TO);
 		addInputButton(row, buttonFactory, ANGLE);
-		addConstantInputCommandButton(row, buttonFactory, Resource.FLOOR,
-				LEFT_FLOOR + "", 1.0f);
-		addConstantInputCommandButton(row, buttonFactory, Resource.CEIL,
-				LEFT_CEILING + "", 1.0f);
+		addConstantInputCommandButton(row, buttonFactory, Resource.FLOOR, LEFT_FLOOR + "", 1.0f);
+		addConstantInputCommandButton(row, buttonFactory, Resource.CEIL, LEFT_CEILING + "", 1.0f);
 
 		row = mathKeyboard.nextRow();
 		addInputButton(row, buttonFactory, LEFT_SQUARE_BRACKET);
@@ -74,10 +88,9 @@ public class InputBoxDefaultSymbolsKeyboardFactory implements KeyboardModelFacto
 		addInputButton(row, buttonFactory, AMPERSAND);
 		addInputButton(row, buttonFactory, AT);
 		addInputButton(row, buttonFactory, HASHTAG);
-		addTranslateInputCommandButton(row, buttonFactory, "Translate.currency",
-				"Translate.currency", 1.0f);
-		addConstantCustomButton(row, buttonFactory, Resource.BACKSPACE_DELETE,
-				Action.BACKSPACE_DELETE);
+		addTranslateInputCommandButton(
+				row, buttonFactory, "Translate.currency", "Translate.currency", 1.0f);
+		addConstantCustomButton(row, buttonFactory, Resource.BACKSPACE_DELETE, Action.BACKSPACE_DELETE);
 
 		row = mathKeyboard.nextRow();
 		addInputButton(row, buttonFactory, COMMA);
@@ -85,12 +98,9 @@ public class InputBoxDefaultSymbolsKeyboardFactory implements KeyboardModelFacto
 		addInputButton(row, buttonFactory, ":=", "\u2254");
 		addInputButton(row, buttonFactory, MINUTES);
 		addInputButton(row, buttonFactory, SECONDS);
-		addConstantCustomButton(row, buttonFactory, Resource.LEFT_ARROW,
-				Action.LEFT_CURSOR);
-		addConstantCustomButton(row, buttonFactory, Resource.RIGHT_ARROW,
-				Action.RIGHT_CURSOR);
-		addConstantCustomButton(row, buttonFactory, Resource.RETURN_ENTER,
-				Action.RETURN_ENTER);
+		addConstantCustomButton(row, buttonFactory, Resource.LEFT_ARROW, Action.LEFT_CURSOR);
+		addConstantCustomButton(row, buttonFactory, Resource.RIGHT_ARROW, Action.RIGHT_CURSOR);
+		addConstantCustomButton(row, buttonFactory, Resource.RETURN_ENTER, Action.RETURN_ENTER);
 
 		return mathKeyboard;
 	}

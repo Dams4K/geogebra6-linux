@@ -1,27 +1,43 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.MyPoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ClipAlgoSutherlandHodogmanTest {
+class ClipAlgoSutherlandHodogmanTest {
 	private final ClipAlgoSutherlandHodogman algo = new ClipAlgoSutherlandHodogman();
-	private final ArrayList< MyPoint > input = new ArrayList<>();
-	private ArrayList< MyPoint > output = new ArrayList<>();
+	private final ArrayList<MyPoint> input = new ArrayList<>();
+	private ArrayList<MyPoint> output = new ArrayList<>();
 	private static final double[][] defaultClipPolygon = {
-			{0, 0},
-			{0, 100},
-			{100, 100},
-			{100, 0},
+		{0, 0},
+		{0, 100},
+		{100, 100},
+		{100, 0},
 	};
 
 	@Test
-	public void allInsideTest() {
+	void allInsideTest() {
 		addInput(10, 10);
 		addInput(80, 10);
 		addInput(80, 80);
@@ -39,7 +55,7 @@ public class ClipAlgoSutherlandHodogmanTest {
 	}
 
 	@Test
-	public void allOutsideTest() {
+	void allOutsideTest() {
 		addInput(-50, -50);
 		addInput(100, -50);
 		addInput(150, 150);
@@ -54,7 +70,7 @@ public class ClipAlgoSutherlandHodogmanTest {
 	}
 
 	@Test
-	public void rectTest() {
+	void rectTest() {
 		addInput(20, -50);
 		addInput(80, -50);
 		addInput(80, 150);
@@ -67,7 +83,7 @@ public class ClipAlgoSutherlandHodogmanTest {
 	}
 
 	@Test
-	public void clipRectTop() {
+	void clipRectTop() {
 		addInput(20, -50);
 		addInput(80, -70);
 		addInput(80, 50);
@@ -82,7 +98,7 @@ public class ClipAlgoSutherlandHodogmanTest {
 	}
 
 	@Test
-	public void clipRectRight() {
+	void clipRectRight() {
 		addInput(20, 20);
 		addInput(150, 20);
 		addInput(150, 80);

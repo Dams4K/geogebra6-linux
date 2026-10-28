@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
 import java.util.ArrayList;
@@ -18,7 +34,9 @@ public class MindMapPaster {
 	public void setTargetFromSelection(SelectionManager selection) {
 		// allows paste
 		target = (GeoMindMapNode) selection.getSelectedGeos().stream()
-				.filter(geo -> geo instanceof GeoMindMapNode).findFirst().orElse(null);
+				.filter(geo -> geo instanceof GeoMindMapNode)
+				.findFirst()
+				.orElse(null);
 	}
 
 	/**
@@ -26,10 +44,10 @@ public class MindMapPaster {
 	 * @param mindMaps mind-map nodes
 	 */
 	public void joinToTarget(ArrayList<GeoMindMapNode> mindMaps) {
-		for (GeoMindMapNode mindMapNode: mindMaps) {
+		for (GeoMindMapNode mindMapNode : mindMaps) {
 			fixPosition(mindMapNode);
 		}
-		for (GeoMindMapNode mindMapNode: mindMaps) {
+		for (GeoMindMapNode mindMapNode : mindMaps) {
 			if (mindMapNode.isParentPending()) {
 				mindMapNode.resolvePendingParent(target);
 			}

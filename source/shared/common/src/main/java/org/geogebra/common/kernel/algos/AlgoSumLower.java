@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -25,7 +29,7 @@ public class AlgoSumLower extends AlgoFunctionAreaSums {
 
 	/**
 	 * Creates lower sum
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -39,29 +43,41 @@ public class AlgoSumLower extends AlgoFunctionAreaSums {
 	 * @param n
 	 *            number of columns
 	 */
-	public AlgoSumLower(Construction cons, String label, GeoFunctionable f,
-			GeoNumberValue a, GeoNumberValue b, GeoNumberValue n) {
+	public AlgoSumLower(
+			Construction cons,
+			String label,
+			GeoFunctionable f,
+			GeoNumberValue a,
+			GeoNumberValue b,
+			GeoNumberValue n) {
 		super(cons, label, f, a, b, n, SumType.LOWERSUM);
 		cons.registerEuclidianViewCE(this);
 	}
 
-	private AlgoSumLower(GeoNumberValue a, GeoNumberValue b, GeoNumberValue n,
-			double[] vals, double[] borders, Construction cons1) {
+	private AlgoSumLower(
+			GeoNumberValue a,
+			GeoNumberValue b,
+			GeoNumberValue n,
+			double[] vals,
+			double[] borders,
+			Construction cons1) {
 		super(a, b, n, SumType.LOWERSUM, vals, borders, cons1);
 		cons.registerEuclidianViewCE(this);
 	}
 
 	@Override
 	public AlgoSumLower copy() {
-		return new AlgoSumLower((GeoNumberValue) this.getA().deepCopy(kernel),
+		return new AlgoSumLower(
+				(GeoNumberValue) this.getA().deepCopy(kernel),
 				(GeoNumberValue) this.getB().deepCopy(kernel),
-				this.getN().copy(), Cloner.clone(getValues()),
-				Cloner.clone(getLeftBorder()), cons);
+				this.getN().copy(),
+				Cloner.clone(getValues()),
+				Cloner.clone(getLeftBorder()),
+				cons);
 	}
 
 	@Override
 	public Commands getClassName() {
 		return Commands.LowerSum;
 	}
-
 }

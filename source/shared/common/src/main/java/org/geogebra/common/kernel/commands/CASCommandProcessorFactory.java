@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -28,64 +44,64 @@ public class CASCommandProcessorFactory implements CommandProcessorFactory {
 	public CommandProcessor getProcessor(Commands command, Kernel kernel) {
 		switch (command) {
 
-		// note: Integral(f,a,b) is allowed but not Integral(f)
-		case Integral:
+			// note: Integral(f,a,b) is allowed but not Integral(f)
+			case Integral:
 
-		case IntegralBetween:
-		case NIntegral:
-			return new CmdIntegral(kernel, command);
-		case Derivative:
-		case NDerivative:
-			return new CmdDerivative(kernel, command);
-		case TrigSimplify:
-		case Expand:
-		case Factor:
-		case IFactor:
-			return new CmdCASCommand1Arg(kernel, command);
-		case Simplify:
-			return new CmdSimplify(kernel);
-		case SurdText:
-			return new CmdSurdText(kernel);
-		case ParametricDerivative:
-			return new CmdParametricDerivative(kernel);
-		case TrigExpand:
-			return new CmdTrigExpand(kernel);
-		case TrigCombine:
-			return new CmdTrigCombine(kernel);
-		case Limit:
-			return new CmdLimit(kernel);
-		case LimitBelow:
-			return new CmdLimitBelow(kernel);
-		case LimitAbove:
-			return new CmdLimitAbove(kernel);
-		case Degree:
-			return new CmdDegree(kernel);
-		case Coefficients:
-			return new CmdCoefficients(kernel);
-		case PartialFractions:
-			return new CmdPartialFractions(kernel);
-		case SolveODE:
-			return new CmdSolveODE(kernel);
-		case ImplicitDerivative:
-			return new CmdImplicitDerivative(kernel);
-		case NextPrime:
-			return new CmdNextPreviousPrime(kernel, true);
-		case PreviousPrime:
-			return new CmdNextPreviousPrime(kernel, false);
-		case CompleteSquare:
-			return new CmdCompleteSquare(kernel);
-		case NSolve:
-		case Solve:
-		case NSolutions:
-		case Solutions:
-		case PlotSolve:
-		case CSolve:
-		case CSolutions:
-			return new CmdSolve(kernel, command);
-		case CASLoaded:
-			return new CmdCASLoaded(kernel);
-		default:
-			break;
+			case IntegralBetween:
+			case NIntegral:
+				return new CmdIntegral(kernel, command);
+			case Derivative:
+			case NDerivative:
+				return new CmdDerivative(kernel, command);
+			case TrigSimplify:
+			case Expand:
+			case Factor:
+			case IFactor:
+				return new CmdCASCommand1Arg(kernel, command);
+			case Simplify:
+				return new CmdSimplify(kernel);
+			case SurdText:
+				return new CmdSurdText(kernel);
+			case ParametricDerivative:
+				return new CmdParametricDerivative(kernel);
+			case TrigExpand:
+				return new CmdTrigExpand(kernel);
+			case TrigCombine:
+				return new CmdTrigCombine(kernel);
+			case Limit:
+				return new CmdLimit(kernel);
+			case LimitBelow:
+				return new CmdLimitBelow(kernel);
+			case LimitAbove:
+				return new CmdLimitAbove(kernel);
+			case Degree:
+				return new CmdDegree(kernel);
+			case Coefficients:
+				return new CmdCoefficients(kernel);
+			case PartialFractions:
+				return new CmdPartialFractions(kernel);
+			case SolveODE:
+				return new CmdSolveODE(kernel);
+			case ImplicitDerivative:
+				return new CmdImplicitDerivative(kernel);
+			case NextPrime:
+				return new CmdNextPreviousPrime(kernel, true);
+			case PreviousPrime:
+				return new CmdNextPreviousPrime(kernel, false);
+			case CompleteSquare:
+				return new CmdCompleteSquare(kernel);
+			case NSolve:
+			case Solve:
+			case NSolutions:
+			case Solutions:
+			case PlotSolve:
+			case CSolve:
+			case CSolutions:
+				return new CmdSolve(kernel, command);
+			case CASLoaded:
+				return new CmdCASLoaded(kernel);
+			default:
+				break;
 		}
 		return null;
 	}

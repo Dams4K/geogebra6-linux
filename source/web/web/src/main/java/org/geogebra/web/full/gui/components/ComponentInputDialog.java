@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.components;
 
 import org.geogebra.common.gui.InputHandler;
@@ -6,7 +22,6 @@ import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.web.full.gui.dialog.ProcessInput;
 import org.geogebra.web.html5.gui.HasKeyboardPopup;
 import org.geogebra.web.html5.gui.inputfield.AutoCompleteTextFieldW;
-import org.geogebra.web.html5.gui.util.Dom;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.shared.components.dialog.ComponentDialog;
 import org.geogebra.web.shared.components.dialog.DialogData;
@@ -28,8 +43,13 @@ public class ComponentInputDialog extends ComponentDialog
 	 * @param hasScrim - background should be greyed out
 	 * @param inputHandler - input handler
 	 */
-	public ComponentInputDialog(AppW app, DialogData dialogData,
-			boolean autoHide, boolean hasScrim, InputHandler inputHandler, String labelText,
+	public ComponentInputDialog(
+			AppW app,
+			DialogData dialogData,
+			boolean autoHide,
+			boolean hasScrim,
+			InputHandler inputHandler,
+			String labelText,
 			String initText) {
 		this(app, dialogData, autoHide, hasScrim, inputHandler);
 		createGUI(labelText, initText);
@@ -43,8 +63,12 @@ public class ComponentInputDialog extends ComponentDialog
 	 * @param hasScrim - background should be greyed out
 	 * @param inputHandler - input handler
 	 */
-	protected ComponentInputDialog(AppW app, DialogData dialogData,
-			boolean autoHide, boolean hasScrim, InputHandler inputHandler) {
+	protected ComponentInputDialog(
+			AppW app,
+			DialogData dialogData,
+			boolean autoHide,
+			boolean hasScrim,
+			InputHandler inputHandler) {
 		super(app, dialogData, autoHide, hasScrim);
 		addStyleName("inputDialogComponent");
 		setPreventHide(true);
@@ -60,8 +84,7 @@ public class ComponentInputDialog extends ComponentDialog
 	}
 
 	private void createGUI(String labelText, String initText) {
-		inputTextField = new ComponentInputField((AppW) app,
-				"", labelText, "", initText, "");
+		inputTextField = new ComponentInputField((AppW) app, "", labelText, "", initText, "", null);
 		addDialogContent(inputTextField);
 	}
 
@@ -73,13 +96,15 @@ public class ComponentInputDialog extends ComponentDialog
 		this.inputHandler = inputHandler;
 	}
 
-	protected void processInputHandler(String inputText,
-			AsyncOperation<Boolean> callback) {
+	protected void processInputHandler(String inputText, AsyncOperation<Boolean> callback) {
 		inputHandler.processInput(inputText, this, callback);
 	}
 
+	/**
+	 * @return the current text of the input field.
+	 */
 	public String getInputText() {
-		return inputTextField.getTextField().getText();
+		return inputTextField.getText();
 	}
 
 	/**
@@ -88,7 +113,7 @@ public class ComponentInputDialog extends ComponentDialog
 	 * @return single line text input
 	 */
 	protected AutoCompleteTextFieldW getTextComponent() {
-		return inputTextField == null ? null : inputTextField.getTextField().getTextComponent();
+		return inputTextField == null ? null : inputTextField.getTextWidget();
 	}
 
 	@Override
@@ -114,8 +139,7 @@ public class ComponentInputDialog extends ComponentDialog
 	}
 
 	@Override
-	public boolean onUndefinedVariables(String string,
-			AsyncOperation<String[]> callback) {
+	public boolean onUndefinedVariables(String string, AsyncOperation<String[]> callback) {
 		return app.getGuiManager().checkAutoCreateSliders(string, callback);
 	}
 
@@ -136,13 +160,12 @@ public class ComponentInputDialog extends ComponentDialog
 	 * otherwise hide dialog
 	 */
 	public void processInput() {
-		inputHandler.processInput(getInputText(), this,
-				ok -> {
-					if (ok) {
-						toolAction();
-						hide();
-					}
-				});
+		inputHandler.processInput(getInputText(), this, ok -> {
+			if (ok) {
+				toolAction();
+				hide();
+			}
+		});
 	}
 
 	/**
@@ -156,7 +179,6 @@ public class ComponentInputDialog extends ComponentDialog
 	 * @param inputHandler input event handler
 	 */
 	public void addInputHandler(ProcessInput inputHandler) {
-		Dom.addEventListener(getTextComponent().getTextBox().getElement(),
-				"input", event -> inputHandler.onInput());
+		inputTextField.addInputHandler(inputHandler);
 	}
 }

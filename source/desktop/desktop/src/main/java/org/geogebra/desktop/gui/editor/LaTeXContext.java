@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.gui.editor;
 
 import java.awt.Color;
@@ -18,8 +34,7 @@ public class LaTeXContext extends ViewContext {
 	/**
 	 * TOKENS : A Map which contains the names of keywords
 	 */
-	private static final Map<String, Integer> TOKENS = new HashMap<>(
-			14);
+	private static final Map<String, Integer> TOKENS = new HashMap<>(14);
 
 	static {
 		TOKENS.put("Default", LexerConstants.DEFAULT);
@@ -69,7 +84,7 @@ public class LaTeXContext extends ViewContext {
 
 	/**
 	 * The constructor
-	 * 
+	 *
 	 * @param app
 	 *            the Application where this context is needed
 	 */
@@ -82,7 +97,7 @@ public class LaTeXContext extends ViewContext {
 
 	/**
 	 * Generate an attribute for a type of keyword
-	 * 
+	 *
 	 * @param keyword
 	 *            the name can be found in scinotesConfiguration.xml
 	 * @param type
@@ -139,7 +154,7 @@ public class LaTeXContext extends ViewContext {
 
 	/**
 	 * Generate a color for a type of keyword
-	 * 
+	 *
 	 * @param name
 	 *            the name can be found in scinotesConfiguration.xml
 	 * @param color

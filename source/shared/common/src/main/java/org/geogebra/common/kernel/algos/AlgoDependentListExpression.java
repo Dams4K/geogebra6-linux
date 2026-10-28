@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDependentNumber.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -51,20 +49,18 @@ import org.geogebra.common.util.debug.Log;
  * List expression, e.g. with L1 = {3, 2, 1}, L2 = {5, 1, 7} such an expression
  * could be L1 + L2
  */
-public class AlgoDependentListExpression extends AlgoElement
-		implements DependentAlgo {
+public class AlgoDependentListExpression extends AlgoElement implements DependentAlgo {
 
 	private GeoList list; // output
 
 	/**
 	 * Creates new dependent list algo.
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param root
 	 *            expression deining the list
 	 */
-
 	public AlgoDependentListExpression(Construction cons, ExpressionNode root) {
 		super(cons);
 		list = new GeoList(cons);
@@ -90,7 +86,7 @@ public class AlgoDependentListExpression extends AlgoElement
 
 	/**
 	 * Returns the resulting list
-	 * 
+	 *
 	 * @return resulting list
 	 */
 	public GeoList getList() {
@@ -99,7 +95,7 @@ public class AlgoDependentListExpression extends AlgoElement
 
 	/**
 	 * Returns the input expression
-	 * 
+	 *
 	 * @return input expression
 	 */
 	@Override
@@ -117,10 +113,8 @@ public class AlgoDependentListExpression extends AlgoElement
 		}
 
 		// get resulting list of ExpressionNodes
-		ExpressionValue evlist = list.getDefinition()
-				.evaluate(StringTemplate.defaultTemplate);
-		MyList myList = (evlist instanceof MyList) ? (MyList) evlist
-				: ((GeoList) evlist).getMyList();
+		ExpressionValue evlist = list.getDefinition().evaluate(StringTemplate.defaultTemplate);
+		MyList myList = (evlist instanceof MyList) ? (MyList) evlist : ((GeoList) evlist).getMyList();
 
 		if (!myList.isDefined()) {
 			list.setUndefined();
@@ -135,8 +129,7 @@ public class AlgoDependentListExpression extends AlgoElement
 		list.clear();
 
 		for (int i = 0; i < evalListSize; i++) {
-			ExpressionValue element = myList.get(i)
-					.evaluate(StringTemplate.defaultTemplate);
+			ExpressionValue element = myList.get(i).evaluate(StringTemplate.defaultTemplate);
 			GeoElement cached = null;
 			if (i < cachedListSize) {
 				cached = list.getCached(i);
@@ -148,14 +141,15 @@ public class AlgoDependentListExpression extends AlgoElement
 		}
 	}
 
-	private static GeoElementND toGeo(ExpressionValue element,
-			GeoElement cachedGeo, Construction cons) {
+	@SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
+	private static GeoElementND toGeo(
+			ExpressionValue element, GeoElement cachedGeo, Construction cons) {
 		GeoElementND geo = null;
 
 		// number result
 		if (element instanceof NumberValue) {
-			ExpressionNode definition = element.isGeoElement()
-					? ((GeoElement) element).getDefinition() : null;
+			ExpressionNode definition =
+					element.isGeoElement() ? ((GeoElement) element).getDefinition() : null;
 			double val = element.evaluateDouble();
 
 			// try to use cached element of same type
@@ -183,21 +177,19 @@ public class AlgoDependentListExpression extends AlgoElement
 				Function fy = isFunction(((MyVecNode) element).getY(), cons);
 				if (fx != null || fy != null) {
 					if (fx == null) {
-						fx = new Function(((MyVecNode) element).getX().wrap(),
-								fy.getFunctionVariable()
-										.deepCopy(cons.getKernel()));
+						fx = new Function(
+								((MyVecNode) element).getX().wrap(),
+								fy.getFunctionVariable().deepCopy(cons.getKernel()));
 					}
 					if (fy == null) {
-						fy = new Function(((MyVecNode) element).getY().wrap(),
-								fx.getFunctionVariable()
-										.deepCopy(cons.getKernel()));
+						fy = new Function(
+								((MyVecNode) element).getY().wrap(),
+								fx.getFunctionVariable().deepCopy(cons.getKernel()));
 					}
 					fx.initFunction();
 					fy.initFunction();
 					// TODO use parametric processor to allow lines, conics
-					GeoCurveCartesian curve = new GeoCurveCartesian(cons,
-							fx, fy,
-							null);
+					GeoCurveCartesian curve = new GeoCurveCartesian(cons, fx, fy, null);
 					cons.removeFromConstructionList(curve);
 					curve.setInterval(-10, 10);
 					return curve;
@@ -233,8 +225,7 @@ public class AlgoDependentListExpression extends AlgoElement
 			if (cachedGeo != null) {
 				// the cached element is a point: set value
 				if (cachedGeo.isGeoPoint()) {
-					((GeoPointND) cachedGeo).setCoords(vec.getX(), vec.getY(),
-							vec.getZ(), 1);
+					((GeoPointND) cachedGeo).setCoords(vec.getX(), vec.getY(), vec.getZ(), 1);
 					geo = cachedGeo;
 				}
 			}
@@ -262,17 +253,16 @@ public class AlgoDependentListExpression extends AlgoElement
 			 * multiplication) // try to use cached element of type GeoList
 			 * GeoList list2 = null; if (i < cachedListSize) { GeoElement
 			 * cachedGeo = list.getCached(i);
-			 * 
+			 *
 			 * // the cached element is a number: set value if
 			 * (cachedGeo.isGeoList()) { list2 = (GeoList) cachedGeo; } }
-			 * 
+			 *
 			 * if (list2 == null) { list2 = new GeoList(cons); }
 			 */
 
 			for (int j = 0; j < myList2.size(); j++) {
 				ExpressionValue en = myList2.get(j);
-				ExpressionValue ev = en
-						.evaluate(StringTemplate.defaultTemplate);
+				ExpressionValue ev = en.evaluate(StringTemplate.defaultTemplate);
 				GeoElementND geo2 = toGeo(ev, null, cons);
 				if (geo2 != null) {
 					list2.add(geo2);
@@ -287,8 +277,7 @@ public class AlgoDependentListExpression extends AlgoElement
 
 				// the cached element is a point: set value
 				if (cachedGeo.isGeoText()) {
-					((GeoText) cachedGeo).setTextString(
-							str.toValueString(StringTemplate.defaultTemplate));
+					((GeoText) cachedGeo).setTextString(str.toValueString(StringTemplate.defaultTemplate));
 					geo = cachedGeo;
 				}
 			}
@@ -296,8 +285,7 @@ public class AlgoDependentListExpression extends AlgoElement
 			// no cached point: create new one
 			if (geo == null) {
 				GeoText text = new GeoText(cons);
-				text.setTextString(
-						str.toValueString(StringTemplate.defaultTemplate));
+				text.setTextString(str.toValueString(StringTemplate.defaultTemplate));
 				geo = text;
 			}
 
@@ -349,16 +337,14 @@ public class AlgoDependentListExpression extends AlgoElement
 			GeoFunction fun = new GeoFunction(cons, (Function) element);
 			return getFunction(fun, cachedGeo);
 		} else if (element instanceof FunctionNVar) {
-			GeoFunctionNVar fun = new GeoFunctionNVar(cons,
-					(FunctionNVar) element);
+			GeoFunctionNVar fun = new GeoFunctionNVar(cons, (FunctionNVar) element);
 			return toGeo(fun, cachedGeo, cons);
 		} else if (element instanceof GeoElement) {
 			GeoElement geo0 = (GeoElement) element;
 			if (cachedGeo != null) {
 
 				// the cached element is the same type: set value
-				if (cachedGeo.getGeoClassType()
-						.equals(geo0.getGeoClassType())) {
+				if (cachedGeo.getGeoClassType().equals(geo0.getGeoClassType())) {
 					cachedGeo.set(geo0);
 					geo = cachedGeo;
 				}
@@ -381,13 +367,11 @@ public class AlgoDependentListExpression extends AlgoElement
 			return (Function) val.unwrap();
 		}
 		if (val.unwrap() instanceof GeoFunction) {
-			return ((GeoFunction) val.unwrap()).getFunction()
-					.deepCopy(cons.getKernel());
+			return ((GeoFunction) val.unwrap()).getFunction().deepCopy(cons.getKernel());
 		}
 		if (val.wrap().containsFreeFunctionVariable(null)) {
 
-			FunctionNVar fun = cons.getKernel().getAlgebraProcessor()
-					.makeFunctionNVar(val.wrap());
+			FunctionNVar fun = cons.getKernel().getAlgebraProcessor().makeFunctionNVar(val.wrap());
 			if (fun instanceof Function) {
 				return ((Function) fun).deepCopy(cons.getKernel());
 			}
@@ -416,9 +400,8 @@ public class AlgoDependentListExpression extends AlgoElement
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// was defined as e.g. L = 3 * {a, b, c}
 		return list.getDefinition().toString(tpl);
 	}
-
 }

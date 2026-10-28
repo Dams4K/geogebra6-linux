@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util.shape;
 
 import java.util.Objects;
@@ -119,7 +135,8 @@ public final class Rectangle {
 	 * @return A new rectangle inset by the given x and y margins.
 	 */
 	public Rectangle insetBy(double dx, double dy) {
-		return new Rectangle(new Point(getMinX() + dx, getMinY() + dy),
+		return new Rectangle(
+				new Point(getMinX() + dx, getMinY() + dy),
 				new Size(getWidth() - 2 * dx, getHeight() - 2 * dy));
 	}
 
@@ -129,8 +146,7 @@ public final class Rectangle {
 			return false;
 		}
 		Rectangle other = (Rectangle) object;
-		return Objects.equals(origin, other.origin)
-				&& Objects.equals(size, other.size);
+		return Objects.equals(origin, other.origin) && Objects.equals(size, other.size);
 	}
 
 	@Override

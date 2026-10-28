@@ -1,7 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 
@@ -14,27 +30,26 @@ import org.geogebra.common.kernel.geos.GeoLine;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.main.AppCommon3D;
 import org.geogebra.common.plugin.GeoClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class EuclidianStyleTest {
+class EuclidianStyleTest {
 	private AppCommon3D app;
 	private ConstructionDefaults cd;
 	private Construction construction;
 
-	@Before
-	public void setupApp() {
+	@BeforeEach
+	void setupApp() {
 		app = AppCommonFactory.create3D();
 		construction = app.getKernel().getConstruction();
 		cd = construction.getConstructionDefaults();
 	}
 
 	@Test
-	public void textShouldBeTransparentOnReload() {
+	void textShouldBeTransparentOnReload() {
 		GeoElementND transparentText = t("trans=\"aaa\"");
 		assertNull(transparentText.getBackgroundColor());
-		GeoElement defaultText = cd
-				.getDefaultGeo(cd.getDefaultType(null, GeoClass.TEXT));
+		GeoElement defaultText = cd.getDefaultGeo(cd.getDefaultType(null, GeoClass.TEXT));
 		defaultText.setBackgroundColor(GColor.WHITE);
 		GeoElementND whiteText = t("\"aaa\"");
 		assertEquals(GColor.WHITE, whiteText.getBackgroundColor());
@@ -44,20 +59,19 @@ public class EuclidianStyleTest {
 	}
 
 	@Test
-	public void linePropertiesShouldApplyToNewGeo() {
+	void linePropertiesShouldApplyToNewGeo() {
 		EuclidianController ec = app.getActiveEuclidianView().getEuclidianController();
 		EuclidianStyleBarSelection selection = new EuclidianStyleBarSelection(app, ec);
 		app.setMode(EuclidianConstants.MODE_JOIN);
 		selection.updateDefaultsForMode(EuclidianConstants.MODE_JOIN);
 		ArrayList<GeoElement> geos = selection.getGeos();
-		EuclidianStyleBarStatic.applyColor(GColor.GREEN, 1, app, geos);
+		EuclidianStyleBarStatic.applyColor(GColor.GREEN, 1, geos);
 		EuclidianStyleBarStatic.applyLineStyle(1, 5, app, geos);
 		assertEquals(GColor.GREEN, new GeoLine(construction).getObjectColor());
 		assertEquals(5, new GeoLine(construction).getLineThickness());
 	}
 
 	private GeoElementND t(String string) {
-		return app.getKernel().getAlgebraProcessor()
-				.processAlgebraCommand(string, false)[0];
+		return app.getKernel().getAlgebraProcessor().processAlgebraCommand(string, false)[0];
 	}
 }

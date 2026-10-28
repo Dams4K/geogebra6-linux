@@ -1,9 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.properties.util;
 
 import java.util.Arrays;
 
 import org.geogebra.common.properties.EnumeratedProperty;
-import org.geogebra.common.properties.GroupedEnumeratedProperty;
 
 /**
  * This is a utility class that provides methods for displaying data with dividers for a
@@ -11,20 +26,12 @@ import org.geogebra.common.properties.GroupedEnumeratedProperty;
  * <p>It allows converting between model indices
  * (corresponding to a valid position in {@link EnumeratedProperty#getValues()})
  * and view indices (corresponds to a valid position with an array containing values and dividers
- * together {see @link GroupedEnumeratedProperty#getGroupDividerIndices()}).</p>
+ * together see {@link EnumeratedProperty#getGroupDividerIndices()}).</p>
  */
 public final class DividerIndicesViewAdapter {
 
 	private final int[] dividerIndices;
 	private final int valueCount;
-
-	/**
-	 * Constructs an adapter for a GroupedEnumeratedProperty.
-	 * @param property property to construct adapter for
-	 */
-	public DividerIndicesViewAdapter(GroupedEnumeratedProperty<?> property) {
-		this(property.getGroupDividerIndices(), property.getValues().size());
-	}
 
 	/**
 	 * Constructs an adapter for a given divider indices and value count.

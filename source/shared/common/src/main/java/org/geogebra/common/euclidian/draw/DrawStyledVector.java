@@ -1,5 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GArea;
 import org.geogebra.common.awt.GBasicStroke;
 import org.geogebra.common.awt.GGraphics2D;
@@ -10,7 +27,6 @@ import org.geogebra.common.awt.GShape;
 import org.geogebra.common.euclidian.EuclidianStatic;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.clipping.ClipLine;
-import org.geogebra.common.factories.AwtFactory;
 
 public class DrawStyledVector {
 
@@ -55,8 +71,11 @@ public class DrawStyledVector {
 		// A or B off screen
 		// clip at screen, that's important for huge coordinates
 		// check if any of vector is on-screen
-		GPoint2D[] clippedPoints = ClipLine.getClipped(model.getStartX(),
-				model.getStartY(), model.getEndX(), model.getEndY(),
+		GPoint2D[] clippedPoints = ClipLine.getClipped(
+				model.getStartX(),
+				model.getStartY(),
+				model.getEndX(),
+				model.getEndY(),
 				view.getMinXScreen() - EuclidianStatic.CLIP_DISTANCE,
 				view.getMaxXScreen() + EuclidianStatic.CLIP_DISTANCE,
 				view.getMinYScreen() - EuclidianStatic.CLIP_DISTANCE,
@@ -64,7 +83,7 @@ public class DrawStyledVector {
 				tmpClipPoints);
 		return clippedPoints == null;
 	}
-	
+
 	private void createVectorShape(GBasicStroke stroke, double length, VectorShape vectorShape) {
 		area = AwtFactory.getPrototype().newArea();
 		GShape strokedLine = stroke.createStrokedShape(line, 255);
@@ -81,6 +100,9 @@ public class DrawStyledVector {
 		}
 	}
 
+	/**
+	 * @return bounds of the drawn shape, or null if it was not drawn yet
+	 */
 	public GRectangle getBounds() {
 		return area == null ? null : area.getBounds();
 	}

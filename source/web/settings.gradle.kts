@@ -5,6 +5,10 @@ pluginManagement {
     includeBuild("../build-logic")
 }
 
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
 dependencyResolutionManagement {
     repositories {
         maven { url = uri("https://repo.geogebra.net/releases") }
@@ -17,6 +21,7 @@ dependencyResolutionManagement {
     }
 }
 
+include("canvas-web")
 include("carota-web")
 include("editor-web")
 include("gwt-generator")

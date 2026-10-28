@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -31,8 +35,8 @@ public class AlgoAppend extends AlgoElement {
 	private static final int ADD_OBJECT_AT_START = 0;
 	private static final int ADD_OBJECT_AT_END = 1;
 
-	private AlgoAppend(Construction cons, String label, GeoList inputList,
-			GeoElement geo, int order) {
+	private AlgoAppend(
+			Construction cons, String label, GeoList inputList, GeoElement geo, int order) {
 		super(cons);
 
 		this.order = order;
@@ -57,10 +61,8 @@ public class AlgoAppend extends AlgoElement {
 	 * @param geo
 	 *            appended element
 	 */
-	public AlgoAppend(Construction cons, String label, GeoList inputList,
-			GeoElement geo) {
+	public AlgoAppend(Construction cons, String label, GeoList inputList, GeoElement geo) {
 		this(cons, label, inputList, geo, ADD_OBJECT_AT_END);
-
 	}
 
 	/**
@@ -73,8 +75,7 @@ public class AlgoAppend extends AlgoElement {
 	 * @param geo
 	 *            prepended element
 	 */
-	public AlgoAppend(Construction cons, String label, GeoElement geo,
-			GeoList inputList) {
+	public AlgoAppend(Construction cons, String label, GeoElement geo, GeoList inputList) {
 		this(cons, label, inputList, geo, ADD_OBJECT_AT_START);
 	}
 
@@ -134,5 +135,4 @@ public class AlgoAppend extends AlgoElement {
 			outputList.add(geo.copyInternal(cons));
 		}
 	}
-
 }

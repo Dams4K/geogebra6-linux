@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -24,22 +28,21 @@ import org.geogebra.common.kernel.geos.GeoPoint;
 
 /**
  * Create a dot plot.
- * 
+ *
  * Input: list of unsorted raw numeric data Output: sorted list of points
  * forming a dot plot of the raw data
- * 
+ *
  * A dot plot is a set of points for which: x coordinates = values from a list
  * of numeric data y coordinates = number of times the x data value has occurred
- * 
+ *
  * example: raw data = { 5,11,12,12,12,5 } dot plot = { (5,1), (5,2), (11,1),
  * (12,1), (12,2), (12,3) }
- * 
+ *
  * Adapted from AlgoSort and AlgoPointList
- * 
+ *
  * @author G.Sturr
  * @version 2010-8-10
  */
-
 public class AlgoDotPlot extends AlgoUsingUniqueAndFrequency {
 
 	private GeoList inputList; // input
@@ -57,20 +60,18 @@ public class AlgoDotPlot extends AlgoUsingUniqueAndFrequency {
 		this(cons, inputList, null, null);
 	}
 
-	protected AlgoDotPlot(Construction cons, String label, GeoList inputList,
-			GeoNumeric scale) {
+	protected AlgoDotPlot(Construction cons, String label, GeoList inputList, GeoNumeric scale) {
 		this(cons, inputList, null, scale);
 		outputList.setLabel(label);
 	}
 
-	protected AlgoDotPlot(Construction cons, String label, GeoList inputList,
-			GeoBoolean stackDots) {
+	protected AlgoDotPlot(Construction cons, String label, GeoList inputList, GeoBoolean stackDots) {
 		this(cons, inputList, stackDots, null);
 		outputList.setLabel(label);
 	}
 
-	protected AlgoDotPlot(Construction cons, GeoList inputList,
-			GeoBoolean stackDots, GeoNumeric scale) {
+	protected AlgoDotPlot(
+			Construction cons, GeoList inputList, GeoBoolean stackDots, GeoNumeric scale) {
 		super(cons);
 		this.inputList = inputList;
 		this.stackAdjacentDots = stackDots;
@@ -85,7 +86,6 @@ public class AlgoDotPlot extends AlgoUsingUniqueAndFrequency {
 		};
 		setInputOutput();
 		compute();
-
 	}
 
 	@Override
@@ -174,20 +174,17 @@ public class AlgoDotPlot extends AlgoUsingUniqueAndFrequency {
 			for (int y = 1; y <= height; y++) {
 				double scaledY = getScaledY(y);
 				if (index < oldListSize) {
-					((GeoPoint) outputList.get(index)).setCoords(x, scaledY,
-							1.0);
+					((GeoPoint) outputList.get(index)).setCoords(x, scaledY, 1.0);
 				} else {
 					outputList.addPoint(x, scaledY, 1.0, null);
 				}
 				index++;
 			}
-
 		}
-
 	}
 
 	/**
-	 * 
+	 *
 	 * @param y
 	 *            current height
 	 * @return scaled y
@@ -200,10 +197,16 @@ public class AlgoDotPlot extends AlgoUsingUniqueAndFrequency {
 		return y;
 	}
 
+	/**
+	 * @return list of unique x values used for the dot plot
+	 */
 	public GeoList getUniqueXList() {
 		return algoFreq.getValue();
 	}
 
+	/**
+	 * @return list of frequencies corresponding to the unique x values
+	 */
 	public GeoList getFrequencyList() {
 		return algoFreq.getResult();
 	}
@@ -212,6 +215,9 @@ public class AlgoDotPlot extends AlgoUsingUniqueAndFrequency {
 		return toolTipText;
 	}
 
+	/**
+	 * @param text tooltip text (for classic 5)
+	 */
 	public void setToolTipPointText(String text) {
 		toolTipText = text;
 	}
@@ -226,5 +232,4 @@ public class AlgoDotPlot extends AlgoUsingUniqueAndFrequency {
 	public double getScaleFactor() {
 		return scaleFactor;
 	}
-
 }

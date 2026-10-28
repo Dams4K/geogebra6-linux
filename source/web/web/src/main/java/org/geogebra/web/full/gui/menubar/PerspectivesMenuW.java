@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.menubar;
 
 import org.geogebra.common.exam.ExamController;
@@ -17,11 +33,12 @@ import org.gwtproject.resources.client.ResourcePrototype;
 /**
  * Web implementation of PerspectivesMenu
  */
-public class PerspectivesMenuW extends Submenu {
+public final class PerspectivesMenuW extends Submenu {
 
 	/** Application */
 	AppW app;
-	private final ExamController examController = GlobalScope.examController;
+
+	private final ExamController examController;
 
 	/**
 	 * @param app application
@@ -29,6 +46,7 @@ public class PerspectivesMenuW extends Submenu {
 	public PerspectivesMenuW(AppW app) {
 		super("apps", app);
 		this.app = app;
+		this.examController = GlobalScope.getExamController(app);
 		addExpandableStyleWithColor(false);
 		initActions();
 	}
@@ -47,10 +65,10 @@ public class PerspectivesMenuW extends Submenu {
 				addItem(MainMenu.getMenuBarItem(
 						GuiResources.INSTANCE.menu_icon_exam24(),
 						app.getLocalization().getMenu("exam_menu_entry"), // "Exam
-																					// Mode"
+						// Mode"
 						new MenuCommand(app) {
 							@Override
-							public void doExecute() {
+							void doExecute() {
 								app.getSaveController().showDialogIfNeeded(getExamCallback(), true);
 							}
 						}));
@@ -63,15 +81,13 @@ public class PerspectivesMenuW extends Submenu {
 		if (perspective == null) {
 			return;
 		}
-		AriaMenuItem item = addItem(MainMenu.getMenuBarItem(icon,
-				app.getLocalization()
-						.getMenu(perspective.getId()),
-				new MenuCommand(app) {
+		AriaMenuItem item = addItem(MainMenu.getMenuBarItem(
+				icon, app.getLocalization().getMenu(perspective.getId()), new MenuCommand(app) {
 
 					@Override
-					public void doExecute() {
+					void doExecute() {
 						setPerspective(app, perspective);
-						if (!examController.isExamActive()) {
+						if (!GlobalScope.isExamActive(app)) {
 							app.showStartTooltip(perspective);
 						}
 					}
@@ -95,8 +111,7 @@ public class PerspectivesMenuW extends Submenu {
 	 */
 	static void setPerspective(AppW app, Perspective perspective) {
 		app.persistWidthAndHeight();
-		boolean changed = app.getGuiManager().getLayout()
-				.applyPerspective(perspective);
+		boolean changed = app.getGuiManager().getLayout().applyPerspective(perspective);
 		app.updateViewSizes();
 		app.getGuiManager().updateMenubar();
 		// set active perspective for highlighting
@@ -105,8 +120,7 @@ public class PerspectivesMenuW extends Submenu {
 		if (StringUtil.emptyOrZero(app.getTubeId())
 				&& StringUtil.empty(app.getAppletParameters().getParamFeatureSet())
 				&& app.getAppletParameters().getDataParamApp()) {
-			Browser.changeMetaTitle(app.getLocalization()
-					.getMenu(perspective.getId()));
+			Browser.changeMetaTitle(app.getLocalization().getMenu(perspective.getId()));
 			Browser.changeUrl("/classic#" + perspective.getSlug());
 		}
 		if (changed) {

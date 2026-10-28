@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.dialog;
 
 import org.geogebra.common.GeoGebraConstants;
@@ -12,7 +28,6 @@ import org.gwtproject.user.client.ui.FlowPanel;
 /**
  * Audio / video / embed dialog.
  */
-
 public abstract class MediaDialog extends ComponentDialog {
 	protected MediaInputPanel mediaInputPanel;
 
@@ -21,8 +36,7 @@ public abstract class MediaDialog extends ComponentDialog {
 	 * @param dialogTitle title of dialog
 	 */
 	public MediaDialog(AppW app, String dialogTitle) {
-		super(app, new DialogData(dialogTitle, "Cancel", "Insert"),
-				false, true);
+		super(app, new DialogData(dialogTitle, "Cancel", "Insert"), false, true);
 		addStyleName("mediaDialog");
 		addStyleName(dialogTitle);
 		buildContent();
@@ -66,8 +80,7 @@ public abstract class MediaDialog extends ComponentDialog {
 
 	@Override
 	public void hide() {
-		app.getGuiManager().setMode(EuclidianConstants.MODE_MOVE,
-				ModeSetter.TOOLBAR);
+		app.getGuiManager().setMode(EuclidianConstants.MODE_MOVE, ModeSetter.TOOLBAR);
 		super.hide();
 	}
 
@@ -80,7 +93,9 @@ public abstract class MediaDialog extends ComponentDialog {
 	}
 
 	protected void onMediaElementCreated(GeoElement geoElement) {
-		getApplication().getActiveEuclidianView()
-				.getEuclidianController().selectAndShowSelectionUI(geoElement);
+		getApplication()
+				.getActiveEuclidianView()
+				.getEuclidianController()
+				.selectAndShowSelectionUI(geoElement);
 	}
 }

@@ -1,13 +1,17 @@
 /*
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by
-the Free Software Foundation.
-
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -44,8 +48,7 @@ public class AlgoPolynomialFromFunctionNVar extends AlgoElement {
 	 * @param label output label
 	 * @param f function, possibly polynomial
 	 */
-	public AlgoPolynomialFromFunctionNVar(Construction cons, String label,
-			GeoFunctionNVar f) {
+	public AlgoPolynomialFromFunctionNVar(Construction cons, String label, GeoFunctionNVar f) {
 		super(cons);
 		this.f = f;
 
@@ -110,7 +113,7 @@ public class AlgoPolynomialFromFunctionNVar extends AlgoElement {
 		if (poly == null) {
 			poly = new ExpressionNode(kernel, 0);
 		}
-		FunctionNVar functionNVar = new FunctionNVar(poly, new FunctionVariable[]{var1, var2});
+		FunctionNVar functionNVar = new FunctionNVar(poly, new FunctionVariable[] {var1, var2});
 		g.setDefined(true);
 		g.setFunction(functionNVar);
 	}
@@ -130,10 +133,8 @@ public class AlgoPolynomialFromFunctionNVar extends AlgoElement {
 					continue; // this part vanished
 				}
 
-				CoeffPowerProduct product =
-						new CoeffPowerProduct(
-								makeProduct(makePowerExp(var1, i), makePowerExp(var2, j)),
-								coeffValue, i + j, i);
+				CoeffPowerProduct product = new CoeffPowerProduct(
+						makeProduct(makePowerExp(var1, i), makePowerExp(var2, j)), coeffValue, i + j, i);
 				products.add(product);
 			}
 		}
@@ -141,9 +142,9 @@ public class AlgoPolynomialFromFunctionNVar extends AlgoElement {
 	}
 
 	private ExpressionNode createPolyFrom(List<CoeffPowerProduct> products) {
-		for (CoeffPowerProduct p: products) {
-			poly = AlgoPolynomialFromCoordinates.addToPoly(poly, p.getExpression(),
-					p.getCoeffValue(), kernel);
+		for (CoeffPowerProduct p : products) {
+			poly = AlgoPolynomialFromCoordinates.addToPoly(
+					poly, p.getExpression(), p.getCoeffValue(), kernel);
 		}
 		return poly;
 	}
@@ -160,15 +161,13 @@ public class AlgoPolynomialFromFunctionNVar extends AlgoElement {
 
 	private ExpressionValue makePowerExp(FunctionVariable fVar, int power) {
 		switch (power) {
-		case 0:
-			return null;
-		case 1:
-			return fVar;
+			case 0:
+				return null;
+			case 1:
+				return fVar;
 
-		default:
-			return new ExpressionNode(kernel, fVar, Operation.POWER,
-					new MyDouble(kernel, power));
+			default:
+				return new ExpressionNode(kernel, fVar, Operation.POWER, new MyDouble(kernel, power));
 		}
-
 	}
 }

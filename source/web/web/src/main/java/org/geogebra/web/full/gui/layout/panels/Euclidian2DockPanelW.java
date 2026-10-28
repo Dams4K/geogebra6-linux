@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.layout.panels;
 
 import org.geogebra.common.euclidian.EuclidianStyleBar;
@@ -14,11 +30,10 @@ import org.gwtproject.user.client.ui.Widget;
  * This class may be redundant since EuclidianDockPanelW, but GeoGebra Desktop
  * also uses two different classes for similar purposes, so its behaviour was
  * imitated here.
- * 
+ *
  * @author arpad
  */
-
-public class Euclidian2DockPanelW extends EuclidianDockPanelWAbstract
+public final class Euclidian2DockPanelW extends EuclidianDockPanelWAbstract
 		implements EuclidianPanelWAbstract {
 
 	EuclidianStyleBar espanel;
@@ -116,8 +131,7 @@ public class Euclidian2DockPanelW extends EuclidianDockPanelWAbstract
 	@Override
 	public void calculateEnvironment() {
 		if (app.hasEuclidianView2EitherShowingOrNot(1)) {
-			app.getEuclidianView2(1).getEuclidianController()
-					.calculateEnvironment();
+			app.getEuclidianView2(1).getEuclidianController().calculateEnvironment();
 		}
 	}
 
@@ -125,5 +139,4 @@ public class Euclidian2DockPanelW extends EuclidianDockPanelWAbstract
 	public void resizeView(int width, int height) {
 		app.ggwGraphicsView2DimChanged(width, height);
 	}
-
 }

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -27,7 +31,7 @@ import org.geogebra.common.kernel.geos.GeoList;
 import org.geogebra.common.plugin.Operation;
 
 /**
- * 
+ *
  * @author Markus
  */
 public class AlgoIf extends AlgoElement {
@@ -38,7 +42,7 @@ public class AlgoIf extends AlgoElement {
 
 	/**
 	 * Algorithm for handling of an if-then-else construct
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -47,9 +51,11 @@ public class AlgoIf extends AlgoElement {
 	 *            bool expressions
 	 * @param alternatives
 	 *            possible outputs
-	 * 
+	 *
 	 */
-	public AlgoIf(Construction cons, String label,
+	public AlgoIf(
+			Construction cons,
+			String label,
 			ArrayList<GeoBoolean> conditions,
 			ArrayList<GeoElement> alternatives) {
 		super(cons);
@@ -70,7 +76,7 @@ public class AlgoIf extends AlgoElement {
 	}
 
 	private void updateListType() {
-		for (GeoElement alt: alternatives) {
+		for (GeoElement alt : alternatives) {
 			if (alt.isGeoList()) {
 				String typeStringForXML = ((GeoList) alt).getTypeStringForXML();
 				if (typeStringForXML != null) {
@@ -126,7 +132,6 @@ public class AlgoIf extends AlgoElement {
 				} else {
 					setResult(last);
 				}
-
 			}
 		} catch (Exception e) {
 			// e.printStackTrace();
@@ -137,8 +142,7 @@ public class AlgoIf extends AlgoElement {
 	private void setResult(GeoElement newResult) {
 		// undefined should work for all input types
 		// we don't want to do list.set(number) as it has different semantics
-		if (!newResult.isDefined()
-				|| (result.isGeoList() && newResult.isGeoNumeric())) {
+		if (!newResult.isDefined() || (result.isGeoList() && newResult.isGeoNumeric())) {
 			result.setUndefined();
 			return;
 		}
@@ -146,39 +150,35 @@ public class AlgoIf extends AlgoElement {
 		result.set(newResult);
 
 		if (!newResult.isIndependent()) {
-			result.setDefinition(newResult.getDefinition() == null ? null
-					: newResult.getDefinition().deepCopy(kernel));
+			result.setDefinition(
+					newResult.getDefinition() == null ? null : newResult.getDefinition().deepCopy(kernel));
 		}
 		if (newResult.getDrawAlgorithm() instanceof DrawInformationAlgo) {
-			result.setDrawAlgorithm(
-					((DrawInformationAlgo) newResult.getDrawAlgorithm())
-							.copy());
+			result.setDrawAlgorithm(((DrawInformationAlgo) newResult.getDrawAlgorithm()).copy());
 		}
-
 	}
 
 	/**
 	 * For Curve[If[t&gt;0,t^2,-t^2],t,t,-5,5]
-	 * 
+	 *
 	 * @return expression expansion of this algo
 	 */
 	public ExpressionNode toExpression() {
 		if (this.alternatives.size() == 1) {
-			return new ExpressionNode(kernel,
-					kernel.convertNumberValueToExpressionNode(
-							this.conditions.get(0)),
-					Operation.IF, kernel.convertNumberValueToExpressionNode(
-							this.alternatives.get(0)));
+			return new ExpressionNode(
+					kernel,
+					kernel.convertNumberValueToExpressionNode(this.conditions.get(0)),
+					Operation.IF,
+					kernel.convertNumberValueToExpressionNode(this.alternatives.get(0)));
 		} else if (this.conditions.size() == 1) {
-			return new ExpressionNode(kernel,
-					new MyNumberPair(kernel,
-							kernel.convertNumberValueToExpressionNode(
-									this.conditions.get(0)),
-							kernel.convertNumberValueToExpressionNode(
-									this.alternatives.get(0))),
+			return new ExpressionNode(
+					kernel,
+					new MyNumberPair(
+							kernel,
+							kernel.convertNumberValueToExpressionNode(this.conditions.get(0)),
+							kernel.convertNumberValueToExpressionNode(this.alternatives.get(0))),
 					Operation.IF_ELSE,
-					kernel.convertNumberValueToExpressionNode(
-							this.alternatives.get(1)));
+					kernel.convertNumberValueToExpressionNode(this.alternatives.get(1)));
 		}
 		MyList cond = new MyList(kernel), functions = new MyList(kernel);
 		for (GeoBoolean f : conditions) {
@@ -196,7 +196,6 @@ public class AlgoIf extends AlgoElement {
 			if (conditions.get(i).getBoolean()) {
 				return !alternatives.get(i).isDefined();
 			}
-
 		}
 		return false;
 	}
@@ -211,10 +210,8 @@ public class AlgoIf extends AlgoElement {
 		if (result instanceof FunctionalNVar && result.isLabelSet()) {
 			FunctionalNVar functionalNVar = (FunctionalNVar) result;
 			String rhs = toString(tpl);
-			return result.getLabel(tpl) + "("
-					+ functionalNVar.getVarString(tpl) + ") = " + rhs;
+			return result.getLabel(tpl) + "(" + functionalNVar.getVarString(tpl) + ") = " + rhs;
 		}
 		return super.toExpString(tpl);
 	}
-
 }

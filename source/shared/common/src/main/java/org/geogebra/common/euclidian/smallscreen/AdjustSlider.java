@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.smallscreen;
 
 import org.geogebra.common.euclidian.EuclidianView;
@@ -39,11 +55,9 @@ public class AdjustSlider extends AdjustWidget {
 		origY = number.getOrigSliderY();
 
 		width = number.getSliderWidth();
-		origWidth = number.getOrigSliderWidth() == null ? 0
-				: number.getOrigSliderWidth().doubleValue();
+		origWidth = number.getOrigSliderWidth() == null ? 0 : number.getOrigSliderWidth();
 
 		horizontal = number.isSliderHorizontal();
-
 	}
 
 	@Override
@@ -56,8 +70,10 @@ public class AdjustSlider extends AdjustWidget {
 			return true;
 		}
 
-		return DoubleUtil.isEqual(x, origX) && origX + origWidth < view.getWidth()
-				&& DoubleUtil.isEqual(origWidth, width) && DoubleUtil.isEqual(y, origY)
+		return DoubleUtil.isEqual(x, origX)
+				&& origX + origWidth < view.getWidth()
+				&& DoubleUtil.isEqual(origWidth, width)
+				&& DoubleUtil.isEqual(y, origY)
 				&& origY < view.getHeight();
 	}
 
@@ -67,10 +83,12 @@ public class AdjustSlider extends AdjustWidget {
 			return true;
 		}
 
-		if (DoubleUtil.isEqual(x, origX) && origX < view.getViewWidth() - MARGIN_X
+		if (DoubleUtil.isEqual(x, origX)
+				&& origX < view.getViewWidth() - MARGIN_X
 				&& DoubleUtil.isEqual(y, origY)
 				&& origY < view.getViewHeight() - MARGIN_Y
-				&& origY - origWidth > 0 && DoubleUtil.isEqual(origWidth, width)) {
+				&& origY - origWidth > 0
+				&& DoubleUtil.isEqual(origWidth, width)) {
 			Log.debug("VSlider " + number.getLabelSimple() + " is ON screen");
 			return true;
 		}
@@ -120,8 +138,7 @@ public class AdjustSlider extends AdjustWidget {
 		if (y > maxY) {
 			y = maxY;
 		}
-		Log.debug("[AS] slider " + number.getLabelSimple()
-				+ " y: " + y + " maxY: " + maxY);
+		Log.debug("[AS] slider " + number.getLabelSimple() + " y: " + y + " maxY: " + maxY);
 	}
 
 	private void adjustToTop() {
@@ -133,12 +150,11 @@ public class AdjustSlider extends AdjustWidget {
 		if (x > maxX) {
 			x = maxX;
 		}
-
 	}
 
 	/**
 	 * Makes a slider onScreen with no scaling enabled.
-	 * 
+	 *
 	 * @param num
 	 *            The geo represents the slider.
 	 * @param view
@@ -148,6 +164,5 @@ public class AdjustSlider extends AdjustWidget {
 		AdjustSlider adjust = new AdjustSlider(num, view);
 		adjust.setDefaultRatio();
 		adjust.apply();
-
 	}
 }

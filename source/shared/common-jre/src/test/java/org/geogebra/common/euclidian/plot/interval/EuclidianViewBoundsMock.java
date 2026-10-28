@@ -1,7 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.plot.interval;
 
+import org.geogebra.common.awt.GShape;
 import org.geogebra.common.kernel.interval.Interval;
-import org.geogebra.common.kernel.interval.function.IntervalTuple;
 
 public class EuclidianViewBoundsMock implements EuclidianViewBounds {
 	private final double xmin;
@@ -26,17 +42,6 @@ public class EuclidianViewBoundsMock implements EuclidianViewBounds {
 		this.ymax = ymax;
 		width = (int) Math.round(xmax - xmin);
 		height = (int) Math.round(ymax - ymin);
-	}
-
-	/**
-	 * @param range of the view
-	 * @param width in pixels
-	 * @param height in pixels
-	 */
-	public EuclidianViewBoundsMock(IntervalTuple range, int width, int height) {
-		this(range.x().getLow(), range.x().getHigh(), range.y().getLow(), range.y().getHigh());
-		this.width = width;
-		this.height = height;
 	}
 
 	@Override
@@ -96,8 +101,7 @@ public class EuclidianViewBoundsMock implements EuclidianViewBounds {
 
 	@Override
 	public Interval toScreenIntervalY(Interval y) {
-		return new Interval(toScreenCoordXd(y.getLow()),
-				toScreenCoordYd(y.getHigh()));
+		return new Interval(toScreenCoordXd(y.getLow()), toScreenCoordYd(y.getHigh()));
 	}
 
 	@Override
@@ -132,6 +136,11 @@ public class EuclidianViewBoundsMock implements EuclidianViewBounds {
 	}
 
 	@Override
+	public double getInvXscale() {
+		return 1;
+	}
+
+	@Override
 	public double getInvYscale() {
 		return 1;
 	}
@@ -146,5 +155,30 @@ public class EuclidianViewBoundsMock implements EuclidianViewBounds {
 				+ ", width=" + width
 				+ ", height=" + height
 				+ '}';
+	}
+
+	@Override
+	public double getXZero() {
+		return 0;
+	}
+
+	@Override
+	public double getYZero() {
+		return 0;
+	}
+
+	@Override
+	public GShape getBoundingPath() {
+		return null;
+	}
+
+	@Override
+	public double getXScale() {
+		return 1;
+	}
+
+	@Override
+	public double getYScale() {
+		return 1;
 	}
 }

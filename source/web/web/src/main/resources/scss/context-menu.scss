@@ -35,7 +35,7 @@
 			}
 
 			.checkMarkMenuItem, .collapseMenuItem {
-				padding-right: 24px;
+				padding-right: 36px;
 			}
 
 			img {
@@ -48,7 +48,7 @@
 				opacity: 0.54;
 			}
 
-			.fa-light {
+			.fa-light, .fa-solid {
 				position: absolute;
 				left: 0;
 				display: flex;
@@ -64,6 +64,20 @@
 				right: 8px;
 				margin: 0;
 			}
+
+			.submenuArrow.fa-solid, .submenuArrow.fa-light {
+				position: relative;
+			    margin: 0;
+                top: -28px;
+                left: calc(100% - 24px);
+			}
+
+			.checkImg {
+				opacity: 1;
+				padding: 0;
+				margin: 4px 4px 4px 16px;
+			}
+
 		}
 
 		$collapse-trans: all 0.2s ease;
@@ -97,11 +111,15 @@
 
 		&.contextSubMenu, &.compactMenu {
 			.listMenuItem {
-				.menuImg {
+				.menuImg, .fa-solid, .fa-light {
 					position: relative;
 					vertical-align: bottom;
 					margin-left: 0;
 					padding-left: 0;
+				}
+
+				.fa-solid, .fa-light {
+					display: inline-block;
 				}
 
 				padding: 0 16px;
@@ -143,14 +161,19 @@
 						margin-right: auto;
 					}
 
-					.gwt-Image {
+					.gwt-Image, .fa-light, .fa-solid {
 						position: static;
 						margin: 2px;
 						padding: 4px;
 						border-radius: 50%;
 					}
 
-					.text:hover, .gwt-Image:hover {
+					.fa-light, .fa-solid {
+						width: 24px;
+						height: 24px;
+					}
+
+					.text:hover, .gwt-Image:hover, .fa-light:hover, .fa-solid:hover {
 						background-color: neutral(200);
 						cursor: pointer;
 					}
@@ -179,40 +202,48 @@
 		opacity: 0.38;
 	}
 
-	.radioButton.RadioButtonMenuItem {
-		display: flex;
-		.radioBg {
-			width: 32px;
-			height: 32px;
-			background-color: transparent;
+	.gwt-MenuItem.listMenuItem.gwt-MenuItem-disabled {
+		cursor: default;
+	}
 
-			.outerCircle {
-				width: 14px;
-				height: 14px;
-				margin: 7px;
-			}
+	.listMenuItem.settingsItem {
+		padding: 0;
+		background-color: white;
+		cursor: default;
+		margin-bottom: 8px;
 
-			.innerCircle {
-				width: 8px;
-				height: 8px;
-				bottom: 20px;
-				left: 12px;
+		.materialTextButton {
+			display: block;
+			margin: auto;
+		}
+	}
+
+	.listMenuItem.iconButtonPanel {
+		height: 36px;
+		padding: 0 16px;
+		display: table;
+		margin: auto;
+		background-color: white;
+		cursor: default;
+
+		&.projection {
+			margin: 0;
+
+			.gwt-Label {
+				height: 32px;
+				line-height: 32px;
+				cursor: default;
 			}
 		}
 
-		.gwt-Label {
-			line-height: 32px;
-		}
+		.iconPanel {
+			display: inline-flex;
+			gap: 8px;
 
-		&:hover {
-			.radioBg {
-				background-color: transparent;
-			}
-		}
-
-		&.selected:hover {
-			.radioBg {
-				background-color: transparent;
+			img {
+				margin: 0;
+				padding: 0;
+				position: relative;
 			}
 		}
 	}

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.gui.layout;
 
 import java.awt.BorderLayout;
@@ -8,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -18,9 +35,9 @@ import org.geogebra.desktop.util.GuiResourcesD;
 
 /**
  * Toolbar to hold launching buttons for minimized views.
- * 
+ *
  * @author G. Sturr
- * 
+ *
  */
 public class DockBar extends JPanel implements SetLabels, DockBarInterface {
 
@@ -34,10 +51,11 @@ public class DockBar extends JPanel implements SetLabels, DockBarInterface {
 
 	private boolean isEastOrientation = true;
 	private boolean showButtonBar = false;
+	private boolean sideBarHasMouse = false;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param app application
 	 */
 	public DockBar(AppD app) {
@@ -45,7 +63,6 @@ public class DockBar extends JPanel implements SetLabels, DockBarInterface {
 		this.app = app;
 		setBorder(BorderFactory.createEmptyBorder());
 		initGUI();
-
 	}
 
 	// ==============================
@@ -56,8 +73,8 @@ public class DockBar extends JPanel implements SetLabels, DockBarInterface {
 
 		// buildButtonPanel();
 		buildSlimSidebarPanel();
-		slimSidebarPanel.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0,
-				SystemColor.controlShadow));
+		slimSidebarPanel.setBorder(
+				BorderFactory.createMatteBorder(1, 1, 0, 0, SystemColor.controlShadow));
 		// buttonPanel.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1,
 		// SystemColor.controlShadow));
 
@@ -72,7 +89,7 @@ public class DockBar extends JPanel implements SetLabels, DockBarInterface {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a new perspective panel
 	 */
 	PerspectivePanel newPerspectivePanel() {
@@ -82,21 +99,19 @@ public class DockBar extends JPanel implements SetLabels, DockBarInterface {
 	/**
 	 * Creates sidebarButtonPanel, a slim vertical bar that acts a button to
 	 * open the perspective popup.
-	 * 
+	 *
 	 */
 	private JPanel buildSlimSidebarPanel() {
 
 		if (slimSidebarPanel == null) {
 			slimSidebarPanel = new JPanel(new BorderLayout(0, 0));
 
-			lblIcon = new JLabel(
-					app.getScaledIcon(GuiResourcesD.DOCKBAR_TRIANGLE_LEFT));
+			lblIcon = new JLabel(app.getScaledIcon(GuiResourcesD.DOCKBAR_TRIANGLE_LEFT));
 			lblIcon.setPreferredSize(new Dimension(10, 0));
 
 			slimSidebarPanel.add(lblIcon, BorderLayout.CENTER);
 
 			slimSidebarPanel.setBackground(null);
-
 		}
 
 		return slimSidebarPanel;
@@ -104,22 +119,19 @@ public class DockBar extends JPanel implements SetLabels, DockBarInterface {
 
 	/**
 	 * set sidebar triangle orientation
-	 * 
+	 *
 	 * @param popupIsVisible
 	 *            right if true, left if false
 	 */
 	public void setSidebarTriangle(boolean popupIsVisible) {
 
 		if (popupIsVisible ^ !isEastOrientation()) {
-			lblIcon.setIcon(
-					app.getImageIcon(GuiResourcesD.DOCKBAR_TRIANGLE_RIGHT));
+			lblIcon.setIcon(new ImageIcon(app.getImage(GuiResourcesD.DOCKBAR_TRIANGLE_RIGHT)));
 		} else {
-			lblIcon.setIcon(
-					app.getImageIcon(GuiResourcesD.DOCKBAR_TRIANGLE_LEFT));
+			lblIcon.setIcon(new ImageIcon(app.getImage(GuiResourcesD.DOCKBAR_TRIANGLE_LEFT)));
 		}
 
 		slimSidebarPanel.repaint();
-
 	}
 
 	// ==============================
@@ -152,8 +164,7 @@ public class DockBar extends JPanel implements SetLabels, DockBarInterface {
 			horizontal = slimSidebarPanel.getPreferredSize().width;
 		}
 
-		int y = (slimSidebarPanel.getHeight() - popup.getPreferredSize().height)
-				/ 2;
+		int y = (slimSidebarPanel.getHeight() - popup.getPreferredSize().height) / 2;
 
 		popup.show(this, horizontal, y);
 
@@ -176,7 +187,6 @@ public class DockBar extends JPanel implements SetLabels, DockBarInterface {
 		} else {
 			popup.superSetVisible(false);
 		}
-
 	}
 
 	@Override
@@ -193,14 +203,12 @@ public class DockBar extends JPanel implements SetLabels, DockBarInterface {
 
 	}
 
-	private boolean sideBarHasMouse = false;
-
 	void setSideBarHasMouse(boolean flag) {
 		sideBarHasMouse = flag;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if side bar has mouse
 	 */
 	public boolean sideBarHasMouse() {
@@ -237,7 +245,6 @@ public class DockBar extends JPanel implements SetLabels, DockBarInterface {
 				setSideBarHasMouse(false);
 			}
 		}
-
 	}
 
 	// ==============================
@@ -265,5 +272,4 @@ public class DockBar extends JPanel implements SetLabels, DockBarInterface {
 		this.isEastOrientation = eastOrientation;
 		setSidebarTriangle(popup != null && popup.isVisible());
 	}
-
 }

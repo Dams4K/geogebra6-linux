@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
@@ -10,7 +26,7 @@ import org.geogebra.common.plugin.EuclidianStyleConstants;
 /**
  * Class for drawing decorations of points (altitude segment from the point to
  * xOy plane, ...)
- * 
+ *
  * @author matthieu
  *
  */
@@ -26,7 +42,7 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param aView3d
 	 *            view
 	 */
@@ -45,7 +61,6 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 		planeMatrix = CoordMatrix4x4.identity();
 		planeMatrix.setVx(Coords.VX.mul(0.2));
 		planeMatrix.setVy(Coords.VY.mul(0.2));
-
 	}
 
 	@Override
@@ -57,7 +72,7 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if decorations should be drawn
 	 */
 	public boolean shouldBeDrawn() {
@@ -66,7 +81,7 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 
 	/**
 	 * set the point for which decorations are made
-	 * 
+	 *
 	 * @param point0
 	 *            decorated point
 	 */
@@ -74,7 +89,6 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 
 		this.point = point0;
 		hasBeenUpdated = false;
-
 	}
 
 	@Override
@@ -87,8 +101,7 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 
 	@Override
 	public void drawHidden(Renderer renderer) {
-		renderer.getTextures().setDashFromLineType(
-				EuclidianStyleConstants.LINE_TYPE_DASHED_LONG);
+		renderer.getTextures().setDashFromLineType(EuclidianStyleConstants.LINE_TYPE_DASHED_LONG);
 		drawOutline(renderer);
 	}
 

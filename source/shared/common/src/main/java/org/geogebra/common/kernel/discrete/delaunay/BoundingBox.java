@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.discrete.delaunay;
 
 /**
@@ -36,7 +52,7 @@ public class BoundingBox {
 
 	/**
 	 * Copy constructor
-	 * 
+	 *
 	 * @param other
 	 *            the copied bounding box
 	 */
@@ -50,7 +66,7 @@ public class BoundingBox {
 
 	/**
 	 * Creates a bounding box given the extent
-	 * 
+	 *
 	 * @param minx
 	 *            minimum x coordinate
 	 * @param maxx
@@ -66,7 +82,7 @@ public class BoundingBox {
 
 	/**
 	 * Create a bounding box between lowerLeft and upperRight
-	 * 
+	 *
 	 * @param lowerLeft
 	 *            lower left point of the box
 	 * @param upperRight
@@ -135,14 +151,16 @@ public class BoundingBox {
 	 * @return true if this BoundingBox contains the other BoundingBox
 	 */
 	public boolean contains(BoundingBox other) {
-		return !(isNull() || other.isNull()) && other.minx >= minx
-				&& other.maxy <= maxx && other.miny >= miny
+		return !(isNull() || other.isNull())
+				&& other.minx >= minx
+				&& other.maxy <= maxx
+				&& other.miny >= miny
 				&& other.maxy <= maxy;
 	}
 
 	/**
 	 * Unify the BoundingBoxes of this and the other BoundingBox
-	 * 
+	 *
 	 * @param other
 	 *            another BoundingBox
 	 * @return The union of the two BoundingBoxes
@@ -154,8 +172,10 @@ public class BoundingBox {
 		if (isNull()) {
 			return new BoundingBox(other);
 		}
-		return new BoundingBox(Math.min(minx, other.minx),
-				Math.max(maxx, other.maxx), Math.min(miny, other.miny),
+		return new BoundingBox(
+				Math.min(minx, other.minx),
+				Math.max(maxx, other.maxx),
+				Math.min(miny, other.miny),
 				Math.max(maxy, other.maxy));
 	}
 

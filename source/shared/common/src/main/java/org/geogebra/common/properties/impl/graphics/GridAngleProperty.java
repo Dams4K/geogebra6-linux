@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.properties.impl.graphics;
 
 import java.util.List;
@@ -15,11 +31,10 @@ import org.geogebra.common.main.Localization;
 import org.geogebra.common.main.settings.AbstractSettings;
 import org.geogebra.common.properties.NumericPropertyWithSuggestions;
 import org.geogebra.common.util.DoubleUtil;
+import org.geogebra.editor.share.util.Unicode;
 
-import com.himamis.retex.editor.share.util.Unicode;
-
-public class GridAngleProperty extends NumericPropertyWithSuggestions implements
-		SettingsDependentProperty {
+public class GridAngleProperty extends NumericPropertyWithSuggestions
+		implements SettingsDependentProperty {
 	private final EuclidianViewInterfaceCommon euclidianView;
 
 	/**
@@ -28,7 +43,9 @@ public class GridAngleProperty extends NumericPropertyWithSuggestions implements
 	 * @param localization localization for the title
 	 * @param euclidianView euclidian view
 	 */
-	public GridAngleProperty(AlgebraProcessor processor, Localization localization,
+	public GridAngleProperty(
+			AlgebraProcessor processor,
+			Localization localization,
 			EuclidianViewInterfaceCommon euclidianView) {
 		super(processor, localization, String.valueOf(Unicode.theta));
 		this.euclidianView = euclidianView;
@@ -63,8 +80,7 @@ public class GridAngleProperty extends NumericPropertyWithSuggestions implements
 	@Override
 	public String getValue() {
 		double val = euclidianView.getGridDistances(2) / Math.PI;
-		double[] frac = AlgoFractionText.decimalToFraction(val,
-				Kernel.MAX_PRECISION);
+		double[] frac = AlgoFractionText.decimalToFraction(val, Kernel.MAX_PRECISION);
 		StringBuilder sb = new StringBuilder();
 		if (frac[1] < 361) {
 			if (!DoubleUtil.isEqual(1, frac[0])) {
@@ -76,15 +92,15 @@ public class GridAngleProperty extends NumericPropertyWithSuggestions implements
 				sb.append(Math.round(frac[1]));
 			}
 		} else {
-			sb.append(euclidianView.getKernel().format(euclidianView.getGridDistances(2),
-					StringTemplate.editTemplate));
+			sb.append(euclidianView
+					.getKernel()
+					.format(euclidianView.getGridDistances(2), StringTemplate.editTemplate));
 		}
 		return sb.toString();
 	}
 
 	private static double getGridTickAngle(double value) {
-		return Math.PI
-				/ Math.min(360, Math.round(Math.abs(Math.PI / value)));
+		return Math.PI / Math.min(360, Math.round(Math.abs(Math.PI / value)));
 	}
 
 	@Override

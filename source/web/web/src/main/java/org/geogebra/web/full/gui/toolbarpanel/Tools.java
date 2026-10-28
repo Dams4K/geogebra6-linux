@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbarpanel;
 
 import java.util.ArrayList;
@@ -27,7 +43,7 @@ import elemental2.dom.DomGlobal;
 /**
  * @author judit Content of tools tab of Toolbar panel.
  */
-public class Tools extends FlowPanel implements SetLabels {
+public final class Tools extends FlowPanel implements SetLabels {
 
 	/**
 	 * application
@@ -56,7 +72,7 @@ public class Tools extends FlowPanel implements SetLabels {
 
 	/**
 	 * Changes visual settings of selected mode.
-	 * 
+	 *
 	 * @param mode
 	 *            the mode will be selected
 	 */
@@ -69,18 +85,14 @@ public class Tools extends FlowPanel implements SetLabels {
 			if (w instanceof CategoryPanel) {
 				FlowPanel panelTools = ((CategoryPanel) w).getToolsPanel();
 				for (int j = 0; j < panelTools.getWidgetCount(); j++) {
-					if ((mode + "").equals(panelTools.getWidget(j).getElement()
-							.getAttribute("mode"))) {
-						panelTools.getWidget(j).getElement()
-								.setAttribute("selected", "true");
+					if ((mode + "").equals(panelTools.getWidget(j).getElement().getAttribute("mode"))) {
+						panelTools.getWidget(j).getElement().setAttribute("selected", "true");
 					} else {
-						panelTools.getWidget(j).getElement()
-								.setAttribute("selected", "false");
+						panelTools.getWidget(j).getElement().setAttribute("selected", "false");
 					}
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -111,10 +123,8 @@ public class Tools extends FlowPanel implements SetLabels {
 
 		for (int i = 0; i < categories.size(); i++) {
 			ToolCategory category = categories.get(i);
-			if (GlobalScope.examController.isIdle() || category == null
-					|| category.isAllowedInExam()) {
-				CategoryPanel catPanel = new CategoryPanel(category,
-						parentTab.toolCollection.getTools(i));
+			if (!GlobalScope.isExamActive(app) || category == null || category.isAllowedInExam()) {
+				CategoryPanel catPanel = new CategoryPanel(category, parentTab.toolCollection.getTools(i));
 				categoryPanelList.add(catPanel);
 				add(catPanel);
 			}
@@ -181,8 +191,7 @@ public class Tools extends FlowPanel implements SetLabels {
 				app.setMode(mode);
 				showTooltip(mode);
 				app.updateDynamicStyleBars();
-				Analytics.logEvent(Analytics.Event.TOOL_SELECTED, Analytics.Param.TOOL_NAME,
-						app.getInternalToolName(mode));
+				Analytics.logToolSelected(app.getInternalToolName(mode));
 			});
 			return btn;
 		}
@@ -202,8 +211,7 @@ public class Tools extends FlowPanel implements SetLabels {
 
 	private boolean allowTooltips() {
 		// allow tooltips for iPad
-		boolean isIpad = DomGlobal.navigator.userAgent.toLowerCase(Locale.ROOT)
-				.contains("ipad");
+		boolean isIpad = DomGlobal.navigator.userAgent.toLowerCase(Locale.ROOT).contains("ipad");
 		return (!NavigatorUtil.isMobile() || isIpad) && app.showToolBarHelp();
 	}
 
@@ -215,9 +223,13 @@ public class Tools extends FlowPanel implements SetLabels {
 		if (allowTooltips()) {
 			app.getToolTipManager().setBlockToolTip(false);
 			app.getToolTipManager()
-					.showBottomInfoToolTip(new ToolTip(app.getToolName(mode), app.getToolHelp(mode),
-							"Help",
-							app.getGuiManager().getTooltipURL(mode)), app,
+					.showBottomInfoToolTip(
+							new ToolTip(
+									app.getToolName(mode),
+									app.getToolHelp(mode),
+									"Help",
+									app.getGuiManager().getTooltipURL(mode)),
+							app,
 							ComponentSnackbar.TOOL_TOOLTIP_DURATION);
 			app.getToolTipManager().setBlockToolTip(true);
 		}

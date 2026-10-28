@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -20,7 +36,6 @@ public class CmdPyramid extends CommandProcessor {
 	 */
 	public CmdPyramid(Kernel kernel) {
 		super(kernel);
-
 	}
 
 	@Override
@@ -32,15 +47,14 @@ public class CmdPyramid extends CommandProcessor {
 		arg = resArgs(c, info);
 
 		if (n == 2) {
-			if ((ok[0] = arg[0].isGeoPolygon())
-					&& (ok[1] = arg[1].isGeoPoint())) {
-				GeoElement[] ret = kernel.getManager3D().pyramid(c.getLabels(),
-						(GeoPolygon) arg[0], (GeoPointND) arg[1]);
+			if ((ok[0] = arg[0].isGeoPolygon()) && (ok[1] = arg[1].isGeoPoint())) {
+				GeoElement[] ret =
+						kernel.getManager3D().pyramid(c.getLabels(), (GeoPolygon) arg[0], (GeoPointND) arg[1]);
 				return ret;
-			} else if ((ok[0] = arg[0].isGeoPolygon())
-					&& (ok[1] = arg[1] instanceof GeoNumberValue)) {
-				GeoElement[] ret = kernel.getManager3D().pyramid(c.getLabels(),
-						(GeoPolygon) arg[0], (GeoNumberValue) arg[1]);
+			} else if ((ok[0] = arg[0].isGeoPolygon()) && (ok[1] = arg[1] instanceof GeoNumberValue)) {
+				GeoElement[] ret = kernel
+						.getManager3D()
+						.pyramid(c.getLabels(), (GeoPolygon) arg[0], (GeoNumberValue) arg[1]);
 				return ret;
 			} else {
 				if (!ok[0]) {
@@ -59,13 +73,10 @@ public class CmdPyramid extends CommandProcessor {
 				points[i] = (GeoPointND) arg[i];
 			}
 			// everything ok
-			GeoElement[] ret = kernel.getManager3D().pyramid(c.getLabels(),
-					points);
+			GeoElement[] ret = kernel.getManager3D().pyramid(c.getLabels(), points);
 			return ret;
 		} else {
 			throw argNumErr(c);
 		}
-
 	}
-
 }

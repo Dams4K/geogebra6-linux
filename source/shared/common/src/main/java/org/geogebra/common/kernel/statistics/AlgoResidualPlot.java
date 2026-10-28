@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -22,10 +26,10 @@ import org.geogebra.common.kernel.geos.GeoPoint;
 
 /**
  * Creates a residual plot.
- * 
+ *
  * Input: list of points (x,y) Input: regression function Output: list of
  * residual points (x, y - yPredicted)
- * 
+ *
  * @author G.Sturr
  */
 public class AlgoResidualPlot extends AlgoElement {
@@ -45,8 +49,7 @@ public class AlgoResidualPlot extends AlgoElement {
 	 * @param function2
 	 *            function
 	 */
-	public AlgoResidualPlot(Construction cons, GeoList inputList,
-			GeoFunctionable function2) {
+	public AlgoResidualPlot(Construction cons, GeoList inputList, GeoFunctionable function2) {
 		super(cons);
 		this.inputList = inputList;
 		this.function = function2;
@@ -82,7 +85,7 @@ public class AlgoResidualPlot extends AlgoElement {
 	 * @return min and max residues
 	 */
 	public double[] getResidualBounds() {
-		return new double[] { min, max };
+		return new double[] {min, max};
 	}
 
 	@Override
@@ -117,5 +120,4 @@ public class AlgoResidualPlot extends AlgoElement {
 			}
 		}
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoCurveCartesian3D;
@@ -12,7 +28,7 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * Algo for dilate at 3D point
- * 
+ *
  * @author mathieu
  *
  */
@@ -20,7 +36,7 @@ public class AlgoDilate3D extends AlgoDilate {
 
 	/**
 	 * dilate at point
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param A
@@ -30,8 +46,7 @@ public class AlgoDilate3D extends AlgoDilate {
 	 * @param S
 	 *            reference point
 	 */
-	public AlgoDilate3D(Construction cons, GeoElement A, GeoNumberValue r,
-			GeoPointND S) {
+	public AlgoDilate3D(Construction cons, GeoElement A, GeoNumberValue r, GeoPointND S) {
 		super(cons, A, r, S);
 	}
 
@@ -42,8 +57,7 @@ public class AlgoDilate3D extends AlgoDilate {
 
 	@Override
 	protected GeoElement getResultTemplate(GeoElement geo) {
-		if (geo instanceof GeoFunction
-				|| geo instanceof GeoCurveCartesian) {
+		if (geo instanceof GeoFunction || geo instanceof GeoCurveCartesian) {
 			return new GeoCurveCartesian3D(cons);
 		}
 
@@ -58,8 +72,8 @@ public class AlgoDilate3D extends AlgoDilate {
 	@Override
 	protected void setOutGeo() {
 		if (inGeo instanceof GeoFunction /* && mirror.isGeoElement3D() */) {
-			AlgoTransformation3D.toGeoCurveCartesian(kernel,
-					(GeoFunction) inGeo, (GeoCurveCartesian3D) outGeo);
+			AlgoTransformation3D.toGeoCurveCartesian(
+					kernel, (GeoFunction) inGeo, (GeoCurveCartesian3D) outGeo);
 		} else {
 			super.setOutGeo();
 		}
@@ -69,5 +83,4 @@ public class AlgoDilate3D extends AlgoDilate {
 	protected Coords getPointCoords() {
 		return S.getInhomCoordsInD3();
 	}
-
 }

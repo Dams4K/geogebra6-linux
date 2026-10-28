@@ -1,9 +1,24 @@
-package org.geogebra.common.spreadsheet.core;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.Nonnull;
+package org.geogebra.common.spreadsheet.core;
 
 import org.geogebra.common.util.shape.Rectangle;
 import org.geogebra.common.util.shape.Size;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A utility class designed to adjust the spreadsheet's viewport if needed.
@@ -21,15 +36,15 @@ final class ViewportAdjuster {
 
 	private final TableLayout layout;
 	private final ViewportAdjusterDelegate viewportAdjusterDelegate;
-	private final static int SCROLL_INCREMENT = 2;
-	private final static int SCROLL_AMOUNT_FOR_PASTE_SELECTION = 7;
+	private static final int SCROLL_INCREMENT = 2;
+	private static final int SCROLL_AMOUNT_FOR_PASTE_SELECTION = 7;
 
 	/**
 	 * @param layout TableLayout
 	 * @param viewportAdjusterDelegate ViewportAdjustmentHandler
 	 */
-	ViewportAdjuster(@Nonnull TableLayout layout,
-			@Nonnull ViewportAdjusterDelegate viewportAdjusterDelegate) {
+	ViewportAdjuster(
+			@NonNull TableLayout layout, @NonNull ViewportAdjusterDelegate viewportAdjusterDelegate) {
 		this.layout = layout;
 		this.viewportAdjusterDelegate = viewportAdjusterDelegate;
 	}
@@ -50,8 +65,7 @@ final class ViewportAdjuster {
 
 		if (scrollAmountX != 0 || scrollAmountY != 0) {
 			viewportAdjusterDelegate.setScrollPosition(
-					viewport.getMinX() + scrollAmountX,
-					viewport.getMinY() + scrollAmountY);
+					viewport.getMinX() + scrollAmountX, viewport.getMinY() + scrollAmountY);
 			return viewport.translatedBy(scrollAmountX, scrollAmountY);
 		}
 		return viewport;
@@ -67,8 +81,7 @@ final class ViewportAdjuster {
 	 * (horizontally)
 	 * @return new viewport
 	 */
-	Rectangle scrollForDrag(double x, double y, Rectangle viewport,
-			boolean extendVertically) {
+	Rectangle scrollForDrag(double x, double y, Rectangle viewport, boolean extendVertically) {
 		double viewportWidth = viewport.getWidth();
 		double viewportHeight = viewport.getHeight();
 		double scrollAmountX = 0;
@@ -100,14 +113,16 @@ final class ViewportAdjuster {
 		double scrollAmountX = 0;
 		boolean scrolledRight = false;
 		if (shouldAdjustViewportHorizontallyRightwards(column, viewport)) {
-			scrollAmountX = Math.ceil(layout.getMinX(column + 1) - viewport.getMinX()
-					+ layout.getRowHeaderWidth() - viewport.getWidth()
-					+ viewportAdjusterDelegate.getScrollBarWidth() + SCROLL_INCREMENT);
+			scrollAmountX = Math.ceil(layout.getMinX(column + 1)
+					- viewport.getMinX()
+					+ layout.getRowHeaderWidth()
+					- viewport.getWidth()
+					+ viewportAdjusterDelegate.getScrollBarWidth()
+					+ SCROLL_INCREMENT);
 			scrolledRight = true;
 		}
 		if (shouldAdjustViewportHorizontallyLeftwards(column, viewport)) {
-			scrollAmountX = scrolledRight ? 0
-					: -Math.floor(viewport.getMinX() - layout.getMinX(column));
+			scrollAmountX = scrolledRight ? 0 : -Math.floor(viewport.getMinX() - layout.getMinX(column));
 		}
 		return scrollAmountX;
 	}
@@ -116,15 +131,17 @@ final class ViewportAdjuster {
 		double scrollAmountY = 0;
 		boolean scrolledDown = false;
 		if (shouldAdjustViewportVerticallyDownwards(row, viewport)) {
-			scrollAmountY = Math.ceil(layout.getMinY(row + 1) - viewport.getMinY()
-					+ layout.getColumnHeaderHeight() - viewport.getHeight()
-					+ viewportAdjusterDelegate.getScrollBarWidth() + SCROLL_INCREMENT
+			scrollAmountY = Math.ceil(layout.getMinY(row + 1)
+					- viewport.getMinY()
+					+ layout.getColumnHeaderHeight()
+					- viewport.getHeight()
+					+ viewportAdjusterDelegate.getScrollBarWidth()
+					+ SCROLL_INCREMENT
 					+ viewportAdjusterDelegate.getViewportInsets().getBottom());
 			scrolledDown = true;
 		}
 		if (shouldAdjustViewportVerticallyUpwards(row, viewport)) {
-			scrollAmountY = scrolledDown ? 0
-					: -Math.floor(viewport.getMinY() - layout.getMinY(row));
+			scrollAmountY = scrolledDown ? 0 : -Math.floor(viewport.getMinY() - layout.getMinY(row));
 		}
 		return scrollAmountY;
 	}
@@ -146,8 +163,9 @@ final class ViewportAdjuster {
 			return false;
 		}
 		return layout.getMinY(row + 1) - viewport.getMinY() + layout.getColumnHeaderHeight()
-				> viewport.getHeight() - viewportAdjusterDelegate.getScrollBarWidth()
-				- viewportAdjusterDelegate.getViewportInsets().getBottom();
+				> viewport.getHeight()
+						- viewportAdjusterDelegate.getScrollBarWidth()
+						- viewportAdjusterDelegate.getViewportInsets().getBottom();
 	}
 
 	private boolean shouldAdjustViewportVerticallyUpwards(int row, Rectangle viewport) {

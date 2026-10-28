@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDependentNumber.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -29,7 +27,7 @@ import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoText;
 
 /**
- * 
+ *
  * @author Markus
  */
 public class AlgoDependentText extends AlgoElement implements DependentAlgo {
@@ -48,8 +46,8 @@ public class AlgoDependentText extends AlgoElement implements DependentAlgo {
 	 * @param mayBeSpreadsheetTraceable
 	 *            whether this may contain spreadsheet tracable vars
 	 */
-	public AlgoDependentText(Construction cons, ExpressionNode root,
-			boolean mayBeSpreadsheetTraceable) {
+	public AlgoDependentText(
+			Construction cons, ExpressionNode root, boolean mayBeSpreadsheetTraceable) {
 		super(cons);
 
 		text = new GeoText(cons);
@@ -106,7 +104,8 @@ public class AlgoDependentText extends AlgoElement implements DependentAlgo {
 		if (oldTpl != tpl) {
 			oldTpl = tpl;
 			for (int i = 0; i < input.length; i++) {
-				if (input[i].isGeoText() && !input[i].isLabelSet()
+				if (input[i].isGeoText()
+						&& !input[i].isLabelSet()
 						&& input[i].getParentAlgorithm() != null) {
 					input[i].setVisualStyle(text);
 					input[i].getParentAlgorithm().update();
@@ -115,12 +114,11 @@ public class AlgoDependentText extends AlgoElement implements DependentAlgo {
 		}
 
 		nodeToGeoText(text.getDefinition(), text, tpl);
-
 	}
 
 	/**
 	 * Converts expression node to geotext
-	 * 
+	 *
 	 * @param root
 	 *            expression
 	 * @param text
@@ -128,8 +126,7 @@ public class AlgoDependentText extends AlgoElement implements DependentAlgo {
 	 * @param tpl
 	 *            string template
 	 */
-	public final static void nodeToGeoText(ExpressionNode root, GeoText text,
-			StringTemplate tpl) {
+	public static void nodeToGeoText(ExpressionNode root, GeoText text, StringTemplate tpl) {
 		try {
 			boolean latex = text.isLaTeX();
 			root.setHoldsLaTeXtext(latex);
@@ -148,7 +145,7 @@ public class AlgoDependentText extends AlgoElement implements DependentAlgo {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// was defined as e.g. text0 = "Radius: " + r
 		if (text.getDefinition() == null) {
 			return "";
@@ -169,7 +166,7 @@ public class AlgoDependentText extends AlgoElement implements DependentAlgo {
 
 	// adapted from ExpressionNode.getCopy()
 	private ExpressionNode getSpecialCopy(ExpressionNode en) {
-		ExpressionNode newNode = null;
+		ExpressionNode newNode;
 		ExpressionValue lev = null, rev = null;
 
 		ExpressionValue left = en.getLeft();
@@ -202,7 +199,7 @@ public class AlgoDependentText extends AlgoElement implements DependentAlgo {
 			return null;
 		}
 
-		ExpressionValue ret = null;
+		ExpressionValue ret;
 		if (ev.isNumberValue()) {
 			// ************
 			// replace first encountered NumberValue, eg x(A) with empty string
@@ -254,5 +251,4 @@ public class AlgoDependentText extends AlgoElement implements DependentAlgo {
 	public ExpressionNode getExpression() {
 		return text.getDefinition();
 	}
-
 }

@@ -1,8 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
 import org.geogebra.common.io.MathMLParser;
+import org.geogebra.editor.share.editor.SyntaxAdapter;
 
-import com.himamis.retex.editor.share.editor.SyntaxAdapter;
 import com.himamis.retex.renderer.share.TeXFormula;
 import com.himamis.retex.renderer.share.serialize.TeXAtomSerializer;
 
@@ -24,8 +40,9 @@ public abstract class AbstractSyntaxAdapter implements SyntaxAdapter {
 	@Override
 	public String convert(String exp) {
 		// might start <math> or <mrow> etc
-		if (exp.startsWith("<")) {
-			return convertMathMLtoGGB(exp);
+		if (exp.trim().startsWith("<")) {
+			String converted = convertMathMLtoGGB(exp);
+			return converted == null ? exp : converted;
 		} else if (mightBeLaTeXSyntax(exp)) {
 			return convertLaTeXtoGGB(exp);
 		} else if (checkClipboardFormat(exp)) {
@@ -52,7 +69,7 @@ public abstract class AbstractSyntaxAdapter implements SyntaxAdapter {
 		// might start <math> or <mrow> etc
 		if (exp.startsWith("<")) {
 			return convertMathMLtoGGB(exp);
-		} else  {
+		} else {
 			return convertLaTeXtoGGB(exp);
 		}
 	}

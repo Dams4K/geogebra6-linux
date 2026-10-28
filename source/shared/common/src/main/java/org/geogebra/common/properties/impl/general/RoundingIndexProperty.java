@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.properties.impl.general;
 
 import static java.util.Map.entry;
@@ -22,6 +38,7 @@ public class RoundingIndexProperty extends AbstractNamedEnumeratedProperty<Integ
 
 	@Weak
 	private App app;
+
 	private final RoundingOptions roundingOptions;
 	private int figuresIndex;
 
@@ -63,7 +80,7 @@ public class RoundingIndexProperty extends AbstractNamedEnumeratedProperty<Integ
 	@Override
 	public String[] getValueNames() {
 		setupValues(app.getLocalization());
-		return super.getValueNames();
+		return getValues().stream().map(this::getTranslationId).toArray(String[]::new);
 	}
 
 	/**
@@ -74,8 +91,7 @@ public class RoundingIndexProperty extends AbstractNamedEnumeratedProperty<Integ
 	 *            whether to skip the separator between DP and SF
 	 * @return position in rounding menu regarding current kernel settings
 	 */
-	final public int getMenuDecimalPosition(Kernel kernel,
-			boolean skipSeparator) {
+	public final int getMenuDecimalPosition(Kernel kernel, boolean skipSeparator) {
 		int pos = -1;
 
 		if (kernel.useSignificantFigures) {

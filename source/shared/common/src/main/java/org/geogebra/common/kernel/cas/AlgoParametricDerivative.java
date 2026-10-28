@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.cas;
@@ -22,7 +26,7 @@ import org.geogebra.common.kernel.geos.GeoElement;
 /**
  * Parametric derivative of a curve c. The parametric derivative of a curve c(t)
  * = (x(t), y(t)) is defined as (x(t), y'(t)/x'(t)).
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class AlgoParametricDerivative extends AlgoElement implements UsesCAS {
@@ -38,14 +42,12 @@ public class AlgoParametricDerivative extends AlgoElement implements UsesCAS {
 	 * @param curve
 	 *            curve
 	 */
-	public AlgoParametricDerivative(Construction cons, String label,
-			GeoCurveCartesian curve) {
+	public AlgoParametricDerivative(Construction cons, String label, GeoCurveCartesian curve) {
 		this(cons, curve);
 		paramDeriv.setLabel(label);
 	}
 
-	private AlgoParametricDerivative(Construction cons,
-			GeoCurveCartesian curve) {
+	private AlgoParametricDerivative(Construction cons, GeoCurveCartesian curve) {
 		super(cons);
 		this.curve = curve;
 		paramDeriv = (GeoCurveCartesian) curve.copyInternal(cons);
@@ -76,7 +78,7 @@ public class AlgoParametricDerivative extends AlgoElement implements UsesCAS {
 	}
 
 	@Override
-	final public void compute() {
+	public final void compute() {
 		if (!curve.isDefined()) {
 			paramDeriv.setUndefined();
 			return;
@@ -88,10 +90,12 @@ public class AlgoParametricDerivative extends AlgoElement implements UsesCAS {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 
-		return getLoc().getPlainDefault("ParametricDerivativeOfA",
-				"Parametric Derivative of %0",
-				curve.toGeoElement().getLabel(tpl));
+		return getLoc()
+				.getPlainDefault(
+						"ParametricDerivativeOfA",
+						"Parametric Derivative of %0",
+						curve.toGeoElement().getLabel(tpl));
 	}
 }

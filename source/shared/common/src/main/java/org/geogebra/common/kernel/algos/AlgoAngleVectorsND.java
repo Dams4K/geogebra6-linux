@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoAngleVector.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -45,8 +43,7 @@ public abstract class AlgoAngleVectorsND extends AlgoAngle {
 	 * @param w
 	 *            second vector
 	 */
-	public AlgoAngleVectorsND(Construction cons, GeoVectorND v,
-			GeoVectorND w) {
+	public AlgoAngleVectorsND(Construction cons, GeoVectorND v, GeoVectorND w) {
 
 		this(cons, v, w, null);
 	}
@@ -61,8 +58,8 @@ public abstract class AlgoAngleVectorsND extends AlgoAngle {
 	 * @param orientation
 	 *            plane orientation
 	 */
-	public AlgoAngleVectorsND(Construction cons, GeoVectorND v,
-			GeoVectorND w, GeoDirectionND orientation) {
+	public AlgoAngleVectorsND(
+			Construction cons, GeoVectorND v, GeoVectorND w, GeoDirectionND orientation) {
 		super(cons);
 		setInput(v, w, orientation);
 		angle = newGeoAngle(cons);
@@ -85,7 +82,7 @@ public abstract class AlgoAngleVectorsND extends AlgoAngle {
 
 	/**
 	 * set inputs
-	 * 
+	 *
 	 * @param v
 	 *            first vector
 	 * @param w
@@ -93,8 +90,7 @@ public abstract class AlgoAngleVectorsND extends AlgoAngle {
 	 * @param orientation
 	 *            orientation
 	 */
-	protected void setInput(GeoVectorND v, GeoVectorND w,
-			GeoDirectionND orientation) {
+	protected void setInput(GeoVectorND v, GeoVectorND w, GeoDirectionND orientation) {
 		this.v = v;
 		this.w = w;
 	}
@@ -124,15 +120,13 @@ public abstract class AlgoAngleVectorsND extends AlgoAngle {
 	public String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("AngleBetweenAB",
-				"Angle between %0, %1", v.getLabel(tpl),
-				w.getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault(
+						"AngleBetweenAB", "Angle between %0, %1", v.getLabel(tpl), w.getLabel(tpl));
 	}
 
 	@Override
-	public boolean updateDrawInfo(double[] m, double[] firstVec,
-			DrawAngle drawable) {
+	public boolean updateDrawInfo(double[] m, double[] firstVec, DrawAngle drawable) {
 		GeoPointND vertex = getStartPoint(v);
 		if (centerIsNotDrawable(vertex)) {
 			return false;
@@ -157,7 +151,6 @@ public abstract class AlgoAngleVectorsND extends AlgoAngle {
 		firstVec[1] = direction.getY();
 
 		return true;
-
 	}
 
 	@Override
@@ -173,5 +166,4 @@ public abstract class AlgoAngleVectorsND extends AlgoAngle {
 
 		return true;
 	}
-
 }

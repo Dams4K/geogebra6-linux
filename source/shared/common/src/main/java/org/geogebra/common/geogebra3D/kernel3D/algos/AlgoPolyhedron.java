@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import java.util.ArrayList;
@@ -6,6 +22,7 @@ import org.geogebra.common.geogebra3D.kernel3D.geos.GeoPoint3D;
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoPolygon3D;
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoPolyhedron;
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoSegment3D;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.algos.AlgoElement;
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -16,7 +33,7 @@ import org.geogebra.common.main.settings.LabelVisibility;
 
 /**
  * @author ggb3D
- * 
+ *
  *         Creates a new GeoPolyhedron
  *
  */
@@ -44,16 +61,11 @@ public abstract class AlgoPolyhedron extends AlgoElement3D {
 	protected void init() {
 		cons.addToAlgorithmList(this);
 
-		outputPolyhedron = new OutputHandler<>(
-				new ElementFactory<GeoPolyhedron>() {
-					@Override
-					public GeoPolyhedron newElement() {
-						GeoPolyhedron p = new GeoPolyhedron(cons,
-								getPolyhedronType());
-						p.setParentAlgorithm(AlgoPolyhedron.this);
-						return p;
-					}
-				});
+		outputPolyhedron = new OutputHandler<>(() -> {
+			GeoPolyhedron p = new GeoPolyhedron(cons, getPolyhedronType());
+			p.setParentAlgorithm(this);
+			return p;
+		});
 
 		outputPolyhedron.adjustOutputSize(1);
 		polyhedron = getPolyhedron();
@@ -63,26 +75,25 @@ public abstract class AlgoPolyhedron extends AlgoElement3D {
 		createOutputPolygons();
 
 		createOutputSegments();
-
 	}
 
 	/**
-	 * 
+	 *
 	 * @return type for the output polyhedron
 	 */
-	abstract protected GeoPolyhedron.Type getPolyhedronType();
+	protected abstract GeoPolyhedron.Type getPolyhedronType();
 
 	/**
-	 * 
+	 *
 	 * @return true if no input point or if first input point is visible
 	 */
-	abstract protected boolean isFirstInputPointVisible();
+	protected abstract boolean isFirstInputPointVisible();
 
 	/**
-	 * 
+	 *
 	 * @return true if no input point or if first input point has label visible
 	 */
-	abstract protected boolean isFirstInputPointLabelVisible();
+	protected abstract boolean isFirstInputPointLabelVisible();
 
 	/**
 	 * create the faces of the polyhedron
@@ -94,41 +105,33 @@ public abstract class AlgoPolyhedron extends AlgoElement3D {
 	/**
 	 * create the output segments handlers
 	 */
-	abstract protected void createOutputSegments();
+	protected abstract void createOutputSegments();
 
 	/**
 	 * @return an output handler for segments
 	 */
 	protected OutputHandler<GeoSegment3D> createOutputSegmentsHandler() {
-		return new OutputHandler<>(
-				new ElementFactory<GeoSegment3D>() {
-					@Override
-					public GeoSegment3D newElement() {
-						GeoSegment3D s = new GeoSegment3D(cons);
-						s.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
-						return s;
-					}
-				});
+		return new OutputHandler<>(() -> {
+			GeoSegment3D s = new GeoSegment3D(cons);
+			s.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
+			return s;
+		});
 	}
 
 	/**
 	 * create the output polygons handlers
 	 */
-	abstract protected void createOutputPolygons();
+	protected abstract void createOutputPolygons();
 
 	/**
 	 * @return an output handler for polygons
 	 */
 	protected OutputHandler<GeoPolygon3D> createOutputPolygonsHandler() {
-		return new OutputHandler<>(
-				new ElementFactory<GeoPolygon3D>() {
-					@Override
-					public GeoPolygon3D newElement() {
-						GeoPolygon3D p = new GeoPolygon3D(cons);
-						p.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
-						return p;
-					}
-				});
+		return new OutputHandler<>(() -> {
+			GeoPolygon3D p = new GeoPolygon3D(cons);
+			p.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
+			return p;
+		});
 	}
 
 	/**
@@ -143,7 +146,7 @@ public abstract class AlgoPolyhedron extends AlgoElement3D {
 	/**
 	 * Update output dependencies
 	 */
-	abstract protected void updateOutput();
+	protected abstract void updateOutput();
 
 	/**
 	 * Alias for updateOutput TODO only use one
@@ -195,21 +198,17 @@ public abstract class AlgoPolyhedron extends AlgoElement3D {
 		for (int k = 0; k < algoList.size(); k++) {
 			AlgoElement algo = algoList.get(k);
 			// make sure we don't remove the polygon as well
-			if (algo instanceof AlgoJoinPoints3D
-					&& ((AlgoJoinPoints3D) algo).getPoly() == poly) {
+			if (algo instanceof AlgoJoinPoints3D && ((AlgoJoinPoints3D) algo).getPoly() == poly) {
 				continue;
-			} else if (algo instanceof AlgoPolygon3D
-					&& ((AlgoPolygon3D) algo).getPolyhedron() == poly) {
+			} else if (algo instanceof AlgoPolygon3D && ((AlgoPolygon3D) algo).getPolyhedron() == poly) {
 				continue;
 			}
 			algo.remove();
-
 		}
 
 		algoList.clear();
 		// remove point
 		oldPoint.doRemove();
-
 	}
 
 	@Override
@@ -239,12 +238,10 @@ public abstract class AlgoPolyhedron extends AlgoElement3D {
 			boolean labelVisible = false;
 			int size = outputPoints.size();
 			if (size > 0) { // check if at least one element is
-							// visible
+				// visible
 				for (int i = 0; i < size && !visible && !labelVisible; i++) {
-					visible = visible
-							|| outputPoints.getElement(i).isEuclidianVisible();
-					labelVisible = labelVisible
-							|| outputPoints.getElement(i).getLabelVisible();
+					visible = visible || outputPoints.getElement(i).isEuclidianVisible();
+					labelVisible = labelVisible || outputPoints.getElement(i).getLabelVisible();
 				}
 			} else { // no element yet
 				visible = isFirstInputPointVisible();
@@ -253,7 +250,7 @@ public abstract class AlgoPolyhedron extends AlgoElement3D {
 
 			p.setEuclidianVisible(visible);
 			if (!visible) { // if not visible, we don't want
-							// setParentAlgorithm() to change it
+				// setParentAlgorithm() to change it
 				p.dontSetEuclidianVisibleBySetParentAlgorithm();
 			}
 			p.setLabelVisible(labelVisible);
@@ -261,9 +258,8 @@ public abstract class AlgoPolyhedron extends AlgoElement3D {
 
 			if (getPolyhedron().getShowObjectCondition() != null) {
 				try {
-					p.setShowObjectCondition(
-							getPolyhedron().getShowObjectCondition());
-				} catch (Exception e) {
+					p.setShowObjectCondition(getPolyhedron().getShowObjectCondition());
+				} catch (Exception ignored) {
 					// circular definition
 				}
 			}
@@ -280,9 +276,9 @@ public abstract class AlgoPolyhedron extends AlgoElement3D {
 	}
 
 	@Override
-	protected void getOutputXML(StringBuilder sb) {
+	protected void getOutputXML(XMLStringBuilder sb) {
 		super.getOutputXML(sb);
-		
+
 		// append XML for polygon and segments linked once more, to avoid
 		// override of specific properties
 		for (GeoPolygon polygon : polyhedron.getPolygonsLinked()) {
@@ -314,5 +310,4 @@ public abstract class AlgoPolyhedron extends AlgoElement3D {
 		}
 		kernel.batchAddComplete();
 	}
-
 }

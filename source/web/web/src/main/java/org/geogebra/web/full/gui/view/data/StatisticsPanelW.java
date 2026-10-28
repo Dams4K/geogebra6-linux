@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.data;
 
 import org.geogebra.common.gui.view.data.DataAnalysisModel;
@@ -8,16 +24,16 @@ import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.ListBox;
 
 /**
- * 
+ *
  * Extended JPanel that displays: (1) summary statistics for the current data
  * set (2) interactive panels for performing statistical inference with the
  * current data set
- * 
+ *
  * @author G. Sturr
- * 
+ *
  */
-public class StatisticsPanelW extends FlowPanel implements StatPanelInterfaceW,
-		 IStatisticsModelListener {
+public final class StatisticsPanelW extends FlowPanel
+		implements StatPanelInterfaceW, IStatisticsModelListener {
 	private static final String SEPARATOR = "-------------------";
 
 	private StatisticsModel model;
@@ -40,7 +56,7 @@ public class StatisticsPanelW extends FlowPanel implements StatPanelInterfaceW,
 
 	/*************************************
 	 * Constructor
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param statDialog
@@ -91,31 +107,30 @@ public class StatisticsPanelW extends FlowPanel implements StatPanelInterfaceW,
 		inferencePanel.clear();
 
 		switch (model.getSelectedMode()) {
+			case StatisticsModel.INFER_T_TEST:
+			case StatisticsModel.INFER_Z_TEST:
+			case StatisticsModel.INFER_Z_INT:
+			case StatisticsModel.INFER_T_INT:
+				inferencePanel.add(getOneVarInferencePanel());
+				break;
 
-		case StatisticsModel.INFER_T_TEST:
-		case StatisticsModel.INFER_Z_TEST:
-		case StatisticsModel.INFER_Z_INT:
-		case StatisticsModel.INFER_T_INT:
-			inferencePanel.add(getOneVarInferencePanel());
-			break;
+			case StatisticsModel.INFER_T_TEST_2MEANS:
+			case StatisticsModel.INFER_T_INT_2MEANS:
+				inferencePanel.add(getTwoVarInferencePanel(true));
+				break;
 
-		case StatisticsModel.INFER_T_TEST_2MEANS:
-		case StatisticsModel.INFER_T_INT_2MEANS:
-			inferencePanel.add(getTwoVarInferencePanel(true));
-			break;
+			case StatisticsModel.INFER_T_TEST_PAIRED:
+			case StatisticsModel.INFER_T_INT_PAIRED:
+				inferencePanel.add(getTwoVarInferencePanel(false));
+				break;
 
-		case StatisticsModel.INFER_T_TEST_PAIRED:
-		case StatisticsModel.INFER_T_INT_PAIRED:
-			inferencePanel.add(getTwoVarInferencePanel(false));
-			break;
+			case StatisticsModel.INFER_ANOVA:
+				inferencePanel.add(getAnovaTable());
+				inferencePanel.add(getMinMVStatPanel());
+				break;
 
-		case StatisticsModel.INFER_ANOVA:
-			inferencePanel.add(getAnovaTable());
-			inferencePanel.add(getMinMVStatPanel());
-			break;
-
-		default:
-			inferencePanel.add(statTable);
+			default:
+				inferencePanel.add(statTable);
 		}
 
 		statDialog.updateStatDataPanelVisibility();
@@ -195,14 +210,13 @@ public class StatisticsPanelW extends FlowPanel implements StatPanelInterfaceW,
 
 	/**
 	 * Handle input event.
-	 * 
+	 *
 	 * @param source
 	 *            input element
 	 */
 	public void actionPerformed(Object source) {
 		int idx = lbInferenceMode.getSelectedIndex();
-		if (source == lbInferenceMode
-				&& idx != -1) {
+		if (source == lbInferenceMode && idx != -1) {
 
 			model.selectInferenceMode(lbInferenceMode.getValue(idx));
 			setInferencePanel();
@@ -248,7 +262,6 @@ public class StatisticsPanelW extends FlowPanel implements StatPanelInterfaceW,
 	public void updateAnovaTable() {
 		getAnovaTable().updatePanel();
 		getMinMVStatPanel().updatePanel();
-
 	}
 
 	/**
@@ -258,30 +271,28 @@ public class StatisticsPanelW extends FlowPanel implements StatPanelInterfaceW,
 	 */
 	public double estimateHeight(int rows) {
 		switch (model.getSelectedMode()) {
+			case StatisticsModel.INFER_T_TEST:
+			case StatisticsModel.INFER_Z_TEST:
+			case StatisticsModel.INFER_Z_INT:
+			case StatisticsModel.INFER_T_INT:
+				// inferencePanel.add(getOneVarInferencePanel());
+				return 150;
 
-		case StatisticsModel.INFER_T_TEST:
-		case StatisticsModel.INFER_Z_TEST:
-		case StatisticsModel.INFER_Z_INT:
-		case StatisticsModel.INFER_T_INT:
-			// inferencePanel.add(getOneVarInferencePanel());
-			return 150;
+			case StatisticsModel.INFER_T_TEST_2MEANS:
+			case StatisticsModel.INFER_T_INT_2MEANS:
+				// /inferencePanel.add(getTwoVarInferencePanel(true));
+				return 320;
 
-		case StatisticsModel.INFER_T_TEST_2MEANS:
-		case StatisticsModel.INFER_T_INT_2MEANS:
-			// /inferencePanel.add(getTwoVarInferencePanel(true));
-			return 320;
+			case StatisticsModel.INFER_T_TEST_PAIRED:
+			case StatisticsModel.INFER_T_INT_PAIRED:
+				// inferencePanel.add(getTwoVarInferencePanel(false));
+				return 320;
 
-		case StatisticsModel.INFER_T_TEST_PAIRED:
-		case StatisticsModel.INFER_T_INT_PAIRED:
-			// inferencePanel.add(getTwoVarInferencePanel(false));
-			return 320;
+			case StatisticsModel.INFER_ANOVA:
+				return 200 + rows * 20;
 
-		case StatisticsModel.INFER_ANOVA:
-			return 200 + rows * 20;
-
-		default:
-			return 70 + rows * 20;
+			default:
+				return 70 + rows * 20;
 		}
 	}
-
 }

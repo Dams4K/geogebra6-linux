@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.algos;
 
 import org.geogebra.common.euclidian.EuclidianConstants;
@@ -35,7 +51,7 @@ public class AlgoIntersectNpFunctionPolyLine extends AlgoRootNewton {
 
 	/**
 	 * constructor with labels
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -49,8 +65,12 @@ public class AlgoIntersectNpFunctionPolyLine extends AlgoRootNewton {
 	 * @param polyClosed
 	 *            indicates whether the poly is polygon(true) or polyLine(false)
 	 */
-	AlgoIntersectNpFunctionPolyLine(Construction cons, String[] label,
-			GeoPoint startPoint, GeoFunctionable func, GeoPoly poly,
+	AlgoIntersectNpFunctionPolyLine(
+			Construction cons,
+			String[] label,
+			GeoPoint startPoint,
+			GeoFunctionable func,
+			GeoPoly poly,
 			boolean polyClosed) {
 		this(cons, startPoint, func, poly, polyClosed);
 
@@ -59,12 +79,11 @@ public class AlgoIntersectNpFunctionPolyLine extends AlgoRootNewton {
 		} else {
 			rootPoint.setLabel(null);
 		}
-
 	}
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param func
@@ -74,8 +93,12 @@ public class AlgoIntersectNpFunctionPolyLine extends AlgoRootNewton {
 	 * @param polyClosed
 	 *            indicates whether the poly is polygon(true) or polyLine(false)
 	 */
-	AlgoIntersectNpFunctionPolyLine(Construction cons, GeoPoint startPoint,
-			GeoFunctionable func, GeoPoly poly, boolean polyClosed) {
+	AlgoIntersectNpFunctionPolyLine(
+			Construction cons,
+			GeoPoint startPoint,
+			GeoFunctionable func,
+			GeoPoly poly,
+			boolean polyClosed) {
 		super(cons);
 		this.startPoint = startPoint;
 		this.func = func;
@@ -86,7 +109,6 @@ public class AlgoIntersectNpFunctionPolyLine extends AlgoRootNewton {
 		setInputOutput(); // for AlgoElement
 		setDependencies();
 		compute();
-
 	}
 
 	private void initElements() {
@@ -106,43 +128,37 @@ public class AlgoIntersectNpFunctionPolyLine extends AlgoRootNewton {
 
 	@Override
 	public final void compute() {
-		Coords minIntersectCoords = null, currentIntersectCoords = null;
+		Coords minIntersectCoords = null, currentIntersectCoords;
 
-		if (!(func.isDefined() && getPoly().isDefined()
-				&& startPoint.isDefined())) {
+		if (!(func.isDefined() && getPoly().isDefined() && startPoint.isDefined())) {
 			rootPoint.setUndefined();
 			Log.debug("either func, poly, or start is not defined");
 			return;
 		}
 
-		double disCurrCoordsStart = -1.0;
+		double disCurrCoordsStart;
 		Function function = func.getFunction();
 		for (int index = 0; index < polySegCount; index++) {
 
 			segEndPoints[0] = getPoly().getPoint(index);
-			segEndPoints[1] = getPoly()
-					.getPoint((index + 1) % this.polyPointLength);
-			GeoVec3D.lineThroughPoints(segEndPoints[0], segEndPoints[1],
-					tempSeg);
+			segEndPoints[1] = getPoly().getPoint((index + 1) % this.polyPointLength);
+			GeoVec3D.lineThroughPoints(segEndPoints[0], segEndPoints[1], tempSeg);
 			tempSeg.setPoints(segEndPoints[0], segEndPoints[1]);
 			tempSeg.calcLength();
 
-			currentIntersectCoords = calcIntersectionPoint(
-					function, tempSeg);
+			currentIntersectCoords = calcIntersectionPoint(function, tempSeg);
 
 			if (minIntersectCoords == null) {
 				if (currentIntersectCoords != null) {
 					minIntersectCoords = currentIntersectCoords;
-					disMinCoordsStart = distanceSqr(currentIntersectCoords,
-							startPoint.getCoords());
+					disMinCoordsStart = distanceSqr(currentIntersectCoords, startPoint.getCoords());
 				}
 			} else {
 				if (currentIntersectCoords == null) {
 					continue;
 				}
 
-				disCurrCoordsStart = distanceSqr(currentIntersectCoords,
-						startPoint.getCoords());
+				disCurrCoordsStart = distanceSqr(currentIntersectCoords, startPoint.getCoords());
 				if (disCurrCoordsStart < disMinCoordsStart) {
 					minIntersectCoords = currentIntersectCoords;
 					disMinCoordsStart = disCurrCoordsStart;
@@ -171,8 +187,7 @@ public class AlgoIntersectNpFunctionPolyLine extends AlgoRootNewton {
 		// standard case
 		else {
 			// get difference f - line
-			Function.difference(fn, seg,
-					diffFunction);
+			Function.difference(fn, seg, diffFunction);
 			x = calcRoot(diffFunction, startPoint.inhomX);
 		}
 
@@ -219,15 +234,16 @@ public class AlgoIntersectNpFunctionPolyLine extends AlgoRootNewton {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-31
 		// simplified to allow better translation
-		return getLoc().getPlainDefault(
-				"IntersectionPointOfABWithInitialValueC",
-				"Intersection of %0 and %1 with initial value %2",
-				input[0].getLabel(tpl), input[1].getLabel(tpl),
-				startPoint.getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault(
+						"IntersectionPointOfABWithInitialValueC",
+						"Intersection of %0 and %1 with initial value %2",
+						input[0].getLabel(tpl),
+						input[1].getLabel(tpl),
+						startPoint.getLabel(tpl));
 	}
 
 	public GeoPoly getPoly() {
@@ -243,5 +259,4 @@ public class AlgoIntersectNpFunctionPolyLine extends AlgoRootNewton {
 		double vy = A.getY() - B.getY();
 		return vx * vx + vy * vy;
 	}
-
 }

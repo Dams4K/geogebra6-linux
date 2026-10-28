@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoAngularBisector.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 26. October 2001
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -37,8 +35,7 @@ import org.geogebra.common.util.MyMath;
  *
  * @author Markus
  */
-public class AlgoAngularBisectorPoints extends AlgoElement
-		implements SymbolicParametersBotanaAlgo {
+public class AlgoAngularBisectorPoints extends AlgoElement implements SymbolicParametersBotanaAlgo {
 
 	private GeoPoint A; // input
 	private GeoPoint B; // input
@@ -55,7 +52,7 @@ public class AlgoAngularBisectorPoints extends AlgoElement
 
 	/**
 	 * Creates new AlgoLineBisector
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param A
@@ -65,8 +62,7 @@ public class AlgoAngularBisectorPoints extends AlgoElement
 	 * @param C
 	 *            leg
 	 */
-	public AlgoAngularBisectorPoints(Construction cons,
-			GeoPoint A, GeoPoint B, GeoPoint C) {
+	public AlgoAngularBisectorPoints(Construction cons, GeoPoint A, GeoPoint B, GeoPoint C) {
 		super(cons);
 		this.A = A;
 		this.B = B;
@@ -130,8 +126,6 @@ public class AlgoAngularBisectorPoints extends AlgoElement
 
 	@Override
 	public final void compute() {
-		boolean infiniteB = B.isInfinite();
-
 		// compute lines g = B v A, h = B v C
 		GeoVec3D.cross(B, A, g);
 		GeoVec3D.cross(B, C, h);
@@ -152,7 +146,7 @@ public class AlgoAngularBisectorPoints extends AlgoElement
 
 		// set direction vector of bisector: (wx, wy)
 		double wx, wy;
-		if (infiniteB) {
+		if (B.isInfinite()) {
 			// if B is at infinity then g and h are parallel
 			// and the bisector line has same direction as g (and h)
 			wx = gx;
@@ -197,7 +191,7 @@ public class AlgoAngularBisectorPoints extends AlgoElement
 				wx = gx + hx;
 				wy = gy + hy;
 			} else { // ip <= 0.0, angle > 90 degrees
-						// BC - BA is a normalvector of the bisector
+				// BC - BA is a normal vector of the bisector
 				wx = hy - gy;
 				wy = gx - hx;
 
@@ -244,13 +238,16 @@ public class AlgoAngularBisectorPoints extends AlgoElement
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("AngleBisectorOfABC",
-				"Angle bisector of %0, %1, %2", A.getLabel(tpl),
-				B.getLabel(tpl), C.getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault(
+						"AngleBisectorOfABC",
+						"Angle bisector of %0, %1, %2",
+						A.getLabel(tpl),
+						B.getLabel(tpl),
+						C.getLabel(tpl));
 	}
 
 	@Override
@@ -259,8 +256,7 @@ public class AlgoAngularBisectorPoints extends AlgoElement
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 
 		if (botanaPolynomials != null) {
 			return botanaPolynomials;
@@ -306,15 +302,13 @@ public class AlgoAngularBisectorPoints extends AlgoElement
 			PPolynomial p1 = PPolynomial.sqrDistance(vA[0], vA[1], vC[0], vC[1]);
 			PPolynomial p2 = PPolynomial.sqrDistance(botanaVars[4], botanaVars[5], vC[0], vC[1]);
 			botanaPolynomials[0] = p1.subtract(p2);
-			botanaPolynomials[1] = PPolynomial.collinear(vC[0], vC[1],
-					botanaVars[4], botanaVars[5], vB[0], vB[1]);
+			botanaPolynomials[1] =
+					PPolynomial.collinear(vC[0], vC[1], botanaVars[4], botanaVars[5], vB[0], vB[1]);
 			botanaPolynomials[2] = m1.add(m1).subtract(a1).subtract(s1);
 			botanaPolynomials[3] = m2.add(m2).subtract(a2).subtract(s2);
 
 			return botanaPolynomials;
-
 		}
 		throw new NoSymbolicParametersException();
-
 	}
 }

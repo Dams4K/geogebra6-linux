@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.accessibility;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -11,6 +27,7 @@ import java.util.Locale;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.plugin.script.GgbScript;
+import org.geogebra.web.awt.JLMContext2D;
 import org.geogebra.web.html5.euclidian.EuclidianSimplePanelW;
 import org.geogebra.web.html5.gui.BaseWidgetFactory;
 import org.geogebra.web.html5.main.AppW;
@@ -27,10 +44,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 
 import com.google.gwtmockito.WithClassesToStub;
-import com.himamis.retex.renderer.web.graphics.JLMContext2d;
 
 @RunWith(GgbMockitoTestRunner.class)
-@WithClassesToStub({EuclidianSimplePanelW.class, JLMContext2d.class})
+@WithClassesToStub({EuclidianSimplePanelW.class, JLMContext2D.class})
 public class AccessibilityViewTest {
 
 	private AppW app;
@@ -112,14 +128,14 @@ public class AccessibilityViewTest {
 	private void assertDescription(int i, String string) {
 		assertTrue(mockPanel.getWidgetCount() > i);
 		assertThat(
-				mockPanel.getWidget(i).getElement().getAttribute("aria-label")
-						.toLowerCase(Locale.ROOT),
+				mockPanel.getWidget(i).getElement().getAttribute("aria-label").toLowerCase(Locale.ROOT),
 				CoreMatchers.containsString(string));
 	}
 
 	private void assertText(int i, String string) {
 		assertTrue(mockPanel.getWidgetCount() > i);
-		assertThat(mockPanel.getWidget(i).getElement().getInnerText().toLowerCase(Locale.ROOT),
+		assertThat(
+				mockPanel.getWidget(i).getElement().getInnerText().toLowerCase(Locale.ROOT),
 				CoreMatchers.containsString(string));
 	}
 
@@ -129,8 +145,7 @@ public class AccessibilityViewTest {
 
 	private BaseWidgetFactory getBaseWidgetFactory() {
 		BaseWidgetFactory factory = mock(BaseWidgetFactory.class);
-		when(factory.newButton()).thenAnswer(
-				invocation -> DomMocker.withElement(new Button()));
+		when(factory.newButton()).thenAnswer(invocation -> DomMocker.withElement(new Button()));
 		when(factory.newLabel()).thenAnswer(invocation -> DomMocker.newLabel());
 
 		when(factory.newSlider(Matchers.anyInt(), Matchers.anyInt()))

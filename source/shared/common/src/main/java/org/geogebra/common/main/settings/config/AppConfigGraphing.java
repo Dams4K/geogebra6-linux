@@ -1,11 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main.settings.config;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 
 import org.geogebra.common.GeoGebraConstants;
 import org.geogebra.common.gui.toolcategorization.AppType;
@@ -31,6 +44,8 @@ import org.geogebra.common.main.syntax.suggestionfilter.GraphingSyntaxFilter;
 import org.geogebra.common.main.syntax.suggestionfilter.SyntaxFilter;
 import org.geogebra.common.properties.factory.DefaultPropertiesFactory;
 import org.geogebra.common.properties.factory.PropertiesFactory;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Config for Graphing Calculator app
@@ -94,11 +109,6 @@ public class AppConfigGraphing extends AbstractAppConfig {
 	}
 
 	@Override
-	public boolean isSimpleMaterialPicker() {
-		return false;
-	}
-
-	@Override
 	public boolean hasPreviewPoints() {
 		return true;
 	}
@@ -125,12 +135,12 @@ public class AppConfigGraphing extends AbstractAppConfig {
 
 	@Override
 	public int[] getDecimalPlaces() {
-		return new int[]{0, 1, 2, 3, 4, 5, 10, 13, 15};
+		return new int[] {0, 1, 2, 3, 4, 5, 10, 13, 15};
 	}
 
 	@Override
 	public int[] getSignificantFigures() {
-		return new int[]{3, 5, 10, 15};
+		return new int[] {3, 5, 10, 15};
 	}
 
 	@Override
@@ -199,7 +209,7 @@ public class AppConfigGraphing extends AbstractAppConfig {
 	}
 
 	@Override
-	public @Nonnull AlgebraStyle getDefaultAlgebraStyle() {
+	public @NonNull AlgebraStyle getDefaultAlgebraStyle() {
 		return AlgebraStyle.DEFINITION_AND_VALUE;
 	}
 
@@ -224,7 +234,7 @@ public class AppConfigGraphing extends AbstractAppConfig {
 	}
 
 	@Override
-	public @CheckForNull SyntaxFilter newCommandSyntaxFilter() {
+	public @Nullable SyntaxFilter newCommandSyntaxFilter() {
 		return new GraphingSyntaxFilter();
 	}
 

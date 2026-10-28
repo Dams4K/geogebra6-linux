@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main;
 
 /**
@@ -24,12 +40,12 @@ public interface InitialViewState {
 	 *
 	 * <p>
 	 * Call this exactly once immediately after the app or file is initialized,
-	 * before any view-toggle shortcuts run. If you don’t call it:
+	 * before any view toggle shortcuts run. If you don't call it:
+	 * </p>
 	 * <ul>
 	 *   <li>Classic apps should treat all views as toggleable.</li>
 	 *   <li>Unbundled apps should treat the first/default tab as active.</li>
 	 * </ul>
-	 * </p>
 	 */
 	void store();
 

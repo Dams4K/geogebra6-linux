@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.keyboard.web.factory;
 
 import java.util.List;
@@ -50,8 +66,7 @@ public class InputBoxKeyboardFactory extends DefaultKeyboardFactory {
 			return false;
 		}
 		InputBoxKeyboardFactory that = (InputBoxKeyboardFactory) o;
-		return inputBoxType == that.inputBoxType && Objects
-				.equals(functionVars, that.functionVars);
+		return inputBoxType == that.inputBoxType && Objects.equals(functionVars, that.functionVars);
 	}
 
 	@Override
@@ -59,30 +74,30 @@ public class InputBoxKeyboardFactory extends DefaultKeyboardFactory {
 		return Objects.hash(inputBoxType, functionVars);
 	}
 
-	private KeyboardModelFactory getMathKeyboard(InputBoxType inputBoxType,
-			List<String> functionVars) {
+	private KeyboardModelFactory getMathKeyboard(
+			InputBoxType inputBoxType, List<String> functionVars) {
 		switch (inputBoxType) {
-		case VECTOR_MATRIX:
-			return new VectorMatrixMathKeyboardFactory();
-		case INEQ_BOOL:
-			return new IneqBoolMathKeyboardFactory();
-		case FUNCTION:
-			return new FunctionMathKeyboardFactory(functionVars);
-		case DEFAULT:
-		default:
-			return new InputBoxDefaultMathKeyboardFactory();
+			case VECTOR_MATRIX:
+				return new VectorMatrixMathKeyboardFactory();
+			case INEQ_BOOL:
+				return new IneqBoolMathKeyboardFactory();
+			case FUNCTION:
+				return new FunctionMathKeyboardFactory(functionVars);
+			case DEFAULT:
+			default:
+				return new InputBoxDefaultMathKeyboardFactory();
 		}
 	}
 
 	private KeyboardModelFactory getFunctionKeyboard(InputBoxType inputBoxType) {
 		switch (inputBoxType) {
-		case DEFAULT:
-		case VECTOR_MATRIX:
-		case FUNCTION:
-		default:
-			return new InputBoxDefaultFunctionKeyboardFactory();
-		case INEQ_BOOL:
-			return new IneqBoolFunctionKeyboardFactory();
+			case DEFAULT:
+			case VECTOR_MATRIX:
+			case FUNCTION:
+			default:
+				return new InputBoxDefaultFunctionKeyboardFactory();
+			case INEQ_BOOL:
+				return new IneqBoolFunctionKeyboardFactory();
 		}
 	}
 }

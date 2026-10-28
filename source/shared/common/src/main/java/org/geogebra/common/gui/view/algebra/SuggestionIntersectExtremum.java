@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.algebra;
 
 import org.geogebra.common.gui.view.algebra.scicalc.LabelHiderCallback;
@@ -22,7 +38,7 @@ import org.geogebra.common.util.DoubleUtil;
  * @author Mathieu
  *
  */
-public class SuggestionIntersectExtremum extends Suggestion {
+public final class SuggestionIntersectExtremum extends Suggestion {
 
 	private static Suggestion INSTANCE = new SuggestionIntersectExtremum();
 
@@ -56,7 +72,6 @@ public class SuggestionIntersectExtremum extends Suggestion {
 
 	private void intersect(GeoElementND geo) {
 		PolyFunction polynomial = getPolynomial(geo);
-		AlgebraProcessor algebraProcessor = geo.getKernel().getAlgebraProcessor();
 		StringBuilder sb = new StringBuilder();
 		sb.append("Intersect[");
 		sb.append(geo.getLabelSimple());
@@ -70,8 +85,8 @@ public class SuggestionIntersectExtremum extends Suggestion {
 			sb.append(bounds[1]);
 		}
 		sb.append("]");
+		AlgebraProcessor algebraProcessor = geo.getKernel().getAlgebraProcessor();
 		processCommand(algebraProcessor, sb.toString(), false);
-
 	}
 
 	private PolyFunction getPolynomial(GeoElementND geo) {
@@ -83,22 +98,20 @@ public class SuggestionIntersectExtremum extends Suggestion {
 			return null;
 		}
 
-		return function.expandToPolyFunction(
-				function.getFunctionExpression(), false, true);
+		return function.expandToPolyFunction(function.getFunctionExpression(), false, true);
 	}
 
-	protected void processCommand(AlgebraProcessor algebraProcessor, String cmd,
-			boolean isSymbolicMode) {
+	private void processCommand(
+			AlgebraProcessor algebraProcessor, String cmd, boolean isSymbolicMode) {
 		if (isSymbolicMode) {
-			GeoElementND[] pointLists = algebraProcessor
-					.processAlgebraCommandNoExceptionHandling(cmd, false,
-							ErrorHelper.silent(), false, new LabelHiderCallback());
+			GeoElementND[] pointLists = algebraProcessor.processAlgebraCommandNoExceptionHandling(
+					cmd, false, ErrorHelper.silent(), false, new LabelHiderCallback());
 			if (pointLists != null) {
 				setPointsColorToGray(pointLists);
 			}
 		} else {
-			algebraProcessor.processAlgebraCommandNoExceptionHandling(cmd, false,
-					ErrorHelper.silent(), false, null);
+			algebraProcessor.processAlgebraCommandNoExceptionHandling(
+					cmd, false, ErrorHelper.silent(), false, null);
 		}
 	}
 
@@ -111,7 +124,7 @@ public class SuggestionIntersectExtremum extends Suggestion {
 
 	private static boolean[] getNeededAlgos(GeoElementND geo) {
 		// intersection with y needed always
-		boolean[] algosMissing = { false, false, true };
+		boolean[] algosMissing = {false, false, true};
 		if (!(geo instanceof GeoFunctionable)) {
 			return algosMissing;
 		}
@@ -120,8 +133,8 @@ public class SuggestionIntersectExtremum extends Suggestion {
 			return algosMissing;
 		}
 
-		PolyFunction poly = function.expandToPolyFunction(
-				function.getFunctionExpression(), false, true);
+		PolyFunction poly =
+				function.expandToPolyFunction(function.getFunctionExpression(), false, true);
 		if (poly == null || poly.getDegree() > 0) {
 			algosMissing[0] = true;
 		}
@@ -137,7 +150,8 @@ public class SuggestionIntersectExtremum extends Suggestion {
 	}
 
 	private static boolean isVerticalLine(GeoElementND geo) {
-		return Equation.isAlgebraEquation(geo) && geo instanceof GeoLine
+		return Equation.isAlgebraEquation(geo)
+				&& geo instanceof GeoLine
 				&& DoubleUtil.isZero(((GeoLine) geo).getY());
 	}
 
@@ -147,8 +161,7 @@ public class SuggestionIntersectExtremum extends Suggestion {
 	 * @return solve suggestion if applicable
 	 */
 	public static Suggestion get(GeoElement geo) {
-		if (mayHaveSpecialPoints(geo)
-				&& !checkDependentAlgo(geo, INSTANCE, getNeededAlgos(geo))) {
+		if (mayHaveSpecialPoints(geo) && !checkDependentAlgo(geo, INSTANCE, getNeededAlgos(geo))) {
 			return INSTANCE;
 		}
 		return null;
@@ -162,13 +175,14 @@ public class SuggestionIntersectExtremum extends Suggestion {
 	 */
 	private static boolean mayHaveSpecialPoints(GeoElement geo) {
 		GeoElementND unwrappedSymbolic = geo.unwrapSymbolic();
-		return geo.isRealValuedFunction() && unwrappedSymbolic != null
+		return geo.isRealValuedFunction()
+				&& unwrappedSymbolic != null
 				&& !unwrappedSymbolic.isNumberValue();
 	}
 
 	@Override
-	protected boolean allAlgosExist(GetCommand className, GeoElement[] input,
-			boolean[] algosMissing) {
+	protected boolean allAlgosExist(
+			GetCommand className, GeoElement[] input, boolean[] algosMissing) {
 		boolean withYAxis = containsLabel(input, "yAxis");
 		if (className == Commands.Intersect && !withYAxis) {
 			algosMissing[0] = false;

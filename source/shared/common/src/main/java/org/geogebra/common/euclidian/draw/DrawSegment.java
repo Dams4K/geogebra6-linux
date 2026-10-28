@@ -1,25 +1,24 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * DrawSegment
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 21. 8 . 2003
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.GLine2D;
 import org.geogebra.common.awt.GPoint2D;
@@ -29,7 +28,6 @@ import org.geogebra.common.euclidian.EuclidianStatic;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.Previewable;
 import org.geogebra.common.euclidian.clipping.ClipLine;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.ConstructionDefaults;
 import org.geogebra.common.kernel.MyPoint;
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -42,7 +40,7 @@ import org.geogebra.common.util.DoubleUtil;
 import org.geogebra.common.util.MyMath;
 
 /**
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class DrawSegment extends SetDrawable implements Previewable, EndDecoratedDrawable {
@@ -67,7 +65,7 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 
 	/**
 	 * Creates new DrawSegment
-	 * 
+	 *
 	 * @param view
 	 *            Euclidian view to be used
 	 * @param segment
@@ -85,7 +83,7 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 
 	/**
 	 * Creates a new DrawSegment for preview.
-	 * 
+	 *
 	 * @param view
 	 *            Euclidian view to be used
 	 * @param points
@@ -95,14 +93,16 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 		this.view = view;
 		this.points = points;
 
-		geo = view.getKernel().getConstruction().getConstructionDefaults()
+		geo = view.getKernel()
+				.getConstruction()
+				.getConstructionDefaults()
 				.getDefaultGeo(ConstructionDefaults.DEFAULT_SEGMENT);
 		segment = (GeoSegment) geo;
 		updatePreview();
 	}
 
 	@Override
-	final public void update() {
+	public final void update() {
 		isVisible = geo.isEuclidianVisible();
 		if (!isVisible) {
 			return;
@@ -126,13 +126,13 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 
 	/**
 	 * update with A, B for end points
-	 * 
+	 *
 	 * @param A
 	 *            end point
 	 * @param B
 	 *            end point
 	 */
-	final public void update(Coords A, Coords B) {
+	public final void update(Coords A, Coords B) {
 
 		labelVisible = geo.isLabelVisible();
 		updateStrokes(geo);
@@ -155,7 +155,10 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 		} else {
 			// A or B off screen
 			// clip at screen, that's important for huge coordinates
-			isVisible = drawClipped(coordsA, coordsB, line,
+			isVisible = drawClipped(
+					coordsA,
+					coordsB,
+					line,
 					view.getMinXScreen() - EuclidianStatic.CLIP_DISTANCE,
 					view.getMaxXScreen() + EuclidianStatic.CLIP_DISTANCE,
 					view.getMinYScreen() - EuclidianStatic.CLIP_DISTANCE,
@@ -169,14 +172,13 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 		drawAndUpdateTraceIfNeeded(segment.getTrace());
 
 		// if no label and no decoration then we're done
-		if (!labelVisible
-				&& geo.getDecorationType() == GeoElementND.DECORATION_NONE) {
+		if (!labelVisible && geo.getDecorationType() == GeoElementND.DECORATION_NONE) {
 			return;
 		}
 
 		// calc midpoint (midX, midY) and perpendicular vector (nx, ny)
-		double midX = (coordsA[0] + coordsB[0]) / 2.0;
-		double midY = (coordsA[1] + coordsB[1]) / 2.0;
+		final double midX = (coordsA[0] + coordsB[0]) / 2.0;
+		final double midY = (coordsA[1] + coordsB[1]) / 2.0;
 		double nx = coordsA[1] - coordsB[1];
 		double ny = coordsB[0] - coordsA[0];
 		double nLength = MyMath.length(nx, ny);
@@ -196,8 +198,7 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 		}
 
 		// update decoration
-		if (geo.getDecorationType() != GeoElementND.DECORATION_NONE
-				&& nLength > 0) {
+		if (geo.getDecorationType() != GeoElementND.DECORATION_NONE && nLength > 0) {
 			if (decoTicks == null) {
 				// only create these object when they are really needed
 				decoTicks = new GLine2D[6];
@@ -214,140 +215,141 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 			double vx, vy, factor;
 
 			switch (geo.getDecorationType()) {
-			default:
-				// do nothing
-				break;
-			case GeoElementND.DECORATION_SEGMENT_ONE_TICK:
-				// use perpendicular vector to set tick
-				factor = tickLength / nLength;
-				nx *= factor;
-				ny *= factor;
-				decoTicks[0].setLine(midX - nx, midY - ny, midX + nx,
-						midY + ny);
-				break;
+				default:
+					// do nothing
+					break;
+				case GeoElementND.DECORATION_SEGMENT_ONE_TICK:
+					// use perpendicular vector to set tick
+					factor = tickLength / nLength;
+					nx *= factor;
+					ny *= factor;
+					decoTicks[0].setLine(midX - nx, midY - ny, midX + nx, midY + ny);
+					break;
 
-			case GeoElementND.DECORATION_SEGMENT_TWO_TICKS:
-				// vector (vx, vy) to get 2 points around midpoint
-				factor = tickSpacing / (2 * nLength);
-				vx = -ny * factor;
-				vy = nx * factor;
-				// use perpendicular vector to set ticks
-				factor = tickLength / nLength;
-				nx *= factor;
-				ny *= factor;
-				decoTicks[0].setLine(midX + vx - nx, midY + vy - ny,
-						midX + vx + nx, midY + vy + ny);
-				decoTicks[1].setLine(midX - vx - nx, midY - vy - ny,
-						midX - vx + nx, midY - vy + ny);
-				break;
+				case GeoElementND.DECORATION_SEGMENT_TWO_TICKS:
+					// vector (vx, vy) to get 2 points around midpoint
+					factor = tickSpacing / (2 * nLength);
+					vx = -ny * factor;
+					vy = nx * factor;
+					// use perpendicular vector to set ticks
+					factor = tickLength / nLength;
+					nx *= factor;
+					ny *= factor;
+					decoTicks[0].setLine(midX + vx - nx, midY + vy - ny, midX + vx + nx, midY + vy + ny);
+					decoTicks[1].setLine(midX - vx - nx, midY - vy - ny, midX - vx + nx, midY - vy + ny);
+					break;
 
-			case GeoElementND.DECORATION_SEGMENT_THREE_TICKS:
-				// vector (vx, vy) to get 2 points around midpoint
-				factor = tickSpacing / nLength;
-				vx = -ny * factor;
-				vy = nx * factor;
-				// use perpendicular vector to set ticks
-				factor = tickLength / nLength;
-				nx *= factor;
-				ny *= factor;
-				decoTicks[0].setLine(midX + vx - nx, midY + vy - ny,
-						midX + vx + nx, midY + vy + ny);
-				decoTicks[1].setLine(midX - nx, midY - ny, midX + nx,
-						midY + ny);
-				decoTicks[2].setLine(midX - vx - nx, midY - vy - ny,
-						midX - vx + nx, midY - vy + ny);
-				break;
+				case GeoElementND.DECORATION_SEGMENT_THREE_TICKS:
+					// vector (vx, vy) to get 2 points around midpoint
+					factor = tickSpacing / nLength;
+					vx = -ny * factor;
+					vy = nx * factor;
+					// use perpendicular vector to set ticks
+					factor = tickLength / nLength;
+					nx *= factor;
+					ny *= factor;
+					decoTicks[0].setLine(midX + vx - nx, midY + vy - ny, midX + vx + nx, midY + vy + ny);
+					decoTicks[1].setLine(midX - nx, midY - ny, midX + nx, midY + ny);
+					decoTicks[2].setLine(midX - vx - nx, midY - vy - ny, midX - vx + nx, midY - vy + ny);
+					break;
 
-			case GeoElementND.DECORATION_SEGMENT_ONE_ARROW:
-				// vector (vx, vy) to get 2 points around midpoint
-				factor = tickSpacing / (1.5 * nLength);
-				vx = -ny * factor;
-				vy = nx * factor;
-				// use perpendicular vector to set tick
-				factor = tickLength / (1.5 * nLength);
-				nx *= factor;
-				ny *= factor;
-				decoTicks[0].setLine(midX - arrowlength * vx,
-						midY - arrowlength * vy,
-						midX - arrowlength * vx + arrowlength * (nx + vx),
-						midY - arrowlength * vy + arrowlength * (ny + vy));
-				decoTicks[1].setLine(midX - arrowlength * vx,
-						midY - arrowlength * vy,
-						midX - arrowlength * vx + arrowlength * (-nx + vx),
-						midY - arrowlength * vy + arrowlength * (-ny + vy));
-				break;
+				case GeoElementND.DECORATION_SEGMENT_ONE_ARROW:
+					// vector (vx, vy) to get 2 points around midpoint
+					factor = tickSpacing / (1.5 * nLength);
+					vx = -ny * factor;
+					vy = nx * factor;
+					// use perpendicular vector to set tick
+					factor = tickLength / (1.5 * nLength);
+					nx *= factor;
+					ny *= factor;
+					decoTicks[0].setLine(
+							midX - arrowlength * vx,
+							midY - arrowlength * vy,
+							midX - arrowlength * vx + arrowlength * (nx + vx),
+							midY - arrowlength * vy + arrowlength * (ny + vy));
+					decoTicks[1].setLine(
+							midX - arrowlength * vx,
+							midY - arrowlength * vy,
+							midX - arrowlength * vx + arrowlength * (-nx + vx),
+							midY - arrowlength * vy + arrowlength * (-ny + vy));
+					break;
 
-			case GeoElementND.DECORATION_SEGMENT_TWO_ARROWS:
-				// vector (vx, vy) to get 2 points around midpoint
-				factor = tickSpacing / (1.5 * nLength);
-				vx = -ny * factor;
-				vy = nx * factor;
-				// use perpendicular vector to set ticks
-				factor = tickLength / (1.5 * nLength);
-				nx *= factor;
-				ny *= factor;
-				decoTicks[0].setLine(midX - 2 * arrowlength * vx,
-						midY - 2 * arrowlength * vy,
-						midX - 2 * arrowlength * vx + arrowlength * (nx + vx),
-						midY - 2 * arrowlength * vy + arrowlength * (ny + vy));
-				decoTicks[1].setLine(midX - 2 * arrowlength * vx,
-						midY - 2 * arrowlength * vy,
-						midX - 2 * arrowlength * vx + arrowlength * (-nx + vx),
-						midY - 2 * arrowlength * vy + arrowlength * (-ny + vy));
+				case GeoElementND.DECORATION_SEGMENT_TWO_ARROWS:
+					// vector (vx, vy) to get 2 points around midpoint
+					factor = tickSpacing / (1.5 * nLength);
+					vx = -ny * factor;
+					vy = nx * factor;
+					// use perpendicular vector to set ticks
+					factor = tickLength / (1.5 * nLength);
+					nx *= factor;
+					ny *= factor;
+					decoTicks[0].setLine(
+							midX - 2 * arrowlength * vx,
+							midY - 2 * arrowlength * vy,
+							midX - 2 * arrowlength * vx + arrowlength * (nx + vx),
+							midY - 2 * arrowlength * vy + arrowlength * (ny + vy));
+					decoTicks[1].setLine(
+							midX - 2 * arrowlength * vx,
+							midY - 2 * arrowlength * vy,
+							midX - 2 * arrowlength * vx + arrowlength * (-nx + vx),
+							midY - 2 * arrowlength * vy + arrowlength * (-ny + vy));
 
-				decoTicks[2].setLine(midX, midY, midX + arrowlength * (nx + vx),
-						midY + arrowlength * (ny + vy));
-				decoTicks[3].setLine(midX, midY,
-						midX + arrowlength * (-nx + vx),
-						midY + arrowlength * (-ny + vy));
-				break;
+					decoTicks[2].setLine(
+							midX, midY, midX + arrowlength * (nx + vx), midY + arrowlength * (ny + vy));
+					decoTicks[3].setLine(
+							midX, midY, midX + arrowlength * (-nx + vx), midY + arrowlength * (-ny + vy));
+					break;
 
-			case GeoElementND.DECORATION_SEGMENT_THREE_ARROWS:
-				// vector (vx, vy) to get 2 points around midpoint
-				factor = tickSpacing / (1.5 * nLength);
-				vx = -ny * factor;
-				vy = nx * factor;
-				// use perpendicular vector to set ticks
-				factor = tickLength / (1.5 * nLength);
-				nx *= factor;
-				ny *= factor;
-				decoTicks[0].setLine(midX - arrowlength * vx,
-						midY - arrowlength * vy,
-						midX - arrowlength * vx + arrowlength * (nx + vx),
-						midY - arrowlength * vy + arrowlength * (ny + vy));
-				decoTicks[1].setLine(midX - arrowlength * vx,
-						midY - arrowlength * vy,
-						midX - arrowlength * vx + arrowlength * (-nx + vx),
-						midY - arrowlength * vy + arrowlength * (-ny + vy));
+				case GeoElementND.DECORATION_SEGMENT_THREE_ARROWS:
+					// vector (vx, vy) to get 2 points around midpoint
+					factor = tickSpacing / (1.5 * nLength);
+					vx = -ny * factor;
+					vy = nx * factor;
+					// use perpendicular vector to set ticks
+					factor = tickLength / (1.5 * nLength);
+					nx *= factor;
+					ny *= factor;
+					decoTicks[0].setLine(
+							midX - arrowlength * vx,
+							midY - arrowlength * vy,
+							midX - arrowlength * vx + arrowlength * (nx + vx),
+							midY - arrowlength * vy + arrowlength * (ny + vy));
+					decoTicks[1].setLine(
+							midX - arrowlength * vx,
+							midY - arrowlength * vy,
+							midX - arrowlength * vx + arrowlength * (-nx + vx),
+							midY - arrowlength * vy + arrowlength * (-ny + vy));
 
-				decoTicks[2].setLine(midX + arrowlength * vx,
-						midY + arrowlength * vy,
-						midX + arrowlength * vx + arrowlength * (nx + vx),
-						midY + arrowlength * vy + arrowlength * (ny + vy));
-				decoTicks[3].setLine(midX + arrowlength * vx,
-						midY + arrowlength * vy,
-						midX + arrowlength * vx + arrowlength * (-nx + vx),
-						midY + arrowlength * vy + arrowlength * (-ny + vy));
+					decoTicks[2].setLine(
+							midX + arrowlength * vx,
+							midY + arrowlength * vy,
+							midX + arrowlength * vx + arrowlength * (nx + vx),
+							midY + arrowlength * vy + arrowlength * (ny + vy));
+					decoTicks[3].setLine(
+							midX + arrowlength * vx,
+							midY + arrowlength * vy,
+							midX + arrowlength * vx + arrowlength * (-nx + vx),
+							midY + arrowlength * vy + arrowlength * (-ny + vy));
 
-				decoTicks[4].setLine(midX - 3 * arrowlength * vx,
-						midY - 3 * arrowlength * vy,
-						midX - 3 * arrowlength * vx + arrowlength * (nx + vx),
-						midY - 3 * arrowlength * vy + arrowlength * (ny + vy));
-				decoTicks[5].setLine(midX - 3 * arrowlength * vx,
-						midY - 3 * arrowlength * vy,
-						midX - 3 * arrowlength * vx + arrowlength * (-nx + vx),
-						midY - 3 * arrowlength * vy + arrowlength * (-ny + vy));
-				break;
+					decoTicks[4].setLine(
+							midX - 3 * arrowlength * vx,
+							midY - 3 * arrowlength * vy,
+							midX - 3 * arrowlength * vx + arrowlength * (nx + vx),
+							midY - 3 * arrowlength * vy + arrowlength * (ny + vy));
+					decoTicks[5].setLine(
+							midX - 3 * arrowlength * vx,
+							midY - 3 * arrowlength * vy,
+							midX - 3 * arrowlength * vx + arrowlength * (-nx + vx),
+							midY - 3 * arrowlength * vy + arrowlength * (-ny + vy));
+					break;
 			}
 		} else {
 			// #4907 make sure decorations disappear for length 0 segments
 			if (decoTicks != null) {
 				for (int i = 0; i < decoTicks.length; i++) {
-					decoTicks[i].setLine(Double.NaN, Double.NaN, Double.NaN,
-							Double.NaN);
+					decoTicks[i].setLine(Double.NaN, Double.NaN, Double.NaN, Double.NaN);
 				}
 			}
-
 		}
 	}
 
@@ -370,22 +372,30 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 	 *            helper array for clipping
 	 * @return whether line intersects clipping rectangle
 	 */
-	public static boolean drawClipped(double[] coordsA, double[] coordsB,
-			GLine2D line, int xmin, int xmax, int ymin, int ymax,
+	public static boolean drawClipped(
+			double[] coordsA,
+			double[] coordsB,
+			GLine2D line,
+			int xmin,
+			int xmax,
+			int ymin,
+			int ymax,
 			GPoint2D[] tmpClipPoints2) {
-		GPoint2D[] clippedPoints = ClipLine.getClipped(coordsA[0], coordsA[1],
-				coordsB[0], coordsB[1], xmin, xmax, ymin, ymax, tmpClipPoints2);
+		GPoint2D[] clippedPoints = ClipLine.getClipped(
+				coordsA[0], coordsA[1], coordsB[0], coordsB[1], xmin, xmax, ymin, ymax, tmpClipPoints2);
 		if (clippedPoints == null) {
 			return false;
 		}
-		line.setLine(clippedPoints[0].getX(), clippedPoints[0].getY(),
-				clippedPoints[1].getX(), clippedPoints[1].getY());
+		line.setLine(
+				clippedPoints[0].getX(),
+				clippedPoints[0].getY(),
+				clippedPoints[1].getX(),
+				clippedPoints[1].getY());
 		return true;
-
 	}
 
 	@Override
-	final public void draw(GGraphics2D g2) {
+	public final void draw(GGraphics2D g2) {
 		// segments of polygons can have zero thickness
 		if (geo.getLineThickness() == 0) {
 			return;
@@ -423,48 +433,47 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 	private void drawLineMiddleDecoration(GGraphics2D g2) {
 		// decoTicks is null for zero length segments
 		g2.setColor(getObjectColor());
-		if (geo.getDecorationType() != GeoElementND.DECORATION_NONE
-				&& decoTicks != null) {
+		if (geo.getDecorationType() != GeoElementND.DECORATION_NONE && decoTicks != null) {
 			g2.setStroke(decoStroke);
 
 			switch (geo.getDecorationType()) {
-			default:
-				// do nothing
-				break;
-			case GeoElementND.DECORATION_SEGMENT_ONE_TICK:
-				g2.draw(decoTicks[0]);
-				break;
+				default:
+					// do nothing
+					break;
+				case GeoElementND.DECORATION_SEGMENT_ONE_TICK:
+					g2.draw(decoTicks[0]);
+					break;
 
-			case GeoElementND.DECORATION_SEGMENT_TWO_TICKS:
-				g2.draw(decoTicks[0]);
-				g2.draw(decoTicks[1]);
-				break;
+				case GeoElementND.DECORATION_SEGMENT_TWO_TICKS:
+					g2.draw(decoTicks[0]);
+					g2.draw(decoTicks[1]);
+					break;
 
-			case GeoElementND.DECORATION_SEGMENT_THREE_TICKS:
-				g2.draw(decoTicks[0]);
-				g2.draw(decoTicks[1]);
-				g2.draw(decoTicks[2]);
-				break;
-			case GeoElementND.DECORATION_SEGMENT_ONE_ARROW:
-				g2.draw(decoTicks[0]);
-				g2.draw(decoTicks[1]);
-				break;
+				case GeoElementND.DECORATION_SEGMENT_THREE_TICKS:
+					g2.draw(decoTicks[0]);
+					g2.draw(decoTicks[1]);
+					g2.draw(decoTicks[2]);
+					break;
+				case GeoElementND.DECORATION_SEGMENT_ONE_ARROW:
+					g2.draw(decoTicks[0]);
+					g2.draw(decoTicks[1]);
+					break;
 
-			case GeoElementND.DECORATION_SEGMENT_TWO_ARROWS:
-				g2.draw(decoTicks[0]);
-				g2.draw(decoTicks[1]);
-				g2.draw(decoTicks[2]);
-				g2.draw(decoTicks[3]);
-				break;
+				case GeoElementND.DECORATION_SEGMENT_TWO_ARROWS:
+					g2.draw(decoTicks[0]);
+					g2.draw(decoTicks[1]);
+					g2.draw(decoTicks[2]);
+					g2.draw(decoTicks[3]);
+					break;
 
-			case GeoElementND.DECORATION_SEGMENT_THREE_ARROWS:
-				g2.draw(decoTicks[0]);
-				g2.draw(decoTicks[1]);
-				g2.draw(decoTicks[2]);
-				g2.draw(decoTicks[3]);
-				g2.draw(decoTicks[4]);
-				g2.draw(decoTicks[5]);
-				break;
+				case GeoElementND.DECORATION_SEGMENT_THREE_ARROWS:
+					g2.draw(decoTicks[0]);
+					g2.draw(decoTicks[1]);
+					g2.draw(decoTicks[2]);
+					g2.draw(decoTicks[3]);
+					g2.draw(decoTicks[4]);
+					g2.draw(decoTicks[5]);
+					break;
 			}
 		}
 	}
@@ -489,13 +498,12 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 	}
 
 	@Override
-	final public void updatePreview() {
+	public final void updatePreview() {
 		isVisible = points.size() == 1;
 		if (isVisible) {
 
 			// start point
-			view.getCoordsForView(points.get(0).getInhomCoordsInD3())
-					.get(coordsA);
+			view.getCoordsForView(points.get(0).getInhomCoordsInD3()).get(coordsA);
 			view.toScreenCoords(coordsA);
 
 			if (line == null) {
@@ -505,7 +513,7 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 	}
 
 	@Override
-	final public void updateMousePos(double mouseRWx, double mouseRWy) {
+	public final void updateMousePos(double mouseRWx, double mouseRWy) {
 		double xRW = mouseRWx;
 		double yRW = mouseRWy;
 		if (isVisible) {
@@ -516,14 +524,12 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 			int my = view.toScreenCoordY(yRW);
 
 			// round angle to nearest 15 degrees if alt pressed
-			if (points.size() == 1
-					&& view.getEuclidianController().isAltDown()) {
+			if (points.size() == 1 && view.getEuclidianController().isAltDown()) {
 				GeoPointND p = points.get(0);
 				double px = p.getInhomX();
 				double py = p.getInhomY();
 				double angle = Math.atan2(yRW - py, xRW - px) * 180 / Math.PI;
-				double radius = Math.sqrt(
-						(py - yRW) * (py - yRW) + (px - xRW) * (px - xRW));
+				double radius = Math.sqrt((py - yRW) * (py - yRW) + (px - xRW) * (px - xRW));
 
 				// round angle to nearest 15 degrees
 				angle = Math.round(angle / 15) * 15;
@@ -544,7 +550,7 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 	}
 
 	@Override
-	final public void drawPreview(GGraphics2D g2) {
+	public final void drawPreview(GGraphics2D g2) {
 		if (isVisible) {
 			g2.setPaint(getObjectColor());
 			updateStrokes(geo);
@@ -559,25 +565,22 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 	}
 
 	@Override
-	final public boolean hit(int x, int y, int hitThreshold) {
+	public final boolean hit(int x, int y, int hitThreshold) {
 		return getDecoratedShape() != null
-				&& getDecoratedShape().intersects(x - hitThreshold, y - hitThreshold,
-						2 * hitThreshold, 2 * hitThreshold);
+				&& getDecoratedShape()
+						.intersects(x - hitThreshold, y - hitThreshold, 2 * hitThreshold, 2 * hitThreshold);
 	}
 
 	private GShape getDecoratedShape() {
-		return hasSegmentStyle()
-				? segmentWithEndings.getShape()
-				: line;
+		return hasSegmentStyle() ? segmentWithEndings.getShape() : line;
 	}
 
 	private boolean hasSegmentStyle() {
-		return geo instanceof GeoSegment
-			&& ((GeoSegment) geo).hasStyledEndpoint();
+		return geo instanceof GeoSegment && ((GeoSegment) geo).hasStyledEndpoint();
 	}
 
 	@Override
-	final public boolean isInside(GRectangle rect) {
+	public final boolean isInside(GRectangle rect) {
 		GShape decoratedShape = getDecoratedShape();
 		if (decoratedShape instanceof GLine2D) {
 			GLine2D line = (GLine2D) decoratedShape;
@@ -601,7 +604,7 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 	 * Returns the bounding box of this Drawable in screen coordinates.
 	 */
 	@Override
-	final public GRectangle getBounds() {
+	public final GRectangle getBounds() {
 		if (line == null || !geo.isDefined() || !geo.isEuclidianVisible()) {
 			return null;
 		}
@@ -617,10 +620,18 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 
 	@Override
 	public void fromPoints(ArrayList<GPoint2D> pts) {
-		segment.getStartPoint().setCoords(view.toRealWorldCoordX(pts.get(0).getX()),
-				view.toRealWorldCoordY(pts.get(0).getY()), 1);
-		segment.getEndPoint().setCoords(view.toRealWorldCoordX(pts.get(1).getX()),
-				view.toRealWorldCoordY(pts.get(1).getY()), 1);
+		segment
+				.getStartPoint()
+				.setCoords(
+						view.toRealWorldCoordX(pts.get(0).getX()),
+						view.toRealWorldCoordY(pts.get(0).getY()),
+						1);
+		segment
+				.getEndPoint()
+				.setCoords(
+						view.toRealWorldCoordX(pts.get(1).getX()),
+						view.toRealWorldCoordY(pts.get(1).getY()),
+						1);
 		segment.getParentAlgorithm().update();
 	}
 
@@ -634,8 +645,8 @@ public class DrawSegment extends SetDrawable implements Previewable, EndDecorate
 
 	private void addPoint(GeoPointND point, ArrayList<GPoint2D> ret) {
 		point.updateCoords2D();
-		ret.add(new MyPoint(view.toScreenCoordXd(point.getX2D()),
-				view.toScreenCoordYd(point.getY2D())));
+		ret.add(
+				new MyPoint(view.toScreenCoordXd(point.getX2D()), view.toScreenCoordYd(point.getY2D())));
 	}
 
 	@Override

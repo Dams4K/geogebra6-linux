@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.dialog;
 
 import static org.geogebra.common.main.settings.TableSettings.DEFAULT_MAX;
@@ -12,12 +28,13 @@ import org.geogebra.common.plugin.Event;
 import org.geogebra.common.plugin.EventType;
 import org.geogebra.web.full.gui.GuiManagerW;
 import org.geogebra.web.full.gui.components.ComponentInputField;
+import org.geogebra.web.full.gui.toolbarpanel.ToolbarTab;
+import org.geogebra.web.full.gui.toolbarpanel.tableview.TableTab;
 import org.geogebra.web.html5.gui.HasKeyboardPopup;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.util.TestHarness;
 import org.geogebra.web.shared.components.dialog.ComponentDialog;
 import org.geogebra.web.shared.components.dialog.DialogData;
-import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Label;
 
 /**
@@ -25,8 +42,7 @@ import org.gwtproject.user.client.ui.Label;
  * on Table of values
  *
  */
-public class InputDialogTableView extends ComponentDialog
-		implements HasKeyboardPopup {
+public final class InputDialogTableView extends ComponentDialog implements HasKeyboardPopup {
 	private ComponentInputField startValue;
 	private ComponentInputField endValue;
 	private ComponentInputField step;
@@ -36,7 +52,7 @@ public class InputDialogTableView extends ComponentDialog
 
 	/**
 	 * Create new dialog. NOT modal to make sure onscreen keyboard still works.
-	 * 
+	 *
 	 * @param app
 	 *            see {@link AppW}
 	 * @param data
@@ -53,38 +69,25 @@ public class InputDialogTableView extends ComponentDialog
 		});
 	}
 
-	/**
-	 * @return input field for start value
-	 */
-	public ComponentInputField getStartField() {
-		return startValue;
-	}
-
 	private void buildContent() {
-		FlowPanel contentPanel = new FlowPanel();
-		buildTextFieldPanel(contentPanel);
-		errorLabel = new Label();
-		errorLabel.setStyleName("globalErrorLabel");
-		contentPanel.add(errorLabel);
-		addDialogContent(contentPanel);
-	}
-
-	private void buildTextFieldPanel(FlowPanel root) {
-		startValue = addTextField("StartValueX", root);
-		endValue = addTextField("EndValueX", root);
-		step = addTextField("Step", root);
+		startValue = createTextField("StartValueX");
+		endValue = createTextField("EndValueX");
+		step = createTextField("Step");
 		// last input text field shouldn't have any bottom margin
 		step.addStyleName("noBottomMarg");
 		TestHarness.setAttr(startValue, "startValue");
 		TestHarness.setAttr(endValue, "endValue");
 		TestHarness.setAttr(step, "stepValue");
+
+		errorLabel = new Label();
+		errorLabel.setStyleName("globalErrorLabel");
+		errorLabel.getElement().setTabIndex(-1);
+
+		addDialogContent(startValue, endValue, step, errorLabel);
 	}
 
-	private ComponentInputField addTextField(String labelText, FlowPanel root) {
-		final ComponentInputField field = new ComponentInputField((AppW) app,
-				null, labelText, null, "");
-		root.add(field);
-		return field;
+	private ComponentInputField createTextField(String labelText) {
+		return new ComponentInputField((AppW) app, null, labelText, null, "", null);
 	}
 
 	@Override
@@ -132,9 +135,9 @@ public class InputDialogTableView extends ComponentDialog
 				initTableValuesView(inputFieldValues[0], inputFieldValues[1], inputFieldValues[2]);
 				app.storeUndoInfo();
 				hide();
+				focusTableAfterClosingDialog();
 			} catch (InvalidValuesException ex) {
-				errorLabel
-						.setText(ex.getLocalizedMessage(app.getLocalization()));
+				errorLabel.setText(ex.getLocalizedMessage(app.getLocalization()));
 				errorLabel.getElement().scrollIntoView();
 			}
 		} else {
@@ -149,7 +152,7 @@ public class InputDialogTableView extends ComponentDialog
 
 	/**
 	 * Initializes Table View
-	 * 
+	 *
 	 * @param min
 	 *            min x-value.
 	 * @param max
@@ -173,8 +176,16 @@ public class InputDialogTableView extends ComponentDialog
 	}
 
 	private void dispatchSetTVValues(double valuesMin, double valuesMax, double valuesStep) {
-		String values = valuesMin + "," + valuesMax + ","
-				+ valuesStep;
+		String values = valuesMin + "," + valuesMax + "," + valuesStep;
 		app.dispatchEvent(new Event(EventType.SET_VALUES_TV, null, values));
+	}
+
+	private void focusTableAfterClosingDialog() {
+		GuiManagerW gui = (GuiManagerW) app.getGuiManager();
+		ToolbarTab toolbarTab =
+				gui.getUnbundledToolbar().getTab(gui.getUnbundledToolbar().getSelectedTabId());
+		if (toolbarTab instanceof TableTab tableTab) {
+			tableTab.focusFirstCell();
+		}
 	}
 }

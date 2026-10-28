@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbarpanel;
 
 import org.geogebra.common.gui.AccessibilityGroup;
@@ -9,6 +25,7 @@ import org.geogebra.web.html5.gui.view.ImageIconSpec;
 import org.geogebra.web.html5.gui.zoompanel.FocusableWidget;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.util.Persistable;
+import org.geogebra.web.html5.util.TestHarness;
 import org.geogebra.web.shared.GlobalHeader;
 import org.gwtproject.dom.client.Element;
 import org.gwtproject.user.client.ui.RootPanel;
@@ -18,16 +35,19 @@ import elemental2.dom.KeyboardEvent;
 /**
  * Toggle button for main menu
  */
-public class MenuToggleButton extends IconButton
-		implements Persistable {
+public final class MenuToggleButton extends IconButton implements Persistable {
 	private final AppW appW;
 
 	/**
 	 * @param app {@link AppW}
 	 */
 	public MenuToggleButton(AppW app) {
-		super(app, () -> {}, new ImageIconSpec(MaterialDesignResources.INSTANCE
-				.toolbar_menu_black()), "Menu");
+		super(
+				app,
+				() -> {},
+				new ImageIconSpec(MaterialDesignResources.INSTANCE.toolbar_menu_black()),
+				"Menu");
+		TestHarness.setAttr(this, "mainMenu");
 		new FocusableWidget(AccessibilityGroup.MENU, null, this).attachTo(app);
 		this.appW = app;
 		buildUI();
@@ -49,7 +69,7 @@ public class MenuToggleButton extends IconButton
 	/**
 	 * Toggle open/closed state of the menu
 	 */
-	protected void toggleMenu() {
+	private void toggleMenu() {
 		appW.hideKeyboard();
 		appW.toggleMenu();
 	}
@@ -84,5 +104,4 @@ public class MenuToggleButton extends IconButton
 	public void setExternal(boolean external) {
 		Dom.toggleClass(this, "menuBtn", "menu", external);
 	}
-
 }

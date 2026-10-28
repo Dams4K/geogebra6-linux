@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.gui.view.probcalculator;
 
 import java.awt.FlowLayout;
@@ -39,7 +55,7 @@ class ResultPanelD extends JPanel implements ResultPanel {
 	 * @param vGap vertical gap
 	 * @param tab left padding
 	 */
-	public ResultPanelD(AppD app, int hGap, int vGap, int tab) {
+	ResultPanelD(AppD app, int hGap, int vGap, int tab) {
 		super(new FlowLayout(FlowLayout.LEFT, hGap, vGap));
 		this.app = app;
 		loc = app.getLocalization();
@@ -136,14 +152,13 @@ class ResultPanelD extends JPanel implements ResultPanel {
 		JLabel begin = new JLabel(loc.getMenu("ProbabilityOf"));
 		JLabel end = new JLabel(loc.getMenu("EndProbabilityOf"));
 		add(begin);
-		for (JComponent component: components) {
+		for (JComponent component : components) {
 			add(component);
 		}
 		add(end);
-
 	}
 
-	public void setLabels() {
+	void setLabels() {
 		lblProb.setText(loc.getMenu("Probability") + ": ");
 
 		lblEndProbOf.setText(loc.getMenu("EndProbabilityOf") + " = ");
@@ -184,18 +199,15 @@ class ResultPanelD extends JPanel implements ResultPanel {
 		lblTwoTailedResult.setText("= " + low + " + " + high);
 	}
 
-	@Override
-	public boolean isFieldLow(Object source) {
+	boolean isFieldLow(Object source) {
 		return source == fldLow;
 	}
 
-	@Override
-	public boolean isFieldHigh(Object source) {
+	boolean isFieldHigh(Object source) {
 		return source == fldHigh;
 	}
 
-	@Override
-	public boolean isFieldResult(Object source) {
+	boolean isFieldResult(Object source) {
 		return source == fldResult;
 	}
 
@@ -213,7 +225,7 @@ class ResultPanelD extends JPanel implements ResultPanel {
 	 * Remove listener from all fields
 	 * @param listener listener
 	 */
-	public void removeActionListener(ActionListener listener) {
+	void removeActionListener(ActionListener listener) {
 		fldLow.removeActionListener(listener);
 		fldHigh.removeActionListener(listener);
 		fldResult.removeActionListener(listener);
@@ -223,7 +235,7 @@ class ResultPanelD extends JPanel implements ResultPanel {
 	 * Add listener to all fields
 	 * @param listener listener
 	 */
-	public void addActionListener(ActionListener listener) {
+	void addActionListener(ActionListener listener) {
 		fldLow.addActionListener(listener);
 		fldHigh.addActionListener(listener);
 		fldResult.addActionListener(listener);

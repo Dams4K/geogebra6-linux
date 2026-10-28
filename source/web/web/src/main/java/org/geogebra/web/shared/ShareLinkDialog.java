@@ -1,6 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.shared;
 
 import org.geogebra.common.move.ggtapi.models.Material;
+import org.geogebra.common.util.debug.AccessibilityAnalytics;
+import org.geogebra.common.util.debug.AccessibilityAnalyticsContext;
 import org.geogebra.web.html5.gui.BaseWidgetFactory;
 import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.main.AppW;
@@ -18,12 +36,12 @@ import org.gwtproject.user.client.ui.Widget;
 /**
  *   Share link dialog
  */
-public class ShareLinkDialog extends ComponentDialog {
+public final class ShareLinkDialog extends ComponentDialog {
 	/** textbox providing share url */
-	protected TextBox linkBox;
+	private TextBox linkBox;
 
 	/** parent widget */
-	protected Widget anchor;
+	private final Widget anchor;
 
 	/**
 	 * @param app application
@@ -32,7 +50,7 @@ public class ShareLinkDialog extends ComponentDialog {
 	 * @param anchor parent widget
 	 */
 	public ShareLinkDialog(AppW app, DialogData data, String shareURL, Widget anchor) {
-		super(app, data, true, false);
+		super(app, data, true, true);
 		this.app = app;
 		this.anchor = anchor;
 		addStyleName(app.getVendorSettings().getStyleName("shareLink"));
@@ -56,13 +74,11 @@ public class ShareLinkDialog extends ComponentDialog {
 		linkBox.setStyleName("linkBox");
 		addLinkBoxHandlers();
 
-		Label linkLabel = BaseWidgetFactory.INSTANCE.newSecondaryText(
-				localize("Link"), "linkLabel");
+		Label linkLabel = BaseWidgetFactory.INSTANCE.newSecondaryText(localize("Link"), "linkLabel");
 
-		StandardButton copyBtn = new StandardButton(localize("Copy"));
-		copyBtn.setStyleName("copyButton");
-
+		StandardButton copyBtn = BaseWidgetFactory.INSTANCE.newTextButton(localize("Copy"));
 		copyBtn.addFastClickHandler(source -> {
+			logShareCompleted(AccessibilityAnalytics.Value.COPY);
 			app.getCopyPaste().copyTextToSystemClipboard(linkBox.getText());
 			hide();
 		});
@@ -73,8 +89,8 @@ public class ShareLinkDialog extends ComponentDialog {
 		linkPanel.add(copyBtn);
 		contentPanel.add(linkPanel);
 
-		Label shareHelp = new Label(localize(((AppW) app).getVendorSettings()
-				.getMenuLocalizationKey("SharedLinkHelpTxt")));
+		Label shareHelp = new Label(
+				localize(((AppW) app).getVendorSettings().getMenuLocalizationKey("SharedLinkHelpTxt")));
 		shareHelp.addStyleName("shareHelpTxt");
 
 		// build button panel (print prev, export img)
@@ -83,23 +99,24 @@ public class ShareLinkDialog extends ComponentDialog {
 		FlowPanel buttonPanel = new FlowPanel();
 		buttonPanel.setStyleName("buttonPanel");
 
-		StandardButton printBtn = roundButton(
-				SharedResources.INSTANCE.print_white(), "Print");
+		StandardButton printBtn = roundButton(SharedResources.INSTANCE.print_white(), "Print");
 		printBtn.addFastClickHandler(source -> {
+			logShareCompleted(AccessibilityAnalytics.Value.PRINT);
 			app.getDialogManager().showPrintPreview();
 			hide();
 		});
 
-		StandardButton exportImgBtn = roundButton(
-				SharedResources.INSTANCE.file_download_white(), "exportImage");
+		StandardButton exportImgBtn =
+				roundButton(SharedResources.INSTANCE.file_download_white(), "exportImage");
 		exportImgBtn.addFastClickHandler(source -> {
+			logShareCompleted(AccessibilityAnalytics.Value.EXPORT_IMAGE);
 			app.getDialogManager().showExportImageDialog(null);
 			hide();
 		});
 
-		StandardButton embedBtn = roundButton(
-				SharedResources.INSTANCE.code_white(), "Embed");
+		StandardButton embedBtn = roundButton(SharedResources.INSTANCE.code_white(), "Embed");
 		embedBtn.addFastClickHandler(source -> {
+			logShareCompleted(AccessibilityAnalytics.Value.EMBED);
 			copyEmbedCode();
 			hide();
 		});
@@ -112,9 +129,14 @@ public class ShareLinkDialog extends ComponentDialog {
 		addDialogContent(contentPanel);
 	}
 
+	private void logShareCompleted(String action) {
+		AccessibilityAnalyticsContext context = app.getAccessibilityAnalyticsContext();
+		AccessibilityAnalytics.logShareCompleted(context.getTrigger(), action);
+		context.reset();
+	}
+
 	private StandardButton roundButton(SVGResource icon, String titleKey) {
-		StandardButton btn = new StandardButton(icon,
-				localize(titleKey), 24);
+		StandardButton btn = new StandardButton(icon, localize(titleKey), 24);
 		btn.setStyleName("roundButton");
 		return btn;
 	}
@@ -127,7 +149,7 @@ public class ShareLinkDialog extends ComponentDialog {
 	/**
 	 * focus textBox and select text
 	 */
-	protected void focusLinkBox() {
+	private void focusLinkBox() {
 		linkBox.setFocus(true);
 		linkBox.setSelectionRange(0, 0);
 		linkBox.selectAll();
@@ -138,14 +160,12 @@ public class ShareLinkDialog extends ComponentDialog {
 		Material m = appW.getActiveMaterial();
 		if (m != null) {
 			String url = appW.getCurrentURL(m.getSharingKeySafe(), true) + "?embed";
-			String code =
-					"<iframe src=\"" + url + "\""
+			String code = "<iframe src=\"" + url + "\""
 					+ " width=\"800\" height=\"600\" allowfullscreen"
 					+ " style=\"border: 1px solid #e4e4e4;border-radius: 4px;\""
 					+ " frameborder=\"0\"></iframe>";
 			this.app.getCopyPaste().copyTextToSystemClipboard(code);
-			((AppW) app).getToolTipManager().showBottomMessage(
-					localize("CopiedToClipboard"), appW);
+			((AppW) app).getToolTipManager().showBottomMessage(localize("CopiedToClipboard"), appW);
 		}
 		hide();
 	}
@@ -155,8 +175,9 @@ public class ShareLinkDialog extends ComponentDialog {
 		if (anchor == null) {
 			super.onResize();
 		} else {
-			setPopupPosition(anchor.getAbsoluteLeft() - (this.getOffsetWidth()
-							- anchor.getOffsetWidth()), anchor.getAbsoluteTop() - 27);
+			setPopupPosition(
+					anchor.getAbsoluteLeft() - (this.getOffsetWidth() - anchor.getOffsetWidth()),
+					anchor.getAbsoluteTop() - 27);
 		}
 	}
 
@@ -171,15 +192,15 @@ public class ShareLinkDialog extends ComponentDialog {
 			anchor.addStyleName("selected");
 		}
 		Scheduler.get().scheduleDeferred(this::focusLinkBox);
-
 	}
 
 	@Override
 	public void center() {
 		super.center();
 		if (anchor != null) {
-			setPopupPosition(anchor.getAbsoluteLeft() - (this.getOffsetWidth()
-					- anchor.getOffsetWidth()), anchor.getAbsoluteTop() - 27);
+			setPopupPosition(
+					anchor.getAbsoluteLeft() - (this.getOffsetWidth() - anchor.getOffsetWidth()),
+					anchor.getAbsoluteTop() - 27);
 		}
 	}
 

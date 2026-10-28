@@ -50,8 +50,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import com.himamis.retex.renderer.share.platform.geom.Area;
-import com.himamis.retex.renderer.share.platform.graphics.Color;
+import org.geogebra.common.awt.GColor;
+
 import com.himamis.retex.renderer.share.platform.graphics.Graphics2DInterface;
 
 /**
@@ -67,8 +67,7 @@ public class HorizontalBox extends Box {
 		if (w != Double.POSITIVE_INFINITY) {
 			double rest = w - b.getWidth();
 			if (rest > 0) {
-				if (alignment == TeXConstants.Align.CENTER
-						|| alignment == TeXConstants.Align.NONE) {
+				if (alignment == TeXConstants.Align.CENTER || alignment == TeXConstants.Align.NONE) {
 					StrutBox s = new StrutBox(rest / 2, 0., 0., 0.);
 					add(s);
 					add(b);
@@ -105,7 +104,7 @@ public class HorizontalBox extends Box {
 		// basic horizontal box
 	}
 
-	public HorizontalBox(Color fg, Color bg) {
+	public HorizontalBox(GColor fg, GColor bg) {
 		super(fg, bg);
 	}
 
@@ -130,29 +129,6 @@ public class HorizontalBox extends Box {
 		endDraw(g2);
 	}
 
-	@Override
-	public Area getArea() {
-		final Area area = geom.createArea();
-
-		double afX = 0;
-		final double afY = 0;
-
-		for (final Box b : children) {
-			if (b instanceof StrutBox) {
-				afX += b.getWidth();
-			} else {
-				final Area a = b.getArea();
-				if (a == null) {
-					return null;
-				}
-				a.translate(afX, afY);
-				area.add(a);
-				afX += b.getWidth();
-			}
-		}
-		return area;
-	}
-
 	public final void add(Box b) {
 		recalculate(b);
 		children.add(b);
@@ -169,12 +145,8 @@ public class HorizontalBox extends Box {
 		// curPos += b.getWidth();
 		// width = Math.max(width, curPos);
 		width += b.getWidth();
-		height = Math.max(
-				(children.isEmpty() ? Double.NEGATIVE_INFINITY : height),
-				b.height - b.shift);
-		depth = Math.max(
-				(children.isEmpty() ? Double.NEGATIVE_INFINITY : depth),
-				b.depth + b.shift);
+		height = Math.max((children.isEmpty() ? Double.NEGATIVE_INFINITY : height), b.height - b.shift);
+		depth = Math.max((children.isEmpty() ? Double.NEGATIVE_INFINITY : depth), b.depth + b.shift);
 	}
 
 	@Override
@@ -182,10 +154,8 @@ public class HorizontalBox extends Box {
 		// iterate from the last child box to the first until a font id is found
 		// that's not equal to NO_FONT
 		FontInfo fontId = null;
-		for (ListIterator it = children
-				.listIterator(children.size()); fontId == null
-						&& it.hasPrevious();)
-			fontId = ((Box) it.previous()).getLastFont();
+		for (ListIterator it = children.listIterator(children.size());
+				fontId == null && it.hasPrevious(); ) fontId = ((Box) it.previous()).getLastFont();
 
 		return fontId;
 	}
@@ -194,10 +164,10 @@ public class HorizontalBox extends Box {
 	public void inspect(BoxConsumer handler, BoxPosition position) {
 		super.inspect(handler, position);
 
-		double xPos = position.x;
+		double xPos = position.x();
 		for (Box box : children) {
-			BoxPosition current = new BoxPosition(xPos, position.y + box.shift,
-					position.scale, position.baseline + box.shift);
+			BoxPosition current = new BoxPosition(
+					xPos, position.y() + box.shift, position.scale(), position.baseline() + box.shift);
 			box.inspect(handler, current);
 			xPos += box.getWidth();
 		}
@@ -237,7 +207,7 @@ public class HorizontalBox extends Box {
 			}
 		}
 
-		return new HorizontalBox[] { hb1, hb2 };
+		return new HorizontalBox[] {hb1, hb2};
 	}
 
 	ArrayList<Box> getChildren() {

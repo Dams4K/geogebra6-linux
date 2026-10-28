@@ -1,16 +1,32 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.geogebra.common.io.DocHandler;
 import org.geogebra.common.io.XMLParseException;
+import org.geogebra.common.io.XMLStringBuilder;
 
 /**
  * Parse a single svg element to get width, height and viewBox
- * 
+ *
  * @author Zbynek
  */
 public class SVGDocHandler implements DocHandler {
@@ -18,11 +34,9 @@ public class SVGDocHandler implements DocHandler {
 	private Map<String, String> attrs = new HashMap<>();
 
 	@Override
-	public void startElement(String tag, LinkedHashMap<String, String> h) {
-		// copy the map: h is emptied after parsing
-		for (Entry<String, String> entry : h.entrySet()) {
-			this.attrs.put(entry.getKey(), entry.getValue());
-		}
+	public void startElement(String tag, Map<String, String> parsedAttrs) {
+		// copy the map: parsedAttrs map is emptied after parsing
+		this.attrs.putAll(parsedAttrs);
 	}
 
 	@Override
@@ -49,7 +63,8 @@ public class SVGDocHandler implements DocHandler {
 	 * @return svg header tag with fixed dimensions
 	 */
 	public String getSVGTag() {
-		StringBuilder sb = new StringBuilder("<svg");
+		XMLStringBuilder sb = new XMLStringBuilder(new StringBuilder(50));
+		sb.startOpeningTag("svg", 0);
 		for (Entry<String, String> entry : attrs.entrySet()) {
 			if (!"width".equals(entry.getKey())
 					&& !"height".equals(entry.getKey())
@@ -60,13 +75,12 @@ public class SVGDocHandler implements DocHandler {
 		appendAttr(sb, "viewBox", getViewBox());
 		appendAttr(sb, "height", getHeight());
 		appendAttr(sb, "width", getWidth());
-		sb.append(">");
-		return sb.toString();
+		sb.endTag();
+		return sb.toString().trim();
 	}
 
 	private String getWidth() {
-		return attrs.get("width") == null ? viewportDiff(0, 2)
-				: attrs.get("width");
+		return attrs.get("width") == null ? viewportDiff(0, 2) : attrs.get("width");
 	}
 
 	private String viewportDiff(int i, int j) {
@@ -74,26 +88,20 @@ public class SVGDocHandler implements DocHandler {
 			return null;
 		}
 		String[] params = getViewBox().trim().split(" ");
-		return (Double.parseDouble(params[j]) - Double.parseDouble(params[i]))
-				+ "";
+		return String.valueOf(Double.parseDouble(params[j]) - Double.parseDouble(params[i]));
 	}
 
 	private String getHeight() {
-		return attrs.get("height") == null ? viewportDiff(1, 3)
-				: attrs.get("height");
+		return attrs.get("height") == null ? viewportDiff(1, 3) : attrs.get("height");
 	}
 
 	private String getViewBox() {
 		return attrs.get("viewBox");
 	}
 
-	private static void appendAttr(StringBuilder sb, String key, String value) {
+	private static void appendAttr(XMLStringBuilder sb, String key, String value) {
 		if (value != null) {
-			sb.append(' ');
-			sb.append(key);
-			sb.append("=\"");
-			StringUtil.encodeXML(sb, value);
-			sb.append("\"");
+			sb.attr(key, value);
 		}
 	}
 

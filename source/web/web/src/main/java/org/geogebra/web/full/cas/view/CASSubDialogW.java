@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.cas.view;
 
 import org.geogebra.common.cas.view.CASSubDialog;
@@ -8,18 +24,18 @@ import org.geogebra.web.shared.components.dialog.DialogData;
 
 /**
  * Dialog to substitute expressions in CAS Input.
- * 
+ *
  * @author balazs.bencze
  *
  */
-public class CASSubDialogW extends CASSubDialog {
+public final class CASSubDialogW extends CASSubDialog {
 	private CASSubstituteDialogW dialog;
 	private AppW app;
 	private CASViewW casView;
 
 	/**
 	 * Substitute dialog for CAS.
-	 * 
+	 *
 	 * @param casView
 	 *            view
 	 * @param prefix
@@ -31,8 +47,8 @@ public class CASSubDialogW extends CASSubDialog {
 	 * @param editRow
 	 *            row to edit
 	 */
-	public CASSubDialogW(CASViewW casView, String prefix, String evalText,
-	        String postfix, int editRow) {
+	public CASSubDialogW(
+			CASViewW casView, String prefix, String evalText, String postfix, int editRow) {
 		super(prefix, evalText, postfix, editRow);
 
 		this.casView = casView;
@@ -45,9 +61,11 @@ public class CASSubDialogW extends CASSubDialog {
 		GeoCasCell cell = casView.getConsoleTable().getGeoCasCell(editRow);
 		initData(cell);
 
-		DialogData dialogData = new DialogData("Substitute", app.getLocalization()
-				.getPlainDefault("RowA", "Row %0", Integer.toString(editRow + 1)),
-				"Cancel", "OK");
+		DialogData dialogData = new DialogData(
+				"Substitute",
+				app.getLocalization().getPlainDefault("RowA", "Row %0", Integer.toString(editRow + 1)),
+				"Cancel",
+				"OK");
 		dialog = new CASSubstituteDialogW(app, dialogData, data);
 		dialog.setOnPositiveAction(() -> apply(ACTION_SUBSTITUTE));
 	}

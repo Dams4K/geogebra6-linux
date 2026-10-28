@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.util;
 
 import org.geogebra.common.awt.GColor;
@@ -21,7 +37,7 @@ public class ImageOrText {
 	 */
 	public ImageOrText() {
 		// empty constructor
-    }
+	}
 
 	/**
 	 * @param string
@@ -107,7 +123,7 @@ public class ImageOrText {
 		}
 		return arr;
 	}
-	
+
 	/**
 	 * @param res
 	 *            resource
@@ -129,12 +145,12 @@ public class ImageOrText {
 	public void applyToLabel(Label button) {
 		if (url != null) {
 			if (bgSize > 0) {
-				button.getElement().getStyle()
-						.setProperty("backgroundSize",
-								bgSize + "px " + bgSize + "px");
+				button
+						.getElement()
+						.getStyle()
+						.setProperty("backgroundSize", bgSize + "px " + bgSize + "px");
 			}
-			button.getElement().getStyle()
-					.setBackgroundImage("url(" + url + ")");
+			button.getElement().getStyle().setBackgroundImage("url(" + url + ")");
 			if (text != null) {
 				button.addStyleName("textIconButton");
 			} else if (className != null) {
@@ -147,8 +163,7 @@ public class ImageOrText {
 		if (text != null) {
 			button.setText(text);
 			if (fgColor != null) {
-				button.getElement().getStyle()
-						.setColor(GColor.getColorString(fgColor));
+				button.getElement().getStyle().setColor(GColor.getColorString(fgColor));
 			}
 			if ("+".equals(text)) {
 				button.getElement().addClassName("borderButton");
@@ -159,19 +174,17 @@ public class ImageOrText {
 			return;
 		}
 		if (fgColor != null) {
-			button.getElement()
+			button
+					.getElement()
 					.getStyle()
-					.setBorderColor(
-							"rgba(" + fgColor.getRed() + ", "
-								+ fgColor.getGreen() + ", "
-								+ fgColor.getBlue() + ", 1)");
+					.setBorderColor("rgba(" + fgColor.getRed() + ", "
+							+ fgColor.getGreen() + ", "
+							+ fgColor.getBlue() + ", 1)");
 			button.getElement().addClassName("borderButton");
-			button.getElement().getStyle()
-					.setBackgroundColor(GColor.getColorString(fgColor));
+			button.getElement().getStyle().setBackgroundColor(GColor.getColorString(fgColor));
 		}
 		if (bgColor != null) {
-			button.getElement().getStyle()
-					.setBackgroundColor(GColor.getColorString(bgColor));
+			button.getElement().getStyle().setBackgroundColor(GColor.getColorString(bgColor));
 		}
 	}
 

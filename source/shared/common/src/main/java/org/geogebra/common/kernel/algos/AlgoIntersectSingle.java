@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.algos;
 
 import java.util.ArrayList;
@@ -17,16 +33,15 @@ import org.geogebra.common.kernel.prover.polynomial.PVariable;
 /**
  * Single intersection point
  */
-public class AlgoIntersectSingle extends AlgoIntersect implements
-		SymbolicParametersBotanaAlgo {
+public class AlgoIntersectSingle extends AlgoIntersect implements SymbolicParametersBotanaAlgo {
 
 	// input
 	private AlgoIntersect algo;
 	private GeoNumberValue index; // index of point in algo, can be input
-									// directly or be
+	// directly or be
 	// calculated from refPoint
 	private GeoPoint refPoint; // reference point in algo to calculate index;
-								// can be null or undefined
+	// can be null or undefined
 
 	// output
 	private GeoPoint point;
@@ -39,7 +54,7 @@ public class AlgoIntersectSingle extends AlgoIntersect implements
 
 	/**
 	 * Creates algo for single intersection close to given point
-	 * 
+	 *
 	 * @param label
 	 *            label for output
 	 * @param algo
@@ -47,8 +62,7 @@ public class AlgoIntersectSingle extends AlgoIntersect implements
 	 * @param refPoint
 	 *            point close to desired intersection
 	 */
-	public AlgoIntersectSingle(String label, AlgoIntersect algo,
-			GeoPoint refPoint) {
+	public AlgoIntersectSingle(String label, AlgoIntersect algo, GeoPoint refPoint) {
 		super(algo.cons);
 		this.algo = algo;
 		algo.addUser(); // this algorithm is a user of algo
@@ -66,7 +80,7 @@ public class AlgoIntersectSingle extends AlgoIntersect implements
 
 	/**
 	 * Creates algo for single intersection with given index
-	 * 
+	 *
 	 * @param label
 	 *            label for output
 	 * @param algo
@@ -74,8 +88,7 @@ public class AlgoIntersectSingle extends AlgoIntersect implements
 	 * @param index
 	 *            index, starting with 1
 	 */
-	public AlgoIntersectSingle(String label, AlgoIntersect algo,
-			GeoNumberValue index) {
+	public AlgoIntersectSingle(String label, AlgoIntersect algo, GeoNumberValue index) {
 		super(algo.cons);
 		this.algo = algo;
 		algo.addUser(); // this algorithm is a user of algo
@@ -97,7 +110,7 @@ public class AlgoIntersectSingle extends AlgoIntersect implements
 
 	/**
 	 * Creates algo for single intersection with given index
-	 * 
+	 *
 	 * @param label
 	 *            label for output
 	 * @param algo
@@ -122,10 +135,8 @@ public class AlgoIntersectSingle extends AlgoIntersect implements
 			// ((AlgoIntersectConics)algo).getB()).addPointOnConic(point);
 
 		} else if (algo instanceof AlgoIntersectLineConic) {
-			point.addIncidence(((AlgoIntersectLineConic) algo).getLine(),
-					false);
-			point.addIncidence(((AlgoIntersectLineConic) algo).getConic(),
-					false);
+			point.addIncidence(((AlgoIntersectLineConic) algo).getLine(), false);
+			point.addIncidence(((AlgoIntersectLineConic) algo).getConic(), false);
 
 			// this is already done in point.addIncidence()
 			// ((AlgoIntersectLineConic)algo).getConic().addPointOnConic(point);
@@ -176,7 +187,7 @@ public class AlgoIntersectSingle extends AlgoIntersect implements
 
 	/**
 	 * Added for LocusEqu
-	 * 
+	 *
 	 * @return inner algo.
 	 */
 	public AlgoIntersect getAlgo() {
@@ -237,8 +248,7 @@ public class AlgoIntersectSingle extends AlgoIntersect implements
 			}
 		}
 
-		if (input[0].isDefined() && input[1].isDefined()
-				&& idx < parentOutput.length) {
+		if (input[0].isDefined() && input[1].isDefined() && idx < parentOutput.length) {
 			// get coordinates from helper algorithm
 			point.setCoords(parentOutput[idx]);
 
@@ -272,14 +282,20 @@ public class AlgoIntersectSingle extends AlgoIntersect implements
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
 		if (refPoint == null) {
-			return getLoc().getPlainDefault("IntersectionOfAandB",
-					"Intersection of %0, %1",
-					input[0].getLabel(tpl), input[1].getLabel(tpl));
+			return getLoc()
+					.getPlainDefault(
+							"IntersectionOfAandB",
+							"Intersection of %0, %1",
+							input[0].getLabel(tpl),
+							input[1].getLabel(tpl));
 		}
-		return getLoc().getPlainDefault("IntersectionPointOfABNearC",
-				"Intersection point of %0, %1 near %2",
-				input[0].getLabel(tpl), input[1].getLabel(tpl),
-				input[2].getLabel(tpl));
+		return getLoc()
+				.getPlainDefault(
+						"IntersectionPointOfABNearC",
+						"Intersection point of %0, %1 near %2",
+						input[0].getLabel(tpl),
+						input[1].getLabel(tpl),
+						input[2].getLabel(tpl));
 	}
 
 	@Override
@@ -288,8 +304,7 @@ public class AlgoIntersectSingle extends AlgoIntersect implements
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 
 		if (botanaPolynomials != null) {
 			return botanaPolynomials;
@@ -297,19 +312,15 @@ public class AlgoIntersectSingle extends AlgoIntersect implements
 
 		if (algo != null) {
 			if (algo instanceof AlgoIntersectLineConic) {
-				botanaPolynomials = ((SymbolicParametersBotanaAlgo) algo)
-						.getBotanaPolynomials(geo);
+				botanaPolynomials = ((SymbolicParametersBotanaAlgo) algo).getBotanaPolynomials(geo);
 				if (botanaVars == null) {
-					botanaVars = ((SymbolicParametersBotanaAlgo) algo)
-							.getBotanaVars(geo);
+					botanaVars = ((SymbolicParametersBotanaAlgo) algo).getBotanaVars(geo);
 				}
 			}
 			if (algo instanceof AlgoIntersectConics) {
-				botanaPolynomials = ((SymbolicParametersBotanaAlgo) algo)
-						.getBotanaPolynomials(geo);
+				botanaPolynomials = ((SymbolicParametersBotanaAlgo) algo).getBotanaPolynomials(geo);
 				if (botanaVars == null) {
-					botanaVars = ((SymbolicParametersBotanaAlgo) algo)
-							.getBotanaVars(geo);
+					botanaVars = ((SymbolicParametersBotanaAlgo) algo).getBotanaVars(geo);
 				}
 			}
 			return botanaPolynomials;

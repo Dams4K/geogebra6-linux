@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbarpanel.tableview.dataimport;
 
 import org.geogebra.common.gui.view.table.TableValuesView;
@@ -17,19 +33,17 @@ import elemental2.dom.FileReader;
 import elemental2.dom.HTMLInputElement;
 import jsinterop.base.Js;
 
-public class CsvImportHandler {
-	protected AppW appW;
-	private FileUpload csvChooser;
+public final class CsvImportHandler {
+	private AppW appW;
 	private DataImportSnackbar progressSnackbar;
-	private Command csvHandler = () -> {
-		csvChooser = getCSVChooser();
+	private final Command csvHandler = () -> {
+		FileUpload csvChooser = getCSVChooser();
 		if (getTable().isEmpty()) {
 			csvChooser.click();
 		} else {
 			DialogData data = new DialogData(null, "Cancel", "Overwrite");
-			OverwriteDataDialog overwriteDataDialog = new OverwriteDataDialog(
-					appW, data);
-			overwriteDataDialog.setOnPositiveAction(() -> csvChooser.click());
+			OverwriteDataDialog overwriteDataDialog = new OverwriteDataDialog(appW, data);
+			overwriteDataDialog.setOnPositiveAction(csvChooser::click);
 			overwriteDataDialog.show();
 		}
 	};
@@ -49,8 +63,7 @@ public class CsvImportHandler {
 			progressSnackbar = new DataImportSnackbar(appW, fileToHandle.name);
 			getTable().getTableValuesModel().removeAllColumns();
 			getTable().clearView();
-			getTable().getTableValuesModel().setOnDataImportedRunnable(()
-					-> progressSnackbar.hide());
+			getTable().getTableValuesModel().setOnDataImportedRunnable(progressSnackbar::hide);
 			openCSV(fileToHandle);
 		});
 
@@ -61,7 +74,7 @@ public class CsvImportHandler {
 	 * open csv file
 	 * @param fileToHandle - selected file
 	 */
-	public final void openCSV(File fileToHandle) {
+	public void openCSV(File fileToHandle) {
 		FileReader reader = new FileReader();
 		String fileName = fileToHandle.name;
 		reader.addEventListener("load", (event) -> {
@@ -74,8 +87,7 @@ public class CsvImportHandler {
 	}
 
 	private void importData(String csv, String fileName) {
-		DataImportHandler handler = new DataImportHandler((AppWFull) appW, fileName,
-				progressSnackbar);
+		DataImportHandler handler = new DataImportHandler((AppWFull) appW, fileName, progressSnackbar);
 		DataImporter importer = new DataImporter(getTable(), handler);
 		importer.importCSV(csv, appW.getLocalization().getDecimalPoint());
 	}

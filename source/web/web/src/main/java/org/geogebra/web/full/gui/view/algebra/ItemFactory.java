@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import org.geogebra.common.gui.view.algebra.AlgebraItem;
@@ -8,7 +24,7 @@ import org.geogebra.common.main.settings.AlgebraStyle;
 /**
  * Helper methods for creating new AV items
  */
-public class ItemFactory {
+public final class ItemFactory {
 
 	/**
 	 *
@@ -41,7 +57,7 @@ public class ItemFactory {
 	 * @param ob geo element
 	 * @return AV item
 	 */
-	public final RadioTreeItem createAVItem(final GeoElement ob) {
+	public RadioTreeItem createAVItem(final GeoElement ob) {
 		RadioTreeItem ti;
 		if (matchCheckbox(ob)) {
 			ti = new CheckboxTreeItem(ob);
@@ -52,7 +68,7 @@ public class ItemFactory {
 		} else if (AlgebraItem.isTextItem(ob)) {
 			ti = new TextTreeItem(ob);
 		} else {
-			ti = new LaTeXTreeItem(ob);
+			ti = LaTeXTreeItem.of(ob);
 		}
 		ti.setUserObject(ob);
 		ti.addStyleName("avItem");

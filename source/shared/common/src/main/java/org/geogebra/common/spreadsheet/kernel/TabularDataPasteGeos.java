@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.spreadsheet.kernel;
 
 import org.geogebra.common.gui.view.spreadsheet.CopyPasteAdapter;
@@ -29,7 +45,7 @@ final class TabularDataPasteGeos implements TabularDataPasteInterface<GeoElement
 	TabularDataPasteGeos(Kernel kernel) {
 		this.relativeCopy = new RelativeCopy(kernel);
 		this.app = kernel.getApplication();
-		adapter = new CopyPasteAdapter(app, null);
+		adapter = new CopyPasteAdapter(app, app.getSpreadsheetTableModel());
 	}
 
 	/**
@@ -37,21 +53,23 @@ final class TabularDataPasteGeos implements TabularDataPasteInterface<GeoElement
 	 * will be the same as the copied ones.
 	 */
 	@Override
-	public void pasteInternal(TabularData<GeoElement> tabularData,
-			TabularClipboard<GeoElement> clipboard, TabularRange destination) {
+	public void pasteInternal(
+			TabularData<GeoElement> tabularData,
+			TabularClipboard<GeoElement> clipboard,
+			TabularRange destination) {
 		CopyPasteCellOperationList operations = collectOperations(clipboard, destination);
 		operations.sort();
 		operations.apply(tabularData);
 	}
 
 	@Override
-	public void pasteExternal(TabularData<GeoElement> tabularData, String[][] data,
-			TabularRange destination) {
+	public void pasteExternal(
+			TabularData<GeoElement> tabularData, String[][] data, TabularRange destination) {
 		adapter.pasteExternalMultiple(data, destination);
 	}
 
-	private CopyPasteCellOperationList collectOperations(TabularClipboard<GeoElement> buffer,
-			TabularRange destination) {
+	private CopyPasteCellOperationList collectOperations(
+			TabularClipboard<GeoElement> buffer, TabularRange destination) {
 		CopyPasteCellOperationList operations = new CopyPasteCellOperationList();
 		TabularRange source = buffer.getSourceRange();
 		for (int col = source.getFromColumn(); col <= source.getToColumn(); ++col) {
@@ -68,7 +86,8 @@ final class TabularDataPasteGeos implements TabularDataPasteInterface<GeoElement
 					try {
 						GeoElement geo = (GeoElement) relativeCopy.doCopyNoStoringUndoInfo0(
 								buffer.contentAt(bufferRow, bufferCol),
-								RelativeCopy.getValue(app, destinationColumn, destinationRow),
+								RelativeCopy.getValue(
+										app.getSpreadsheetTableModel(), destinationColumn, destinationRow),
 								destination.getFromColumn() - source.getFromColumn(),
 								destination.getFromRow() - source.getFromRow());
 						if (geo != null) {

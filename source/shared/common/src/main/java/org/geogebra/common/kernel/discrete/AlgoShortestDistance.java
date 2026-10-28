@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.discrete;
 
 import java.util.HashMap;
@@ -31,6 +47,9 @@ public class AlgoShortestDistance extends AlgoElement implements GraphAlgo {
 	private GeoLocusND<? extends MyPoint> locus;
 	private GeoBoolean weighted;
 	private int edgeCount = 0;
+	// weighted Shortest Path
+	// use length of segments to weight
+	private Function<TreeLink, Double> wtTransformer = link -> link.weight;
 
 	/**
 	 * @param cons
@@ -44,8 +63,8 @@ public class AlgoShortestDistance extends AlgoElement implements GraphAlgo {
 	 * @param weighted
 	 *            whether to use Euclidian length
 	 */
-	public AlgoShortestDistance(Construction cons, GeoList inputList,
-			GeoPointND start, GeoPointND end, GeoBoolean weighted) {
+	public AlgoShortestDistance(
+			Construction cons, GeoList inputList, GeoPointND start, GeoPointND end, GeoBoolean weighted) {
 		super(cons);
 		this.inputList = inputList;
 		this.start = start;
@@ -81,15 +100,6 @@ public class AlgoShortestDistance extends AlgoElement implements GraphAlgo {
 	public Commands getClassName() {
 		return Commands.ShortestDistance;
 	}
-
-	// weighted Shortest Path
-	// use length of segments to weight
-	private Function<TreeLink, Double> wtTransformer = new Function<TreeLink, Double>() {
-		@Override
-		public Double apply(TreeLink link) {
-			return link.weight;
-		}
-	};
 
 	@Override
 	public final void compute() {
@@ -137,8 +147,8 @@ public class AlgoShortestDistance extends AlgoElement implements GraphAlgo {
 				g.addEdge(
 						new TreeLink(seg.getLength(), node1, node2, edgeCount++),
 						node1,
-						node2, EdgeType.UNDIRECTED);
-
+						node2,
+						EdgeType.UNDIRECTED);
 			}
 		}
 
@@ -178,8 +188,7 @@ public class AlgoShortestDistance extends AlgoElement implements GraphAlgo {
 			} else if (n2 == startNode.node || n2 == endNode.node) {
 				n2.id.getInhomCoords(inhomLast);
 			}
-			locus.insertPoint(inhomLast[0], inhomLast[1], inhomLast[2],
-					false);
+			locus.insertPoint(inhomLast[0], inhomLast[1], inhomLast[2], false);
 		}
 		double[] inhom1 = new double[3];
 		double[] inhom2 = new double[3];
@@ -201,14 +210,14 @@ public class AlgoShortestDistance extends AlgoElement implements GraphAlgo {
 
 	private static class NodeMatcher {
 		private final GeoPointND target;
-		public TreeNode node;
+		private TreeNode node;
 		private boolean exactMatch;
 
-		public NodeMatcher(GeoPointND target) {
+		NodeMatcher(GeoPointND target) {
 			this.target = target;
 		}
 
-		public void check(GeoPointND p1, TreeNode node2) {
+		void check(GeoPointND p1, TreeNode node2) {
 			if (p1 == target) {
 				exactMatch = true;
 				node = node2;

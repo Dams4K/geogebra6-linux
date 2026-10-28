@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.components.dropdown.grid;
 
 import java.util.ArrayList;
@@ -8,7 +24,7 @@ import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.event.dom.client.ClickEvent;
 import org.gwtproject.user.client.ui.FlowPanel;
 
-public class GridCardPanel extends FlowPanel {
+public final class GridCardPanel extends FlowPanel {
 	private final AppW appW;
 	private final List<GridCard> cardList = new ArrayList<>();
 	private GridDropdownListener listener;
@@ -35,8 +51,10 @@ public class GridCardPanel extends FlowPanel {
 	}
 
 	private GridCard buildCard(BackgroundType type, BackgroundType selectedBackgroundType) {
-		GridCard gridCard = new GridCard(appW, GridDataProvider.getResourceForBackgroundType(
-				type), GridDataProvider.getTransKeyForRulingType(type));
+		GridCard gridCard = new GridCard(
+				appW,
+				GridDataProvider.getResourceForBackgroundType(type),
+				GridDataProvider.getTransKeyForRulingType(type));
 		if (type == selectedBackgroundType) {
 			gridCard.setSelected(true);
 		}
@@ -46,11 +64,13 @@ public class GridCardPanel extends FlowPanel {
 	}
 
 	private void addClickHandler(GridCard gridCard, BackgroundType type) {
-		gridCard.addDomHandler(event -> {
-			deselectAll();
-			gridCard.setSelected(true);
-			listener.itemSelected(BackgroundType.rulingOptions.indexOf(type));
-		}, ClickEvent.getType());
+		gridCard.addDomHandler(
+				event -> {
+					deselectAll();
+					gridCard.setSelected(true);
+					listener.itemSelected(BackgroundType.rulingOptions.indexOf(type));
+				},
+				ClickEvent.getType());
 	}
 
 	/**

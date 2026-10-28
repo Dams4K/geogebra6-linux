@@ -1,23 +1,22 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
-*/
-
 /*
- * GeoVec3D.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 31. August 2001, 11:22
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.geos;
 
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.arithmetic.NumberValue;
@@ -29,8 +28,7 @@ import org.geogebra.common.util.DoubleUtil;
  *
  * @author Markus
  */
-public abstract class GeoVec3D extends GeoElement
-		implements Traceable {
+public abstract class GeoVec3D extends GeoElement implements Traceable {
 	/** x coordinate */
 	public double x = Double.NaN;
 	/** y coordinate */
@@ -43,6 +41,7 @@ public abstract class GeoVec3D extends GeoElement
 	 * For backward compatibility
 	 */
 	public boolean hasUpdatePrivilege = false;
+
 	private final StringBuilder sbToString = new StringBuilder(50);
 
 	/**
@@ -55,7 +54,7 @@ public abstract class GeoVec3D extends GeoElement
 
 	/**
 	 * Creates new GeoVec3D with coordinates (x,y,z) and label
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param x
@@ -116,7 +115,7 @@ public abstract class GeoVec3D extends GeoElement
 
 	/**
 	 * Set coords from source vector
-	 * 
+	 *
 	 * @param v
 	 *            source vector
 	 */
@@ -125,21 +124,21 @@ public abstract class GeoVec3D extends GeoElement
 	/**
 	 * @return x-coord
 	 */
-	final public double getX() {
+	public final double getX() {
 		return x;
 	}
 
 	/**
 	 * @return y-coord
 	 */
-	final public double getY() {
+	public final double getY() {
 		return y;
 	}
 
 	/**
 	 * @return z-coord
 	 */
-	final public double getZ() {
+	public final double getZ() {
 		return z;
 	}
 
@@ -147,7 +146,7 @@ public abstract class GeoVec3D extends GeoElement
 	 * @param ret
 	 *            array to store coords
 	 */
-	final public void getCoords(double[] ret) {
+	public final void getCoords(double[] ret) {
 		ret[0] = x;
 		ret[1] = y;
 		ret[2] = z;
@@ -156,14 +155,13 @@ public abstract class GeoVec3D extends GeoElement
 	/**
 	 * @return this vector as coords
 	 */
-	final public Coords getCoords() {
-		Coords coords = new Coords(x, y, z);
-		return coords;
+	public final Coords getCoords() {
+		return new Coords(x, y, z);
 	}
 
 	/**
 	 * Writes x and y to the array res.
-	 * 
+	 *
 	 * @param res
 	 *            array to store x and y
 	 */
@@ -190,17 +188,16 @@ public abstract class GeoVec3D extends GeoElement
 	/**
 	 * Yields true if this vector and v are linear dependent. This is done by
 	 * checking that cross product of this and v is the 0 vector (using standard precision).
-	 * 
+	 *
 	 * @param v
 	 *            other vector
 	 * @return true if this and other vector are linear dependent
 	 */
-	final public boolean linDep(GeoVec3D v) {
+	public final boolean linDep(GeoVec3D v) {
 		// v lin.dep this <=> angle(v,w) ~ 0 <=> cross(v,w) << |this|*|v|
 		// use Math.max(abs coords) as norm to avoid overflow / underflow
 		double n1 = Math.max(Math.abs(x), Math.max(Math.abs(y), Math.abs(z)));
-		double n2 = Math.max(Math.abs(v.x),
-				Math.max(Math.abs(v.y), Math.abs(v.z)));
+		double n2 = Math.max(Math.abs(v.x), Math.max(Math.abs(v.y), Math.abs(v.z)));
 
 		double x1 = x / n1;
 		double y1 = y / n1;
@@ -218,14 +215,14 @@ public abstract class GeoVec3D extends GeoElement
 	/**
 	 * @return tue if all coords are zero
 	 */
-	final public boolean isZero() {
+	public final boolean isZero() {
 		return DoubleUtil.isZero(x) && DoubleUtil.isZero(y) && DoubleUtil.isZero(z);
 	}
 
 	/**
 	 * Calculates the cross product of vectors u and v. The result is stored in
 	 * w.
-	 * 
+	 *
 	 * @param u
 	 *            vector u
 	 * @param v
@@ -233,34 +230,32 @@ public abstract class GeoVec3D extends GeoElement
 	 * @param w
 	 *            vector to store u x v
 	 */
-	final public static void cross(GeoVec3D u, GeoVec3D v, GeoVec3D w) {
-		w.setCoords(u.y * v.z - u.z * v.y, u.z * v.x - u.x * v.z,
-				u.x * v.y - u.y * v.x);
+	public static void cross(GeoVec3D u, GeoVec3D v, GeoVec3D w) {
+		w.setCoords(u.y * v.z - u.z * v.y, u.z * v.x - u.x * v.z, u.x * v.y - u.y * v.x);
 	}
 
 	/**
 	 * Calculates the cross product of vectors u and v.
-	 * 
+	 *
 	 * @param u
 	 *            vector u
 	 * @param v
 	 *            vector v
 	 * @return the cross product of vectors u and v.
 	 */
-	final public static Coords cross(GeoVec3D u, GeoVec3D v) {
+	public static Coords cross(GeoVec3D u, GeoVec3D v) {
 		Coords ret = new Coords(3);
 		ret.setX(u.y * v.z - u.z * v.y);
 		ret.setY(u.z * v.x - u.x * v.z);
 		ret.setZ(u.x * v.y - u.y * v.x);
 
 		return ret;
-
 	}
 
 	/**
 	 * Calculates the line through the points A and B. The result is stored in
 	 * g.
-	 * 
+	 *
 	 * @param A
 	 *            first point
 	 * @param B
@@ -268,8 +263,7 @@ public abstract class GeoVec3D extends GeoElement
 	 * @param g
 	 *            line to store the result
 	 */
-	final public static void lineThroughPoints(GeoPoint A, GeoPoint B,
-			GeoLine g) {
+	public static void lineThroughPoints(GeoPoint A, GeoPoint B, GeoLine g) {
 		// note: this could be done simply using cross(A, B, g)
 		// but we want to avoid large coefficients in the line
 		// and we want AB to be the direction vector of the line
@@ -285,20 +279,18 @@ public abstract class GeoVec3D extends GeoElement
 				g.setUndefined();
 			} else {
 				// through point B
-				g.setCoords(A.getY(), -A.getX(),
-						A.getX() * B.getInhomY() - A.getY() * B.getInhomX());
+				g.setCoords(A.getY(), -A.getX(), A.getX() * B.getInhomY() - A.getY() * B.getInhomX());
 			}
 		} else { // through point A
 			if (B.isInfinite()) {
 				// B is direction
-				g.setCoords(-B.getY(), B.getX(),
-						A.getInhomX() * B.getY() - A.getInhomY() * B.getX());
+				g.setCoords(-B.getY(), B.getX(), A.getInhomX() * B.getY() - A.getInhomY() * B.getX());
 			} else {
 				// through point B
-				g.setCoords(A.getInhomY() - B.getInhomY(),
+				g.setCoords(
+						A.getInhomY() - B.getInhomY(),
 						B.getInhomX() - A.getInhomX(),
-						A.getInhomX() * B.getInhomY()
-								- A.getInhomY() * B.getInhomX());
+						A.getInhomX() * B.getInhomY() - A.getInhomY() * B.getInhomX());
 			}
 		}
 	}
@@ -306,7 +298,7 @@ public abstract class GeoVec3D extends GeoElement
 	/**
 	 * Calculates the line through the points A and B. The result is stored in
 	 * g.
-	 * 
+	 *
 	 * @param A
 	 *            first point
 	 * @param B
@@ -314,8 +306,7 @@ public abstract class GeoVec3D extends GeoElement
 	 * @param g
 	 *            line to store result
 	 */
-	final public static void lineThroughPointsCoords(Coords A, Coords B,
-			GeoLine g) {
+	public static void lineThroughPointsCoords(Coords A, Coords B, GeoLine g) {
 		// note: this could be done simply using cross(A, B, g)
 		// but we want to avoid large coefficients in the line
 		// and we want AB to be the direction vector of the line
@@ -335,22 +326,19 @@ public abstract class GeoVec3D extends GeoElement
 				g.setUndefined();
 			} else {
 				// through point B
-				g.setCoords(A.getY(), -A.getX(),
-						A.getX() * B.getInhom(1) - A.getY() * B.getInhom(0));
+				g.setCoords(A.getY(), -A.getX(), A.getX() * B.getInhom(1) - A.getY() * B.getInhom(0));
 			}
 		} else { // through point A
 			if (DoubleUtil.isZero(B.getZ())) {
 				// B is direction
-				g.setCoords(B.getY(), -B.getX(),
-						B.getX() * A.getInhom(1) - B.getY() * A.getInhom(0));
+				g.setCoords(B.getY(), -B.getX(), B.getX() * A.getInhom(1) - B.getY() * A.getInhom(0));
 			} else {
 				// through point B
 				double aInhomX = A.getInhom(0);
 				double aInhomY = A.getInhom(1);
 				double bInhomX = B.getInhom(0);
 				double bInhomY = B.getInhom(1);
-				g.setCoords(aInhomY - bInhomY, bInhomX - aInhomX,
-						aInhomX * bInhomY - aInhomY * bInhomX);
+				g.setCoords(aInhomY - bInhomY, bInhomX - aInhomX, aInhomX * bInhomY - aInhomY * bInhomX);
 			}
 		}
 	}
@@ -358,7 +346,7 @@ public abstract class GeoVec3D extends GeoElement
 	/**
 	 * Calculates the line through the point A with direction v. The result is
 	 * stored in g.
-	 * 
+	 *
 	 * @param A
 	 *            start point
 	 * @param v
@@ -366,8 +354,7 @@ public abstract class GeoVec3D extends GeoElement
 	 * @param g
 	 *            line to store result
 	 */
-	final public static void lineThroughPointVector(GeoPoint A, GeoVec3D v,
-			GeoLine g) {
+	public static void lineThroughPointVector(GeoPoint A, GeoVec3D v, GeoLine g) {
 		// note: this could be done simply using cross(A, v, g)
 		// but we want to avoid large coefficients in the line
 		// and we want v to be the direction vector of the line
@@ -375,7 +362,7 @@ public abstract class GeoVec3D extends GeoElement
 		if (A.isInfinite()) { // A is direction
 			g.setUndefined();
 		} else { // through point A
-					// v is direction
+			// v is direction
 			g.setCoords(-v.y, v.x, A.getInhomX() * v.y - A.getInhomY() * v.x);
 		}
 	}
@@ -383,7 +370,7 @@ public abstract class GeoVec3D extends GeoElement
 	/**
 	 * Calculates the cross product of vectors u and v. The result is stored in
 	 * w.
-	 * 
+	 *
 	 * @param u
 	 *            vector u
 	 * @param vx
@@ -395,8 +382,7 @@ public abstract class GeoVec3D extends GeoElement
 	 * @param w
 	 *            vector to store u * v
 	 */
-	final public static void cross(GeoVec3D u, double vx, double vy, double vz,
-			GeoVec3D w) {
+	public static void cross(GeoVec3D u, double vx, double vy, double vz, GeoVec3D w) {
 
 		double x = u.y * vz - u.z * vy;
 		double y = u.z * vx - u.x * vz;
@@ -416,7 +402,7 @@ public abstract class GeoVec3D extends GeoElement
 	/**
 	 * Calculates the cross product of vectors u and v. The result is stored in
 	 * w.
-	 * 
+	 *
 	 * @param ux
 	 *            x(u)
 	 * @param uy
@@ -432,15 +418,15 @@ public abstract class GeoVec3D extends GeoElement
 	 * @param w
 	 *            vector to store u*v
 	 */
-	final public static void cross(double ux, double uy, double uz, double vx,
-			double vy, double vz, GeoVec3D w) {
+	public static void cross(
+			double ux, double uy, double uz, double vx, double vy, double vz, GeoVec3D w) {
 		w.setCoords(uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx);
 	}
 
 	/**
 	 * Calculates the cross product of vectors u and v. The result is stored in
 	 * w.
-	 * 
+	 *
 	 * @param u
 	 *            first input
 	 * @param v
@@ -448,7 +434,7 @@ public abstract class GeoVec3D extends GeoElement
 	 * @param w
 	 *            vector to store u*v
 	 */
-	final public static void cross(double[] u, double[] v, double[] w) {
+	public static void cross(double[] u, double[] v, double[] w) {
 		w[0] = u[1] * v[2] - u[2] * v[1];
 		w[1] = u[2] * v[0] - u[0] * v[2];
 		w[2] = u[0] * v[1] - u[1] * v[0];
@@ -456,25 +442,25 @@ public abstract class GeoVec3D extends GeoElement
 
 	/**
 	 * Calculates the inner product of this vector and vector v.
-	 * 
+	 *
 	 * @param v
 	 *            other vector
 	 * @return inner product
 	 */
-	final public double inner(GeoVec3D v) {
+	public final double inner(GeoVec3D v) {
 		return x * v.x + y * v.y + z * v.z;
 	}
 
 	/**
 	 * Changes orientation of this vector. v is changed to -v.
 	 */
-	final public void changeSign() {
+	public final void changeSign() {
 		setCoords(-x, -y, -z);
 	}
 
 	/**
 	 * c = a + b
-	 * 
+	 *
 	 * @param a
 	 *            vector a
 	 * @param b
@@ -482,13 +468,13 @@ public abstract class GeoVec3D extends GeoElement
 	 * @param c
 	 *            vector to store a+b
 	 **/
-	final public static void add(GeoVec3D a, GeoVec3D b, GeoVec3D c) {
+	public static void add(GeoVec3D a, GeoVec3D b, GeoVec3D c) {
 		c.setCoords(a.x + b.x, a.y + b.y, a.z + b.z);
 	}
 
 	/**
 	 * c = a - b
-	 * 
+	 *
 	 * @param a
 	 *            vector a
 	 * @param b
@@ -496,7 +482,7 @@ public abstract class GeoVec3D extends GeoElement
 	 * @param c
 	 *            vector to store a-b
 	 */
-	final public static void sub(GeoVec3D a, GeoVec3D b, GeoVec3D c) {
+	public static void sub(GeoVec3D a, GeoVec3D b, GeoVec3D c) {
 		c.setCoords(a.x - b.x, a.y - b.y, a.z - b.z);
 	}
 
@@ -517,15 +503,9 @@ public abstract class GeoVec3D extends GeoElement
 	 * returns all class-specific xml tags for saveXML Geogebra File Format
 	 */
 	@Override
-	protected void getXMLtags(StringBuilder sb) {
-		super.getXMLtags(sb);
-		sb.append("\t<coords x=\"");
-		sb.append(x);
-		sb.append("\" y=\"");
-		sb.append(y);
-		sb.append("\" z=\"");
-		sb.append(z);
-		sb.append("\"/>\n");
+	protected void getXMLTags(XMLStringBuilder sb) {
+		super.getXMLTags(sb);
+		sb.startTag("coords").attr("x", x).attr("y", y).attr("z", z).endTag();
 	}
 
 	@Override
@@ -550,7 +530,7 @@ public abstract class GeoVec3D extends GeoElement
 	/**
 	 * mirror transform with angle phi [ cos(phi) sin(phi) ] [ sin(phi)
 	 * -cos(phi) ]
-	 * 
+	 *
 	 * @param phi
 	 *            parameter of mirror transform
 	 */
@@ -567,5 +547,4 @@ public abstract class GeoVec3D extends GeoElement
 	public boolean hasCoords() {
 		return true;
 	}
-
 }

@@ -1,8 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.geos;
 
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidianForPlane.EuclidianViewForPlaneCompanionInterface;
 import org.geogebra.common.geogebra3D.kernel3D.transform.MirrorableAtPlane;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.arithmetic.NumberValue;
@@ -26,13 +43,13 @@ import org.geogebra.common.util.ExtendedBoolean;
 
 /**
  * @author ggb3D
- * 
+ *
  */
-public class GeoConic3D extends GeoConicND
-		implements RotatableND, MirrorableAtPlane, ViewCreator {
+public class GeoConic3D extends GeoConicND implements RotatableND, MirrorableAtPlane, ViewCreator {
 
 	/** 2D coord sys where the conic exists */
 	private CoordSys coordSys = new CoordSys(2);
+
 	private Coords midpoint3D;
 	private CoordMatrix4x4 tmpMatrix4x4;
 
@@ -40,7 +57,7 @@ public class GeoConic3D extends GeoConicND
 
 	/**
 	 * Creates an empty 3D conic with 2D coord sys
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param cs
@@ -53,7 +70,7 @@ public class GeoConic3D extends GeoConicND
 
 	/**
 	 * Copy constructor
-	 * 
+	 *
 	 * @param conic
 	 *            original
 	 */
@@ -64,7 +81,7 @@ public class GeoConic3D extends GeoConicND
 
 	/**
 	 * Creates an empty 3D conic with 2D coord sys
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 */
@@ -73,7 +90,7 @@ public class GeoConic3D extends GeoConicND
 	}
 
 	/**
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param isIntersection
@@ -94,7 +111,7 @@ public class GeoConic3D extends GeoConicND
 
 	/**
 	 * set the 2D coordinate system
-	 * 
+	 *
 	 * @param cs
 	 *            the 2D coordinate system
 	 */
@@ -109,13 +126,13 @@ public class GeoConic3D extends GeoConicND
 
 	/*
 	 * private Coords midpoint2D;
-	 * 
+	 *
 	 * /** sets the coords of the 2D midpoint
-	 * 
+	 *
 	 * @param coords
-	 * 
+	 *
 	 * public void setMidpoint2D(Coords coords){ midpoint2D=coords; }
-	 * 
+	 *
 	 * public Coords getMidpoint2D(){ return midpoint2D; }
 	 */
 
@@ -130,7 +147,7 @@ public class GeoConic3D extends GeoConicND
 	/*
 	 * public Coords getMidpoint2D(){ return
 	 * coordSys.getPoint(super.getMidpoint2D());
-	 * 
+	 *
 	 * }
 	 */
 
@@ -168,7 +185,7 @@ public class GeoConic3D extends GeoConicND
 
 	/**
 	 * it's a 3D GeoElement.
-	 * 
+	 *
 	 * @return true
 	 */
 	@Override
@@ -187,21 +204,21 @@ public class GeoConic3D extends GeoConicND
 		StringBuilder sbToString = new StringBuilder();
 
 		switch (getType()) {
-		case CONIC_CIRCLE:
-		case CONIC_ELLIPSE:
-		case CONIC_HYPERBOLA:
-		case CONIC_PARABOLA:
-			sbToString.setLength(0);
-			sbToString.append(label);
-			sbToString.append(": ");
-			// GeoFunction.initStringBuilder(sbToString, tpl, label, "t",
-			// isLabelSet(), false);
-			break;
-		default:
-			sbToString.setLength(0);
-			sbToString.append(label);
-			sbToString.append(": ");
-			break;
+			case CONIC_CIRCLE:
+			case CONIC_ELLIPSE:
+			case CONIC_HYPERBOLA:
+			case CONIC_PARABOLA:
+				sbToString.setLength(0);
+				sbToString.append(label);
+				sbToString.append(": ");
+				// GeoFunction.initStringBuilder(sbToString, tpl, label, "t",
+				// isLabelSet(), false);
+				break;
+			default:
+				sbToString.setLength(0);
+				sbToString.append(label);
+				sbToString.append(": ");
+				break;
 		}
 
 		sbToString.append(buildValueString(tpl));
@@ -212,7 +229,6 @@ public class GeoConic3D extends GeoConicND
 	protected StringBuilder buildValueString(StringTemplate tpl) {
 
 		return buildParametricValueString(tpl, 3);
-
 	}
 
 	@Override
@@ -228,7 +244,7 @@ public class GeoConic3D extends GeoConicND
 
 	/**
 	 * set the conic as single point equal to m
-	 * 
+	 *
 	 * @param m
 	 *            point
 	 */
@@ -237,18 +253,16 @@ public class GeoConic3D extends GeoConicND
 		// coordSys.setSimpleCoordSysWithOrigin(m.getInhomCoordsInD3());
 
 		// set midpoint as projection of m on the current coord sys
-		setMidpoint(
-				coordSys.getNormalProjection(m.getInhomCoordsInD3())[1].get());
+		setMidpoint(coordSys.getNormalProjection(m.getInhomCoordsInD3())[1].get());
 
 		setSinglePointMatrix();
 
 		singlePoint();
-
 	}
 
 	/**
 	 * set the conic as single point equal to coords
-	 * 
+	 *
 	 * @param coords
 	 *            point
 	 */
@@ -262,7 +276,6 @@ public class GeoConic3D extends GeoConicND
 		setSinglePointMatrix();
 
 		singlePoint();
-
 	}
 
 	private void setSinglePointMatrix() {
@@ -277,13 +290,13 @@ public class GeoConic3D extends GeoConicND
 
 	/**
 	 * set this to single point at location m
-	 * 
+	 *
 	 * @param conic
 	 *            conic which will be single point
 	 * @param m
 	 *            point
 	 */
-	static public void setSinglePoint(GeoConic3D conic, Coords m) {
+	public static void setSinglePoint(GeoConic3D conic, Coords m) {
 
 		CoordSys cs = conic.getCoordSys();
 		if (cs == null) {
@@ -295,12 +308,11 @@ public class GeoConic3D extends GeoConicND
 		cs.completeCoordSys2D();
 		cs.makeOrthoMatrix(false, false);
 
-		conic.setMidpoint(new double[] { 0, 0 });
+		conic.setMidpoint(new double[] {0, 0});
 
 		conic.setSinglePointMatrix();
 
 		conic.singlePoint();
-
 	}
 
 	@Override
@@ -311,8 +323,8 @@ public class GeoConic3D extends GeoConicND
 	/*
 	 * protected String getTypeString() { switch (type) { case
 	 * GeoConic.CONIC_CIRCLE: return "Circle"; default: return "Conic3D"; }
-	 * 
-	 * 
+	 *
+	 *
 	 * }
 	 */
 
@@ -333,7 +345,6 @@ public class GeoConic3D extends GeoConicND
 			coordSys.set(((GeoConicND) geo).getCoordSys());
 			setIsEndOfQuadric(((GeoConicND) geo).isEndOfQuadric());
 		}
-
 	}
 
 	// //////////////////////////////////
@@ -344,38 +355,27 @@ public class GeoConic3D extends GeoConicND
 	 * returns all class-specific xml tags for saveXML
 	 */
 	@Override
-	protected void getXMLtags(StringBuilder sb) {
+	protected void getXMLTags(XMLStringBuilder sb) {
 		if (getCoordSys() != null && isIndependent()) {
 
 			Coords v0 = getCoordSys().getV(0);
 			Coords v1 = getCoordSys().getV(1);
 			Coords origin = getCoordSys().getOrigin();
-
-			sb.append("\t<coords ox=\"");
-			sb.append(origin.get(1));
-			sb.append("\" oy=\"");
-			sb.append(origin.get(2));
-			sb.append("\" oz=\"");
-			sb.append(origin.get(3));
-			sb.append("\" ow=\"");
-			sb.append(origin.get(4));
-			sb.append("\" vx=\"");
-			sb.append(v0.get(1));
-			sb.append("\" vy=\"");
-			sb.append(v0.get(2));
-			sb.append("\" vz=\"");
-			sb.append(v0.get(3));
-			sb.append("\" wx=\"");
-			sb.append(v1.get(1));
-			sb.append("\" wy=\"");
-			sb.append(v1.get(2));
-			sb.append("\" wz=\"");
-			sb.append(v1.get(3));
-			sb.append("\"/>\n");
+			sb.startTag("coords");
+			sb.attr("ox", origin.getX());
+			sb.attr("oy", origin.getY());
+			sb.attr("oz", origin.getZ());
+			sb.attr("ow", origin.getW());
+			sb.attr("vx", v0.getX());
+			sb.attr("vy", v0.getY());
+			sb.attr("vz", v0.getZ());
+			sb.attr("wx", v1.getX());
+			sb.attr("wy", v1.getY());
+			sb.attr("wz", v1.getZ());
+			sb.endTag();
 		}
 		// curve thickness and type printed by conicND
-		super.getXMLtags(sb);
-
+		super.getXMLTags(sb);
 	}
 
 	// //////////////////////////////////
@@ -401,10 +401,10 @@ public class GeoConic3D extends GeoConicND
 	 */
 	public Coords[] getProjection(Coords coords, Coords willingDirection) {
 
-		Coords[] result = new Coords[] { new Coords(4), new Coords(4) };
+		Coords[] result = new Coords[] {new Coords(4), new Coords(4)};
 
-		coords.projectPlaneThruV(getCoordSys().getMatrixOrthonormal(),
-				willingDirection, result[0], result[1]);
+		coords.projectPlaneThruV(
+				getCoordSys().getMatrixOrthonormal(), willingDirection, result[0], result[1]);
 
 		return result;
 	}
@@ -414,7 +414,7 @@ public class GeoConic3D extends GeoConicND
 	// //////////////////////////////////
 
 	/**
-	 * 
+	 *
 	 * @return true if is an intersection curve
 	 */
 	public boolean isIntersection() {
@@ -427,8 +427,7 @@ public class GeoConic3D extends GeoConicND
 	}
 
 	@Override
-	public void matrixTransform(double a00, double a01, double a10,
-			double a11) {
+	public void matrixTransform(double a00, double a01, double a10, double a11) {
 
 		if (tmpMatrix4x4 == null) {
 			tmpMatrix4x4 = CoordMatrix4x4.identity();
@@ -461,8 +460,16 @@ public class GeoConic3D extends GeoConicND
 	}
 
 	@Override
-	public void matrixTransform(double a00, double a01, double a02, double a10,
-			double a11, double a12, double a20, double a21, double a22) {
+	public void matrixTransform(
+			double a00,
+			double a01,
+			double a02,
+			double a10,
+			double a11,
+			double a12,
+			double a20,
+			double a21,
+			double a22) {
 
 		if (tmpMatrix4x4 == null) {
 			tmpMatrix4x4 = CoordMatrix4x4.identity();
@@ -485,41 +492,37 @@ public class GeoConic3D extends GeoConicND
 		double[] ret = getCoordSys().matrixTransform(tmpMatrix4x4);
 
 		super.matrixTransform(ret[0], ret[1], 0, ret[2]);
-
 	}
 
 	@Override
-	final public void rotate(NumberValue phiVal) {
+	public final void rotate(NumberValue phiVal) {
 		coordSys.rotate(phiVal.getDouble(), Coords.O);
 	}
 
 	@Override
-	final public void rotate(NumberValue phiVal, GeoPointND Q) {
+	public final void rotate(NumberValue phiVal, GeoPointND Q) {
 		coordSys.rotate(phiVal.getDouble(), Q.getInhomCoordsInD3());
 	}
 
 	@Override
-	public void rotate(NumberValue phiVal, Coords Q,
-			GeoDirectionND orientation) {
+	public void rotate(NumberValue phiVal, Coords Q, GeoDirectionND orientation) {
 
 		rotate(phiVal, Q, orientation.getDirectionInD3());
-
 	}
 
-	private void rotate(NumberValue phiVal, Coords center,
-			Coords direction) {
+	private void rotate(NumberValue phiVal, Coords center, Coords direction) {
 		coordSys.rotate(phiVal.getDouble(), center, direction.normalized());
 	}
 
 	@Override
 	public Coords getDirectionInD3() {
 		switch (type) {
-		case CONIC_LINE:
-		case CONIC_EMPTY:
-		case CONIC_SINGLE_POINT:
-			return null;
-		default:
-			return getCoordSys().getVz();
+			case CONIC_LINE:
+			case CONIC_EMPTY:
+			case CONIC_SINGLE_POINT:
+				return null;
+			default:
+				return getCoordSys().getVz();
 		}
 	}
 
@@ -547,7 +550,6 @@ public class GeoConic3D extends GeoConicND
 		Coords direction = line.getDirectionInD3().normalized();
 
 		getCoordSys().mirror(point, direction);
-
 	}
 
 	@Override
@@ -572,7 +574,6 @@ public class GeoConic3D extends GeoConicND
 		}
 
 		dilate(r);
-
 	}
 
 	// ////////////////////////////////
@@ -585,8 +586,8 @@ public class GeoConic3D extends GeoConicND
 
 	@Override
 	public void createView2D() {
-		euclidianViewForPlane = kernel.getApplication().getCompanion()
-				.createEuclidianViewForPlane(this, true);
+		euclidianViewForPlane =
+				kernel.getApplication().getCompanion().createEuclidianViewForPlane(this, true);
 		euclidianViewForPlane.setTransformRegardingView();
 	}
 
@@ -605,8 +606,8 @@ public class GeoConic3D extends GeoConicND
 
 	@Override
 	public boolean hasView2DVisible() {
-		return euclidianViewForPlane != null && kernel.getApplication()
-				.getGuiManager().showView(euclidianViewForPlane.getId());
+		return euclidianViewForPlane != null
+				&& kernel.getApplication().getGuiManager().showView(euclidianViewForPlane.getId());
 	}
 
 	@Override
@@ -619,9 +620,7 @@ public class GeoConic3D extends GeoConicND
 			return;
 		}
 
-		kernel.getApplication().getGuiManager().setShowView(flag,
-				euclidianViewForPlane.getId());
-
+		kernel.getApplication().getGuiManager().setShowView(flag, euclidianViewForPlane.getId());
 	}
 
 	@Override
@@ -638,8 +637,7 @@ public class GeoConic3D extends GeoConicND
 	}
 
 	@Override
-	public void setEuclidianViewForPlane(
-			EuclidianViewForPlaneCompanionInterface view) {
+	public void setEuclidianViewForPlane(EuclidianViewForPlaneCompanionInterface view) {
 		euclidianViewForPlane = view;
 	}
 
@@ -668,9 +666,6 @@ public class GeoConic3D extends GeoConicND
 
 		// check direction
 		Coords normal = getMainDirection();
-		return DoubleUtil.isZero(normal.getX())
-				&& DoubleUtil.isZero(normal.getY());
-
+		return DoubleUtil.isZero(normal.getX()) && DoubleUtil.isZero(normal.getY());
 	}
-
 }

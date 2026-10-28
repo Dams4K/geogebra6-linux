@@ -1,8 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.parser.function;
 
 import org.geogebra.common.plugin.Operation;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 /**
  * Creates ParserFunctions.
@@ -11,11 +26,33 @@ public class ParserFunctionsFactory {
 
 	private static final String SINGLE_ARG = "( <x> )";
 
-	private static final String[] TRANSLATABLE_1_VAR = new String[] { "sin", "cos",
-			"tan", "cot", "csc", "sec", "sinh", "cosh", "tanh", "coth", "csch",
-			"sech", "arcsin", "arccos", "arctan", "asind", "acosd", "atand", "arcsinh",
-			"arccosh", "arctanh", "real", "imaginary", "conjugate",
-			"fractionalPart" };
+	private static final String[] TRANSLATABLE_1_VAR = new String[] {
+		"sin",
+		"cos",
+		"tan",
+		"cot",
+		"csc",
+		"sec",
+		"sinh",
+		"cosh",
+		"tanh",
+		"coth",
+		"csch",
+		"sech",
+		"arcsin",
+		"arccos",
+		"arctan",
+		"asind",
+		"acosd",
+		"atand",
+		"arcsinh",
+		"arccosh",
+		"arctanh",
+		"real",
+		"imaginary",
+		"conjugate",
+		"fractionalPart"
+	};
 
 	private final boolean addExtra;
 
@@ -41,10 +78,16 @@ public class ParserFunctionsFactory {
 		return new ParserFunctionsFactory(false);
 	}
 
+	/**
+	 * @return parser functions for algebra input
+	 */
 	public ParserFunctions createParserFunctions() {
 		return createParserFunctions(false);
 	}
 
+	/**
+	 * @return parser functions input boxes
+	 */
 	public ParserFunctions createInputBoxParserFunctions() {
 		return createParserFunctions(true);
 	}
@@ -132,14 +175,12 @@ public class ParserFunctionsFactory {
 
 		put(pf, 3, "beta", Operation.BETA_INCOMPLETE, "( <a>, <b>, <x> )");
 
-		put(pf, 3, "betaRegularized", Operation.BETA_INCOMPLETE_REGULARIZED,
-				"( <a>, <b>, <x> )");
+		put(pf, 3, "betaRegularized", Operation.BETA_INCOMPLETE_REGULARIZED, "( <a>, <b>, <x> )");
 		put(pf, 3, "ibeta", Operation.BETA_INCOMPLETE_REGULARIZED, null);
 
 		put(pf, 1, "gamma", Operation.GAMMA);
 		put(pf, 2, "gamma", Operation.GAMMA_INCOMPLETE, "( <a>, <x> )");
-		put(pf, 2, "gammaRegularized", Operation.GAMMA_INCOMPLETE_REGULARIZED,
-				"( <a>, <x> )");
+		put(pf, 2, "gammaRegularized", Operation.GAMMA_INCOMPLETE_REGULARIZED, "( <a>, <x> )");
 
 		put(pf, 1, "Dirac", Operation.DIRAC);
 		put(pf, 2, "Dirac", Operation.DIRAC, null);
@@ -223,13 +264,11 @@ public class ParserFunctionsFactory {
 		put(pf, 1, "imaginary", Operation.IMAGINARY);
 	}
 
-	private static void put(ParserFunctionsImpl pf, int size, String name,
-							Operation op) {
+	private static void put(ParserFunctionsImpl pf, int size, String name, Operation op) {
 		put(pf, size, name, op, SINGLE_ARG);
 	}
 
-	private static void put(ParserFunctionsImpl pf, int size, String name,
-							Operation op, String arg) {
+	private static void put(ParserFunctionsImpl pf, int size, String name, Operation op, String arg) {
 		pf.add(name, size, arg, op);
 	}
 
@@ -243,7 +282,7 @@ public class ParserFunctionsFactory {
 	}
 
 	private static void addTranslatable(ParserFunctionsImpl pf) {
-		for (String fn: TRANSLATABLE_1_VAR) {
+		for (String fn : TRANSLATABLE_1_VAR) {
 			pf.addTranslatable(fn, SINGLE_ARG);
 		}
 		pf.addTranslatable("nroot", 2, ParserFunctions.NROOT_SUFFIX, Operation.NROOT);

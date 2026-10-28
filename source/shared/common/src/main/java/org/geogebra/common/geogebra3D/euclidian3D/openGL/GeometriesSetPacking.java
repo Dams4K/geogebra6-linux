@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.openGL;
 
 import org.geogebra.common.awt.GColor;
@@ -18,20 +34,19 @@ class GeometriesSetPacking extends GeometriesSet {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param manager
 	 *            manager
 	 * @param bufferManager
 	 *            gl buffer manager
-	 * 
+	 *
 	 * @param color
 	 *            color
 	 * @param layer
 	 *            layer
 	 */
-	public GeometriesSetPacking(
-			ManagerShaders manager,
-			GLBufferManager bufferManager, GColor color, int layer) {
+	GeometriesSetPacking(
+			ManagerShaders manager, GLBufferManager bufferManager, GColor color, int layer) {
 		super(manager);
 		this.color = color;
 		this.layer = layer;
@@ -52,17 +67,16 @@ class GeometriesSetPacking extends GeometriesSet {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return geometry set index
 	 */
-	public int getIndex() {
+	int getIndex() {
 		return index;
 	}
 
 	@Override
 	protected Geometry newGeometry(Manager.Type type) {
-		return new GeometryPacking(manager, this, type,
-				currentGeometryIndex);
+		return new GeometryPacking(manager, this, type, currentGeometryIndex);
 	}
 
 	@Override
@@ -72,22 +86,21 @@ class GeometriesSetPacking extends GeometriesSet {
 
 	/**
 	 * update all geometries color for this set
-	 * 
+	 *
 	 * @param newColor
 	 *            color
 	 * @param newLayer
 	 *            layer
 	 */
-	public void updateColorAndLayer(GColor newColor, int newLayer) {
+	void updateColorAndLayer(GColor newColor, int newLayer) {
 		this.color = newColor;
 		this.layer = newLayer;
-		bufferManager.updateColorAndLayer(index, getGeometriesLength(),
-				newColor, newLayer);
+		bufferManager.updateColorAndLayer(index, getGeometriesLength(), newColor, newLayer);
 	}
 
 	/**
 	 * update all geometries visibility for this set
-	 * 
+	 *
 	 * @param visible
 	 *            if visible
 	 * @param alpha
@@ -95,36 +108,34 @@ class GeometriesSetPacking extends GeometriesSet {
 	 * @param objLayer
 	 *            object layer
 	 */
-	public void updateVisibility(boolean visible, int alpha, int objLayer) {
-		bufferManager.updateVisibility(index, 0, getGeometriesLength(),
-				visible, alpha, objLayer);
+	void updateVisibility(boolean visible, int alpha, int objLayer) {
+		bufferManager.updateVisibility(index, 0, getGeometriesLength(), visible, alpha, objLayer);
 	}
 
 	@Override
 	public void hideLastGeometries() {
-		bufferManager.updateVisibility(index, currentGeometryIndex,
-				oldGeometriesLength, false, 0, 0);
+		bufferManager.updateVisibility(index, currentGeometryIndex, oldGeometriesLength, false, 0, 0);
 	}
 
 	/**
 	 * @return current color
 	 */
-	public GColor getColor() {
+	GColor getColor() {
 		return color;
 	}
 
 	/**
 	 * @return current layer
 	 */
-	public int getLayer() {
+	int getLayer() {
 		return layer;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return gl buffer manager
 	 */
-	public GLBufferManager getBufferManager() {
+	GLBufferManager getBufferManager() {
 		return bufferManager;
 	}
 
@@ -135,8 +146,8 @@ class GeometriesSetPacking extends GeometriesSet {
 
 	@Override
 	public boolean usePacking() {
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public boolean equals(Object obj) {

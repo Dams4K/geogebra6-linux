@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.dialog.image;
 
 import org.geogebra.common.euclidian.EuclidianConstants;
@@ -12,8 +28,7 @@ import org.gwtproject.user.client.ui.FlowPanel;
 /**
  * Input Dialog for Webcam / Document Camera
  */
-public class WebcamInputDialog extends ComponentDialog
-		implements WebcamDialogInterface {
+public final class WebcamInputDialog extends ComponentDialog implements WebcamDialogInterface {
 	private WebCamInputPanel webcamInputPanel;
 
 	/**
@@ -54,16 +69,14 @@ public class WebcamInputDialog extends ComponentDialog
 			this.webcamInputPanel.stopVideo();
 		}
 		((AppW) app).getImageManager().setPreventAuxImage(false);
-		((AppW) app).getGuiManager().setMode(EuclidianConstants.MODE_SELECT_MOW,
-				ModeSetter.TOOLBAR);
+		((AppW) app).getGuiManager().setMode(EuclidianConstants.MODE_SELECT_MOW, ModeSetter.TOOLBAR);
 		super.hide();
 	}
 
 	@Override
 	public void hide(boolean autoClosed, boolean setFocus) {
 		super.hide(autoClosed, setFocus);
-		app.getGuiManager().setMode(EuclidianConstants.MODE_SELECT_MOW,
-				ModeSetter.TOOLBAR);
+		app.getGuiManager().setMode(EuclidianConstants.MODE_SELECT_MOW, ModeSetter.TOOLBAR);
 	}
 
 	/**

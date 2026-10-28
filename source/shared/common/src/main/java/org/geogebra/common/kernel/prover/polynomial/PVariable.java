@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.prover.polynomial;
 
 import java.util.HashMap;
@@ -7,7 +23,7 @@ import org.geogebra.common.kernel.geos.GeoElement;
 
 /**
  * A simple class for variables.
- * 
+ *
  * @author Simon Weitzhofer
  * @author Damien Desfontaines
  *
@@ -23,7 +39,7 @@ public class PVariable implements Comparable<PVariable> {
 
 	/**
 	 * Creates a new variable
-	 * 
+	 *
 	 * @param kernel
 	 *            current kernel
 	 */
@@ -36,7 +52,7 @@ public class PVariable implements Comparable<PVariable> {
 
 	/**
 	 * Creates a new variable and sets the parent GeoElement
-	 * 
+	 *
 	 * @param parent
 	 *            the GeoElement which defines the variable
 	 */
@@ -47,7 +63,7 @@ public class PVariable implements Comparable<PVariable> {
 
 	/**
 	 * Returns the variable v
-	 * 
+	 *
 	 * @param v
 	 *            the name of the variable
 	 */
@@ -60,7 +76,7 @@ public class PVariable implements Comparable<PVariable> {
 
 	/**
 	 * Copies a variable
-	 * 
+	 *
 	 * @param fv
 	 *            the variable to copy
 	 */
@@ -71,7 +87,7 @@ public class PVariable implements Comparable<PVariable> {
 
 	/**
 	 * Returns the unique id of the variable
-	 * 
+	 *
 	 * @return the id
 	 */
 	public int getId() {
@@ -105,7 +121,7 @@ public class PVariable implements Comparable<PVariable> {
 
 	/**
 	 * Returns the name of the variable.
-	 * 
+	 *
 	 * @return the name
 	 */
 	public String getName() {
@@ -115,7 +131,7 @@ public class PVariable implements Comparable<PVariable> {
 
 	/**
 	 * Exports the variable into LaTeX
-	 * 
+	 *
 	 * @return the LaTeX formatted variable
 	 */
 	public String toTeX() {
@@ -130,7 +146,7 @@ public class PVariable implements Comparable<PVariable> {
 	/**
 	 * Returns the Variable which describes the other coordinate of the same
 	 * point
-	 * 
+	 *
 	 * @return the Variable
 	 */
 	public PVariable getTwin() {
@@ -139,7 +155,7 @@ public class PVariable implements Comparable<PVariable> {
 
 	/**
 	 * Sets the Variable which describes the other coordinate of the same point
-	 * 
+	 *
 	 * @param twin
 	 *            the Variable. Is null if there is no twin.
 	 */
@@ -149,7 +165,7 @@ public class PVariable implements Comparable<PVariable> {
 
 	/**
 	 * Returns the parent GeoElement
-	 * 
+	 *
 	 * @return the parent GeoElement
 	 */
 	public GeoElement getParent() {
@@ -158,12 +174,11 @@ public class PVariable implements Comparable<PVariable> {
 
 	/**
 	 * Sets the parent GeoElement
-	 * 
+	 *
 	 * @param parent
 	 *            the parent GeoElement
 	 */
 	public void setParent(final GeoElement parent) {
 		this.parent = parent;
 	}
-
 }

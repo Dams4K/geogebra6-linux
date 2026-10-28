@@ -1,8 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import org.geogebra.common.kernel.geos.GProperty;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.main.Localization;
+import org.geogebra.editor.share.util.Unicode;
 import org.geogebra.web.full.css.MaterialDesignResources;
 import org.geogebra.web.html5.css.GuiResourcesSimple;
 import org.geogebra.web.html5.gui.util.AriaHelper;
@@ -18,13 +35,11 @@ import org.gwtproject.event.dom.client.DomEvent;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Label;
 
-import com.himamis.retex.editor.share.util.Unicode;
-
 /**
  * Animation panel for points and sliders
  *
  */
-public class AnimPanel extends FlowPanel implements ClickHandler, HasDataTest {
+public final class AnimPanel extends FlowPanel implements ClickHandler, HasDataTest {
 
 	/** Size of play button in pixels */
 	public static final int PLAY_BUTTON_SIZE = 24;
@@ -32,8 +47,10 @@ public class AnimPanel extends FlowPanel implements ClickHandler, HasDataTest {
 	/**
 	 * Animation speeds
 	 */
-	final static double[] ANIM_SPEEDS = { 0.05, 0.1, 0.15, 0.2, 0.35, 0.75, 1,
-			1.5, 2, 3.5, 4, 5, 6, 7, 10, 15, 20 };
+	static final double[] ANIM_SPEEDS = {
+		0.05, 0.1, 0.15, 0.2, 0.35, 0.75, 1, 1.5, 2, 3.5, 4, 5, 6, 7, 10, 15, 20
+	};
+
 	private final RadioTreeItem radioTreeItem;
 	private StandardButton btnSpeedDown;
 	private StandardButton btnSpeedUp;
@@ -84,12 +101,12 @@ public class AnimPanel extends FlowPanel implements ClickHandler, HasDataTest {
 	private void buildSpeedPanel() {
 		speedPanel = new FlowPanel();
 		speedPanel.addStyleName("speedPanel-hidden");
-		btnSpeedDown = new StandardButton(
-				MaterialDesignResources.INSTANCE.speed_down_black(), PLAY_BUTTON_SIZE);
+		btnSpeedDown =
+				new StandardButton(MaterialDesignResources.INSTANCE.speed_down_black(), PLAY_BUTTON_SIZE);
 		btnSpeedDown.setStyleName("flatButton");
 
-		btnSpeedUp = new StandardButton(
-				MaterialDesignResources.INSTANCE.speed_up_black(), PLAY_BUTTON_SIZE);
+		btnSpeedUp =
+				new StandardButton(MaterialDesignResources.INSTANCE.speed_up_black(), PLAY_BUTTON_SIZE);
 		btnSpeedUp.setStyleName("flatButton");
 
 		btnSpeedDown.addFastClickHandler((e) -> {
@@ -119,32 +136,32 @@ public class AnimPanel extends FlowPanel implements ClickHandler, HasDataTest {
 	}
 
 	private void createPlayButton() {
-		btnPlay = new ToggleButton(GuiResourcesSimple.INSTANCE.play_circle(),
-				GuiResourcesSimple.INSTANCE.pause_circle());
+		btnPlay = new ToggleButton(
+				GuiResourcesSimple.INSTANCE.play_circle(), GuiResourcesSimple.INSTANCE.pause_circle());
 		btnPlay.setTabIndex(-1);
 		btnPlay.setStyleName("avPlayButton");
 		btnPlay.addFastClickHandler((event) -> {
-				getController().stopEdit();
+			getController().stopEdit();
 
-				boolean value = !isGeoAnimating();
+			boolean value = !isGeoAnimating();
 
-				getGeo().setAnimating(value);
-				setPlay(value);
-				getGeo().updateRepaint();
+			getGeo().setAnimating(value);
+			setPlay(value);
+			getGeo().updateRepaint();
 
-				setAnimating(getGeo().isAnimating());
+			setAnimating(getGeo().isAnimating());
 		});
 	}
 
 	/** @return tree item controller */
-	protected RadioTreeItemController getController() {
+	private RadioTreeItemController getController() {
 		return radioTreeItem.getController();
 	}
 
 	/**
 	 * @return geo element
 	 */
-	protected GeoElement getGeo() {
+	private GeoElement getGeo() {
 		return this.radioTreeItem.geo;
 	}
 
@@ -235,8 +252,7 @@ public class AnimPanel extends FlowPanel implements ClickHandler, HasDataTest {
 	 * Update UI
 	 */
 	public void update() {
-		boolean visible = this.radioTreeItem.geo != null
-				&& this.radioTreeItem.geo.isAnimatable();
+		boolean visible = this.radioTreeItem.geo != null && this.radioTreeItem.geo.isAnimatable();
 		if (isGeoAnimating() != play || !isVisible()) {
 			boolean v = isGeoAnimating();
 			setPlay(v);

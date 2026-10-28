@@ -58,23 +58,52 @@ public class TeXConstants {
 	// ALIGNMENT CONSTANTS
 	// *******************
 
-	public static enum Align {
-		LEFT, RIGHT, CENTER, TOP, BOTTOM, NONE, INVALID
+	public enum Align {
+		LEFT,
+		RIGHT,
+		CENTER,
+		TOP,
+		BOTTOM,
+		NONE,
+		INVALID
 	}
 
-	public static enum Muskip {
-		THIN, MED, THICK, NEGTHIN, NEGMED, NEGTHICK, NONE
+	public enum Muskip {
+		THIN,
+		MED,
+		THICK,
+		NEGTHIN,
+		NEGMED,
+		NEGTHICK,
+		NONE
 	}
 
-	public static enum Type {
-		ORDINARY, BIG_OPERATOR, BINARY_OPERATOR, RELATION, OPENING, CLOSING, PUNCTUATION, INNER, ACCENT, INTERTEXT, MULTICOLUMN, HLINE, NONE
+	public enum Type {
+		ORDINARY,
+		BIG_OPERATOR,
+		BINARY_OPERATOR,
+		RELATION,
+		OPENING,
+		CLOSING,
+		PUNCTUATION,
+		INNER,
+		ACCENT,
+		INTERTEXT,
+		MULTICOLUMN,
+		HLINE,
+		NONE
 	}
 
 	// ******************************************
 	// * Define elements which are a group opener
 	// ******************************************
-	public static enum Opener {
-		NONE, LBRACE, LSQBRACKET, B_LSQBRACKET, B_LBRACKET, BEGIN_MATH
+	public enum Opener {
+		NONE,
+		LBRACE,
+		LSQBRACKET,
+		B_LSQBRACKET,
+		B_LBRACKET,
+		BEGIN_MATH
 	}
 
 	public static final int SCRIPT_NORMAL = 0;

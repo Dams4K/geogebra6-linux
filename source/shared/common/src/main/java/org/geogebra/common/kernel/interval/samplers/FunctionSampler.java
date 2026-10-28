@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.interval.samplers;
 
 import org.geogebra.common.euclidian.EuclidianView;
@@ -33,15 +49,14 @@ public class FunctionSampler implements IntervalFunctionSampler {
 		this(data, null, domain, numberOfSamples);
 	}
 
-	private FunctionSampler(IntervalFunctionData data, EuclidianViewBounds bounds, Interval domain,
-			int numberOfSamples) {
+	private FunctionSampler(
+			IntervalFunctionData data, EuclidianViewBounds bounds, Interval domain, int numberOfSamples) {
 		this.bounds = bounds;
 		this.numberOfSamples = numberOfSamples;
 		this.data = data;
 		this.space = createSpaceOn(domain);
 		function = data.getFunction();
 		extend(domain);
-
 	}
 
 	private DiscreteSpace createSpaceOn(Interval domain) {
@@ -55,7 +70,7 @@ public class FunctionSampler implements IntervalFunctionSampler {
 	public FunctionSampler(IntervalFunctionData data, EuclidianViewBounds bounds) {
 		this(data, bounds, bounds.domain(), -1);
 	}
-	
+
 	@Override
 	public IntervalTupleList tuples() {
 		return data.tuples();
@@ -78,8 +93,8 @@ public class FunctionSampler implements IntervalFunctionSampler {
 	}
 
 	private void extendDataBothSide(Interval domain) {
-		space.extend(domain, x -> data.prepend(x, function.value(x)),
-				x -> data.append(x, function.value(x)));
+		space.extend(
+				domain, x -> data.prepend(x, function.value(x)), x -> data.append(x, function.value(x)));
 	}
 
 	@Override
@@ -110,5 +125,4 @@ public class FunctionSampler implements IntervalFunctionSampler {
 	private boolean hasBounds() {
 		return bounds != null;
 	}
-
 }

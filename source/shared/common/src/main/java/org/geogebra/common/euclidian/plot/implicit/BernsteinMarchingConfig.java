@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.plot.implicit;
 
 import static org.geogebra.common.kernel.implicit.GeoImplicitCurve.interpolate;
@@ -11,6 +27,9 @@ import org.geogebra.common.kernel.SegmentType;
 import org.geogebra.common.kernel.implicit.MarchingConfig;
 import org.geogebra.common.kernel.implicit.MarchingRect;
 
+/**
+ * Cell configuration for marching squares in Bernstein algo.
+ */
 public enum BernsteinMarchingConfig implements MarchingConfig {
 	/**
 	 * All corners are inside / outside
@@ -23,11 +42,13 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 	T0001(1) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{
-					moveTo(r.x1(), interpolate(r.bottomLeft(), r.topLeft(), r.y2(),
-							r.y1())),
-					new MyPoint(interpolate(r.bottomLeft(), r.bottomRight(), r.x1(), r.x2()),
-							r.y2(), SegmentType.LINE_TO)};
+			return new MyPoint[] {
+				moveTo(r.x1(), interpolate(r.bottomLeft(), r.topLeft(), r.y2(), r.y1())),
+				new MyPoint(
+						interpolate(r.bottomLeft(), r.bottomRight(), r.x1(), r.x2()),
+						r.y2(),
+						SegmentType.LINE_TO)
+			};
 		}
 	},
 
@@ -37,11 +58,13 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 	T0010(2) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{
-					moveTo(r.x2(), interpolate(r.bottomRight(), r.topRight(), r.y2(),
-							r.y1())),
-					new MyPoint(interpolate(r.bottomRight(), r.bottomLeft(), r.x2(), r.x1()),
-							r.y2(), SegmentType.LINE_TO)};
+			return new MyPoint[] {
+				moveTo(r.x2(), interpolate(r.bottomRight(), r.topRight(), r.y2(), r.y1())),
+				new MyPoint(
+						interpolate(r.bottomRight(), r.bottomLeft(), r.x2(), r.x1()),
+						r.y2(),
+						SegmentType.LINE_TO)
+			};
 		}
 	},
 
@@ -51,12 +74,11 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 	T0011(3) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{
-					moveTo(r.x1(), interpolate(r.topLeft(), r.bottomLeft(), r.y1(),
-							r.y2())),
-					new MyPoint(r.x2(),
-							interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2()),
-							SegmentType.LINE_TO)};
+			return new MyPoint[] {
+				moveTo(r.x1(), interpolate(r.topLeft(), r.bottomLeft(), r.y1(), r.y2())),
+				new MyPoint(
+						r.x2(), interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2()), SegmentType.LINE_TO)
+			};
 		}
 	},
 
@@ -66,11 +88,10 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 	T0100(4) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{
-					moveTo(r.x2(), interpolate(r.topRight(), r.bottomRight(), r.y1(),
-							r.y2())),
-					new MyPoint(interpolate(r.topRight(), r.topLeft(), r.x2(), r.x1()),
-							r.y1(), SegmentType.LINE_TO)
+			return new MyPoint[] {
+				moveTo(r.x2(), interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2())),
+				new MyPoint(
+						interpolate(r.topRight(), r.topLeft(), r.x2(), r.x1()), r.y1(), SegmentType.LINE_TO)
 			};
 		}
 	},
@@ -78,14 +99,13 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 	T0101(5) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{
-					moveTo(r.x1(), interpolate(r.topLeft(), r.bottomLeft(), r.y1(), r.y2())),
-					lineTo(interpolate(r.bottomLeft(), r.bottomRight(), r.x1(), r.x2()), r.y2()),
-					moveTo(r.x2(), interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2())),
-					lineTo(interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()), r.y1())
+			return new MyPoint[] {
+				moveTo(r.x1(), interpolate(r.topLeft(), r.bottomLeft(), r.y1(), r.y2())),
+				lineTo(interpolate(r.bottomLeft(), r.bottomRight(), r.x1(), r.x2()), r.y2()),
+				moveTo(r.x2(), interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2())),
+				lineTo(interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()), r.y1())
 			};
 		}
-
 	},
 	/**
 	 * both the corners at the left are inside / outside
@@ -93,11 +113,10 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 	T0110(6) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{
-					moveTo(interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()),
-							r.y1()),
-					lineTo(interpolate(r.bottomLeft(), r.bottomRight(), r.x1(), r.x2()),
-							r.y2())};
+			return new MyPoint[] {
+				moveTo(interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()), r.y1()),
+				lineTo(interpolate(r.bottomLeft(), r.bottomRight(), r.x1(), r.x2()), r.y2())
+			};
 		}
 	},
 	/**
@@ -106,10 +125,11 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 	T0111(7) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{moveTo(r.x1(),
-					interpolate(r.topLeft(), r.bottomLeft(), r.y1(), r.y2())),
-					new MyPoint(interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()),
-							r.y1(), SegmentType.LINE_TO)};
+			return new MyPoint[] {
+				moveTo(r.x1(), interpolate(r.topLeft(), r.bottomLeft(), r.y1(), r.y2())),
+				new MyPoint(
+						interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()), r.y1(), SegmentType.LINE_TO)
+			};
 		}
 	},
 
@@ -125,7 +145,6 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 		public MyPoint[] getPoints(MarchingRect r) {
 			return T0110.getPoints(r);
 		}
-
 	},
 	/**
 	 * opposite corners are inside / outside. NOTE: This configuration is
@@ -134,11 +153,11 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 	T1010(10) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{
-					moveTo(r.x1(), interpolate(r.topLeft(), r.bottomLeft(), r.y1(), r.y2())),
-					lineTo(interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()), r.y1()),
-					moveTo(r.x2(), interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2())),
-					lineTo(interpolate(r.bottomLeft(), r.bottomRight(), r.x1(), r.x2()), r.y2()),
+			return new MyPoint[] {
+				moveTo(r.x1(), interpolate(r.topLeft(), r.bottomLeft(), r.y1(), r.y2())),
+				lineTo(interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()), r.y1()),
+				moveTo(r.x2(), interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2())),
+				lineTo(interpolate(r.bottomLeft(), r.bottomRight(), r.x1(), r.x2()), r.y2()),
 			};
 		}
 	},
@@ -146,12 +165,12 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 	T1011(11) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{moveTo(r.x2(),
-					interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2())),
-					new MyPoint(interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()),
-							r.y1(), SegmentType.LINE_TO)};
+			return new MyPoint[] {
+				moveTo(r.x2(), interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2())),
+				new MyPoint(
+						interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()), r.y1(), SegmentType.LINE_TO)
+			};
 		}
-
 	},
 
 	T1100(12) {
@@ -164,11 +183,13 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 	T1101(13) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{
-					moveTo(r.x2(), interpolate(r.bottomRight(), r.topRight(), r.y2(),
-							r.y1())),
-					new MyPoint(interpolate(r.bottomRight(), r.bottomLeft(), r.x2(), r.x1()),
-							r.y2(), SegmentType.LINE_TO)};
+			return new MyPoint[] {
+				moveTo(r.x2(), interpolate(r.bottomRight(), r.topRight(), r.y2(), r.y1())),
+				new MyPoint(
+						interpolate(r.bottomRight(), r.bottomLeft(), r.x2(), r.x1()),
+						r.y2(),
+						SegmentType.LINE_TO)
+			};
 		}
 
 		@Override
@@ -180,11 +201,13 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 	T1110(14) {
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{
-					moveTo(r.x1(), interpolate(r.bottomLeft(), r.topLeft(), r.y2(),
-							r.y1())),
-					new MyPoint(interpolate(r.bottomLeft(), r.bottomRight(), r.x1(), r.x2()),
-							r.y2(), SegmentType.LINE_TO)};
+			return new MyPoint[] {
+				moveTo(r.x1(), interpolate(r.bottomLeft(), r.topLeft(), r.y2(), r.y1())),
+				new MyPoint(
+						interpolate(r.bottomLeft(), r.bottomRight(), r.x1(), r.x2()),
+						r.y2(),
+						SegmentType.LINE_TO)
+			};
 		}
 	},
 
@@ -192,11 +215,13 @@ public enum BernsteinMarchingConfig implements MarchingConfig {
 
 		@Override
 		public MyPoint[] getPoints(MarchingRect r) {
-			return new MyPoint[]{
-					moveTo(interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()),
-							interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2())),
-					lineTo(interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()),
-							interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2()))
+			return new MyPoint[] {
+				moveTo(
+						interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()),
+						interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2())),
+				lineTo(
+						interpolate(r.topLeft(), r.topRight(), r.x1(), r.x2()),
+						interpolate(r.topRight(), r.bottomRight(), r.y1(), r.y2()))
 			};
 		}
 	},

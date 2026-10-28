@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import java.util.ArrayList;
@@ -11,7 +27,7 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * Class for drawing lines
- * 
+ *
  * @author mathieu
  *
  */
@@ -21,7 +37,7 @@ public class DrawLine3D extends DrawCoordSys1D {
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param a_view3D
 	 *            view
 	 * @param line
@@ -33,7 +49,7 @@ public class DrawLine3D extends DrawCoordSys1D {
 
 	/**
 	 * Constructor for helpers
-	 * 
+	 *
 	 * @param a_view3D
 	 *            view
 	 * @param line
@@ -41,15 +57,14 @@ public class DrawLine3D extends DrawCoordSys1D {
 	 * @param geo2
 	 *            parent geo
 	 */
-	public DrawLine3D(EuclidianView3D a_view3D, GeoLineND line,
-			GeoElement geo2) {
+	public DrawLine3D(EuclidianView3D a_view3D, GeoLineND line, GeoElement geo2) {
 		super(a_view3D);
 		init((GeoElement) line, geo2);
 	}
 
 	/**
 	 * constructor for previewable
-	 * 
+	 *
 	 * @param a_view3D
 	 *            view
 	 * @param selectedPoints
@@ -77,7 +92,7 @@ public class DrawLine3D extends DrawCoordSys1D {
 
 	/**
 	 * update the drawable when the element changes
-	 * 
+	 *
 	 * @param updateDrawMinMax
 	 *            update min and max values
 	 */
@@ -97,19 +112,18 @@ public class DrawLine3D extends DrawCoordSys1D {
 		GeoLineND line = getLine();
 
 		Coords o = line.getPointInD(3, 0).getInhomCoordsInSameDimension();
-		Coords v = line.getPointInD(3, 1).getInhomCoordsInSameDimension()
-				.sub(o);
+		Coords v = line.getPointInD(3, 1).getInhomCoordsInSameDimension().sub(o);
 
-		double[] minmax = getView3D().getIntervalClippedLarge(new double[] {
-				Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY }, o, v);
+		double[] minmax = getView3D()
+				.getIntervalClippedLarge(
+						new double[] {Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, o, v);
 
 		setDrawMinMax(minmax[0], minmax[1]);
 	}
 
 	@Override
 	protected void updateForView() {
-		if (getView3D().viewChangedByZoom()
-				|| getView3D().viewChangedByTranslate()) {
+		if (getView3D().viewChangedByZoom() || getView3D().viewChangedByTranslate()) {
 			updateForItSelf();
 		}
 	}
@@ -139,11 +153,10 @@ public class DrawLine3D extends DrawCoordSys1D {
 	@Override
 	public void enlargeBounds(Coords min, Coords max, boolean dontExtend) {
 		if (!Double.isNaN(boundsMin.getX())) {
-            if (dontExtend) {
-                reduceBounds(boundsMin, boundsMax);
-            }
+			if (dontExtend) {
+				reduceBounds(boundsMin, boundsMax);
+			}
 			enlargeBounds(min, max, boundsMin, boundsMax);
 		}
 	}
-
 }

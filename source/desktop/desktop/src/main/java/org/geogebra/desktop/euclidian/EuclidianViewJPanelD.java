@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.euclidian;
 
 import java.awt.Color;
@@ -5,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
 
@@ -14,8 +29,7 @@ import org.geogebra.common.euclidian.EuclidianViewJPanel;
 import org.geogebra.desktop.awt.GGraphics2DD;
 import org.geogebra.desktop.awt.GRectangleD;
 
-public class EuclidianViewJPanelD extends JPanel
-		implements EuclidianViewJPanel {
+public class EuclidianViewJPanelD extends JPanel implements EuclidianViewJPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,8 +52,7 @@ public class EuclidianViewJPanelD extends JPanel
 
 		// register Listener
 		if (addListeners) {
-			((EuclidianControllerListeners) view.getEuclidianController())
-					.addListenersTo(this);
+			((EuclidianControllerListeners) view.getEuclidianController()).addListenersTo(this);
 		}
 
 		// enable drop transfers
@@ -73,12 +86,7 @@ public class EuclidianViewJPanelD extends JPanel
 	}
 
 	@Override
-	public void setToolTipText(String plainText) {
-		super.setToolTipText(plainText);
-	}
-
-	@Override
-	final public void paint(Graphics g) {
+	public final void paint(Graphics g) {
 		g2.setImpl((Graphics2D) g);
 		view.paint(g2);
 	}

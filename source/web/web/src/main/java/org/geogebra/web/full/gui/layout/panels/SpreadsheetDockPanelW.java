@@ -1,32 +1,59 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.layout.panels;
 
 import org.geogebra.common.euclidian.EuclidianConstants;
+import org.geogebra.common.kernel.geos.GeoElement;
+import org.geogebra.common.kernel.geos.GeoElementSpreadsheet;
 import org.geogebra.common.main.App;
+import org.geogebra.common.main.OptionType;
 import org.geogebra.common.main.settings.SpreadsheetSettings;
+import org.geogebra.common.spreadsheet.core.Spreadsheet;
+import org.geogebra.common.spreadsheet.core.SpreadsheetCoords;
+import org.geogebra.common.spreadsheet.core.TabularRange;
+import org.geogebra.web.full.css.MaterialDesignResources;
 import org.geogebra.web.full.gui.layout.ViewCounter;
-import org.geogebra.web.full.gui.view.spreadsheet.SpreadsheetStyleBarW;
-import org.geogebra.web.full.gui.view.spreadsheet.SpreadsheetViewW;
-import org.geogebra.web.full.gui.view.spreadsheet.TableCanvasExporter;
+import org.geogebra.web.full.gui.toolbar.mow.toolbox.components.IconButton;
+import org.geogebra.web.full.gui.toolbarpanel.spreadsheet.SpreadsheetPanel;
+import org.geogebra.web.full.gui.toolbarpanel.spreadsheet.stylebar.SpreadsheetStyleBar;
 import org.geogebra.web.full.main.AppWFull;
 import org.geogebra.web.html5.gui.util.MathKeyboardListener;
+import org.geogebra.web.html5.gui.view.ImageIconSpec;
+import org.gwtproject.dom.style.shared.Unit;
 import org.gwtproject.resources.client.ResourcePrototype;
 import org.gwtproject.user.client.ui.AbsolutePanel;
 import org.gwtproject.user.client.ui.Panel;
 import org.gwtproject.user.client.ui.Widget;
+import org.jspecify.annotations.Nullable;
 
 import elemental2.dom.CanvasRenderingContext2D;
 
 /**
  * @author Arpad Fekete
- * 
+ *
  * Top level GUI for the spreadsheet view
  *
  */
-public class SpreadsheetDockPanelW extends NavigableDockPanelW {
+public final class SpreadsheetDockPanelW extends NavigableDockPanelW {
 
-	private SpreadsheetStyleBarW sstylebar;
-	private SpreadsheetViewW sview;
+	private SpreadsheetStyleBar sstylebar;
+	private @Nullable SpreadsheetPanel spreadsheetPanel;
 	private AbsolutePanel wrapview;
+	boolean scrollToShow = true;
 
 	/**
 	 * @param appl
@@ -42,16 +69,29 @@ public class SpreadsheetDockPanelW extends NavigableDockPanelW {
 		if (wrapview == null) {
 			wrapview = new AbsolutePanel();
 			wrapview.addStyleName("SpreadsheetWrapView");
-			sview = app.getGuiManager().getSpreadsheetView();
-			wrapview.add(sview.getFocusPanel());
+			Spreadsheet<GeoElement> spreadsheet = app.getSpreadsheet();
+			if (spreadsheet != null) {
+				spreadsheetPanel = new SpreadsheetPanel(app, spreadsheet);
+				wrapview.add(spreadsheetPanel);
+			}
 		}
 		return wrapview;
 	}
 
 	@Override
 	protected Widget loadStyleBar() {
-		if (sstylebar == null) {
-			sstylebar = sview.getSpreadsheetStyleBar();
+		if (sstylebar == null && spreadsheetPanel != null) {
+			sstylebar = new SpreadsheetStyleBar(
+					app, spreadsheetPanel.getSpreadsheet(), spreadsheetPanel.getStyleBarModel());
+			IconButton settingsBtn = new IconButton(
+					app,
+					new ImageIconSpec(MaterialDesignResources.INSTANCE.gear()),
+					"Settings",
+					() -> app.getDialogManager().showPropertiesDialog(OptionType.SPREADSHEET, null));
+			settingsBtn.getElement().getStyle().setPadding(6, Unit.PX);
+			sstylebar.add(settingsBtn);
+			sstylebar.addStyleName("noMargin");
+			sstylebar.setDividerVisible(false);
 		}
 		return sstylebar;
 	}
@@ -59,17 +99,8 @@ public class SpreadsheetDockPanelW extends NavigableDockPanelW {
 	@Override
 	public void onResize() {
 		super.onResize();
-
-		if (app != null && sview != null) {
-			int width = getComponentInteriorWidth();
-			int height = getComponentInteriorHeight();
-
-			if (width <= 0 || height <= 0) {
-				return;
-			}
-
-			wrapview.setPixelSize(width, height);
-			sview.onResize(width, height);
+		if (spreadsheetPanel != null) {
+			spreadsheetPanel.onResize();
 		}
 	}
 
@@ -135,24 +166,58 @@ public class SpreadsheetDockPanelW extends NavigableDockPanelW {
 
 	@Override
 	public MathKeyboardListener getKeyboardListener() {
-		return this.sview.getSpreadsheetTable()
-				.getEditor().getTextfield();
+		return spreadsheetPanel == null ? null : spreadsheetPanel.getKeyboardListener();
 	}
 
 	@Override
-	public void paintToCanvas(CanvasRenderingContext2D context2d,
-			ViewCounter counter, int left, int top) {
+	public void paintToCanvas(
+			CanvasRenderingContext2D context2d, ViewCounter counter, int left, int top) {
 		drawWhiteBackground(context2d, left, top);
 		context2d.save();
 		context2d.rect(left, top, getOffsetWidth(), getOffsetHeight());
 		context2d.clip();
-		TableCanvasExporter tableCanvasExporter = new TableCanvasExporter(
-				sview.getSpreadsheetTable(), app, getOffsetWidth(), getOffsetHeight(), context2d);
-		tableCanvasExporter.paintToCanvas(left, top);
+		if (spreadsheetPanel != null) {
+			spreadsheetPanel.paintToCanvas(context2d, left, top);
+		}
 		context2d.restore();
 		if (counter != null) {
 			counter.decrement();
 		}
 	}
 
+	/**
+	 * Scroll to show an element.
+	 * @param geo construction element
+	 * @param labelNew new label
+	 */
+	public void scrollIfNeeded(GeoElement geo, String labelNew) {
+		SpreadsheetCoords location = geo.getSpreadsheetCoords();
+
+		if (labelNew != null && location == null) {
+			location = GeoElementSpreadsheet.getSpreadsheetCoordsSafe(labelNew);
+		}
+
+		if (scrollToShow
+				&& location != null
+				&& (location.column > -1)
+				&& (location.row > -1)
+				&& spreadsheetPanel != null) {
+			spreadsheetPanel
+					.getSpreadsheet()
+					.scrollRangeIntoView(new TabularRange(location.row, location.column));
+		}
+	}
+
+	public void setScrollToShow(boolean scrollToShow) {
+		this.scrollToShow = scrollToShow;
+	}
+
+	/**
+	 * Saves the current content and hides the cell editor.
+	 */
+	public void saveContentAndHideCellEditor() {
+		if (spreadsheetPanel != null) {
+			spreadsheetPanel.saveContentAndHideCellEditor();
+		}
+	}
 }

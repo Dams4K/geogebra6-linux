@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -21,10 +25,9 @@ import org.geogebra.common.util.MyMath2;
 
 /**
  * Cumulative LogNormal[mean, s, val]
- * 
+ *
  * @author Michael Borcherds
  */
-
 public class AlgoLogNormal extends AlgoDistribution {
 
 	/**
@@ -35,8 +38,12 @@ public class AlgoLogNormal extends AlgoDistribution {
 	 * @param value probability variable value
 	 * @param cumulative true for CDF, false for PDF
 	 */
-	public AlgoLogNormal(Construction cons, GeoNumberValue mean,
-			GeoNumberValue sd, GeoNumberValue value, GeoBoolean cumulative) {
+	public AlgoLogNormal(
+			Construction cons,
+			GeoNumberValue mean,
+			GeoNumberValue sd,
+			GeoNumberValue value,
+			GeoBoolean cumulative) {
 		super(cons, mean, sd, value, null, cumulative);
 		compute();
 	}
@@ -48,8 +55,7 @@ public class AlgoLogNormal extends AlgoDistribution {
 
 	@Override
 	public final void compute() {
-		if (input[0].isDefined() && input[1].isDefined()
-				&& input[2].isDefined()) {
+		if (input[0].isDefined() && input[1].isDefined() && input[2].isDefined()) {
 			double mean = a.getDouble();
 			double s = b.getDouble();
 			double x = c.getDouble();
@@ -59,9 +65,7 @@ public class AlgoLogNormal extends AlgoDistribution {
 			} else if (x <= 0) {
 				num.setValue(0);
 			} else if (pdf) {
-				num.setValue(MyMath2.erf(
-						(Math.log(x) - mean) / (Math.sqrt(2) * Math.abs(s))) / 2
-						+ 0.5);
+				num.setValue(MyMath2.erf((Math.log(x) - mean) / (Math.sqrt(2) * Math.abs(s))) / 2 + 0.5);
 			} else {
 				double prod = x * Math.sqrt(Kernel.PI_2) * Math.abs(s);
 				double en = Math.log(x) - mean;
@@ -72,5 +76,4 @@ public class AlgoLogNormal extends AlgoDistribution {
 			num.setUndefined();
 		}
 	}
-
 }

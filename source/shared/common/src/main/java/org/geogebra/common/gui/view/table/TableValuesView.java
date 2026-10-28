@@ -1,10 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.table;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import javax.annotation.CheckForNull;
 
 import org.geogebra.common.gui.view.table.dialog.RegressionBuilder;
 import org.geogebra.common.gui.view.table.dialog.StatisticGroup;
@@ -36,6 +50,8 @@ import org.geogebra.common.main.settings.Settings;
 import org.geogebra.common.main.settings.TableSettings;
 import org.geogebra.common.scientific.LabelController;
 import org.geogebra.common.util.debug.Log;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.google.j2objc.annotations.Weak;
 
@@ -48,8 +64,10 @@ public final class TableValuesView implements TableValues, SettingListener {
 
 	@Weak
 	private final Kernel kernel;
+
 	@Weak
 	private final App app;
+
 	@Weak
 	private final TableSettings settings;
 
@@ -61,8 +79,9 @@ public final class TableValuesView implements TableValues, SettingListener {
 	private boolean algebraLabelVisibleCheck = true;
 	private final StatisticGroupsBuilder statisticGroupsBuilder;
 	private final RegressionSpecificationBuilder regressionSpecificationBuilder;
+	private final TableValuesStatisticsViewModel statisticsViewModel;
 	private TableValuesPoints points;
-	private @CheckForNull List<GeoEvaluatable> batchAdditions;
+	private @Nullable List<GeoEvaluatable> batchAdditions;
 
 	/**
 	 * Create a new Table Value View.
@@ -79,6 +98,7 @@ public final class TableValuesView implements TableValues, SettingListener {
 		processor = new TableValuesInputProcessor(kernel.getConstruction(), this);
 		statisticGroupsBuilder = kernel.getStatisticGroupsBuilder();
 		regressionSpecificationBuilder = app.getRegressionSpecBuilder();
+		statisticsViewModel = new TableValuesStatisticsViewModel(this, app.getLocalization());
 		createTableDimensions();
 		settings.addListener(this);
 	}
@@ -216,7 +236,6 @@ public final class TableValuesView implements TableValues, SettingListener {
 			}
 			getValues().updateRepaint();
 		}
-
 	}
 
 	private void clearValuesRow(int row) {
@@ -236,6 +255,11 @@ public final class TableValuesView implements TableValues, SettingListener {
 	@Override
 	public TableValuesModel getTableValuesModel() {
 		return model;
+	}
+
+	@Override
+	public @NonNull TableValuesStatisticsViewModel getStatisticsViewModel() {
+		return statisticsViewModel;
 	}
 
 	@Override
@@ -275,8 +299,7 @@ public final class TableValuesView implements TableValues, SettingListener {
 				}
 			}
 			if (evaluatable.getParentAlgorithm() instanceof AlgoDependentListExpression) {
-				points.notifyPointsAdded(
-						(AlgoDependentListExpression) evaluatable.getParentAlgorithm());
+				points.notifyPointsAdded((AlgoDependentListExpression) evaluatable.getParentAlgorithm());
 			}
 		}
 	}
@@ -388,7 +411,7 @@ public final class TableValuesView implements TableValues, SettingListener {
 		// If we just read a bunch of functions/lists from XML,
 		// make sure they have a point column. Should be a no-op for new files.
 		if (batchAdditions != null && points != null) {
-			for (GeoEvaluatable evaluatable: batchAdditions) {
+			for (GeoEvaluatable evaluatable : batchAdditions) {
 				points.createPointsIfNeeded(evaluatable);
 			}
 		}
@@ -403,8 +426,7 @@ public final class TableValuesView implements TableValues, SettingListener {
 
 	@Override
 	public boolean isEmpty() {
-		return model == null
-				|| (model.getColumnCount() == 1 && model.isEvaluatableEmptyList(0));
+		return model == null || (model.getColumnCount() == 1 && model.isEvaluatableEmptyList(0));
 	}
 
 	@Override
@@ -421,8 +443,7 @@ public final class TableValuesView implements TableValues, SettingListener {
 	@Override
 	public List<StatisticGroup> getStatistics1Var(int column) {
 		return statisticGroupsBuilder.buildOneVariableStatistics(
-				model.getEvaluatable(column),
-				model.getHeaderAt(column));
+				model.getEvaluatable(column), model.getHeaderAt(column));
 	}
 
 	@Override
@@ -436,8 +457,8 @@ public final class TableValuesView implements TableValues, SettingListener {
 
 	@Override
 	public List<RegressionSpecification> getRegressionSpecifications(int column) {
-		GeoList[] cleanLists = statisticGroupsBuilder.getCleanListsTwoVariable(getEvaluatable(0),
-				getEvaluatable(column));
+		GeoList[] cleanLists =
+				statisticGroupsBuilder.getCleanListsTwoVariable(getEvaluatable(0), getEvaluatable(column));
 		return regressionSpecificationBuilder.getForListSize(cleanLists[0].size());
 	}
 
@@ -453,8 +474,7 @@ public final class TableValuesView implements TableValues, SettingListener {
 		GeoEvaluatable yVal = model.getEvaluatable(column);
 		MyVecNode points = new MyVecNode(kernel, xVal, yVal);
 		Command cmd = regression.buildCommand(kernel, points);
-		EvalInfo info = new EvalInfo(true, true)
-				.withSymbolicMode(kernel.getSymbolicMode());
+		EvalInfo info = new EvalInfo(true, true).withSymbolicMode(kernel.getSymbolicMode());
 		try {
 			GeoElement element = kernel.getAlgebraProcessor().processValidExpression(cmd, info)[0];
 			app.storeUndoInfo();

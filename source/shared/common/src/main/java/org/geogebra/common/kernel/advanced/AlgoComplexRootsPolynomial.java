@@ -1,7 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.advanced;
 
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.EquationSolverInterface;
@@ -16,8 +32,7 @@ public class AlgoComplexRootsPolynomial extends AlgoRootsPolynomial {
 
 	double[] curComplexRoots;
 
-	public AlgoComplexRootsPolynomial(Construction cons, String[] labels,
-			GeoFunctionable f) {
+	public AlgoComplexRootsPolynomial(Construction cons, String[] labels, GeoFunctionable f) {
 		super(cons, labels, f, true);
 	}
 
@@ -26,8 +41,7 @@ public class AlgoComplexRootsPolynomial extends AlgoRootsPolynomial {
 
 		computeComplexRoots();
 
-		setRootPoints(solution.curRoots, curComplexRoots,
-				solution.curRealRoots);
+		setRootPoints(solution.curRoots, curComplexRoots, solution.curRealRoots);
 	}
 
 	@Override
@@ -53,9 +67,12 @@ public class AlgoComplexRootsPolynomial extends AlgoRootsPolynomial {
 	 * @param eqnSolver equation solver
 	 * @return array of current complex roots
 	 */
-	public static double[] calcComplexRoots(Function fun, Solution solution,
-			double[] curComplexRoots, EquationSolverInterface eqnSolver) {
-		LinkedList<PolyFunction> factorList;
+	public static double[] calcComplexRoots(
+			Function fun,
+			Solution solution,
+			double[] curComplexRoots,
+			EquationSolverInterface eqnSolver) {
+		List<PolyFunction> factorList;
 		double[] complexRoots = curComplexRoots;
 
 		// get polynomial factors for this function
@@ -84,14 +101,13 @@ public class AlgoComplexRootsPolynomial extends AlgoRootsPolynomial {
 				// now let's compute the roots of this factor
 				// compute all roots of polynomial polyFun
 				if (polyFun.hasZeroRoot()) {
-					complexRoots = addToCurrentRoots(new double[]{0}, new double[]{0},
-							1, solution, complexRoots);
+					complexRoots =
+							addToCurrentRoots(new double[] {0}, new double[] {0}, 1, solution, complexRoots);
 				}
 				real = polyFun.getCoeffsCopyNoTrailingZeros();
 				complex = new double[real.length];
 				noOfRoots = eqnSolver.polynomialComplexRoots(real, complex);
-				complexRoots =
-						addToCurrentRoots(real, complex, noOfRoots, solution, complexRoots);
+				complexRoots = addToCurrentRoots(real, complex, noOfRoots, solution, complexRoots);
 			}
 			return complexRoots;
 		}
@@ -99,8 +115,8 @@ public class AlgoComplexRootsPolynomial extends AlgoRootsPolynomial {
 	}
 
 	// add first number of doubles in roots to current roots
-	private static double[] addToCurrentRoots(double[] real, double[] complex,
-			int number, Solution solution, double[] curComplexRoots) {
+	private static double[] addToCurrentRoots(
+			double[] real, double[] complex, int number, Solution solution, double[] curComplexRoots) {
 		double[] complexRoots = curComplexRoots;
 		int length = solution.curRealRoots + number;
 		if (length >= solution.curRoots.length) { // ensure space
@@ -128,8 +144,7 @@ public class AlgoComplexRootsPolynomial extends AlgoRootsPolynomial {
 	}
 
 	// roots array and number of roots
-	final private void setRootPoints(double[] real, double[] complex,
-			int number) {
+	private void setRootPoints(double[] real, double[] complex, int number) {
 		initRootPoints(number);
 
 		// now set the new values of the roots
@@ -147,5 +162,4 @@ public class AlgoComplexRootsPolynomial extends AlgoRootsPolynomial {
 			updateLabels(number);
 		}
 	}
-
 }

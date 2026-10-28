@@ -1,16 +1,31 @@
-package org.geogebra.web.full.gui.menu;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
+package org.geogebra.web.full.gui.menu;
 
 import org.geogebra.web.full.gui.HeaderView;
 import org.gwtproject.user.client.ui.FlowPanel;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 class HeaderedMenuView extends FlowPanel {
 
 	private HeaderView headerView;
 
-	HeaderedMenuView(@Nonnull MenuView menuView) {
+	HeaderedMenuView(@NonNull MenuView menuView) {
 		setStyleName("headeredMenuView");
 		add(menuView);
 	}
@@ -19,7 +34,7 @@ class HeaderedMenuView extends FlowPanel {
 		return headerView;
 	}
 
-	void setHeaderView(@CheckForNull HeaderView headerView) {
+	void setHeaderView(@Nullable HeaderView headerView) {
 		removeHeaderView();
 		this.headerView = headerView;
 		addHeaderView();

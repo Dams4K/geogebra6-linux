@@ -1,14 +1,28 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.components;
 
+import static org.geogebra.common.properties.PropertyView.Dropdown;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.function.Supplier;
 
 import org.geogebra.common.gui.SetLabels;
-import org.geogebra.common.properties.NamedEnumeratedProperty;
-import org.geogebra.common.properties.impl.AbstractGroupedEnumeratedProperty;
 import org.geogebra.common.util.MulticastEvent;
 import org.geogebra.web.html5.gui.inputfield.UpDownArrowHandler;
 import org.geogebra.web.html5.gui.menu.AriaMenuItem;
@@ -18,35 +32,48 @@ import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.dom.client.Element;
 import org.gwtproject.user.client.DOM;
 import org.gwtproject.user.client.ui.Widget;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-public class DropDownComboBoxController implements SetLabels, UpDownArrowHandler {
+public final class DropDownComboBoxController implements SetLabels, UpDownArrowHandler {
 	private final Widget parent;
 	private ComponentDropDownPopup dropDown;
 	private List<AriaMenuItem> dropDownElementsList;
-	private final List<String> items;
+	private final Supplier<List<String>> items;
 	private final List<Runnable> changeHandlers = new ArrayList<>();
-	private NamedEnumeratedProperty<?> property;
-	private MulticastEvent<String> onHighlighted = new MulticastEvent<>();
+	private final MulticastEvent<String> onHighlighted = new MulticastEvent<>();
+	private final @NonNull Supplier<List<Integer>> dividerIndexSupplier;
+	private final ComponentDropDown.@Nullable Styler styler;
 
 	/**
 	 * popup controller for dropdown and combo box
 	 * @param app apps
+	 * @param dividerIndexSupplier provides indices
 	 * @param parent dropdown or combo box
 	 * @param items list of items in popup
 	 * @param labelKey label of drop down or combo box
 	 * @param onClose handler to run on close
+	 * @param styler a function that applies style to an item
 	 */
-	public DropDownComboBoxController(final AppW app, Widget parent,
-			List<String> items, String labelKey, Runnable onClose) {
+	public DropDownComboBoxController(
+			final AppW app,
+			@NonNull Supplier<List<Integer>> dividerIndexSupplier,
+			Widget parent,
+			Supplier<List<String>> items,
+			String labelKey,
+			Runnable onClose,
+			ComponentDropDown.@Nullable Styler styler) {
+		this.dividerIndexSupplier = dividerIndexSupplier;
 		this.parent = parent;
 		this.items = items;
+		this.styler = styler;
 
 		init(app, labelKey, onClose);
 	}
 
 	private void init(AppW app, String labelKey, Runnable onClose) {
 		createPopup(app, labelKey, parent, onClose);
-		setElements(items);
+		setElements(items.get());
 		setSelectedOption(-1);
 	}
 
@@ -56,24 +83,33 @@ public class DropDownComboBoxController implements SetLabels, UpDownArrowHandler
 	}
 
 	/**
-	 * open/close dropdown
+	 * Open or close dropdown.
 	 * @param isFullWidth whether dropdown should have full width
+	 * @param anchor focus anchor
 	 */
-	public void toggleAsDropDown(boolean isFullWidth) {
+	public void toggleAsDropDown(boolean isFullWidth, Element anchor) {
+		toggleAsDropDown(isFullWidth, anchor, true);
+	}
+
+	/**
+	 * Open or close dropdown.
+	 * @param isFullWidth whether dropdown should have full width
+	 * @param anchor focus anchor
+	 * @param autoFocusOnOpen whether opening should immediately move focus to the selected item.
+	 */
+	public void toggleAsDropDown(boolean isFullWidth, Element anchor, boolean autoFocusOnOpen) {
 		if (isOpened()) {
 			closePopup();
 		} else {
-			showAsDropDown(isFullWidth);
+			showAsDropDown(isFullWidth, anchor, autoFocusOnOpen);
 		}
 		AriaHelper.setAriaExpanded(parent, isOpened());
 		Dom.toggleClass(parent, "active", isOpened());
-
 	}
 
 	private void highlightSelectedElement(int index, boolean highlight) {
 		if (index >= 0 && index < dropDownElementsList.size()) {
-			Dom.toggleClass(dropDownElementsList.get(index), "selectedDropDownElement",
-					highlight);
+			Dom.toggleClass(dropDownElementsList.get(index), "selectedDropDownElement", highlight);
 			AriaHelper.setAriaSelected(dropDownElementsList.get(index), highlight);
 		}
 	}
@@ -91,22 +127,25 @@ public class DropDownComboBoxController implements SetLabels, UpDownArrowHandler
 			final int currentIndex = i;
 			AriaMenuItem item = new AriaMenuItem(dropDownList.get(i), null, () -> {
 				setSelectedOption(currentIndex);
-				if (property != null) {
-					property.setIndex(currentIndex);
-				}
-				for (Runnable handler: changeHandlers) {
+				for (Runnable handler : changeHandlers) {
 					handler.run();
 				}
 			});
 			AriaHelper.setRole(item, "option");
 			item.getElement().setId(DOM.createUniqueId());
+			if (styler != null) {
+				styler.apply(item, i);
+			}
 			item.setStyleName("dropDownElement");
 			dropDownElementsList.add(item);
 		}
 		setupDropDownMenu(dropDownElementsList);
 	}
 
-	void setSelectedOption(int idx) {
+	/**
+	 * @param idx selected option index, or -1 for no selection
+	 */
+	public void setSelectedOption(int idx) {
 		highlightSelectedElement(dropDown.getSelectedIndex(), false);
 		highlightSelectedElement(idx, true);
 		dropDown.setSelectedIndex(idx);
@@ -115,47 +154,40 @@ public class DropDownComboBoxController implements SetLabels, UpDownArrowHandler
 
 	private void setupDropDownMenu(List<AriaMenuItem> menuItems) {
 		dropDown.clear();
-		List<Integer> dividers = getGroupDividerIndices();
-		for (int i = 0 ; i < menuItems.size() ; i++) {
-			if (dividers != null && dividers.contains(i))  {
+		List<Integer> dividers = dividerIndexSupplier.get();
+		for (int i = 0; i < menuItems.size(); i++) {
+			if (dividers != null && dividers.contains(i)) {
 				dropDown.addDivider();
 			}
 			dropDown.addItem(menuItems.get(i));
 		}
 	}
 
-	private List<Integer> getGroupDividerIndices() {
-		if (property instanceof AbstractGroupedEnumeratedProperty) {
-			int[] groupDividerIndices = ((AbstractGroupedEnumeratedProperty<?>)
-					property).getGroupDividerIndices();
-			return IntStream.of(groupDividerIndices).boxed().collect(Collectors.toList());
-		}
-		return null;
-	}
-
+	/**
+	 * @return index of the selected option, or -1 if nothing is selected.
+	 */
 	public int getSelectedIndex() {
 		return dropDown.getSelectedIndex();
 	}
 
 	@Override
 	public void setLabels() {
-		if (property != null) {
-			setElements(Arrays.asList(property.getValueNames()));
-		} else {
-			setElements(items);
-		}
+		setElements(items.get());
 	}
 
 	public ComponentDropDownPopup getPopup() {
 		return dropDown;
 	}
 
+	/**
+	 * @return whether the drop-down popup is currently open.
+	 */
 	public boolean isOpened() {
 		return dropDown.isOpened();
 	}
 
 	/**
-	 * CLose popup.
+	 * Close popup.
 	 */
 	public void closePopup() {
 		dropDown.close();
@@ -181,12 +213,18 @@ public class DropDownComboBoxController implements SetLabels, UpDownArrowHandler
 	}
 
 	/**
-	 * shop popup and position as dropdown
-	 * @param isFullWidth - is dropdown should have full width
+	 * Moves focus into the opened popup.
 	 */
-	public void showAsDropDown(boolean isFullWidth) {
-		dropDown.setAutoFocus(true);
+	public void focusOpenedPopup() {
+		if (isOpened()) {
+			dropDown.focusSelectedItem();
+		}
+	}
+
+	private void showAsDropDown(boolean isFullWidth, Element anchor, boolean autoFocusOnOpen) {
+		dropDown.setAutoFocus(autoFocusOnOpen);
 		dropDown.positionAtBottomAnchor();
+		dropDown.setFocusAnchor(anchor);
 		if (isFullWidth) {
 			dropDown.setWidthInPx(parent.asWidget().getElement().getClientWidth());
 		}
@@ -200,17 +238,15 @@ public class DropDownComboBoxController implements SetLabels, UpDownArrowHandler
 		this.changeHandlers.add(changeHandler);
 	}
 
-	public void setProperty(NamedEnumeratedProperty<?> property) {
-		this.property = property;
-	}
-
 	/**
 	 * reset dropdown to property value
 	 */
-	public void resetFromModel() {
-		if (property.getIndex() > -1) {
-			setSelectedOption(property.getIndex());
+	public void resetFromModel(Dropdown propertyDropDown) {
+		Integer index = propertyDropDown.getSelectedItemIndex();
+		if (index == null) {
+			index = 0;
 		}
+		setSelectedOption(index);
 	}
 
 	/**
@@ -218,21 +254,24 @@ public class DropDownComboBoxController implements SetLabels, UpDownArrowHandler
 	 */
 	public void onInputChange(String input) {
 		setSelectedOption(possibleSelectedIndex(input));
-		for (Runnable handler: changeHandlers) {
+		for (Runnable handler : changeHandlers) {
 			handler.run();
 		}
 	}
 
 	/**
 	 * @param input text field input
-	 * @return index of input in {@link DropDownComboBoxController#items}, if contains it,
+	 * @return index of input in {@link #items}, if contains it,
 	 * -1 otherwise
 	 */
 	public int possibleSelectedIndex(String input) {
-		if (items != null && input != null) {
-			for (int i = 0; i < items.size(); i++) {
-				if (items.get(i).equals(input)) {
-					return i;
+		if (input != null) {
+			List<String> items = this.items.get();
+			if (items != null) {
+				for (int i = 0; i < items.size(); i++) {
+					if (items.get(i).equals(input)) {
+						return i;
+					}
 				}
 			}
 		}

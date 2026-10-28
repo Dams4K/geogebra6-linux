@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.implicit3D;
 
 import org.geogebra.common.geogebra3D.kernel3D.implicit3D.GeoImplicitCurve3D.CurveType;
@@ -18,7 +34,7 @@ import org.geogebra.common.util.DoubleUtil;
 
 /**
  * Finds intersection path of surface and plane
- * 
+ *
  * @author zbynek
  *
  */
@@ -36,8 +52,7 @@ public class AlgoIntersectFunctionNVarPlane extends AlgoElement {
 	 * @param plane
 	 *            plane
 	 */
-	public AlgoIntersectFunctionNVarPlane(Construction c,
-			GeoFunctionNVar surface, GeoPlaneND plane) {
+	public AlgoIntersectFunctionNVarPlane(Construction c, GeoFunctionNVar surface, GeoPlaneND plane) {
 		super(c);
 		this.surface = surface;
 		this.plane = plane;
@@ -49,10 +64,9 @@ public class AlgoIntersectFunctionNVarPlane extends AlgoElement {
 
 	@Override
 	protected void setInputOutput() {
-		this.input = new GeoElement[] { (GeoElement) plane, surface };
+		this.input = new GeoElement[] {(GeoElement) plane, surface};
 		setOnlyOutput(curve);
 		setDependencies();
-
 	}
 
 	@Override
@@ -84,10 +98,11 @@ public class AlgoIntersectFunctionNVarPlane extends AlgoElement {
 			double b = norm.getY();
 			double c = norm.getZ();
 			double d = norm.getW();
-			exp = x.wrap().multiply(a / c)
+			exp = x.wrap()
+					.multiply(a / c)
 					.plus(y.wrap()
-							.multiply(b / c).plus(surface
-									.getFunctionExpression().deepCopy(kernel))
+							.multiply(b / c)
+							.plus(surface.getFunctionExpression().deepCopy(kernel))
 							.plus(d / c));
 
 			curve.getTransformedCoordSys().setZequal(a, b, c, d);
@@ -108,15 +123,13 @@ public class AlgoIntersectFunctionNVarPlane extends AlgoElement {
 				double v = -norm.getW() / norm.getX();
 				ExpressionNode substY = new ExpressionNode(kernel, v);
 				vr.addVars("x", substY);
-				vr.addVars("y",
-						new FunctionVariable(kernel, "x"));
+				vr.addVars("y", new FunctionVariable(kernel, "x"));
 
 				// set transformed coord sys to x=value
 				curve.getTransformedCoordSys().setXequal(v);
 				curve.setType(CurveType.PLANE_X);
 			}
-			exp = exp.traverse(vr).wrap()
-					.subtract(new FunctionVariable(kernel, "y"));
+			exp = exp.traverse(vr).wrap().subtract(new FunctionVariable(kernel, "y"));
 		}
 		Equation eqn = new Equation(kernel, exp, new ExpressionNode(kernel, 0));
 		eqn.initEquation();
@@ -127,5 +140,4 @@ public class AlgoIntersectFunctionNVarPlane extends AlgoElement {
 	public GetCommand getClassName() {
 		return Commands.IntersectPath;
 	}
-
 }

@@ -1,49 +1,48 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * DrawPoint.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 11. October 2001, 23:59
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.euclidian.draw;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.GRectangle;
 import org.geogebra.common.euclidian.Drawable;
 import org.geogebra.common.euclidian.DrawableND;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.RemoveNeeded;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.arithmetic.FunctionalNVar;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoList;
 
 /**
  * Draw a GeoList containing drawable objects
- * 
+ *
  * @author Markus Hohenwarter
  */
 public final class DrawList extends Drawable implements RemoveNeeded {
 	/** corresponding list as geo */
 	GeoList geoList;
+
 	private DrawListArray drawables;
 	/** whether this is visible */
 	boolean isVisible;
 
 	/**
 	 * Creates new drawable list
-	 * 
+	 *
 	 * @param view
 	 *            view
 	 * @param geoList
@@ -64,7 +63,6 @@ public final class DrawList extends Drawable implements RemoveNeeded {
 		if (drawables == null) {
 			drawables = new DrawListArray(view);
 		}
-
 	}
 
 	@Override
@@ -90,11 +88,9 @@ public final class DrawList extends Drawable implements RemoveNeeded {
 			// add drawable for listElement
 			// if (addToDrawableList(listElement, drawablePos,
 			// oldDrawableSize))
-			if (drawables.addToDrawableList(listElement, drawablePos,
-					oldDrawableSize, this)) {
+			if (drawables.addToDrawableList(listElement, drawablePos, oldDrawableSize, this)) {
 				drawablePos++;
 			}
-
 		}
 
 		// remove end of list
@@ -228,6 +224,11 @@ public final class DrawList extends Drawable implements RemoveNeeded {
 		return result;
 	}
 
+	@Override
+	public boolean isCompatibleWithGeo() {
+		return !geoList.drawAsComboBox();
+	}
+
 	/**
 	 * @param geoItem
 	 *            geo
@@ -237,5 +238,4 @@ public final class DrawList extends Drawable implements RemoveNeeded {
 		return geoItem instanceof FunctionalNVar
 				|| (geoItem.isGeoText() && geoItem.isLaTeXDrawableGeo());
 	}
-
 }

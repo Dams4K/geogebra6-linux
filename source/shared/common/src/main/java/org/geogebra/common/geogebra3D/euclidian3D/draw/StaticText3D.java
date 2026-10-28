@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import org.geogebra.common.awt.GColor;
@@ -5,15 +21,20 @@ import org.geogebra.common.awt.GFont;
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoText;
-import org.geogebra.common.main.App;
 
 public class StaticText3D implements CaptionText {
-	private GeoElement geo;
+	private final GeoElement geo;
+	private final EuclidianView3D view;
 	private GFont font;
 	private boolean serif = false;
 
-	public StaticText3D(GeoElement geo) {
+	/**
+	 * @param geo construction element
+	 * @param view 3D view
+	 */
+	public StaticText3D(GeoElement geo, EuclidianView3D view) {
 		this.geo = geo;
+		this.view = view;
 	}
 
 	@Override
@@ -28,11 +49,6 @@ public class StaticText3D implements CaptionText {
 
 	private GeoText asGeoText() {
 		return (GeoText) geo;
-	}
-
-	@Override
-	public int fontSize() {
-		return 0;
 	}
 
 	@Override
@@ -72,20 +88,16 @@ public class StaticText3D implements CaptionText {
 
 	@Override
 	public void createFont(GFont original) {
-		if (!(geo instanceof GeoText)) {
+		if (!(geo instanceof GeoText text)) {
 			font = original;
 			return;
 		}
-		GeoText text = (GeoText) getGeoElement();
 
-		App app = getGeoElement().getKernel().getApplication();
-		int newFontSize = (int) Math.max(4,
-				((EuclidianView3D) app.getEuclidianView3D()).getFontSize()
-						* text.getFontSizeMultiplier());
+		double newFontSize = text.getFontSize(view.getFontSize());
 		int newFontStyle = text.getFontStyle();
 		serif = text.isSerifFont();
-		font = app.getFontCanDisplay(
-				text.getTextString(), serif, newFontStyle, newFontSize);
+		font = view.getApplication()
+				.getFontCanDisplay(text.getTextString(), serif, newFontStyle, newFontSize);
 	}
 
 	@Override

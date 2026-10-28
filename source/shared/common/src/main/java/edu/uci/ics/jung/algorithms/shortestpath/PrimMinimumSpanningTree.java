@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package edu.uci.ics.jung.algorithms.shortestpath;
 
 import java.util.Collection;
@@ -12,7 +28,7 @@ import edu.uci.ics.jung.graph.util.Pair;
 /**
  * For the input Graph, creates a MinimumSpanningTree using a variation of
  * Prim's algorithm.
- * 
+ *
  * @author Tom Nelson - tomnelson@dev.java.net
  *
  * @param <V>
@@ -21,8 +37,7 @@ import edu.uci.ics.jung.graph.util.Pair;
  *            the edge type
  */
 @SuppressWarnings("unchecked")
-public class PrimMinimumSpanningTree<V, E>
-		implements Function<Graph<V, E>, Graph<V, E>> {
+public class PrimMinimumSpanningTree<V, E> implements Function<Graph<V, E>, Graph<V, E>> {
 
 	protected Supplier<? extends Graph<V, E>> treeFactory;
 	protected Function<E, Double> weights;
@@ -39,8 +54,8 @@ public class PrimMinimumSpanningTree<V, E>
 	 * Creates an instance which generates a minimum spanning tree using the
 	 * input edge weights.
 	 */
-	public PrimMinimumSpanningTree(Supplier<? extends Graph<V, E>> factory,
-			Function<E, Double> weights) {
+	public PrimMinimumSpanningTree(
+			Supplier<? extends Graph<V, E>> factory, Function<E, Double> weights) {
 		this.treeFactory = factory;
 		if (weights != null) {
 			this.weights = weights;
@@ -81,8 +96,7 @@ public class PrimMinimumSpanningTree<V, E>
 		return null;
 	}
 
-	protected void updateTree(Graph<V, E> tree, Graph<V, E> graph,
-			Collection<E> unfinishedEdges) {
+	protected void updateTree(Graph<V, E> tree, Graph<V, E> graph, Collection<E> unfinishedEdges) {
 		Collection<V> tv = tree.getVertices();
 		double minCost = Double.MAX_VALUE;
 		E nextEdge = null;
@@ -105,8 +119,7 @@ public class PrimMinimumSpanningTree<V, E>
 					currentVertex = first;
 					nextVertex = second;
 				}
-			} else if ((tv.contains(second) == true
-					&& tv.contains(first) == false)) {
+			} else if ((tv.contains(second) == true && tv.contains(first) == false)) {
 				if (weights.apply(e) < minCost) {
 					minCost = weights.apply(e);
 					nextEdge = e;

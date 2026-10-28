@@ -1,17 +1,34 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.geos;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.geogebra.common.awt.GPoint2D;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.geos.properties.VerticalAlignment;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.plugin.GeoClass;
 
-public class GeoMindMapNode extends GeoInline implements TextStyle, HasTextFormatter,
-		HasVerticalAlignment {
+public class GeoMindMapNode extends GeoInline
+		implements TextStyle, HasTextFormatter, HasVerticalAlignment {
 
 	public static final double DEFAULT_WIDTH = 200;
 	public static final double ROOT_HEIGHT = 72;
@@ -41,6 +58,9 @@ public class GeoMindMapNode extends GeoInline implements TextStyle, HasTextForma
 			this.dy1 = dy1;
 		}
 
+		/**
+		 * @return whether this alignment is vertical (top or bottom)
+		 */
 		public boolean isVertical() {
 			return this == TOP || this == BOTTOM;
 		}
@@ -100,8 +120,8 @@ public class GeoMindMapNode extends GeoInline implements TextStyle, HasTextForma
 	@Override
 	public void set(GeoElementND geo) {
 		if (geo instanceof GeoMindMapNode) {
-			setLocation(new GPoint2D(((GeoMindMapNode) geo).getLocation().x,
-					((GeoMindMapNode) geo).getLocation().y));
+			setLocation(new GPoint2D(
+					((GeoMindMapNode) geo).getLocation().x, ((GeoMindMapNode) geo).getLocation().y));
 		}
 	}
 
@@ -175,7 +195,7 @@ public class GeoMindMapNode extends GeoInline implements TextStyle, HasTextForma
 	}
 
 	@Override
-	protected void getStyleXML(StringBuilder sb) {
+	protected void getStyleXML(XMLStringBuilder sb) {
 		super.getStyleXML(sb);
 		XMLBuilder.appendBorderAndAlignment(sb, this, verticalAlignment);
 		XMLBuilder.appendParent(sb, parent, nodeAlignment);
@@ -188,7 +208,7 @@ public class GeoMindMapNode extends GeoInline implements TextStyle, HasTextForma
 	 * Build XML with parent label replaced
 	 * @param sb builder
 	 */
-	public void getXMLNoParent(StringBuilder sb) {
+	public void getXMLNoParent(XMLStringBuilder sb) {
 		if (parent == null) {
 			getXML(false, sb);
 			return;
@@ -245,6 +265,9 @@ public class GeoMindMapNode extends GeoInline implements TextStyle, HasTextForma
 		return nodeAlignment;
 	}
 
+	/**
+	 * @param alignment node alignment
+	 */
 	public void setAlignment(NodeAlignment alignment) {
 		this.nodeAlignment = alignment;
 	}

@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoAxisFirstLength.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.advanced;
@@ -47,8 +45,7 @@ public class AlgoAxisLength extends AlgoElement {
 	 * @param axisId
 	 *            0 for major, 1 for minor
 	 */
-	public AlgoAxisLength(Construction cons, String label,
-			GeoConicND arg, int axisId) {
+	public AlgoAxisLength(Construction cons, String label, GeoConicND arg, int axisId) {
 		super(cons);
 		this.c = arg;
 		this.axisId = axisId;
@@ -60,8 +57,7 @@ public class AlgoAxisLength extends AlgoElement {
 
 	@Override
 	public Commands getClassName() {
-		return axisId == 0 ? Commands.FirstAxisLength
-				: Commands.SecondAxisLength;
+		return axisId == 0 ? Commands.FirstAxisLength : Commands.SecondAxisLength;
 	}
 
 	// for AlgoElement
@@ -86,26 +82,25 @@ public class AlgoAxisLength extends AlgoElement {
 	@Override
 	public final void compute() {
 		switch (c.type) {
-		case GeoConicNDConstants.CONIC_CIRCLE:
-		case GeoConicNDConstants.CONIC_HYPERBOLA:
-		case GeoConicNDConstants.CONIC_ELLIPSE:
-			num.setValue(c.getHalfAxis(axisId));
-			break;
+			case GeoConicNDConstants.CONIC_CIRCLE:
+			case GeoConicNDConstants.CONIC_HYPERBOLA:
+			case GeoConicNDConstants.CONIC_ELLIPSE:
+				num.setValue(c.getHalfAxis(axisId));
+				break;
 
-		default:
-			num.setUndefined();
+			default:
+				num.setUndefined();
 		}
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		if (axisId == 1) {
-			return getLoc().getPlainDefault("SecondAxisLengthOfA",
-					"Length of %0's semi-minor axis", c.getLabel(tpl));
+			return getLoc()
+					.getPlainDefault(
+							"SecondAxisLengthOfA", "Length of %0's semi-minor axis", c.getLabel(tpl));
 		}
-		return getLoc().getPlainDefault("FirstAxisLengthOfA",
-				"Length of %0's semi-major axis", c.getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault("FirstAxisLengthOfA", "Length of %0's semi-major axis", c.getLabel(tpl));
 	}
-
 }

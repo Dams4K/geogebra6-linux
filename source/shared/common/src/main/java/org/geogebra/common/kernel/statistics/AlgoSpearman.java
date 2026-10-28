@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -24,7 +28,7 @@ import org.geogebra.common.kernel.geos.GeoPoint;
 /**
  * Finds Spearman's correlation coefficient from a list of points or two lists
  * of numbers.
- * 
+ *
  * @author G. Sturr
  */
 public class AlgoSpearman extends AlgoElement {
@@ -50,8 +54,7 @@ public class AlgoSpearman extends AlgoElement {
 	 * @param geoListY
 	 *            list of numbers
 	 */
-	public AlgoSpearman(Construction cons, String label, GeoList geoListX,
-			GeoList geoListY) {
+	public AlgoSpearman(Construction cons, String label, GeoList geoListX, GeoList geoListY) {
 		super(cons);
 		this.geoListX = geoListX;
 		this.geoListY = geoListY;
@@ -153,8 +156,7 @@ public class AlgoSpearman extends AlgoElement {
 			// input is two lists
 			int sizeX = geoListX.size();
 			int sizeY = geoListY.size();
-			if (!geoListX.isDefined() || !geoListY.isDefined() || sizeX < 2
-					|| sizeX != sizeY) {
+			if (!geoListX.isDefined() || !geoListY.isDefined() || sizeX < 2 || sizeX != sizeY) {
 				result.setUndefined();
 				return;
 			}
@@ -180,5 +182,4 @@ public class AlgoSpearman extends AlgoElement {
 
 		result.setValue(sp.correlation(valX, valY));
 	}
-
 }

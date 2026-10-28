@@ -1,32 +1,37 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.plugin;
 
 import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.AccessController;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivilegedAction;
-import java.util.Iterator;
 import java.util.function.Consumer;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
 import javax.swing.JOptionPane;
 
 import org.geogebra.common.GeoGebraConstants;
 import org.geogebra.common.awt.GBufferedImage;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.jre.plugin.GgbAPIJre;
-import org.geogebra.common.jre.util.Base64;
 import org.geogebra.common.main.App.ExportType;
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.plugin.JsObjectWrapper;
@@ -41,45 +46,17 @@ import org.geogebra.desktop.io.MyImageIO;
 import org.geogebra.desktop.main.AppD;
 import org.geogebra.desktop.util.UtilD;
 
-/*
- GeoGebra - Dynamic Mathematics for Everyone
- http://www.geogebra.org
-
- This file is part of GeoGebra.
-
- This program is free software; you can redistribute it and/or modify it
- under the terms of the GNU General Public License as published by
- the Free Software Foundation.
-
- */
-
 /**
- * <h3>GgbAPI - API for PlugLets</h3>
- * 
- * <pre>
- *    The Api the plugin program can use.
- * </pre>
- * <ul>
- * <li>GgbAPI(Application) //Application owns it
- * <li>getApplication()
- * <li>getKernel()
- * <li>getConstruction()
- * <li>getAlgebraProcessor()
- * <li>getPluginManager()
- * <li>evalCommand(String)
- * <li>and the rest of the methods from the Applet JavaScript/Java interface
- * <li>...
- * </ul>
- * 
+ * Desktop implementation of {@link org.geogebra.common.plugin.GgbAPI}.
+ *
  * @author H-P Ulven
  */
-
 public class GgbAPID extends GgbAPIJre {
 
 	/**
 	 * Constructor: Makes the api with a reference to the GeoGebra program.
 	 * Called from GeoGebra.
-	 * 
+	 *
 	 * @param app
 	 *            Application
 	 */
@@ -92,7 +69,7 @@ public class GgbAPID extends GgbAPIJre {
 
 	/**
 	 * Returns current construction as a ggb file in form of a byte array.
-	 * 
+	 *
 	 * @return null if something went wrong
 	 */
 	@Override
@@ -114,14 +91,14 @@ public class GgbAPID extends GgbAPIJre {
 	 */
 	@Override
 	public synchronized void setErrorDialogsActive(boolean flag) {
-		((AppD) app).setErrorDialogsActive(flag);
+		app.setErrorDialogsActive(flag);
 	}
 
 	/**
 	 * Clears the construction and resets all views.
 	 */
 	public synchronized void fileNew() {
-		((AppD) app).fileNew();
+		app.fileNew();
 	}
 
 	/**
@@ -153,177 +130,121 @@ public class GgbAPID extends GgbAPIJre {
 	public void openFileUnsafe(String strURL) throws IOException {
 		String lowerCase = StringUtil.toLowerCaseUS(strURL);
 		URL url = new URL(strURL);
-		((AppD) app).loadXML(url, lowerCase
-				.endsWith(FileExtensions.GEOGEBRA_TOOL.toString()));
-	}
-
-	private static volatile MessageDigest messageDigestMD5 = null;
-
-	/**
-	 * @return reference to MD5 algorithm
-	 * @throws NoSuchAlgorithmException
-	 *             if algorithm is not supported
-	 */
-	public static MessageDigest getMessageDigestMD5()
-			throws NoSuchAlgorithmException {
-		if (messageDigestMD5 == null) {
-			messageDigestMD5 = MessageDigest.getInstance("MD5");
-		}
-
-		return messageDigestMD5;
+		((AppD) app).loadXML(url, lowerCase.endsWith(FileExtensions.GEOGEBRA_TOOL.toString()));
 	}
 
 	/*
 	 * saves a PNG file signed applets only
 	 */
 	@Override
-	public synchronized boolean writePNGtoFile(String filename,
-			final double exportScale, final boolean transparent,
-			final double DPI0, final boolean greyscale) {
-		
+	public synchronized boolean writePNGtoFile(
+			String filename,
+			final double exportScale,
+			final boolean transparent,
+			final double DPI0,
+			final boolean greyscale) {
+
 		final double DPI = DPI0 <= 0 ? 72 : DPI0;
 
 		File file1 = null;
 		try {
 			file1 = new File(filename);
 		} catch (Throwable t) {
-			t.printStackTrace();
+			Log.debug(t);
 		}
 		if (file1 == null) {
 			return false;
 		}
 		final File file = file1;
-		return (Boolean) AccessController
-				.doPrivileged((PrivilegedAction<Object>) () -> {
-
-					try {
-						// draw graphics view into image
-						GBufferedImage img = ((AppD) getApplication())
-								.getActiveEuclidianView()
-								.getExportImage(exportScale, transparent,
-										ExportType.PNG);
-
-						if (greyscale) {
-							((GBufferedImageD) img).convertToGrayscale();
-						}
-
-						// write image to file
-						MyImageIO.write(
-								GBufferedImageD.getAwtBufferedImage(img),
-								"png", (float) DPI, file);
-
-						return true;
-					} catch (Exception ex) {
-						ex.printStackTrace();
-						Log.debug(ex.toString());
-						return false;
-					} catch (Error ex) {
-						ex.printStackTrace();
-						Log.debug(ex.toString());
-						return false;
-					}
-
-				});
-
-	}
-
-	@Override
-	protected void exportPNGClipboard(boolean transparent, int DPI,
-			double exportScale, EuclidianView ev) {
-		// more control but doesn't paste into eg Paint, Google Docs
-		GraphicExportDialog.exportPNGClipboard(transparent, DPI, exportScale,
-				(AppD) app, (EuclidianViewInterfaceD) ev);
-	}
-
-	@Override
-	protected void exportPNGClipboardDPIisNaN(boolean transparent,
-			double exportScale, EuclidianView ev) {
-		// pastes into more programs
-		GBufferedImage img = ev.getExportImage(exportScale, transparent,
-				ExportType.PNG);
-
-		ImageSelection imgSel = new ImageSelection(
-				GBufferedImageD.getAwtBufferedImage(img));
-		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSel,
-				null);
-	}
-
-	@Override
-	protected String base64encodePNG(boolean transparent, double DPI,
-			double exportScale, EuclidianView ev) {
-		GBufferedImage img = ((EuclidianViewInterfaceD) ev)
-				.getExportImage(exportScale, transparent, ExportType.PNG);
-		return base64encode(GBufferedImageD.getAwtBufferedImage(img), DPI);
-	}
-
-	/**
-	 * @param img
-	 *            image
-	 * @return encoded image
-	 */
-	public static String base64encode(BufferedImage img, double DPI) {
-		if (img == null) {
-			return null;
-		}
 		try {
-			Iterator<ImageWriter> it = ImageIO
-					.getImageWritersByFormatName("png");
-			ImageWriter writer = it.next();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			// draw graphics view into image
+			GBufferedImage img = getApplication()
+					.getActiveEuclidianView()
+					.getExportImage(exportScale, transparent, ExportType.PNG);
 
-			ImageOutputStream ios = ImageIO.createImageOutputStream(baos);
+			if (greyscale) {
+				((GBufferedImageD) img).convertToGrayscale();
+			}
 
-			writer.setOutput(ios);
+			// write image to file
+			MyImageIO.write(GBufferedImageD.getAwtBufferedImage(img), "png", (float) DPI, file);
 
-			MyImageIO.writeImage(writer, img, DPI);
-
-			String ret = Base64.encodeToString(baos.toByteArray(), false);
-
-			baos.close();
-			ios.close();
-
-			return ret;
-		} catch (IOException e) {
-			Log.debug(e);
-			return null;
+			return true;
+		} catch (IOException | RuntimeException | Error ex) {
+			Log.debug(ex);
+			return false;
 		}
+	}
+
+	@Override
+	protected void exportPNGClipboard(
+			boolean transparent, int DPI, double exportScale, EuclidianView ev) {
+		// more control but doesn't paste into eg Paint, Google Docs
+		GraphicExportDialog.exportPNGClipboard(
+				transparent, DPI, exportScale, (AppD) app, (EuclidianViewInterfaceD) ev);
+	}
+
+	@Override
+	protected void exportPNGClipboardDPIisNaN(
+			boolean transparent, double exportScale, EuclidianView ev) {
+		// pastes into more programs
+		GBufferedImage img = ev.getExportImage(exportScale, transparent, ExportType.PNG);
+
+		ImageSelection imgSel = new ImageSelection(GBufferedImageD.getAwtBufferedImage(img));
+		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSel, null);
+	}
+
+	@Override
+	protected String base64encodePNG(
+			boolean transparent, double DPI, double exportScale, EuclidianView ev) {
+		GBufferedImage img =
+				((EuclidianViewInterfaceD) ev).getExportImage(exportScale, transparent, ExportType.PNG);
+		return GBufferedImageD.base64encode(GBufferedImageD.getAwtBufferedImage(img), DPI);
 	}
 
 	@Override
 	public String prompt(Object promptText, Object initValue) {
-		return (String) JOptionPane.showInputDialog(((AppD) app).getFrame(),
-				promptText, GeoGebraConstants.APPLICATION_NAME,
-				JOptionPane.PLAIN_MESSAGE, null, null, initValue);
+		return (String) JOptionPane.showInputDialog(
+				((AppD) app).getFrame(),
+				promptText,
+				GeoGebraConstants.APPLICATION_NAME,
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				null,
+				initValue);
 	}
 
 	@Override
 	public void alert(String message) {
 		Localization loc = app.getLocalization();
-		Object[] options = { loc.getMenu("StopScript"), loc.getMenu("OK") };
-		int n = JOptionPane.showOptionDialog(((AppD) app).getFrame(), message,
-				GeoGebraConstants.APPLICATION_NAME, JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE, null, // do not use a custom Icon
+		Object[] options = {loc.getMenu("StopScript"), loc.getMenu("OK")};
+		int n = JOptionPane.showOptionDialog(
+				((AppD) app).getFrame(),
+				message,
+				GeoGebraConstants.APPLICATION_NAME,
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE,
+				null, // do not use a custom Icon
 				options, // the titles of buttons
 				options[0]); // default button title
 
 		if (n == 0) {
 			throw new Error("Script stopped by user");
 		}
-
 	}
 
 	/**
 	 * Returns the dimensions of the real world coordinate system in the
 	 * graphics view as [xmin, ymin, width, height]
-	 * 
+	 *
 	 * @return dimensions of the real world coordinate system
 	 */
 	public synchronized Rectangle2D.Double getCoordSystemRectangle() {
 		EuclidianView ev = app.getEuclidianView1();
-		return new Rectangle2D.Double(ev.getXmin(), ev.getYmin(),
-				ev.getXmax() - ev.getXmin(), ev.getYmax() - ev.getYmin());
+		return new Rectangle2D.Double(
+				ev.getXmin(), ev.getYmin(), ev.getXmax() - ev.getXmin(), ev.getYmax() - ev.getYmin());
 	}
-	
+
 	@Override
 	public void exportSVG(String file0, Consumer<String> callback) {
 		String filename = file0;
@@ -336,22 +257,20 @@ public class GgbAPID extends GgbAPIJre {
 		File file = new File(filename);
 
 		EuclidianView view = app.getActiveEuclidianView();
-		GraphicExportDialog.exportSVG(app, view, file, true,
-				view.getExportWidth(),
-				view.getExportHeight(), -1, -1, 1, true);
-		
+		GraphicExportDialog.exportSVG(
+				app, view, file, true, view.getExportWidth(), view.getExportHeight(), -1, -1, 1, true);
+
 		try {
 			// read file back as String
-			callback.accept(new String(Files.readAllBytes(Paths.get(filename)),
-					StandardCharsets.UTF_8));
+			callback.accept(Files.readString(Paths.get(filename)));
 		} catch (IOException e) {
 			Log.error("problem reading " + filename);
 		}
 	}
 
 	@Override
-	public void exportPDF(double exportScale, String file0, Consumer<String> callback,
-			String sliderLabel, double dpi) {
+	public void exportPDF(
+			double exportScale, String file0, Consumer<String> callback, String sliderLabel, double dpi) {
 
 		String filename = file0;
 
@@ -363,14 +282,12 @@ public class GgbAPID extends GgbAPIJre {
 		File file = new File(filename);
 
 		EuclidianView view = app.getActiveEuclidianView();
-		GraphicExportDialog.exportPDF(app, view, file, true,
-				view.getExportWidth(),
-				view.getExportHeight(), exportScale);
+		GraphicExportDialog.exportPDF(
+				view, file, true, view.getExportWidth(), view.getExportHeight(), exportScale);
 
 		try {
 			// read file back as String
-			callback.accept(new String(Files.readAllBytes(Paths.get(filename)),
-					StandardCharsets.UTF_8));
+			callback.accept(Files.readString(Paths.get(filename)));
 		} catch (IOException e) {
 			Log.error("problem reading " + filename);
 		}
@@ -380,5 +297,4 @@ public class GgbAPID extends GgbAPIJre {
 	public JsObjectWrapper getWrapper(Object obj) {
 		return new JsObjectWrapperD(obj);
 	}
-
 }

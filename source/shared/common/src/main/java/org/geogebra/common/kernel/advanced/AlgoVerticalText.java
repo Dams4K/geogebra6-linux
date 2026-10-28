@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.advanced;
@@ -23,7 +27,7 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * Algorithm for vertical text
- * 
+ *
  * @author Michael
  */
 public class AlgoVerticalText extends AlgoElement {
@@ -37,7 +41,7 @@ public class AlgoVerticalText extends AlgoElement {
 
 	/**
 	 * Creates new algo for vertical text
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -52,7 +56,7 @@ public class AlgoVerticalText extends AlgoElement {
 
 	/**
 	 * Creates new unlabeled algo for vertical text
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param args
@@ -64,7 +68,7 @@ public class AlgoVerticalText extends AlgoElement {
 
 	/**
 	 * Creates new algo for vertical text, with fixed position point
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -74,15 +78,14 @@ public class AlgoVerticalText extends AlgoElement {
 	 * @param position
 	 *            corner
 	 */
-	public AlgoVerticalText(Construction cons, String label, GeoText args,
-			GeoPointND position) {
+	public AlgoVerticalText(Construction cons, String label, GeoText args, GeoPointND position) {
 		this(cons, args, position);
 		text.setLabel(label);
 	}
 
 	/**
 	 * Creates new unlabeled algo for vertical text, with fixed position point
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param args
@@ -148,8 +151,7 @@ public class AlgoVerticalText extends AlgoElement {
 
 	@Override
 	public final void compute() {
-		if (!args.isDefined()
-				|| (startPoint != null && !startPoint.isDefined())) {
+		if (!args.isDefined() || (startPoint != null && !startPoint.isDefined())) {
 			text.setTextString("");
 			return;
 		}
@@ -164,12 +166,10 @@ public class AlgoVerticalText extends AlgoElement {
 		if (startPointCopy != null) {
 			startPointCopy.setCoords(startPoint.getCoordsInD3(), false);
 		}
-
 	}
 
 	@Override
 	public boolean isLaTeXTextCommand() {
 		return true;
 	}
-
 }

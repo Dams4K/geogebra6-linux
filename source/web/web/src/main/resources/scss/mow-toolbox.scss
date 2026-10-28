@@ -43,6 +43,10 @@
 		height: 72px;
 
 		&.disabled {
+			.gwt-Label {
+				color: neutral(500);
+			}
+
 			.colorButton {
 				opacity: 0.36;
 				cursor: default;
@@ -107,7 +111,7 @@
 				opacity: 0.54;
 			}
 
-			.fa-light {
+			.fa-light, .fa-solid {
 				font-size: 17px;
 				display: flex;
 				width: 18px;
@@ -125,8 +129,7 @@
 	}
 
 	.gwt-PopupPanel.categoryPopup {
-		width: 192px;
-		height: 144px;
+		max-width: 192px;
 		display:inline-flex;
 		padding: 8px;
 		z-index: z-index.$z-dialog-under-keyboard;

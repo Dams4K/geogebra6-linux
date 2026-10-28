@@ -1,9 +1,26 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.main.scripting;
 
 import java.util.Arrays;
 
 import org.geogebra.common.util.InjectJsInterop;
 import org.geogebra.common.util.debug.Log;
+import org.geogebra.gwtutil.JsObject;
 
 import elemental2.core.Function;
 import elemental2.core.JsArray;
@@ -22,7 +39,7 @@ public class QuickJS {
 
 	@JsOverlay
 	static QuickJS get() {
-		return Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("QJS"));
+		return Js.uncheckedCast(JsObject.of(DomGlobal.window).get("QJS"));
 	}
 
 	native Promise<Object> getQuickJS();
@@ -32,6 +49,7 @@ public class QuickJS {
 
 		@InjectJsInterop
 		public QuickJSHandle global;
+
 		public Function callFunction;
 
 		@JsProperty
@@ -79,7 +97,7 @@ public class QuickJS {
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL)
 	static class ContextFactory {
 
-		public native QuickJSContext newContext();
+		native QuickJSContext newContext();
 	}
 
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL)
@@ -92,7 +110,7 @@ public class QuickJS {
 	// in the same file as MethodWrapper class so that JsInterop with varargs works correctly
 	@JsOverlay
 	static Promise<Object> afterLibraryLoaded(Object exportedApi, SandboxConverter converter) {
-		final JsPropertyMap<Object> bundle = Js.asPropertyMap(exportedApi);
+		final JsPropertyMap<Object> bundle = JsObject.of(exportedApi);
 		return QuickJS.get().getQuickJS().then(factory -> {
 			QuickJSContext vm = Js.<QuickJS.ContextFactory>uncheckedCast(factory).newContext();
 			QuickJSHandle ggbApplet = vm.newObject();
@@ -100,13 +118,12 @@ public class QuickJS {
 			vm.setProp(vm.global, "window", vm.global);
 			vm.setProp(vm.global, "console", console);
 			vm.setProp(vm.global, "ggbApplet", ggbApplet);
-			JsPropertyMap<?> methods = Js.asPropertyMap(exportedApi);
-			methods.forEach(method ->
-					addWrappedMethod(ggbApplet, method, bundle, method, vm, converter));
-			JsPropertyMap<Object> consoleBundle = Js.asPropertyMap(DomGlobal.console);
-			Arrays.asList("error", "info", "log", "warn").forEach(method ->
-				addWrappedMethod(console, method, consoleBundle, method, vm, converter)
-			);
+			JsPropertyMap<?> methods = JsObject.of(exportedApi);
+			methods.forEach(method -> addWrappedMethod(ggbApplet, method, bundle, method, vm, converter));
+			JsPropertyMap<Object> consoleBundle = JsObject.of(DomGlobal.console);
+			Arrays.asList("error", "info", "log", "warn")
+					.forEach(
+							method -> addWrappedMethod(console, method, consoleBundle, method, vm, converter));
 			vm.setProp(vm.global, "open", vm.newFunction("", getWindowOpen(converter, vm)));
 			addWrappedMethod(vm.global, "alert", bundle, "showTooltip", vm, converter);
 			return Promise.resolve(vm);
@@ -116,8 +133,8 @@ public class QuickJS {
 	@JsOverlay
 	private static MethodWrapper getWindowOpen(SandboxConverter converter, QuickJSContext vm) {
 		return (sandboxArgs) -> {
-			Object url = sandboxArgs.length > 0 ? converter.fromSandboxObject(sandboxArgs[0], vm)
-					: Js.undefined();
+			Object url =
+					sandboxArgs.length > 0 ? converter.fromSandboxObject(sandboxArgs[0], vm) : Js.undefined();
 			if (url instanceof String && ((String) url).startsWith("https://")) {
 				DomGlobal.window.open((String) url);
 				// do not return the new window handle
@@ -129,9 +146,13 @@ public class QuickJS {
 	}
 
 	@JsOverlay
-	private static void addWrappedMethod(QuickJSHandle sanboxed, String method,
-			JsPropertyMap<Object> bundle, String bundleMethod,
-			QuickJSContext vm, SandboxConverter converter) {
+	private static void addWrappedMethod(
+			QuickJSHandle sanboxed,
+			String method,
+			JsPropertyMap<Object> bundle,
+			String bundleMethod,
+			QuickJSContext vm,
+			SandboxConverter converter) {
 		Function methodFn = (Function) bundle.get(bundleMethod);
 		MethodWrapper methodWrapper = (sandboxArgs) -> {
 			JsArray<Object> realArgs = new JsArray<>();
@@ -146,6 +167,10 @@ public class QuickJS {
 
 	@JsFunction
 	interface MethodWrapper {
+		/**
+		 * @param arguments sandboxed arguments
+		 * @return sandboxed result
+		 */
 		Object call(Object... arguments);
 	}
 }

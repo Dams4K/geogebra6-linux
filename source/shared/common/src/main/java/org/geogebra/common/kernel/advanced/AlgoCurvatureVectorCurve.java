@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.advanced;
 
 import org.geogebra.common.kernel.CircularDefinitionException;
@@ -15,12 +31,11 @@ import org.geogebra.common.kernel.geos.GeoVector;
 /**
  * @author Victor Franco Espino
  * @version 11-02-2007
- * 
+ *
  *          Calculate Curvature Vector for curve: c(t) =
  *          ((a'(t)b''(t)-a''(t)b'(t))/T^4) * (-b'(t),a'(t)) T =
  *          sqrt(a'(t)^2+b'(t)^2)
  */
-
 public class AlgoCurvatureVectorCurve extends AlgoElement {
 
 	private GeoPoint A; // input
@@ -44,8 +59,7 @@ public class AlgoCurvatureVectorCurve extends AlgoElement {
 	 * @param f
 	 *            curve
 	 */
-	public AlgoCurvatureVectorCurve(Construction cons, GeoPoint A,
-			GeoCurveCartesian f) {
+	public AlgoCurvatureVectorCurve(Construction cons, GeoPoint A, GeoCurveCartesian f) {
 		super(cons);
 		this.A = A;
 		this.f = f;
@@ -54,7 +68,7 @@ public class AlgoCurvatureVectorCurve extends AlgoElement {
 		v = new GeoVector(cons);
 		try {
 			v.setStartPoint(A);
-		} catch (CircularDefinitionException e) {
+		} catch (CircularDefinitionException ignored) {
 			// can't happen with new vectors
 		}
 
@@ -85,8 +99,7 @@ public class AlgoCurvatureVectorCurve extends AlgoElement {
 	 * @param geoConic
 	 *            conic
 	 */
-	public AlgoCurvatureVectorCurve(Construction cons, GeoPoint A,
-			GeoConic geoConic) {
+	public AlgoCurvatureVectorCurve(Construction cons, GeoPoint A, GeoConic geoConic) {
 		super(cons);
 		this.A = A;
 		this.gc = geoConic;
@@ -94,7 +107,7 @@ public class AlgoCurvatureVectorCurve extends AlgoElement {
 		v = new GeoVector(cons);
 		try {
 			v.setStartPoint(A);
-		} catch (CircularDefinitionException e) {
+		} catch (CircularDefinitionException ignored) {
 			// can't happen with new vectors
 		}
 
@@ -138,8 +151,7 @@ public class AlgoCurvatureVectorCurve extends AlgoElement {
 				v.x = f1eval[0] * curvature / norm;
 				v.y = f1eval[1] * curvature / norm;
 			} else {
-				double tvalue = f.getClosestParameterForCurvature(A,
-						f.getMinParameter());
+				double tvalue = f.getClosestParameterForCurvature(A, f.getMinParameter());
 				f1.evaluateCurve(tvalue, f1eval);
 				f2.evaluateCurve(tvalue, f2eval);
 				t2 = f1eval[0] * f1eval[0] + f1eval[1] * f1eval[1];
@@ -167,5 +179,4 @@ public class AlgoCurvatureVectorCurve extends AlgoElement {
 		A.removeAlgorithm(algoCAS2);
 		f.removeAlgorithm(algoCAS2);
 	}
-
 }

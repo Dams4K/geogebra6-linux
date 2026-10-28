@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.test;
 
 import static org.mockito.Matchers.any;
@@ -6,8 +22,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.function.Function;
 
+import org.geogebra.common.factories.UtilFactory;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.UndoRedoMode;
+import org.geogebra.common.util.GTimer;
+import org.geogebra.common.util.GTimerListener;
 import org.geogebra.common.util.debug.Log;
 import org.geogebra.web.cas.giac.CASFactoryW;
 import org.geogebra.web.full.gui.applet.AppletFactory;
@@ -19,6 +38,7 @@ import org.geogebra.web.full.main.GDevice;
 import org.geogebra.web.geogebra3D.AppletFactory3D;
 import org.geogebra.web.html5.Browser;
 import org.geogebra.web.html5.GeoGebraGlobal;
+import org.geogebra.web.html5.factories.UtilFactoryW;
 import org.geogebra.web.html5.gui.GeoGebraFrameSimple;
 import org.geogebra.web.html5.gui.laf.GLookAndFeelI;
 import org.geogebra.web.html5.main.AppW;
@@ -35,9 +55,10 @@ import jsinterop.base.JsPropertyMap;
 
 public class AppMocker {
 
-	private static class TestLog extends Log {
+	private static final class TestLog extends Log {
 
 		@Override
+		@SuppressWarnings("PMD.SystemPrintln")
 		public void print(Level level, Object logEntry) {
 			if (logEntry instanceof Throwable) {
 				((Throwable) logEntry).printStackTrace(System.out);
@@ -45,7 +66,6 @@ public class AppMocker {
 				System.out.println(logEntry);
 			}
 		}
-
 	}
 
 	/**
@@ -99,14 +119,17 @@ public class AppMocker {
 		useCommonFakeProviders();
 		AppletFactory factory = new AppletFactory3D() {
 			@Override
-			public AppWFull getApplet(GeoGebraElement element,
+			public AppWFull getApplet(
+					GeoGebraElement element,
 					AppletParameters params,
-					GeoGebraFrameFull frame, GLookAndFeelI laf, GDevice device) {
+					GeoGebraFrameFull frame,
+					GLookAndFeelI laf,
+					GDevice device) {
 				return new AppWapplet3DTest(params, frame, (GLookAndFeel) laf, device);
 			}
 		};
-		GeoGebraFrameFull fr = new GeoGebraFrameFull(factory,
-				new GLookAndFeel(), new BrowserDevice(), DomMocker.getGeoGebraElement(), ae);
+		GeoGebraFrameFull fr = new GeoGebraFrameFull(
+				factory, new GLookAndFeel(), new BrowserDevice(), DomMocker.getGeoGebraElement(), ae);
 		fr.runAsyncAfterSplash();
 		AppWFull app = fr.getApp();
 		setAppDefaults(app);
@@ -129,8 +152,8 @@ public class AppMocker {
 	 */
 	public static AppWsimple mockAppletSimple(AppletParameters ae) {
 		useCommonFakeProviders();
-		GeoGebraFrameSimple frame = new GeoGebraFrameSimple(DomMocker.getGeoGebraElement(), ae,
-				new CASFactoryW());
+		GeoGebraFrameSimple frame =
+				new GeoGebraFrameSimple(DomMocker.getGeoGebraElement(), ae, new CASFactoryW());
 		AppWsimple app = new AppWSimpleMock(ae, frame, false);
 		setAppDefaults(app);
 		return app;
@@ -146,23 +169,28 @@ public class AppMocker {
 		when(GeoGebraGlobal.__GGB__keysVar.get(any())).thenReturn(bundle);
 		JsPropertyMap<String> category = mock(JsPropertyMap.class);
 		when(bundle.get(any())).thenReturn(category);
-		when(category.get(any())).thenAnswer(args ->
-				translation.apply(args.getArgumentAt(0, String.class)));
+		when(category.get(any()))
+				.thenAnswer(args -> translation.apply(args.getArgumentAt(0, String.class)));
 	}
 
 	private static void useCommonFakeProviders() {
 		ElementalMocker.setupElemental();
-		GwtMockito.useProviderForType(PopupImpl.class,
-				type -> new PopupImpl() {
+		GwtMockito.useProviderForType(PopupImpl.class, type -> new PopupImpl() {
 
-					@Override
-					public Element getStyleElement(Element popup) {
-						return DomMocker.getElement();
-					}
-				});
+			@Override
+			public Element getStyleElement(Element popup) {
+				return DomMocker.getElement();
+			}
+		});
+		MockTimer.clearInstances();
+		UtilFactory.setPrototypeIfNull(new UtilFactoryW() {
+			@Override
+			public GTimer newTimer(GTimerListener listener, int delay) {
+				return new MockTimer();
+			}
+		});
 		Browser.mockWebGL();
 		FactoryProviderGWT.ensureLoaded();
 		setTestLogger();
 	}
-
 }

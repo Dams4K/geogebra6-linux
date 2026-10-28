@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.cas.view;
 
 import java.awt.Color;
@@ -8,7 +24,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JToolBar;
 
 import org.geogebra.common.awt.GColor;
@@ -25,6 +41,7 @@ import org.geogebra.desktop.gui.util.PopupMenuButtonD;
 import org.geogebra.desktop.gui.util.ToggleButtonD;
 import org.geogebra.desktop.main.AppD;
 import org.geogebra.desktop.main.LocalizationD;
+import org.geogebra.desktop.main.ScaledIcon;
 import org.geogebra.desktop.util.GuiResourcesD;
 
 /**
@@ -53,6 +70,7 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 	protected ToggleButtonD btnShowKeyboard;
 	/** height of buttons */
 	protected int iconHeight = 18;
+
 	private Dimension iconDimension = new Dimension(16, iconHeight);
 	private boolean needUndo = false;
 
@@ -79,7 +97,7 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param targetGeos
 	 *            list of selected cells
 	 */
@@ -91,7 +109,7 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param geo
 	 *            selected cell
 	 */
@@ -123,8 +141,7 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 	 * @param targetGeos
 	 *            cells that need updating
 	 */
-	protected void processSource(Object source,
-			ArrayList<GeoElement> targetGeos) {
+	protected void processSource(Object source, ArrayList<GeoElement> targetGeos) {
 
 		if (source == btnTextColor) {
 			if (btnTextColor.getSelectedIndex() >= 0) {
@@ -141,31 +158,28 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 			applyTextSize(targetGeos);
 		} else if (source == btnUseAsText) {
 			int i = casView.getConsoleTable().getEditingRow();
-			int pos = ((CASTableCellEditorD) casView.getConsoleTable()
-					.getCellEditor(i, CASTableD.COL_CAS_CELLS))
-							.getCaretPosition();
+			int pos = ((CASTableCellEditorD)
+							casView.getConsoleTable().getCellEditor(i, CASTableD.COL_CAS_CELLS))
+					.getCaretPosition();
 			applyUseAsText(targetGeos);
 			casView.getConsoleTable().startEditingRow(i);
-			((CASTableCellEditorD) casView.getConsoleTable().getCellEditor(i,
-					CASTableD.COL_CAS_CELLS)).setCaretPosition(pos);
+			((CASTableCellEditorD) casView.getConsoleTable().getCellEditor(i, CASTableD.COL_CAS_CELLS))
+					.setCaretPosition(pos);
 		} else if (source == btnShowKeyboard) {
-			if ((app.getGuiManager()) != null) {
+			if (app.getGuiManager() != null) {
 				if (AppD.isVirtualKeyboardActive()
-						&& !((GuiManagerD) app.getGuiManager())
-								.showVirtualKeyboard()) {
+						&& !((GuiManagerD) app.getGuiManager()).showVirtualKeyboard()) {
 
 					// if keyboard is active but hidden, just show it
 					((GuiManagerD) app.getGuiManager()).toggleKeyboard(true);
-					((GuiManagerD) app.getGuiManager()).getVirtualKeyboard()
-							.toggleNumeric(true);
+					((GuiManagerD) app.getGuiManager()).getVirtualKeyboard().toggleNumeric(true);
 
 				} else {
 
-					AppD.setVirtualKeyboardActive(
-							!AppD.isVirtualKeyboardActive());
+					AppD.setVirtualKeyboardActive(!AppD.isVirtualKeyboardActive());
+					((GuiManagerD) app.getGuiManager()).toggleKeyboard(AppD.isVirtualKeyboardActive());
 					((GuiManagerD) app.getGuiManager())
-							.toggleKeyboard(AppD.isVirtualKeyboardActive());
-					((GuiManagerD) app.getGuiManager()).getVirtualKeyboard()
+							.getVirtualKeyboard()
 							.toggleNumeric(AppD.isVirtualKeyboardActive());
 				}
 			}
@@ -181,7 +195,7 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 		for (int i = 0; i < popupBtnList.length; i++) {
 			try {
 				popupBtnList[i].update(selectedRows);
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 				// TODO: find problem
 			}
 		}
@@ -189,7 +203,7 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 			try {
 				toggleBtnList[i].update(selectedRows);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.debug(e);
 				// TODO: find problem
 			}
 		}
@@ -232,8 +246,8 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 		for (int i = 0; i < geos.size(); i++) {
 			GeoElement geo = geos.get(i);
 			Log.debug(((GeoCasCell) geo).getGeoText());
-			if (geo instanceof GeoCasCell && ((GeoCasCell) geo).getGeoText()
-					.getFontStyle() != fontStyle) {
+			if (geo instanceof GeoCasCell
+					&& ((GeoCasCell) geo).getGeoText().getFontStyle() != fontStyle) {
 				((GeoCasCell) geo).getGeoText().setFontStyle(fontStyle);
 				geo.updateRepaint();
 				needUndo = true;
@@ -243,20 +257,19 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 
 	private void applyTextSize(ArrayList<GeoElement> geos) {
 
-		double fontSize = GeoText
-				.getRelativeFontSize(btnTextSize.getSelectedIndex()); // transform
-																		// indices
-																		// to
-																		// the
-																		// range
-																		// -4,
-																		// .. ,
-																		// 4
+		double fontSize = GeoText.getRelativeFontSize(btnTextSize.getSelectedIndex()); // transform
+		// indices
+		// to
+		// the
+		// range
+		// -4,
+		// .. ,
+		// 4
 
 		for (int i = 0; i < geos.size(); i++) {
 			GeoElement geo = geos.get(i);
-			if (geo instanceof GeoCasCell && ((GeoCasCell) geo).getGeoText()
-					.getFontSizeMultiplier() != fontSize) {
+			if (geo instanceof GeoCasCell
+					&& ((GeoCasCell) geo).getGeoText().getFontSizeMultiplier() != fontSize) {
 				((GeoCasCell) geo).setFontSizeMultiplier(fontSize);
 				geo.updateRepaint();
 				needUndo = true;
@@ -268,14 +281,14 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 	 * @return array of popup buttons
 	 */
 	protected PopupMenuButtonD[] newPopupBtnList() {
-		return new PopupMenuButtonD[] { btnTextColor, btnTextSize };
+		return new PopupMenuButtonD[] {btnTextColor, btnTextSize};
 	}
 
 	/**
 	 * @return array of toggle buttons
 	 */
 	protected ToggleButtonD[] newToggleBtnList() {
-		return new ToggleButtonD[] { btnBold, btnItalic, btnUseAsText };
+		return new ToggleButtonD[] {btnBold, btnItalic, btnUseAsText};
 	}
 
 	/**
@@ -289,7 +302,7 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 
 		removeAll();
 
-		ImageIcon kbdIcon = app.getScaledIcon(GuiResourcesD.CAS_KEYBOARD);
+		ScaledIcon kbdIcon = app.getScaledIcon(GuiResourcesD.CAS_KEYBOARD);
 
 		iconHeight = kbdIcon.getIconHeight();
 		iconDimension = new Dimension(iconHeight, iconHeight);
@@ -339,59 +352,68 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 
 		// ========================
 		// text color button
-		final Dimension textColoriconHeight = new Dimension(iconHeight,
-				iconHeight);
+		final Dimension textColoriconHeight = new Dimension(iconHeight, iconHeight);
 
-		btnTextColor = new ColorPopupMenuButton(app, textColoriconHeight,
-				ColorPopupMenuButton.COLORSET_DEFAULT, false) {
+		btnTextColor =
+				new ColorPopupMenuButton(
+						app, textColoriconHeight, ColorPopupMenuButton.COLORSET_DEFAULT, false) {
 
-			private static final long serialVersionUID = 1L;
+					private static final long serialVersionUID = 1L;
 
-			private GColor geoColor;
+					private GColor geoColor;
 
-			@Override
-			public void update(List<GeoElement> geos) {
+					@Override
+					public void update(List<GeoElement> geos) {
 
-				boolean geosOK = checkGeoText(geos);
-				setVisible(geosOK);
+						boolean geosOK = checkGeoText(geos);
+						setVisible(geosOK);
 
-				if (geosOK) {
-					GeoElement geo = ((GeoElement) geos.get(0))
-							.getGeoElementForPropertiesDialog();
-					geoColor = ((GeoCasCell) geo).getFontColor();
-					updateColorTable();
+						if (geosOK) {
+							GeoElement geo = geos.get(0).getGeoElementForPropertiesDialog();
+							geoColor = ((GeoCasCell) geo).getFontColor();
+							updateColorTable();
 
-					// find the geoColor in the table and select it
-					int index = this.getColorIndex(geoColor);
-					setSelectedIndex(index);
+							// find the geoColor in the table and select it
+							int index = this.getColorIndex(geoColor);
+							setSelectedIndex(index);
 
-					// if nothing was selected, set the icon to show the
-					// non-standard color
-					if (index == -1) {
-						this.setIcon(getButtonIcon());
+							// if nothing was selected, set the icon to show the
+							// non-standard color
+							if (index == -1) {
+								this.setIcon(getButtonIcon());
+							}
+
+							setFgColor(geoColor);
+							// setFontStyle(((TextProperties) geo).getFontStyle());
+						}
 					}
 
-					setFgColor(geoColor);
-					// setFontStyle(((TextProperties) geo).getFontStyle());
-				}
-			}
-
-			@Override
-			public ImageIcon getButtonIcon() {
-				return GeoGebraIconD.createTextSymbolIcon("A",
-						app.getPlainFont(), textColoriconHeight,
-						GColorD.getAwtColor(getSelectedColor()), null);
-			}
-
-		};
+					@Override
+					public Icon getButtonIcon() {
+						return GeoGebraIconD.createTextSymbolIcon(
+								"A",
+								app.getPlainFont(),
+								textColoriconHeight,
+								GColorD.getAwtColor(getSelectedColor()),
+								null,
+								app.getImageManager().getPixelRatio());
+					}
+				};
 
 		btnTextColor.addActionListener(this);
 
 		// ========================================
 		// use as text button
-		ImageIcon useAsTextIcon = GeoGebraIconD.createStringIcon(
-				loc.getMenu("Text").substring(0, 1), app.getPlainFont(), true,
-				false, true, iconDimension, Color.black, null);
+		ScaledIcon useAsTextIcon = GeoGebraIconD.createStringIcon(
+				loc.getMenu("Text").substring(0, 1),
+				app.getPlainFont(),
+				true,
+				false,
+				true,
+				iconDimension,
+				Color.black,
+				null,
+				app.getImageManager().getPixelRatio());
 		btnUseAsText = new ToggleButtonD(useAsTextIcon, iconHeight) {
 
 			private static final long serialVersionUID = 1L;
@@ -401,16 +423,22 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 
 				setVisible(true);
 				btnUseAsText.setSelected(checkGeoText(geos));
-
 			}
 		};
 		btnUseAsText.addActionListener(this);
 
 		// ========================================
 		// bold text button
-		ImageIcon boldIcon = GeoGebraIconD.createStringIcon(
-				loc.getMenu("Bold").substring(0, 1), app.getPlainFont(), true,
-				false, true, iconDimension, Color.black, null);
+		ScaledIcon boldIcon = GeoGebraIconD.createStringIcon(
+				loc.getMenu("Bold").substring(0, 1),
+				app.getPlainFont(),
+				true,
+				false,
+				true,
+				iconDimension,
+				Color.black,
+				null,
+				app.getImageManager().getPixelRatio());
 		btnBold = new ToggleButtonD(boldIcon, iconHeight) {
 
 			private static final long serialVersionUID = 1L;
@@ -421,11 +449,9 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 				boolean geosOK = checkGeoText(geos);
 				setVisible(geosOK);
 				if (geosOK) {
-					GeoElement geo = ((GeoElement) geos.get(0))
-							.getGeoElementForPropertiesDialog();
+					GeoElement geo = geos.get(0).getGeoElementForPropertiesDialog();
 					int style = ((GeoCasCell) geo).getGeoText().getFontStyle();
-					btnBold.setSelected(style == Font.BOLD
-							|| style == (Font.BOLD + Font.ITALIC));
+					btnBold.setSelected(style == Font.BOLD || style == (Font.BOLD + Font.ITALIC));
 				}
 			}
 		};
@@ -433,9 +459,16 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 
 		// ========================================
 		// italic text button
-		ImageIcon italicIcon = GeoGebraIconD.createStringIcon(
-				loc.getMenu("Italic").substring(0, 1), app.getPlainFont(),
-				false, true, true, iconDimension, Color.black, null);
+		ScaledIcon italicIcon = GeoGebraIconD.createStringIcon(
+				loc.getMenu("Italic").substring(0, 1),
+				app.getPlainFont(),
+				false,
+				true,
+				true,
+				iconDimension,
+				Color.black,
+				null,
+				app.getImageManager().getPixelRatio());
 		btnItalic = new ToggleButtonD(italicIcon, iconHeight) {
 
 			private static final long serialVersionUID = 1L;
@@ -447,14 +480,11 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 				setVisible(geosOK);
 				this.setVisible(geosOK);
 				if (geosOK) {
-					GeoElement geo = ((GeoElement) geos.get(0))
-							.getGeoElementForPropertiesDialog();
+					GeoElement geo = geos.get(0).getGeoElementForPropertiesDialog();
 					int style = ((GeoCasCell) geo).getGeoText().getFontStyle();
-					btnItalic.setSelected(style == Font.ITALIC
-							|| style == (Font.BOLD + Font.ITALIC));
+					btnItalic.setSelected(style == Font.ITALIC || style == (Font.BOLD + Font.ITALIC));
 				}
 			}
-
 		};
 		btnItalic.addActionListener(this);
 
@@ -463,29 +493,30 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 
 		String[] textSizeArray = app.getLocalization().getFontSizeStrings();
 
-		btnTextSize = new PopupMenuButtonD(app, textSizeArray, -1, 1,
-				new Dimension(-1, iconHeight), SelectionTable.MODE_TEXT) {
+		btnTextSize =
+				new PopupMenuButtonD(
+						app, textSizeArray, -1, 1, new Dimension(-1, iconHeight), SelectionTable.MODE_TEXT) {
 
-			private static final long serialVersionUID = 1L;
+					private static final long serialVersionUID = 1L;
 
-			@Override
-			public void update(List<GeoElement> geos) {
+					@Override
+					public void update(List<GeoElement> geos) {
 
-				boolean geosOK = checkGeoText(geos);
-				setVisible(geosOK);
+						boolean geosOK = checkGeoText(geos);
+						setVisible(geosOK);
 
-				if (geosOK) {
-					GeoElement geo = geos.get(0);
-					setSelectedIndex(GeoText.getFontSizeIndex(
-							((GeoCasCell) geo).getFontSizeMultiplier())); // font
-																			// size
-																			// ranges
-																			// from
-					// -4 to 4, transform
-					// this to 0,1,..,4
-				}
-			}
-		};
+						if (geosOK) {
+							GeoElement geo = geos.get(0);
+							setSelectedIndex(
+									GeoText.getFontSizeIndex(((GeoCasCell) geo).getFontSizeMultiplier())); // font
+							// size
+							// ranges
+							// from
+							// -4 to 4, transform
+							// this to 0,1,..,4
+						}
+					}
+				};
 		btnTextSize.addActionListener(this);
 		btnTextSize.setKeepVisible(false);
 	}
@@ -502,5 +533,4 @@ public class CASStyleBar extends JToolBar implements ActionListener {
 		btnBold.setToolTipText(loc.getPlainTooltip("stylebar.Bold"));
 		btnItalic.setToolTipText(loc.getPlainTooltip("stylebar.Italic"));
 	}
-
 }

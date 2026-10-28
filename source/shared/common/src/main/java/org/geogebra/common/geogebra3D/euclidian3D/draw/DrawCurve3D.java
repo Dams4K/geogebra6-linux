@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import org.geogebra.common.euclidian.plot.CurvePlotter;
@@ -17,14 +33,15 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * @author ggb3D
- * 
+ *
  *         Drawable for GeoCurveCartesian3D
- * 
+ *
  */
 public class DrawCurve3D extends Drawable3DCurves implements HasZPick {
 
 	/** handle to the curve */
 	private CurveEvaluable curve;
+
 	private CurveHitting curveHitting;
 
 	private Coords boundsMin = new Coords(3);
@@ -39,14 +56,12 @@ public class DrawCurve3D extends Drawable3DCurves implements HasZPick {
 	public DrawCurve3D(EuclidianView3D a_view3d, CurveEvaluable curve) {
 		super(a_view3d, (GeoElement) curve);
 		this.curve = curve;
-
 	}
 
 	@Override
 	public void drawGeometry(Renderer renderer) {
 
 		renderer.getGeometryManager().draw(getGeometryIndex());
-
 	}
 
 	@Override
@@ -60,8 +75,7 @@ public class DrawCurve3D extends Drawable3DCurves implements HasZPick {
 		Manager manager = renderer.getGeometryManager();
 		PlotterBrush brush = manager.getBrush();
 		brush.start(getReusableGeometryIndex());
-		brush.setThickness(getGeoElement().getLineThickness(),
-				(float) view.getScale());
+		brush.setThickness(getGeoElement().getLineThickness(), (float) view.getScale());
 		brush.setAffineTexture(0f, 0f);
 		brush.setLength(1f);
 
@@ -91,8 +105,7 @@ public class DrawCurve3D extends Drawable3DCurves implements HasZPick {
 			max = curve.getMaxParameter();
 		}
 
-		CurvePlotter.plotCurve(curve, min, max, view, brush, false,
-				Gap.MOVE_TO);
+		CurvePlotter.plotCurve(curve, min, max, view, brush, false, Gap.MOVE_TO);
 
 		setGeometryIndex(brush.end());
 		endPacking();
@@ -100,7 +113,6 @@ public class DrawCurve3D extends Drawable3DCurves implements HasZPick {
 		manager.setNoBoundsRecorders();
 
 		return true;
-
 	}
 
 	@Override
@@ -112,8 +124,7 @@ public class DrawCurve3D extends Drawable3DCurves implements HasZPick {
 
 	@Override
 	protected void updateForView() {
-		if (getView3D().viewChangedByZoom()
-				|| getView3D().viewChangedByTranslate()) {
+		if (getView3D().viewChangedByZoom() || getView3D().viewChangedByTranslate()) {
 			updateForItSelf();
 		}
 	}
@@ -144,8 +155,7 @@ public class DrawCurve3D extends Drawable3DCurves implements HasZPick {
 			curveHitting = new CurveHitting(this, getView3D());
 		}
 
-		return curveHitting.hit(hitting, (Path) curve,
-				getGeoElement().getLineThickness() + 2);
+		return curveHitting.hit(hitting, (Path) curve, getGeoElement().getLineThickness() + 2);
 	}
 
 	@Override
@@ -178,9 +188,8 @@ public class DrawCurve3D extends Drawable3DCurves implements HasZPick {
 	}
 
 	@Override
-	public void setZPickIfBetter(double zNear, double zFar,
-			boolean discardPositive, double positionOnHitting) {
+	public void setZPickIfBetter(
+			double zNear, double zFar, boolean discardPositive, double positionOnHitting) {
 		this.setZPick(zNear, zFar, discardPositive, positionOnHitting);
 	}
-
 }

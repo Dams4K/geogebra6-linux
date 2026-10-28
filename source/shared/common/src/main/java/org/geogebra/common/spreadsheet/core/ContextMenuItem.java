@@ -1,8 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.spreadsheet.core;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Context menu items (for spreadsheet).
@@ -19,10 +35,23 @@ public class ContextMenuItem {
 		CALCULATE("Calculate"),
 		SUM("Sum.Tool"),
 		MEAN("Mean.Tool"),
+		SAMPLE_SD("Stats.SampleSD"),
+		SD("Stats.SD"),
+		MIN("Stats.Min"),
+		Q1("Stats.Quartile1"),
+		MEDIAN("Stats.Median"),
+		Q3("Stats.Q3"),
+		MAX("Stats.Max"),
+		STATISTICS("Statistics"),
+		STATISTICS_ONE_VARIABLE("1VariableStatistics"),
+		STATISTICS_TWO_VARIABLES("2VariableStatistics"),
+		STATISTICS_REGRESSION("Regression"),
+		STATISTICS_FREQUENCY_TABLE("FrequencyTable"),
 		CREATE_CHART("ContextMenu.CreateChart"),
 		LINE_CHART("ContextMenu.LineChart"),
 		BAR_CHART("ContextMenu.BarChart"),
 		HISTOGRAM("Histogram"),
+		BOX_PLOT("Boxplot"),
 		PIE_CHART("ContextMenu.PieChart"),
 		INSERT_ROW_ABOVE("ContextMenu.insertRowAbove"),
 		INSERT_ROW_BELOW("ContextMenu.insertRowBelow"),
@@ -30,36 +59,37 @@ public class ContextMenuItem {
 		INSERT_COLUMN_LEFT("ContextMenu.insertColumnLeft"),
 		INSERT_COLUMN_RIGHT("ContextMenu.insertColumnRight"),
 		DELETE_COLUMN("ContextMenu.deleteColumn"),
+		OBJECT_PROPERTIES("Properties"),
 		DIVIDER("");
 
-		public final @Nonnull String localizationKey;
+		public final @NonNull String localizationKey;
 
-		Identifier(@Nonnull String localizationKey) {
+		Identifier(@NonNull String localizationKey) {
 			this.localizationKey = localizationKey;
 		}
 	}
 
-	private final @Nonnull Identifier identifier;
+	private final @NonNull Identifier identifier;
 
 	/**
 	 * Creates a context menu item.
 	 * @param identifier identifier to specify the context menu item and its displayed text
 	 */
-	protected ContextMenuItem(@Nonnull Identifier identifier) {
+	protected ContextMenuItem(@NonNull Identifier identifier) {
 		this.identifier = identifier;
 	}
 
 	/**
 	 * @return the identifier that specifies the context menu item
 	 */
-	public @Nonnull Identifier getIdentifier() {
+	public @NonNull Identifier getIdentifier() {
 		return identifier;
 	}
 
 	/**
 	 * @return localization key for the displayed text, derived from the identifier
 	 */
-	public @Nonnull String getLocalizationKey() {
+	public @NonNull String getLocalizationKey() {
 		return identifier.localizationKey;
 	}
 
@@ -74,7 +104,7 @@ public class ContextMenuItem {
 		 * @param identifier identifier to specify the context menu item and its displayed text
 		 * @param action operation to execute when this item is selected
 		 */
-		public ActionableItem(@Nonnull Identifier identifier, @Nonnull Runnable action) {
+		public ActionableItem(@NonNull Identifier identifier, @NonNull Runnable action) {
 			super(identifier);
 			this.action = action;
 		}
@@ -98,7 +128,7 @@ public class ContextMenuItem {
 		 * @param identifier identifier to specify the context menu item and its displayed text
 		 * @param items child context menu items to be nested in this item
 		 */
-		public SubMenuItem(@Nonnull Identifier identifier, @Nonnull List<ContextMenuItem> items) {
+		public SubMenuItem(@NonNull Identifier identifier, @NonNull List<ContextMenuItem> items) {
 			super(identifier);
 			this.items = items;
 		}
@@ -106,7 +136,7 @@ public class ContextMenuItem {
 		/**
 		 * @return the list of child items
 		 */
-		public @Nonnull List<ContextMenuItem> getItems() {
+		public @NonNull List<ContextMenuItem> getItems() {
 			return this.items;
 		}
 	}

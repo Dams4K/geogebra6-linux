@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
@@ -8,9 +24,9 @@ import org.geogebra.common.kernel.geos.GeoElement;
 
 /**
  * Class for storing drawables includes in a DrawList
- * 
+ *
  * @author Mathieu
- * 
+ *
  */
 public class DrawListArray extends ArrayList<DrawableND> {
 
@@ -21,7 +37,7 @@ public class DrawListArray extends ArrayList<DrawableND> {
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param view
 	 *            view
 	 */
@@ -33,7 +49,7 @@ public class DrawListArray extends ArrayList<DrawableND> {
 
 	/**
 	 * Add the listElement's drawable
-	 * 
+	 *
 	 * @param listElement
 	 *            element to insert
 	 * @param drawablePos
@@ -44,9 +60,9 @@ public class DrawListArray extends ArrayList<DrawableND> {
 	 *            list in which we might find drawable for given geo
 	 * @return false if the drawable == null
 	 */
-	public boolean addToDrawableList(GeoElement listElement, int drawablePos,
-			int oldDrawableSize, DrawableND drawList) {
-		DrawableND d = null;
+	public boolean addToDrawableList(
+			GeoElement listElement, int drawablePos, int oldDrawableSize, DrawableND drawList) {
+		DrawableND d;
 		boolean inOldDrawableRange = drawablePos < oldDrawableSize;
 		if (inOldDrawableRange) {
 			// try to reuse old drawable
@@ -74,7 +90,7 @@ public class DrawListArray extends ArrayList<DrawableND> {
 
 	/**
 	 * For 3D: remove old drawable
-	 * 
+	 *
 	 * @param oldDrawable
 	 *            old drawable at same position
 	 * @param listElement
@@ -83,14 +99,14 @@ public class DrawListArray extends ArrayList<DrawableND> {
 	 *            list that wants to add this geo
 	 * @return new drawable
 	 */
-	protected DrawableND getDrawable(DrawableND oldDrawable,
-			GeoElement listElement, DrawableND drawList) {
+	protected DrawableND getDrawable(
+			DrawableND oldDrawable, GeoElement listElement, DrawableND drawList) {
 		return getDrawable(listElement, drawList);
 	}
 
 	/**
 	 * update the drawable
-	 * 
+	 *
 	 * @param d
 	 *            drawable to be updated
 	 */
@@ -100,15 +116,14 @@ public class DrawListArray extends ArrayList<DrawableND> {
 
 	/**
 	 * Returns UPDATED drawable for the geo
-	 * 
+	 *
 	 * @param listElement
 	 *            geo
 	 * @param drawList
 	 *            list that wants to add this geo
 	 * @return drawable for the geo
 	 */
-	private DrawableND getDrawable(GeoElement listElement,
-			DrawableND drawList) {
+	private DrawableND getDrawable(GeoElement listElement, DrawableND drawList) {
 
 		DrawableND d = view.getDrawableND(listElement);
 		if (d == null) {
@@ -131,5 +146,4 @@ public class DrawListArray extends ArrayList<DrawableND> {
 	protected DrawableND createDrawableND(GeoElement listElement) {
 		return view.newDrawable(listElement);
 	}
-
 }

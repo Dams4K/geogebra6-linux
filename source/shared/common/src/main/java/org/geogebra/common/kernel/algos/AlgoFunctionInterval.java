@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -37,7 +41,7 @@ public class AlgoFunctionInterval extends AlgoElement {
 	private final GeoFunction g; // output g
 	private ExpressionNode exp; // current expression of f
 	// (needed to notice change of f)
-	private final ExpressionNode condition; //for serialization only
+	private final ExpressionNode condition; // for serialization only
 
 	/**
 	 * @param cons
@@ -49,8 +53,8 @@ public class AlgoFunctionInterval extends AlgoElement {
 	 * @param b
 	 *            right bound
 	 */
-	public AlgoFunctionInterval(Construction cons, GeoFunctionable f,
-			GeoNumberValue a, GeoNumberValue b) {
+	public AlgoFunctionInterval(
+			Construction cons, GeoFunctionable f, GeoNumberValue a, GeoNumberValue b) {
 		super(cons);
 		this.f = f;
 		this.a = a;
@@ -60,8 +64,7 @@ public class AlgoFunctionInterval extends AlgoElement {
 		FunctionVariable fv = f.getFunction().getFunctionVariable();
 		condition = CmdFunction.buildInterval(kernel, a, fv, b);
 
-		g = f instanceof GeoFunction ? ((GeoFunction) f).copy()
-				: new GeoFunction(cons);
+		g = f instanceof GeoFunction ? ((GeoFunction) f).copy() : new GeoFunction(cons);
 
 		// buildFunction();
 		// g = initHelperAlgorithm();
@@ -122,10 +125,14 @@ public class AlgoFunctionInterval extends AlgoElement {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
-		return getLoc().getPlainDefault("FunctionAonIntervalBC",
-				"Function %0 on interval [%1, %2]", f.getLabel(tpl),
-				ageo.getLabel(tpl), bgeo.getLabel(tpl));
+	public final String toString(StringTemplate tpl) {
+		return getLoc()
+				.getPlainDefault(
+						"FunctionAonIntervalBC",
+						"Function %0 on interval [%1, %2]",
+						f.getLabel(tpl),
+						ageo.getLabel(tpl),
+						bgeo.getLabel(tpl));
 	}
 
 	public ExpressionNode getCondition() {

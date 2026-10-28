@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.algos;
 
 import org.geogebra.common.kernel.kernelND.GeoElementND;
@@ -12,7 +28,7 @@ public enum Algos implements GetCommand {
 	AlgoMacro;
 	private final String command;
 
-	private Algos() {
+	Algos() {
 		this.command = "Expression";
 	}
 
@@ -28,10 +44,8 @@ public enum Algos implements GetCommand {
 	 *            command, macro or expression
 	 * @return whether geo is using given command
 	 */
-	public static boolean isUsedFor(GetCommand cmdOrExpression,
-			GeoElementND geo) {
+	public static boolean isUsedFor(GetCommand cmdOrExpression, GeoElementND geo) {
 		return geo.getParentAlgorithm() != null
 				&& cmdOrExpression.equals(geo.getParentAlgorithm().getClassName());
 	}
-
 }

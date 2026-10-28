@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * GeoVec2D.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 31. August 2001, 11:34
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.arithmetic;
@@ -34,11 +32,12 @@ import org.geogebra.common.kernel.printing.printable.vector.PrintableVector;
 import org.geogebra.common.kernel.printing.printer.vector.VectorNodeStringifier;
 import org.geogebra.common.kernel.printing.printer.vector.VectorPrinterMapBuilder;
 import org.geogebra.common.kernel.printing.printer.vector.VectorPrintingMode;
+import org.geogebra.common.main.Localization;
 
 import com.google.j2objc.annotations.Weak;
 
 /**
- * 
+ *
  * @author Markus
  */
 public class MyVecNode extends ValidExpression
@@ -55,28 +54,30 @@ public class MyVecNode extends ValidExpression
 
 	private VectorNodeStringifier stringifier;
 	private int mode = Kernel.COORD_CARTESIAN;
+
 	@Weak
 	private Kernel kernel;
+
 	private boolean isCASVector;
 
 	/**
 	 * Creates new MyVec2D
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
 	public MyVecNode(Kernel kernel) {
 		this.kernel = kernel;
 		VectorPrinterMapBuilder builder = new VectorPrinterMapBuilder2D();
-		stringifier = new VectorNodeStringifier(this,
-				builder.build(kernel.getApplication().getSettings().getGeneral()));
+		stringifier = new VectorNodeStringifier(
+				this, builder.build(kernel.getApplication().getSettings().getGeneral()));
 		stringifier.setPrintingMode(VectorPrintingMode.Cartesian);
 	}
 
 	/**
 	 * Creates new MyVec2D with coordinates (x,y) as ExpressionNodes. Both
 	 * nodes must evaluate to NumberValues.
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 * @param x
@@ -91,8 +92,7 @@ public class MyVecNode extends ValidExpression
 
 	@Override
 	public MyVecNode deepCopy(Kernel kernel1) {
-		MyVecNode ret = new MyVecNode(kernel1, x.deepCopy(kernel1),
-				y.deepCopy(kernel1));
+		MyVecNode ret = new MyVecNode(kernel1, x.deepCopy(kernel1), y.deepCopy(kernel1));
 		ret.setMode(mode);
 		if (isCASVector()) {
 			ret.setupCASVector();
@@ -148,23 +148,25 @@ public class MyVecNode extends ValidExpression
 	@Override
 	public String toString(StringTemplate tpl) {
 		return hasPolarCoords()
-				? stringifier.toString(tpl, VectorPrintingMode.Polar) : stringifier.toString(tpl);
+				? stringifier.toString(tpl, VectorPrintingMode.Polar)
+				: stringifier.toString(tpl);
 	}
 
 	@Override
 	public String toValueString(StringTemplate tpl) {
 		if (tpl.getStringType().isGiac() && isEquation(x) && isEquation(y)) {
 			Traversing.VariableReplacer replacer = new Traversing.VariableReplacer(kernel);
-			Stream.of("x", "y", "z").forEach(varName ->
-					replacer.addVars(varName, new FunctionVariable(kernel, varName))
-			);
+			Stream.of("x", "y", "z")
+					.forEach(varName -> replacer.addVars(varName, new FunctionVariable(kernel, varName)));
 			ExpressionValue xCopy = x.deepCopy(kernel).traverse(replacer);
 			ExpressionValue yCopy = y.deepCopy(kernel).traverse(replacer);
 			Construction cons = kernel.getConstruction();
 			boolean suppressLabelsActive = cons.isSuppressLabelsActive();
 			cons.setSuppressLabelCreation(true);
-			GeoElement[] geos = kernel.getAlgebraProcessor()
-					.processEquationIntersect(xCopy, yCopy);
+			GeoElement[] geos = kernel.getAlgebraProcessor().processEquationIntersect(xCopy, yCopy);
+			if (geos == null || geos.length == 0) {
+				return stringifier.toValueString(tpl);
+			}
 			cons.setSuppressLabelCreation(suppressLabelsActive);
 			return geos[0].toValueString(tpl);
 		}
@@ -231,8 +233,7 @@ public class MyVecNode extends ValidExpression
 	// could be vector or point
 	@Override
 	public ValueType getValueType() {
-		return this.mode != Kernel.COORD_COMPLEX ? ValueType.NONCOMPLEX2D
-				: ValueType.COMPLEX;
+		return this.mode != Kernel.COORD_COMPLEX ? ValueType.NONCOMPLEX2D : ValueType.COMPLEX;
 	}
 
 	// could be vector or point
@@ -247,7 +248,7 @@ public class MyVecNode extends ValidExpression
 	}
 
 	@Override
-	final public boolean contains(ExpressionValue ev) {
+	public final boolean contains(ExpressionValue ev) {
 		return ev == this;
 	}
 
@@ -261,6 +262,11 @@ public class MyVecNode extends ValidExpression
 	 */
 	public Kernel getKernel() {
 		return kernel;
+	}
+
+	@Override
+	public Localization getLocalization() {
+		return kernel.getLocalization();
 	}
 
 	@Override
@@ -282,9 +288,12 @@ public class MyVecNode extends ValidExpression
 	@Override
 	public ExpressionValue getChild(int index) {
 		switch (index) {
-		case 0: return x;
-		case 1: return y;
-		default: return super.getChild(index);
+			case 0:
+				return x;
+			case 1:
+				return y;
+			default:
+				return super.getChild(index);
 		}
 	}
 
@@ -321,7 +330,7 @@ public class MyVecNode extends ValidExpression
 
 	@Override
 	public double[] getPointAsDouble() {
-		return new double[] { x.evaluateDouble(), y.evaluateDouble(), 0 };
+		return new double[] {x.evaluateDouble(), y.evaluateDouble(), 0};
 	}
 
 	@Override
@@ -332,14 +341,12 @@ public class MyVecNode extends ValidExpression
 		if (y instanceof ReplaceChildrenByValues) {
 			((ReplaceChildrenByValues) y).replaceChildrenByValues(geo);
 		}
-
 	}
 
 	@Override
 	public ExpressionValue evaluate(StringTemplate tpl) {
 		// MyNumberPair used for datafunction -- don't simplify
-		if (!(this instanceof MyNumberPair)
-				&& (x.evaluatesToList() || y.evaluatesToList())) {
+		if (!(this instanceof MyNumberPair) && (x.evaluatesToList() || y.evaluatesToList())) {
 			MyList result = new MyList(kernel);
 			ExpressionValue xEval = x.evaluate(tpl);
 			ExpressionValue yEval = y.evaluate(tpl);
@@ -361,8 +368,7 @@ public class MyVecNode extends ValidExpression
 				yEval = y.deepCopy(kernel);
 			}
 			for (int idx = 0; idx < size; idx++) {
-				MyVecNode el = new MyVecNode(kernel, MyList.get(xEval, idx),
-						MyList.get(yEval, idx));
+				MyVecNode el = new MyVecNode(kernel, MyList.get(xEval, idx), MyList.get(yEval, idx));
 				el.setMode(mode);
 				result.addListElement(el);
 			}
@@ -376,7 +382,7 @@ public class MyVecNode extends ValidExpression
 		return null;
 	}
 
-    @Override
+	@Override
 	public int getCoordinateSystem() {
 		return mode;
 	}

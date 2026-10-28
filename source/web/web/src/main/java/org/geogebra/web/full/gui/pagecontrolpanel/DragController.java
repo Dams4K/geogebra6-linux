@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.pagecontrolpanel;
 
 import java.util.ArrayList;
@@ -13,18 +29,20 @@ import org.gwtproject.timer.client.Timer;
 
 class DragController {
 
-	private static final int DROPANIM_SPEED = 5;
+	private static final int DROP_ANIMATION_SPEED = 5;
 
 	private final Cards cards;
 	private final App app;
 
 	/** The page which the pointer was down at start. */
 	private PagePreviewCard clicked;
+
 	private final Timer dropAnimTimer;
 	private final AutoScrollTimer autoScroll;
 
 	/** Currently dragged card */
 	private PagePreviewCard dragged;
+
 	private int target;
 
 	/** interface to query the list of cards */
@@ -47,7 +65,7 @@ class DragController {
 
 		/**
 		 * Select the card.
-		 * 
+		 *
 		 * @param card
 		 *            to select.
 		 */
@@ -55,7 +73,7 @@ class DragController {
 
 		/**
 		 * Change the position of two cards.
-		 * 
+		 *
 		 * @param srcIdx
 		 *            the source index (the dragged one)
 		 * @param destIdx
@@ -65,7 +83,7 @@ class DragController {
 
 		/**
 		 * Perform a click on the given page.
-		 * 
+		 *
 		 * @param pageIdx
 		 *            the index of the page to click.
 		 * @param select
@@ -79,7 +97,7 @@ class DragController {
 		void resetCardPositions();
 	}
 
-	private class AutoScrollTimer extends Timer {
+	private final class AutoScrollTimer extends Timer {
 
 		private static final int SCROLL_TIME = 5;
 		private int scroll;
@@ -98,8 +116,8 @@ class DragController {
 			this.scroll = scroll;
 			scheduleRepeating(SCROLL_TIME);
 		}
-		
-		public void checkIfNeeded(int y) {
+
+		void checkIfNeeded(int y) {
 			if (y < getApp().getAbsTop() + PagePreviewCard.MARGIN) {
 				start(-2);
 			} else if (y > getApp().getHeight() - PagePreviewCard.MARGIN) {
@@ -109,10 +127,10 @@ class DragController {
 			}
 		}
 	}
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param slides
 	 *            the cards interface.
 	 * @param app
@@ -141,8 +159,8 @@ class DragController {
 	}
 
 	private int getDropIndex() {
-		return (int) Math.round((double) (dragged.getTop() - PagePreviewCard.MARGIN)
-				/ PagePreviewCard.TOTAL_HEIGHT);
+		return (int) Math.round(
+				(double) (dragged.getTop() - PagePreviewCard.MARGIN) / PagePreviewCard.TOTAL_HEIGHT);
 	}
 
 	private void prepareDragCard() {
@@ -189,7 +207,8 @@ class DragController {
 
 			PagePreviewCard targetCard = cards.cardAt(target);
 			int newTop = PagePreviewCard.computeTop(target + adjustedTarget)
-					- dragged.getTop() + PagePreviewCard.MARGIN;
+					- dragged.getTop()
+					+ PagePreviewCard.MARGIN;
 			setTop(targetCard, newTop);
 		}
 	}
@@ -214,13 +233,13 @@ class DragController {
 	}
 
 	private void findTarget() {
-		double ratio = (double) (dragged.getTop() - dragged.getComputedTop())
-				/ PagePreviewCard.TOTAL_HEIGHT;
+		double ratio =
+				(double) (dragged.getTop() - dragged.getComputedTop()) / PagePreviewCard.TOTAL_HEIGHT;
 		int diff = (int) ((ratio > 0) ? Math.ceil(ratio) : Math.floor(ratio));
 		target = dragged.getPageIndex() + diff;
 	}
 
-	public void adjustTop(PagePreviewCard current) {
+	private void adjustTop(PagePreviewCard current) {
 		int index = current.getPageIndex();
 		if (dragged.getPageIndex() > index && index > target) {
 			index++;
@@ -235,7 +254,7 @@ class DragController {
 		return index() != -1 && getDropIndex() != -1;
 	}
 
-	public void cancel() {
+	private void cancel() {
 		CancelEventTimer.resetDrag();
 		if (isValid()) {
 			dragged.removeStyleName("dragged");
@@ -248,7 +267,7 @@ class DragController {
 	/**
 	 * @return see {@link App}
 	 */
-	public AppW getApp() {
+	private AppW getApp() {
 		return (AppW) app;
 	}
 
@@ -275,8 +294,7 @@ class DragController {
 	 */
 	private int cardIndexAt(int x, int y) {
 		for (PagePreviewCard card : cards.getCards()) {
-			if ((!isValid() || card != dragged)
-					&& card.isHit(x, y)) {
+			if ((!isValid() || card != dragged) && card.isHit(x, y)) {
 				return card.getPageIndex();
 			}
 		}
@@ -288,7 +306,7 @@ class DragController {
 	 * @param x - coordinate.
 	 * @param y - coordinate.
 	 */
-	public void start(int x, int y) {
+	void start(int x, int y) {
 		if (clicked != null || isValid()) {
 			cancelDrag();
 		}
@@ -317,7 +335,7 @@ class DragController {
 
 	/**
 	 * Called at pointer (mouse or touch) move.
-	 * 
+	 *
 	 * @param y
 	 *            coordinate.
 	 * @param touch
@@ -366,14 +384,13 @@ class DragController {
 			if (isValid()) {
 				cards.clickPage(index(), false);
 			}
-
 		}
 		cancelDrag();
 	}
 
 	private void createDropAnimation() {
 		CancelEventTimer.resetDrag();
-		dropAnimTimer.scheduleRepeating(DROPANIM_SPEED);
+		dropAnimTimer.scheduleRepeating(DROP_ANIMATION_SPEED);
 	}
 
 	/**
@@ -394,8 +411,7 @@ class DragController {
 		if (index() >= 0) {
 			boolean moved = index() != getDropIndex();
 			if (moved) {
-				Event evt = new Event(EventType.MOVE_PAGE, null,
-						dragged == null ? "" : dragged.getID());
+				Event evt = new Event(EventType.MOVE_PAGE, null, dragged == null ? "" : dragged.getID());
 				HashMap<String, Object> args = new HashMap<>();
 				args.put("to", getDropIndex());
 				app.dispatchEvent(evt.setJsonArgument(args));
@@ -420,7 +436,7 @@ class DragController {
 	 * @param y vertical position
 	 * @return true, if a card is found at position (x,y)
 	 */
-	public boolean hitCard(int x, int y) {
+	boolean hitCard(int x, int y) {
 		return cardIndexAt(x, y) != -1;
 	}
 }

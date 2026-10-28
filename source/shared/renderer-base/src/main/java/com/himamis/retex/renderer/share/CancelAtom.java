@@ -45,7 +45,8 @@
 
 package com.himamis.retex.renderer.share;
 
-import com.himamis.retex.renderer.share.platform.graphics.Color;
+import org.geogebra.common.awt.GColor;
+
 import com.himamis.retex.renderer.share.serialize.HasTrueBase;
 
 /**
@@ -53,17 +54,19 @@ import com.himamis.retex.renderer.share.serialize.HasTrueBase;
  */
 public class CancelAtom extends Atom implements HasTrueBase {
 
-	public static enum Type {
-		SLASH, BACKSLASH, X
+	public enum Type {
+		SLASH,
+		BACKSLASH,
+		X
 	}
 
-	private static Color cancelColor = null;
+	private static GColor cancelColor = null;
 
 	private final Atom base;
 	private final Type ctype;
-	private final Color color;
+	private final GColor color;
 
-	public CancelAtom(final Atom base, final Type ctype, final Color color) {
+	public CancelAtom(final Atom base, final Type ctype, final GColor color) {
 		this.base = base;
 		this.ctype = ctype;
 		this.color = color;
@@ -78,10 +81,8 @@ public class CancelAtom extends Atom implements HasTrueBase {
 	@Override
 	public Box createBox(TeXEnvironment env) {
 		final Box b = base.createBox(env);
-		final double drt = env.getTeXFont()
-				.getDefaultRuleThickness(env.getStyle());
-		final double extra = new TeXLength(Unit.EX, 0.5)
-				.getValue(env);
+		final double drt = env.getTeXFont().getDefaultRuleThickness(env.getStyle());
+		final double extra = new TeXLength(Unit.EX, 0.5).getValue(env);
 		return new CancelBox(b, ctype, drt, extra, color);
 	}
 
@@ -94,7 +95,7 @@ public class CancelAtom extends Atom implements HasTrueBase {
 		final Atom c = sac.get();
 		if (c instanceof ColorAtom) {
 			final ColorAtom ca = (ColorAtom) c;
-			Color col = ca.getFg();
+			GColor col = ca.getFg();
 			if (col == null) {
 				col = ca.getBg();
 			}
@@ -158,5 +159,4 @@ public class CancelAtom extends Atom implements HasTrueBase {
 	public Atom getTrueBase() {
 		return base;
 	}
-
 }

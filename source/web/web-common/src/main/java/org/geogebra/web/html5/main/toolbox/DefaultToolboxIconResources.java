@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.main.toolbox;
 
 import org.geogebra.web.resources.SVGResource;
@@ -29,6 +45,42 @@ public interface DefaultToolboxIconResources extends ClientBundle {
 
 	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/mow/toolbox/tool_shapes.svg")
 	SVGResource shapes();
+
+	@Source("org/geogebra/common/icons/svg/web/toolIcons/mode_shapesquare.svg")
+	SVGResource square();
+
+	@Source("org/geogebra/common/icons/svg/web/toolIcons/mode_shaperectangle.svg")
+	SVGResource rectangle();
+
+	@Source("org/geogebra/common/icons/svg/web/toolIcons/mode_shapetriangle.svg")
+	SVGResource triangle();
+
+	@Source("org/geogebra/common/icons/svg/web/toolIcons/mode_circle.svg")
+	SVGResource circle();
+
+	@Source("org/geogebra/common/icons/svg/web/toolIcons/mode_shapeellipse.svg")
+	SVGResource ellipse();
+
+	@Source("org/geogebra/common/icons/svg/web/toolIcons/mode_pentagon.svg")
+	SVGResource pentagon();
+
+	@Source("org/geogebra/common/icons/svg/web/toolIcons/mode_line.svg")
+	SVGResource line();
+
+	@Source("org/geogebra/common/icons/svg/web/toolIcons/mode_shapefreeform.svg")
+	SVGResource freeform();
+
+	@Source("org/geogebra/common/icons/svg/web/toolIcons/mode_parallelogram.svg")
+	SVGResource parallelogram();
+
+	@Source("org/geogebra/common/icons/svg/web/toolIcons/mode_stadium.svg")
+	SVGResource stadium();
+
+	@Source("org/geogebra/common/icons/svg/web/toolIcons/mode_curve.svg")
+	SVGResource curve();
+
+	@Source("org/geogebra/common/icons/svg/web/toolIcons/mode_masktool.svg")
+	SVGResource mask();
 
 	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/mow/toolbox/text_fields.svg")
 	SVGResource texts();
@@ -90,4 +142,28 @@ public interface DefaultToolboxIconResources extends ClientBundle {
 	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/ev/target.svg")
 	SVGResource target();
 
+	// MEBIS TOOLBOX SVGS
+	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/mow/toolbox/polygon.svg")
+	SVGResource pentagon_fontawesome();
+
+	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/mow/toolbox/ellipse.svg")
+	SVGResource ellipse_fontawesome();
+
+	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/mow/toolbox/freeform.svg")
+	SVGResource freeform_fontawesome();
+
+	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/mow/toolbox/geogebra.svg")
+	SVGResource geogebra_fontawesome();
+
+	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/mow/toolbox/line.svg")
+	SVGResource curve_fontawesome();
+
+	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/mow/toolbox/parallel.svg")
+	SVGResource parallelogram_fontawesome();
+
+	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/mow/toolbox/stadium.svg")
+	SVGResource stadium_fontawesome();
+
+	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/mow/toolbox/mask.svg")
+	SVGResource mask_fontawesome();
 }

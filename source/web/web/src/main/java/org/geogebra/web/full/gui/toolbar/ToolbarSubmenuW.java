@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbar;
 
 import org.geogebra.common.euclidian.EuclidianConstants;
@@ -20,7 +36,7 @@ import org.gwtproject.user.client.ui.Label;
 /**
  * Submenu for ModeToggleMenu. This extension is needed so that this FlowPanel
  * can act as a popup.
- * 
+ *
  * @author bencze
  */
 public class ToolbarSubmenuW extends FlowPanel implements HasHide {
@@ -80,13 +96,11 @@ public class ToolbarSubmenuW extends FlowPanel implements HasHide {
 		setStyleName("visible", visible);
 		if (visible) {
 			app.invokeLater(() -> {
-				if (itemList.getOffsetWidth()
-						+ order * 45 > app
-								.getWidth()) {
-					itemList.getElement().getStyle().setLeft(
-							app.getWidth() - 45 * order
-									- itemList.getOffsetWidth() - 10,
-							Unit.PX);
+				if (itemList.getOffsetWidth() + order * 45 > app.getWidth()) {
+					itemList
+							.getElement()
+							.getStyle()
+							.setLeft(app.getWidth() - 45 * order - itemList.getOffsetWidth() - 10, Unit.PX);
 				}
 			});
 		}
@@ -100,7 +114,7 @@ public class ToolbarSubmenuW extends FlowPanel implements HasHide {
 	/**
 	 * Creates a list item, adds an image and a label with the specified mode,
 	 * and adds it to the submenu list.
-	 * 
+	 *
 	 * @param addMode
 	 *            the mode to be used with this item
 	 * @return the newly created {@code ListItem}
@@ -134,8 +148,7 @@ public class ToolbarSubmenuW extends FlowPanel implements HasHide {
 				|| mode == EuclidianConstants.MODE_ERASER) {
 			img.addStyleName("mowPanelButton");
 		}
-		if (mode == EuclidianConstants.MODE_IMAGE
-				|| mode == EuclidianConstants.MODE_DELETE) {
+		if (mode == EuclidianConstants.MODE_IMAGE || mode == EuclidianConstants.MODE_DELETE) {
 			img.addStyleName("plusPadding");
 		}
 		return img;

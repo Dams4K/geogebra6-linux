@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
@@ -11,8 +27,8 @@ public class SurfaceParameter {
 	private static final short ROOT_MESH_INTERVALS_SPEED_TO_QUALITY_FACTOR = 2;
 	// max factor
 	private static final short ROOT_MESH_INTERVALS_MAX_FACTOR = 2;
-	private static final double ROOT_MESH_INTERVALS_MAX_FACTOR_INVERSE = 1.0
-			/ ROOT_MESH_INTERVALS_MAX_FACTOR;
+	private static final double ROOT_MESH_INTERVALS_MAX_FACTOR_INVERSE =
+			1.0 / ROOT_MESH_INTERVALS_MAX_FACTOR;
 	/**
 	 * says if we draw borders for wireframe (we use short for array index
 	 * shifting)
@@ -22,6 +38,7 @@ public class SurfaceParameter {
 	public boolean wireframeUnique;
 	/** steps to draw wireframe */
 	public int wireFrameStep;
+
 	public double delta;
 	public double borderMin;
 	public double borderMax;
@@ -41,10 +58,8 @@ public class SurfaceParameter {
 			if (this.step > this.delta) {
 				// we have maximum one wireframe line
 				this.wireframeUnique = true;
-				double uWireFrame = Math.ceil(this.borderMin / this.step)
-						* this.step;
-				this.wireFrameStep = (int) (n * (this.borderMax - uWireFrame)
-						/ this.delta);
+				double uWireFrame = Math.ceil(this.borderMin / this.step) * this.step;
+				this.wireFrameStep = (int) (n * (this.borderMax - uWireFrame) / this.delta);
 
 				this.step = this.delta / n;
 				this.max = uWireFrame + this.step * this.wireFrameStep;
@@ -58,13 +73,11 @@ public class SurfaceParameter {
 				if (factor > 1) {
 					this.wireFrameStep = (int) Math.ceil(factor);
 				} else if (factor < ROOT_MESH_INTERVALS_MAX_FACTOR_INVERSE) {
-					int stepFactor = (int) Math.ceil(
-							ROOT_MESH_INTERVALS_MAX_FACTOR_INVERSE / factor);
+					int stepFactor = (int) Math.ceil(ROOT_MESH_INTERVALS_MAX_FACTOR_INVERSE / factor);
 					// Log.debug("stepFactor = " + stepFactor);
 					this.step *= stepFactor;
 				}
-				if (levelOfDetail == LevelOfDetail.QUALITY
-						&& this.wireFrameStep == 1) {
+				if (levelOfDetail == LevelOfDetail.QUALITY && this.wireFrameStep == 1) {
 					this.wireFrameStep *= ROOT_MESH_INTERVALS_SPEED_TO_QUALITY_FACTOR;
 				}
 				this.max = Math.floor(this.borderMax / this.step) * this.step;
@@ -96,22 +109,18 @@ public class SurfaceParameter {
 	 * @param index
 	 *            parameter index
 	 */
-	public void initBorder(SurfaceEvaluable surfaceGeo, EuclidianView3D view3d,
-			int index) {
+	public void initBorder(SurfaceEvaluable surfaceGeo, EuclidianView3D view3d, int index) {
 		borderMin = surfaceGeo.getMinParameter(index);
 		borderMax = surfaceGeo.getMaxParameter(index);
 		step = Double.NaN;
 		step = Double.NaN;
 
-		if (((GeoElement) surfaceGeo).isGeoFunctionNVar()
-				|| (surfaceGeo instanceof GeoFunction)) {
+		if (((GeoElement) surfaceGeo).isGeoFunctionNVar() || (surfaceGeo instanceof GeoFunction)) {
 			if (Double.isNaN(borderMin)) {
-				borderMin = view3d.getClippingCubeDrawable()
-						.getMinMax()[index][0];
+				borderMin = view3d.getClippingCubeDrawable().getMinMax()[index][0];
 			}
 			if (Double.isNaN(borderMax)) {
-				borderMax = view3d.getClippingCubeDrawable()
-						.getMinMax()[index][1];
+				borderMax = view3d.getClippingCubeDrawable().getMinMax()[index][1];
 			}
 
 			// don't draw borders
@@ -119,8 +128,7 @@ public class SurfaceParameter {
 
 			// wireframe follows the grid
 			step = view3d.getAxisNumberingDistance(index);
-		} else if (((GeoSurfaceCartesianND) surfaceGeo)
-				.isSurfaceOfRevolutionAroundOx()) {
+		} else if (((GeoSurfaceCartesianND) surfaceGeo).isSurfaceOfRevolutionAroundOx()) {
 			// cartesian surface of revolution
 			if (index == 0) {
 				borderMin = view3d.getXmin();
@@ -153,5 +161,4 @@ public class SurfaceParameter {
 		}
 		return (this.n - 1) / this.wireFrameStep + 2 * this.wireframeBorder;
 	}
-
 }

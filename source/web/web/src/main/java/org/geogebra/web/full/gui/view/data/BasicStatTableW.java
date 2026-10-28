@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.data;
 
 import org.geogebra.common.gui.view.data.DataVariable.GroupType;
@@ -14,12 +30,11 @@ import org.gwtproject.user.client.ui.FlowPanel;
 /**
  * Displays statistics for DataAnalysisView when in one variable or regression
  * mode.
- * 
+ *
  * @author G. Sturr
- * 
+ *
  */
-public class BasicStatTableW extends FlowPanel implements StatPanelInterfaceW,
-		StatTableListener {
+public class BasicStatTableW extends FlowPanel implements StatPanelInterfaceW, StatTableListener {
 	protected final AppW app;
 	private StatTableModel model;
 
@@ -38,8 +53,7 @@ public class BasicStatTableW extends FlowPanel implements StatPanelInterfaceW,
 	 * @param defaultModel
 	 *            model
 	 */
-	public BasicStatTableW(AppW app, DataAnalysisViewW statDialog,
-			boolean defaultModel) {
+	public BasicStatTableW(AppW app, DataAnalysisViewW statDialog, boolean defaultModel) {
 		this.daView = statDialog;
 		this.app = app;
 		setStyleName("daStatistics");
@@ -61,24 +75,39 @@ public class BasicStatTableW extends FlowPanel implements StatPanelInterfaceW,
 	protected void initStatTable() {
 
 		statTable = new StatTableW();
-		statTable.setStatTable(getModel().getRowCount(), getModel().getRowNames(),
-				getColumnCount(), getModel().getColumnNames());
+		statTable.setStatTable(
+				getModel().getRowCount(),
+				getModel().getRowNames(),
+				getColumnCount(),
+				getModel().getColumnNames());
 		clear();
 		add(statTable);
 	}
 
+	/**
+	 * @return the row names of the underlying stat table model.
+	 */
 	public String[] getRowNames() {
 		return getModel().getRowNames();
 	}
 
+	/**
+	 * @return the column names of the underlying stat table model.
+	 */
 	public String[] getColumnNames() {
 		return getModel().getColumnNames();
 	}
 
+	/**
+	 * @return the number of data rows, excluding the header row
+	 */
 	public int getRowCount() {
 		return getModel().getRowCount() - 1;
 	}
 
+	/**
+	 * @return the number of data columns.
+	 */
 	public int getColumnCount() {
 		return 2;
 	}
@@ -88,18 +117,19 @@ public class BasicStatTableW extends FlowPanel implements StatPanelInterfaceW,
 	/**
 	 * Evaluates all statistics for the selected data list. If data source is
 	 * not valid, the result cells are set blank.
-	 * 
+	 *
 	 */
 	@Override
 	public void updatePanel() {
-		statTable.setStatTable(getModel().getRowCount(), getModel()
-				.getRowNames(), getColumnCount(), getModel()
-				.getColumnNames());
+		statTable.setStatTable(
+				getModel().getRowCount(),
+				getModel().getRowNames(),
+				getColumnCount(),
+				getModel().getColumnNames());
 		app.getAsyncManager().scheduleCallback(getModel()::updatePanel);
 	}
 
-	protected AlgoElement getAlgo(Statistic algoName, GeoList dataList,
-			GeoElement geoRegression) {
+	protected AlgoElement getAlgo(Statistic algoName, GeoList dataList, GeoElement geoRegression) {
 		return getModel().getAlgo(algoName, dataList, geoRegression);
 	}
 
@@ -130,8 +160,7 @@ public class BasicStatTableW extends FlowPanel implements StatPanelInterfaceW,
 
 	@Override
 	public void setValueAt(double value, int row, int column) {
-		statTable.setValueAt(daView.getModel().format(value), row,
-				column + 1);
+		statTable.setValueAt(daView.getModel().format(value), row, column + 1);
 	}
 
 	@Override
@@ -157,5 +186,4 @@ public class BasicStatTableW extends FlowPanel implements StatPanelInterfaceW,
 	public StatTableModel getModel() {
 		return model;
 	}
-
 }

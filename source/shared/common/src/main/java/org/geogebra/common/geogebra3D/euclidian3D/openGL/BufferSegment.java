@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.openGL;
 
 import org.geogebra.common.geogebra3D.euclidian3D.openGL.ManagerShaders.TypeElement;
@@ -11,11 +27,13 @@ class BufferSegment {
 	int elementsOffset;
 	/** length for elements in BufferPack */
 	private int elementsLength;
+
 	private int elementsAvailableLength;
 	/** offset for indices in BufferPack */
 	int indicesOffset;
 	/** length for indices in BufferPack */
 	private int indicesLength;
+
 	private int indicesAvailableLength;
 	/** BufferPack */
 	BufferPackAbstract bufferPack;
@@ -24,7 +42,7 @@ class BufferSegment {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param bufferPack
 	 *            buffer pack
 	 * @param elementsLength
@@ -32,15 +50,18 @@ class BufferSegment {
 	 * @param indicesLength
 	 *            indices length
 	 */
-	public BufferSegment(BufferPackAbstract bufferPack, int elementsLength,
-			int indicesLength) {
-		this(bufferPack, bufferPack.elementsLength, elementsLength,
-				bufferPack.indicesLength, indicesLength);
+	BufferSegment(BufferPackAbstract bufferPack, int elementsLength, int indicesLength) {
+		this(
+				bufferPack,
+				bufferPack.elementsLength,
+				elementsLength,
+				bufferPack.indicesLength,
+				indicesLength);
 	}
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param bufferPack
 	 *            buffer pack
 	 * @param elementsOffset
@@ -52,8 +73,11 @@ class BufferSegment {
 	 * @param indicesLength
 	 *            indices length
 	 */
-	public BufferSegment(BufferPackAbstract bufferPack, int elementsOffset,
-			int elementsLength, int indicesOffset,
+	BufferSegment(
+			BufferPackAbstract bufferPack,
+			int elementsOffset,
+			int elementsLength,
+			int indicesOffset,
 			int indicesLength) {
 		this.bufferPack = bufferPack;
 		this.elementsOffset = elementsOffset;
@@ -65,91 +89,89 @@ class BufferSegment {
 	}
 
 	/**
-	 * 
+	 *
 	 * set index to where start elements and indices
-	 * 
+	 *
 	 * @param index
 	 *            index
 	 */
-	public void getStart(Index index) {
+	void getStart(Index index) {
 		index.set(elementsOffset, indicesOffset);
 	}
 
 	/**
 	 * set index to where end elements and indices
-	 * 
+	 *
 	 * @param index
 	 *            index
 	 */
-	public void getEnd(Index index) {
-		index.set(elementsOffset + elementsAvailableLength,
-				indicesOffset + indicesAvailableLength);
+	void getEnd(Index index) {
+		index.set(elementsOffset + elementsAvailableLength, indicesOffset + indicesAvailableLength);
 	}
 
 	/**
-	 * 
+	 *
 	 * @return element length
 	 */
-	public int getElementsLength() {
+	int getElementsLength() {
 		return elementsLength;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return elements available length
 	 */
-	public int getElementsAvailableLength() {
+	int getElementsAvailableLength() {
 		return elementsAvailableLength;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return indices length
 	 */
-	public int getIndicesLength() {
+	int getIndicesLength() {
 		return indicesLength;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return indices available length
 	 */
-	public int getIndicesAvailableLength() {
+	int getIndicesAvailableLength() {
 		return indicesAvailableLength;
 	}
 
 	/**
 	 * extend available lengths
-	 * 
+	 *
 	 * @param bufferSegment
 	 *            buffer segment
 	 */
-	public void addToAvailableLengths(BufferSegment bufferSegment) {
+	void addToAvailableLengths(BufferSegment bufferSegment) {
 		elementsAvailableLength += bufferSegment.getElementsAvailableLength();
 		indicesAvailableLength += bufferSegment.getIndicesAvailableLength();
 	}
 
 	/**
 	 * set available lengths
-	 * 
+	 *
 	 * @param elementsAvailableLength
 	 *            for elements
 	 * @param indicesAvailableLength
 	 *            for indices
 	 */
-	public void setAvailableLengths(int elementsAvailableLength,
-			int indicesAvailableLength) {
+	void setAvailableLengths(int elementsAvailableLength, int indicesAvailableLength) {
 		this.elementsAvailableLength = elementsAvailableLength;
 		this.indicesAvailableLength = indicesAvailableLength;
 	}
 
 	/**
 	 * set lengths
-	 * 
+	 *
 	 * @param index
 	 *            index
 	 */
-	public void setLengths(Index index) {
+	void setLengths(Index index) {
 		elementsLength = index.v1;
 		indicesLength = index.v2;
 	}
@@ -162,5 +184,4 @@ class BufferSegment {
 				+ (indicesOffset + indicesAvailableLength) + "  "
 				+ bufferPack;
 	}
-
 }

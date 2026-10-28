@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D;
 
 import org.geogebra.common.awt.GDimension;
@@ -27,16 +43,17 @@ import org.geogebra.common.util.DoubleUtil;
  */
 public class EuclidianView3DForExport extends EuclidianView3D {
 
-	final static private double DEFAULT_SCALE = 500;
+	private static final double DEFAULT_SCALE = 500;
 	/**
 	 * default edge length for print
 	 */
-	final static public double EDGE_FOR_PRINT = 40; // 4cm
-	final static private float THICKNESS_FOR_PRINT_LINES = 3.5f / 2; // 3.5mm
-	final static private float SHIFT_LINE_TO_SURFACE_THICKNESS = -0.3f / 2; // 3.2mm
-	final static private float SHIFT_LINE_THICKNESS_TO_POINT_SIZE = 0.3f / 2; // 3.8mm
-	final static private String THICKNESS_GEO_NAME = "STLthickness";
-	final static private String SCALE_GEO_NAME = "STLscale";
+	public static final double EDGE_FOR_PRINT = 40; // 4cm
+
+	private static final float THICKNESS_FOR_PRINT_LINES = 3.5f / 2; // 3.5mm
+	private static final float SHIFT_LINE_TO_SURFACE_THICKNESS = -0.3f / 2; // 3.2mm
+	private static final float SHIFT_LINE_THICKNESS_TO_POINT_SIZE = 0.3f / 2; // 3.8mm
+	private static final String THICKNESS_GEO_NAME = "STLthickness";
+	private static final String SCALE_GEO_NAME = "STLscale";
 
 	private double mXmin;
 	private double mXmax;
@@ -53,7 +70,7 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param ec
 	 *            controller
 	 * @param settings
@@ -66,7 +83,7 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param xmin
 	 *            x-coord min
 	 * @param xmax
@@ -90,8 +107,17 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 	 * @param zTickDistance
 	 *            z axis tick
 	 */
-	public void updateSettings(double xmin, double xmax, double ymin, double ymax, double zmin,
-			double zmax, double xyScale, double xzScale, double xTickDistance, double yTickDistance,
+	public void updateSettings(
+			double xmin,
+			double xmax,
+			double ymin,
+			double ymax,
+			double zmin,
+			double zmax,
+			double xyScale,
+			double xzScale,
+			double xTickDistance,
+			double yTickDistance,
 			double zTickDistance) {
 		this.mXmin = xmin;
 		this.mXmax = xmax;
@@ -112,17 +138,17 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 		setNumberingDistance(settings, 2, zTickDistance);
 		settingsChanged(settings);
 
-		((RendererForExport) renderer).setXYMinMax(xmin * getXscale(), xmax * getXscale(),
-				ymin * getYscale(),
-				ymax * getYscale());
+		((RendererForExport) renderer)
+				.setXYMinMax(
+						xmin * getXscale(), xmax * getXscale(), ymin * getYscale(), ymax * getYscale());
 
 		setWaitForUpdate();
 	}
 
 	private void setNumberingDistance(EuclidianSettings3D settings, int axis, double distance) {
 		if (distance > 0) {
-			settings.setAxisNumberingDistance(axis,
-					new GeoNumeric(app.getKernel().getConstruction(), distance));
+			settings.setAxisNumberingDistance(
+					axis, new GeoNumeric(app.getKernel().getConstruction(), distance));
 		} else {
 			settings.setAutomaticAxesNumberingDistance(true, axis, false);
 		}
@@ -153,7 +179,7 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param format
 	 *            3D format
 	 * @return 3D export
@@ -163,67 +189,44 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param format
 	 *            3D format
 	 * @param dialog
 	 *            settings dialog
 	 * @return 3D export
 	 */
-	public StringBuilder export3D(final Format format,
-			final Export3dDialogInterface dialog) {
+	public StringBuilder export3D(final Format format, final Export3dDialogInterface dialog) {
 		settingsChanged(getSettings());
 		useSpecificThickness = false;
 		updateScene();
 		if (format.needsScale()) {
 			if (updateObjectsBounds(true, true, true)) {
 				useSpecificThickness = true;
-				double thickness = THICKNESS_FOR_PRINT_LINES;
-				GeoElement thicknessGeo = getKernel()
-						.lookupLabel(THICKNESS_GEO_NAME);
-				if (thicknessGeo != null && thicknessGeo.isNumberValue()) {
-					double t = ((NumberValue) thicknessGeo).getDouble() / 2;
-					if (t > 0) {
-						thickness = t;
-					}
-				}
-				double scale = -1;
-				GeoElement scaleGeo = getKernel().lookupLabel(SCALE_GEO_NAME);
-				if (scaleGeo != null && scaleGeo.isNumberValue()) {
-					// 1unit = 10mm
-					scale = ((NumberValue) scaleGeo).getDouble() * 10;
-				}
+
 				double[] dimensions = new double[3];
-				for (int i = 0; i < 3; i++) {
-					dimensions[i] = (boundsMax.get(i + 1)
-							- boundsMin.get(i + 1))
-							* getScale(i) / getXscale();
-				}
-				if (scale < 0) {
-					double d = dimensions[0];
-					for (int i = 1; i < 3; i++) {
-						if (d < dimensions[i]) {
-							d = dimensions[i];
-						}
-					}
-					scale = EDGE_FOR_PRINT / d;
-				}
+				double thickness = computeThickness();
+				double scale = computeScale(dimensions);
 
 				if (dialog != null) {
-					dialog.show(dimensions[0] * scale, dimensions[1] * scale,
-							dimensions[2] * scale, scale, thickness * 2,
+					dialog.show(
+							dimensions[0] * scale,
+							dimensions[1] * scale,
+							dimensions[2] * scale,
+							scale,
+							thickness * 2,
 							() -> {
-								setThicknessAndScale(format,
+								setThicknessAndScale(
+										format,
 										dialog.getCurrentThickness() / 2,
 										dialog.getCurrentScale(),
 										dialog.wantsFilledSolids());
-								ExportToPrinter3D exportToPrinter = new ExportToPrinter3D(this,
-										renderer.getGeometryManager());
+								ExportToPrinter3D exportToPrinter =
+										new ExportToPrinter3D(this, renderer.getGeometryManager());
 								getApplication().getKernel().detach(this);
-								getApplication().exportStringToFile(
-										format.getExtension(),
-										exportToPrinter.export(format)
-												.toString(), true);
+								getApplication()
+										.exportStringToFile(
+												format.getExtension(), exportToPrinter.export(format).toString(), true);
 							});
 					return null;
 				}
@@ -232,14 +235,47 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 				format.setScale(10); // default value: 1unit = 10mm
 			}
 		}
-		ExportToPrinter3D exportToPrinter = new ExportToPrinter3D(this,
-				renderer.getGeometryManager());
+		ExportToPrinter3D exportToPrinter = new ExportToPrinter3D(this, renderer.getGeometryManager());
 		return exportToPrinter.export(format);
+	}
+
+	private double computeScale(double[] dimensions) {
+		double scale = -1;
+		GeoElement scaleGeo = getKernel().lookupLabel(SCALE_GEO_NAME);
+		if (scaleGeo != null && scaleGeo.isNumberValue()) {
+			// 1unit = 10mm
+			scale = ((NumberValue) scaleGeo).getDouble() * 10;
+		}
+		for (int i = 0; i < 3; i++) {
+			dimensions[i] = (boundsMax.get(i + 1) - boundsMin.get(i + 1)) * getScale(i) / getXscale();
+		}
+		if (scale < 0) {
+			double d = dimensions[0];
+			for (int i = 1; i < 3; i++) {
+				if (d < dimensions[i]) {
+					d = dimensions[i];
+				}
+			}
+			scale = EDGE_FOR_PRINT / d;
+		}
+		return scale;
+	}
+
+	private double computeThickness() {
+		double thickness = THICKNESS_FOR_PRINT_LINES;
+		GeoElement thicknessGeo = getKernel().lookupLabel(THICKNESS_GEO_NAME);
+		if (thicknessGeo != null && thicknessGeo.isNumberValue()) {
+			double t = ((NumberValue) thicknessGeo).getDouble() / 2;
+			if (t > 0) {
+				thickness = t;
+			}
+		}
+		return thickness;
 	}
 
 	/**
 	 * set thickness and scale
-	 * 
+	 *
 	 * @param format
 	 *            export format
 	 * @param thickness
@@ -249,13 +285,13 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 	 * @param wantsFilledSolids
 	 *            if user wants filled solid
 	 */
-	void setThicknessAndScale(Format format, double thickness,
-			double scale, boolean wantsFilledSolids) {
+	void setThicknessAndScale(
+			Format format, double thickness, double scale, boolean wantsFilledSolids) {
 		specificThicknessForLines = (float) (thickness / scale * getXscale());
-		specificThicknessForSurfaces = (float) ((thickness
-				+ SHIFT_LINE_TO_SURFACE_THICKNESS) / scale * getXscale());
-		specificSizeForPoints = (float) ((thickness
-				+ SHIFT_LINE_THICKNESS_TO_POINT_SIZE) / scale * getXscale());
+		specificThicknessForSurfaces =
+				(float) ((thickness + SHIFT_LINE_TO_SURFACE_THICKNESS) / scale * getXscale());
+		specificSizeForPoints =
+				(float) ((thickness + SHIFT_LINE_THICKNESS_TO_POINT_SIZE) / scale * getXscale());
 		specificThicknessForLines /= PlotterBrush.LINE3D_THICKNESS;
 		specificSizeForPoints /= DrawPoint3D.DRAW_POINT_FACTOR;
 		format.setScale(scale);
@@ -279,7 +315,7 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param getter
 	 *            geometry getter
 	 */
@@ -439,4 +475,8 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 		return 0.25f;
 	}
 
+	@Override
+	public int getLatitudes() {
+		return 64;
+	}
 }

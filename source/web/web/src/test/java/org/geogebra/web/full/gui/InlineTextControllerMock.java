@@ -1,6 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui;
 
 import org.geogebra.common.awt.GGraphics2D;
+import org.geogebra.common.euclidian.draw.DrawInline;
 import org.geogebra.common.euclidian.inline.InlineTextController;
 import org.geogebra.common.kernel.geos.GeoInline;
 import org.geogebra.common.kernel.geos.properties.HorizontalAlignment;
@@ -9,8 +26,7 @@ import org.geogebra.common.kernel.geos.properties.VerticalAlignment;
 public class InlineTextControllerMock implements InlineTextController {
 	private String url;
 
-	public InlineTextControllerMock() {
-	}
+	public InlineTextControllerMock() {}
 
 	public InlineTextControllerMock(String url) {
 		this.url = url;
@@ -22,53 +38,58 @@ public class InlineTextControllerMock implements InlineTextController {
 	}
 
 	@Override
-	public boolean updateFontSize() {
-		return false;
-	}
-
-	@Override
 	public void create() {
-
+		// mock
 	}
 
 	@Override
 	public void discard() {
-
+		// mock
 	}
 
 	@Override
 	public void setLocation(int x, int y) {
-
+		// mock
 	}
 
 	@Override
 	public void setWidth(int width) {
-
+		// mock
 	}
 
 	@Override
 	public void setHeight(int height) {
-
+		// mock
 	}
 
 	@Override
 	public void toForeground(int x, int y) {
-
+		// mock
 	}
 
 	@Override
-	public void toBackground() {
-
+	public void toBackground(DrawInline.SuspensionTrigger trigger) {
+		// mock
 	}
 
 	@Override
 	public void format(String key, Object val) {
+		// mock
+	}
 
+	@Override
+	public void formatFont(String val) {
+		// mock
+	}
+
+	@Override
+	public boolean hasIndeterminableFont() {
+		return false;
 	}
 
 	@Override
 	public void updateContent() {
-
+		// mock
 	}
 
 	@Override
@@ -88,12 +109,12 @@ public class InlineTextControllerMock implements InlineTextController {
 
 	@Override
 	public void draw(GGraphics2D g2) {
-
+		// mock
 	}
 
 	@Override
 	public void insertHyperlink(String url, String text) {
-
+		// mock
 	}
 
 	@Override
@@ -103,7 +124,7 @@ public class InlineTextControllerMock implements InlineTextController {
 
 	@Override
 	public void switchListTo(String listType) {
-
+		// mock
 	}
 
 	@Override
@@ -118,12 +139,12 @@ public class InlineTextControllerMock implements InlineTextController {
 
 	@Override
 	public void updateContentIfChanged() {
-
+		// mock
 	}
 
 	@Override
 	public void saveContent() {
-
+		// mock
 	}
 
 	@Override
@@ -133,12 +154,12 @@ public class InlineTextControllerMock implements InlineTextController {
 
 	@Override
 	public void setSelectionText(String text) {
-
+		// mock
 	}
 
 	@Override
 	public void setTransform(double angle, double sx, double sy) {
-
+		// mock
 	}
 
 	@Override
@@ -146,13 +167,19 @@ public class InlineTextControllerMock implements InlineTextController {
 		return false;
 	}
 
+	@Override
+	public boolean hasContent() {
+		return true;
+	}
+
+	@Override
 	public VerticalAlignment getVerticalAlignment() {
 		return VerticalAlignment.TOP;
 	}
 
 	@Override
 	public void setVerticalAlignment(VerticalAlignment alignment) {
-
+		// mock
 	}
 
 	@Override
@@ -162,7 +189,6 @@ public class InlineTextControllerMock implements InlineTextController {
 
 	@Override
 	public void setHorizontalAlignment(HorizontalAlignment alignment) {
-
+		// mock
 	}
-
 }

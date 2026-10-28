@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -37,7 +41,7 @@ public class AlgoFoldExpression extends AlgoElement {
 	/**
 	 * Creates labeled function sum algo for truncated list (or whole list if
 	 * truncate == null)
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -53,9 +57,14 @@ public class AlgoFoldExpression extends AlgoElement {
 	 * @param op
 	 *            operation
 	 */
-	public AlgoFoldExpression(Construction cons, String label,
-			GeoElement expression, GeoNumeric var, GeoNumeric from,
-			GeoNumeric truncate, Operation op) {
+	public AlgoFoldExpression(
+			Construction cons,
+			String label,
+			GeoElement expression,
+			GeoNumeric var,
+			GeoNumeric from,
+			GeoNumeric truncate,
+			Operation op) {
 		super(cons);
 		this.expression = expression;
 		this.var = var;
@@ -63,8 +72,7 @@ public class AlgoFoldExpression extends AlgoElement {
 		this.to = truncate;
 		this.op = op;
 		this.foldComputer = getComputer(expression);
-		resultFun = foldComputer.getTemplate(cons,
-				expression.getGeoClassType());
+		resultFun = foldComputer.getTemplate(cons, expression.getGeoClassType());
 		if (op == Operation.MULTIPLY && resultFun instanceof VectorNDValue) {
 			((VectorNDValue) resultFun).setMode(Kernel.COORD_COMPLEX);
 		}
@@ -75,20 +83,19 @@ public class AlgoFoldExpression extends AlgoElement {
 
 	private static FoldComputer getComputer(GeoElement expression) {
 		switch (expression.getGeoClassType()) {
-		case POINT:
-		case POINT3D:
-		case VECTOR:
-		case VECTOR3D:
-			return new PointNDFold();
-		case FUNCTION_NVAR:
-
-			return new FunctionNvarFold();
-		case FUNCTION:
-			return new FunctionFold();
-		case LIST:
-			return new ListFold();
-		case TEXT:
-			return new TextFold();
+			case POINT:
+			case POINT3D:
+			case VECTOR:
+			case VECTOR3D:
+				return new PointNDFold();
+			case FUNCTION_NVAR:
+				return new FunctionNvarFold();
+			case FUNCTION:
+				return new FunctionFold();
+			case LIST:
+				return new ListFold();
+			case TEXT:
+				return new TextFold();
 		}
 		return new NumberFold();
 	}
@@ -107,7 +114,7 @@ public class AlgoFoldExpression extends AlgoElement {
 
 	/**
 	 * Returns result
-	 * 
+	 *
 	 * @return sum of functions
 	 */
 	public GeoElement getResult() {
@@ -153,12 +160,10 @@ public class AlgoFoldExpression extends AlgoElement {
 			this.setStopUpdateCascade(false);
 			expressionParentAlgo.update();
 		}
-
 	}
 
 	@Override
 	public Commands getClassName() {
 		return op == Operation.PLUS ? Commands.Sum : Commands.Product;
 	}
-
 }

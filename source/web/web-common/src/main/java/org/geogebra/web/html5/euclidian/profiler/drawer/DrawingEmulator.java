@@ -1,8 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.euclidian.profiler.drawer;
 
 import java.util.List;
-
-import javax.annotation.CheckForNull;
 
 import org.geogebra.common.move.ggtapi.models.json.JSONException;
 import org.geogebra.common.util.debug.GeoGebraProfiler;
@@ -12,6 +26,7 @@ import org.geogebra.web.html5.euclidian.profiler.coords.Coordinate;
 import org.geogebra.web.html5.euclidian.profiler.coords.CoordinatesParser;
 import org.geogebra.web.html5.util.file.FileLoader;
 import org.gwtproject.timer.client.Timer;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Autonomously draws onto the canvas from a file. The name of the file is specified
@@ -74,7 +89,7 @@ public class DrawingEmulator {
 	}
 
 	private int getSleepInterval(
-			@CheckForNull Coordinate previousCoordinate, Coordinate actualCoordinate) {
+			@Nullable Coordinate previousCoordinate, Coordinate actualCoordinate) {
 		if (previousCoordinate == null) {
 			return 0;
 		} else {

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -11,14 +27,14 @@ import org.geogebra.common.main.MyError;
 
 /**
  * AngularBisector[ &lt;GeoPoint&gt;, &lt;GeoPoint&gt;, &lt;GeoPoint&gt; ]
- * 
+ *
  * AngularBisector[ &lt;GeoLine&gt;, &lt;GeoLine&gt; ]
  */
 public class CmdAngularBisector extends CommandProcessor {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -27,49 +43,48 @@ public class CmdAngularBisector extends CommandProcessor {
 	}
 
 	@Override
-	final public GeoElement[] process(Command c, EvalInfo info) throws MyError {
+	public final GeoElement[] process(Command c, EvalInfo info) throws MyError {
 		int n = c.getArgumentNumber();
 		boolean[] ok = new boolean[n];
 
 		GeoElement[] arg = resArgs(c, info);
 
 		switch (n) {
-		case 2:
+			case 2:
 
-			// angular bisector of 2 lines
-			if ((ok[0] = arg[0].isGeoLine())
-					&& (ok[1] = arg[1].isGeoLine())) {
-				return angularBisector(c.getLabels(), (GeoLineND) arg[0],
-						(GeoLineND) arg[1]);
-			}
-			if (!ok[0]) {
-				throw argErr(c, arg[0]);
-			}
-			throw argErr(c, arg[1]);
-
-		case 3:
-
-			// angular bisector of three points
-			if ((ok[0] = arg[0].isGeoPoint())
-					&& (ok[1] = arg[1].isGeoPoint())
-					&& (ok[2] = arg[2].isGeoPoint())) {
-				GeoElement[] ret = {
-						angularBisector(c.getLabel(), (GeoPointND) arg[0],
-								(GeoPointND) arg[1], (GeoPointND) arg[2]) };
-				return ret;
-			}
-			if (!ok[0]) {
-				throw argErr(c, arg[0]);
-			} else if (!ok[1]) {
+				// angular bisector of 2 lines
+				if ((ok[0] = arg[0].isGeoLine()) && (ok[1] = arg[1].isGeoLine())) {
+					return angularBisector(c.getLabels(), (GeoLineND) arg[0], (GeoLineND) arg[1]);
+				}
+				if (!ok[0]) {
+					throw argErr(c, arg[0]);
+				}
 				throw argErr(c, arg[1]);
-			} else {
-				throw argErr(c, arg[2]);
-			}
-		case 4:
-			return process4(arg, ok, c);
 
-		default:
-			throw argNumErr(c);
+			case 3:
+
+				// angular bisector of three points
+				if ((ok[0] = arg[0].isGeoPoint())
+						&& (ok[1] = arg[1].isGeoPoint())
+						&& (ok[2] = arg[2].isGeoPoint())) {
+					GeoElement[] ret = {
+						angularBisector(
+								c.getLabel(), (GeoPointND) arg[0], (GeoPointND) arg[1], (GeoPointND) arg[2])
+					};
+					return ret;
+				}
+				if (!ok[0]) {
+					throw argErr(c, arg[0]);
+				} else if (!ok[1]) {
+					throw argErr(c, arg[1]);
+				} else {
+					throw argErr(c, arg[2]);
+				}
+			case 4:
+				return process4(arg, ok, c);
+
+			default:
+				throw argNumErr(c);
 		}
 	}
 
@@ -87,7 +102,7 @@ public class CmdAngularBisector extends CommandProcessor {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param labels
 	 *            labels
 	 * @param g
@@ -96,11 +111,9 @@ public class CmdAngularBisector extends CommandProcessor {
 	 *            second line
 	 * @return angular bisector for two lines
 	 */
-	protected GeoElement[] angularBisector(String[] labels, GeoLineND g,
-			GeoLineND h) {
+	protected GeoElement[] angularBisector(String[] labels, GeoLineND g, GeoLineND h) {
 
-		return getAlgoDispatcher().angularBisector(labels, (GeoLine) g,
-				(GeoLine) h);
+		return getAlgoDispatcher().angularBisector(labels, (GeoLine) g, (GeoLine) h);
 	}
 
 	/**
@@ -114,10 +127,8 @@ public class CmdAngularBisector extends CommandProcessor {
 	 *            third point
 	 * @return angular bisector for three points
 	 */
-	protected GeoElement angularBisector(String label, GeoPointND A,
-			GeoPointND B, GeoPointND C) {
+	protected GeoElement angularBisector(String label, GeoPointND A, GeoPointND B, GeoPointND C) {
 
-		return getAlgoDispatcher().angularBisector(label, (GeoPoint) A,
-				(GeoPoint) B, (GeoPoint) C);
+		return getAlgoDispatcher().angularBisector(label, (GeoPoint) A, (GeoPoint) B, (GeoPoint) C);
 	}
 }

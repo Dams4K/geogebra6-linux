@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.handler;
 
 import org.geogebra.common.gui.InputHandler;
@@ -6,7 +22,6 @@ import org.geogebra.common.kernel.arithmetic.SymbolicMode;
 import org.geogebra.common.kernel.commands.AlgebraProcessor;
 import org.geogebra.common.kernel.commands.EvalInfo;
 import org.geogebra.common.kernel.geos.GeoNumberValue;
-import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.MyError.Errors;
 import org.geogebra.common.main.error.ErrorHandler;
@@ -39,8 +54,8 @@ public class NumberInputHandler implements InputHandler {
 	 * @param appl
 	 *            app
 	 */
-	public NumberInputHandler(AlgebraProcessor algebraProcessor,
-			AsyncOperation<GeoNumberValue> cb, App appl) {
+	public NumberInputHandler(
+			AlgebraProcessor algebraProcessor, AsyncOperation<GeoNumberValue> cb, App appl) {
 		this(algebraProcessor);
 		callback = cb;
 		app = appl;
@@ -54,8 +69,8 @@ public class NumberInputHandler implements InputHandler {
 	}
 
 	@Override
-	public void processInput(String inputString, final ErrorHandler handler,
-			final AsyncOperation<Boolean> callback0) {
+	public void processInput(
+			String inputString, final ErrorHandler handler, final AsyncOperation<Boolean> callback0) {
 		try {
 			handler.resetError();
 			final Construction cons = algebraProcessor.getKernel().getConstruction();
@@ -63,27 +78,20 @@ public class NumberInputHandler implements InputHandler {
 			boolean oldVal = cons.isSuppressLabelsActive();
 			cons.setSuppressLabelCreation(true);
 			algebraProcessor.processAlgebraCommandNoExceptionHandling(
-					inputString, false, handler, evalInfo,
-					new AsyncOperation<GeoElementND[]>() {
-
-						@Override
-						public void callback(GeoElementND[] result) {
-							// allow labels again
-							cons.setSuppressLabelCreation(oldVal);
-							boolean success = result != null
-									&& result[0] instanceof GeoNumberValue;
-							if (success) {
-								setNum((GeoNumberValue) result[0]);
-								if (callback != null) {
-									callback.callback(num);
-								}
-							} else {
-								handler.showError(
-										Errors.NumberExpected.getError(app.getLocalization()));
+					inputString, false, handler, evalInfo, result -> {
+						// allow labels again
+						cons.setSuppressLabelCreation(oldVal);
+						boolean success = result != null && result[0] instanceof GeoNumberValue;
+						if (success) {
+							setNum((GeoNumberValue) result[0]);
+							if (callback != null) {
+								callback.callback(num);
 							}
-							if (callback0 != null) {
-								callback0.callback(success);
-							}
+						} else {
+							handler.showError(Errors.NumberExpected.getError(app.getLocalization()));
+						}
+						if (callback0 != null) {
+							callback0.callback(success);
 						}
 					});
 		} catch (Throwable e) {
@@ -102,5 +110,4 @@ public class NumberInputHandler implements InputHandler {
 	public GeoNumberValue getNum() {
 		return num;
 	}
-
 }

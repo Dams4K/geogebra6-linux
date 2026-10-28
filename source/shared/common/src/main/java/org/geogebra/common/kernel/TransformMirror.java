@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel;
 
 import org.geogebra.common.kernel.algos.AlgoMirror;
@@ -10,9 +26,9 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
 
 /**
  * Mirror
- * 
+ *
  * @author Zbynek
- * 
+ *
  */
 public class TransformMirror extends Transform {
 
@@ -65,7 +81,7 @@ public class TransformMirror extends Transform {
 
 	@Override
 	protected AlgoTransformation getTransformAlgo(GeoElement geo) {
-		AlgoMirror algo = null;
+		AlgoMirror algo;
 		if (mirror.isGeoLine()) {
 			algo = new AlgoMirror(cons, geo, (GeoLine) mirror);
 		} else if (mirror.isGeoPoint()) {
@@ -85,5 +101,4 @@ public class TransformMirror extends Transform {
 	public boolean changesOrientation() {
 		return mirror.isGeoLine() || mirror.isGeoConic();
 	}
-
 }

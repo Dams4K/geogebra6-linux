@@ -1,5 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui;
 
+import org.geogebra.editor.share.util.GWTKeycodes;
 import org.geogebra.web.html5.Browser;
 import org.geogebra.web.html5.gui.inputfield.CursorOverlayController;
 import org.geogebra.web.html5.main.AppW;
@@ -11,8 +28,6 @@ import org.gwtproject.event.dom.client.FocusHandler;
 import org.gwtproject.event.dom.client.KeyDownEvent;
 import org.gwtproject.user.client.ui.TextArea;
 
-import com.himamis.retex.editor.share.util.GWTKeycodes;
-
 /**
  * handle dummy cursor on android
  *
@@ -22,6 +37,7 @@ public class DummyCursor implements FocusHandler, BlurHandler {
 	protected AppW app;
 	/** text field */
 	protected HasKeyboardTF textField;
+
 	private boolean dummyActive = false;
 	private final TextArea textArea;
 
@@ -54,17 +70,17 @@ public class DummyCursor implements FocusHandler, BlurHandler {
 			}
 		}
 		switch (code) {
-		case GWTKeycodes.KEY_BACKSPACE:
-			textField.onBackSpace();
-			break;
-		case GWTKeycodes.KEY_LEFT:
-			onArrowLeft();
-			break;
-		case GWTKeycodes.KEY_RIGHT:
-			onArrowRight();
-			break;
-		default:
-			break;
+			case GWTKeycodes.KEY_BACKSPACE:
+				textField.onBackSpace();
+				break;
+			case GWTKeycodes.KEY_LEFT:
+				onArrowLeft();
+				break;
+			case GWTKeycodes.KEY_RIGHT:
+				onArrowRight();
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -97,7 +113,7 @@ public class DummyCursor implements FocusHandler, BlurHandler {
 
 	/**
 	 * adds a dummy cursor at a specified position
-	 * 
+	 *
 	 * @param caretPos
 	 *            position to add the dummy cursor at
 	 */
@@ -132,7 +148,7 @@ public class DummyCursor implements FocusHandler, BlurHandler {
 	/**
 	 * enables the ggb keyboard, sets textfield to readonly to prevent native
 	 * keyboard
-	 * 
+	 *
 	 */
 	public void enableGGBKeyboard() {
 		if (app.isWhiteboardActive()) {

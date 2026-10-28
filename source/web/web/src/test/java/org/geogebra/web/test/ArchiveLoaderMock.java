@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.test;
 
 import java.util.Map;
@@ -26,7 +42,7 @@ public class ArchiveLoaderMock extends ArchiveLoader {
 	 */
 	public static String toJson(GgbFile zip) {
 		JSONArray archive = new JSONArray();
-		for (Map.Entry<String, ArchiveEntry> entry: zip.entrySet()) {
+		for (Map.Entry<String, ArchiveEntry> entry : zip.entrySet()) {
 			try {
 				JSONObject archiveEntry = new JSONObject();
 				archiveEntry.put("fileName", entry.getKey());
@@ -52,8 +68,7 @@ public class ArchiveLoaderMock extends ArchiveLoader {
 			JSONArray array = new JSONArray(encoded);
 			for (int i = 0; i < array.length(); i++) {
 				JSONObject content = array.getJSONObject(i);
-				archiveContent.put(content.getString("fileName"),
-						content.getString("fileContent"));
+				archiveContent.put(content.getString("fileName"), content.getString("fileContent"));
 			}
 		} catch (JSONException e) {
 			Log.debug(e);

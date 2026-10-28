@@ -1,4 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.js;
+
+import java.util.Objects;
 
 import org.geogebra.gwtutil.JavaScriptInjector;
 import org.geogebra.web.html5.css.GuiResourcesSimple;
@@ -48,8 +66,7 @@ public class ResourcesInjector {
 	 * @param parameters applet parameters (for determining vendor)
 	 */
 	protected void injectResourcesGUI(AppletParameters parameters) {
-		new StyleInjector(GWT.getModuleBaseURL())
-				.inject("css/bundles", "simple-bundle");
+		new StyleInjector(GWT.getModuleBaseURL()).inject("css/bundles", "simple-bundle");
 	}
 
 	/**
@@ -57,16 +74,15 @@ public class ResourcesInjector {
 	 */
 	public static void removeResources() {
 		resourcesInjected = false;
-		NodeList<Element> resources = DomGlobal.document
-				.querySelectorAll("." + StyleInjector.CLASSNAME);
+		NodeList<Element> resources =
+				DomGlobal.document.querySelectorAll("." + StyleInjector.CLASSNAME);
 		for (int i = 0; i < resources.getLength(); i++) {
-			resources.getAt(i).remove();
+			Objects.requireNonNull(resources.getAt(i)).remove();
 		}
 
-		NodeList<Element> scripts = DomGlobal.document
-				.querySelectorAll("script[src$=\"cache.js\"]");
+		NodeList<Element> scripts = DomGlobal.document.querySelectorAll("script[src$=\"cache.js\"]");
 		for (int i = 0; i < scripts.getLength(); i++) {
-			scripts.getAt(i).remove();
+			Objects.requireNonNull(scripts.getAt(i)).remove();
 		}
 	}
 

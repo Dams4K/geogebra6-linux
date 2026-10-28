@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.properties.impl.objects;
 
 import java.util.List;
@@ -30,8 +46,7 @@ public class LabelStyleProperty extends FlagListProperty {
 
 	@Override
 	public List<String> getFlagNames() {
-		return List.of(getLocalization().getMenu("ShowLabel"),
-				getLocalization().getMenu("ShowValue"));
+		return List.of(getLocalization().getMenu("ShowLabel"), getLocalization().getMenu("ShowValue"));
 	}
 
 	@Override
@@ -40,11 +55,9 @@ public class LabelStyleProperty extends FlagListProperty {
 		boolean value = values.get(1);
 		int mode = -1;
 		if (name && value) {
-			mode = isForceCaption() ? GeoElementND.LABEL_CAPTION_VALUE
-					: GeoElementND.LABEL_NAME_VALUE;
+			mode = isForceCaption() ? GeoElementND.LABEL_CAPTION_VALUE : GeoElementND.LABEL_NAME_VALUE;
 		} else if (name) {
-			mode = isForceCaption() ? GeoElementND.LABEL_CAPTION
-					: GeoElementND.LABEL_NAME;
+			mode = isForceCaption() ? GeoElementND.LABEL_CAPTION : GeoElementND.LABEL_NAME;
 		} else if (value) {
 			mode = GeoElementND.LABEL_VALUE;
 		}

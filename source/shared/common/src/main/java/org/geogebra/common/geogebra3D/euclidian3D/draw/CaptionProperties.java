@@ -1,13 +1,28 @@
-package org.geogebra.common.geogebra3D.euclidian3D.draw;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
+package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
 import org.geogebra.common.kernel.matrix.Coords;
+import org.jspecify.annotations.Nullable;
 
 public class CaptionProperties {
-	private @CheckForNull CaptionText caption;
+	private @Nullable CaptionText caption;
 	private final Coords color = new Coords(0, 0, 0, 1);
 	private final EuclidianView3D view;
 	private Coords backgroundColor;
@@ -44,13 +59,23 @@ public class CaptionProperties {
 			return;
 		}
 		GColor convertColor = caption.foregroundColor();
-		if (view.isAdditiveDisplay()
-				&& convertColor.isDarkerThan(Drawable3D.DARKEST_ADDITIVE_COLOR)) {
-			convertColor = Drawable3D.DARKEST_ADDITIVE_COLOR
-					.deriveWithAlpha(convertColor.getAlpha());
+		updateColor(convertColor, view, color);
+	}
+
+	/**
+	 * Update color from baseColor.
+	 * @param baseColor construction element color
+	 * @param view view
+	 * @param color output color
+	 */
+	public static void updateColor(GColor baseColor, EuclidianView3D view, Coords color) {
+		GColor convertColor = baseColor;
+		if (view.isAdditiveDisplay() && baseColor.isDarkerThan(Drawable3D.DARKEST_ADDITIVE_COLOR)) {
+			convertColor = Drawable3D.DARKEST_ADDITIVE_COLOR.deriveWithAlpha(baseColor.getAlpha());
 		}
 
-		color.set((double) convertColor.getRed() / 255,
+		color.set(
+				(double) convertColor.getRed() / 255,
 				(double) convertColor.getGreen() / 255,
 				(double) convertColor.getBlue() / 255,
 				1);
@@ -78,9 +103,10 @@ public class CaptionProperties {
 		this.backgroundColor = bgColor == null
 				? null
 				: new Coords(
-				(double) bgColor.getRed() / 255,
-				(double) bgColor.getGreen() / 255,
-				(double) bgColor.getBlue() / 255, 1);
+						(double) bgColor.getRed() / 255,
+						(double) bgColor.getGreen() / 255,
+						(double) bgColor.getBlue() / 255,
+						1);
 	}
 
 	/**

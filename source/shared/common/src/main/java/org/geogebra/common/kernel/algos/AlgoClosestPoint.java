@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -25,8 +29,7 @@ import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.kernel.matrix.Coords;
 
-public class AlgoClosestPoint extends AlgoElement
-		implements FixedPathRegionAlgo {
+public class AlgoClosestPoint extends AlgoElement implements FixedPathRegionAlgo {
 
 	private Path path; // input
 	protected GeoPointND point; // input
@@ -55,7 +58,7 @@ public class AlgoClosestPoint extends AlgoElement
 
 	/**
 	 * create the output point
-	 * 
+	 *
 	 * @param cons1
 	 *            construction
 	 * @param pointPath
@@ -83,12 +86,11 @@ public class AlgoClosestPoint extends AlgoElement
 
 	/**
 	 * @author Tam
-	 * 
+	 *
 	 *         for special cases of e.g. AlgoIntersectLineConic
 	 */
 	protected void addIncidence() {
 		P.addIncidence((GeoElement) path, false);
-
 	}
 
 	public GeoPointND getP() {
@@ -106,12 +108,10 @@ public class AlgoClosestPoint extends AlgoElement
 	public final void compute() {
 		if (input[0].isDefined() && point.isDefined()) {
 			if (path instanceof GeoFunction) {
-				Function fun = ((GeoFunction) path).getFunction()
-						.deepCopy(kernel);
+				Function fun = ((GeoFunction) path).getFunction().deepCopy(kernel);
 				Coords coords = point.getCoordsInD2();
-				double val = AlgoDistancePointObject
-						.getClosestFunctionValueToPoint(fun, coords.getX(),
-								coords.getY());
+				double val = AlgoDistancePointObject.getClosestFunctionValueToPoint(
+						fun, coords.getX(), coords.getY());
 				P.setCoords(val, fun.value(val), 1.0);
 			} else {
 				setCoords();
@@ -125,15 +125,17 @@ public class AlgoClosestPoint extends AlgoElement
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
-		return getLoc().getPlainDefault("PointOnAClosestToB",
-				"Point on %0 closest to %1", input[0].getLabel(tpl),
-				input[1].getLabel(tpl));
+	public final String toString(StringTemplate tpl) {
+		return getLoc()
+				.getPlainDefault(
+						"PointOnAClosestToB",
+						"Point on %0 closest to %1",
+						input[0].getLabel(tpl),
+						input[1].getLabel(tpl));
 	}
 
 	@Override
 	public boolean isChangeable(GeoElementND out) {
 		return false;
 	}
-
 }

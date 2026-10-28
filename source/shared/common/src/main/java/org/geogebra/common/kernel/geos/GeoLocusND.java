@@ -1,19 +1,24 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.geos;
 
 import java.util.ArrayList;
 
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.FixedPathRegionAlgo;
 import org.geogebra.common.kernel.MyPoint;
@@ -34,7 +39,7 @@ import org.geogebra.common.util.ExtendedBoolean;
 
 /**
  * Locus of points
- * 
+ *
  * @author Markus
  * @param <T>
  *            2D or 3D point type
@@ -49,6 +54,7 @@ public abstract class GeoLocusND<T extends MyPoint> extends GeoElement
 
 	/** coords of points on locus */
 	protected ArrayList<T> myPointList;
+
 	private double closestPointDist;
 	/**
 	 * index of point closest to changingPoint
@@ -63,7 +69,7 @@ public abstract class GeoLocusND<T extends MyPoint> extends GeoElement
 
 	/**
 	 * Creates new locus
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 */
@@ -85,10 +91,10 @@ public abstract class GeoLocusND<T extends MyPoint> extends GeoElement
 	}
 
 	/**
-	 * 
+	 *
 	 * @return new GeoLocus of same type
 	 */
-	abstract protected GeoLocusND<T> newGeoLocus();
+	protected abstract GeoLocusND<T> newGeoLocus();
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -106,11 +112,11 @@ public abstract class GeoLocusND<T extends MyPoint> extends GeoElement
 
 	/**
 	 * Number of valid points in x and y arrays.
-	 * 
+	 *
 	 * @return number of valid points in x and y arrays.
 	 */
 	@Override
-	final public int getPointLength() {
+	public final int getPointLength() {
 		return myPointList.size();
 	}
 
@@ -143,7 +149,7 @@ public abstract class GeoLocusND<T extends MyPoint> extends GeoElement
 	 * returns all class-specific xml tags for getXML
 	 */
 	@Override
-	protected void getStyleXML(StringBuilder sb) {
+	protected void getStyleXML(XMLStringBuilder sb) {
 		super.getStyleXML(sb);
 		getLineStyleXML(sb);
 	}
@@ -214,19 +220,19 @@ public abstract class GeoLocusND<T extends MyPoint> extends GeoElement
 
 	/**
 	 * set infos for current changing point
-	 * 
+	 *
 	 * @param P
 	 *            point
 	 */
-	abstract protected void setChangingPoint(GeoPointND P);
+	protected abstract void setChangingPoint(GeoPointND P);
 
 	/**
-	 * 
+	 *
 	 * @param segment
 	 *            segment
 	 * @return closest parameter on the segment from the changing point
 	 */
-	abstract protected double getChangingPointParameter(GeoSegmentND segment);
+	protected abstract double getChangingPointParameter(GeoSegmentND segment);
 
 	/**
 	 * @return closest point to changing point
@@ -253,22 +259,22 @@ public abstract class GeoLocusND<T extends MyPoint> extends GeoElement
 			closestPointParameter = 1;
 		}
 
-		return locusPoint.barycenter(closestPointParameter, locusPoint2);
+		return locusPoint.barycenter(closestPointParameter, locusPoint2, SegmentType.MOVE_TO);
 	}
 
 	/**
-	 * 
+	 *
 	 * @return new GeoSegment
 	 */
-	abstract protected GeoSegmentND newGeoSegment();
+	protected abstract GeoSegmentND newGeoSegment();
 
 	/**
-	 * 
+	 *
 	 * @param segment
 	 *            segment
 	 * @return distance from current point infos to segment
 	 */
-	abstract protected double changingPointDistance(GeoSegmentND segment);
+	protected abstract double changingPointDistance(GeoSegmentND segment);
 
 	/**
 	 * Adds a new point (x,y,z) to the end of the point list of this locus.
@@ -397,7 +403,7 @@ public abstract class GeoLocusND<T extends MyPoint> extends GeoElement
 	}
 
 	@Override
-	final public ExtendedBoolean isEqualExtended(GeoElementND geo) {
+	public final ExtendedBoolean isEqualExtended(GeoElementND geo) {
 		// return false if it's a different type, otherwise use equals() method
 		return ExtendedBoolean.newExtendedBoolean(this == geo); // TODO?
 	}
@@ -407,12 +413,12 @@ public abstract class GeoLocusND<T extends MyPoint> extends GeoElement
 	 * label description
 	 */
 	@Override
-	final public boolean isLabelValueShowable() {
+	public final boolean isLabelValueShowable() {
 		return true;
 	}
 
 	@Override
-	final public boolean isLabelShowable() {
+	public final boolean isLabelShowable() {
 		return true;
 	}
 
@@ -425,7 +431,7 @@ public abstract class GeoLocusND<T extends MyPoint> extends GeoElement
 	}
 
 	@Override
-	final public boolean isAuxiliaryObjectByDefault() {
+	public final boolean isAuxiliaryObjectByDefault() {
 		return true;
 	}
 
@@ -455,7 +461,7 @@ public abstract class GeoLocusND<T extends MyPoint> extends GeoElement
 	}
 
 	@Override
-	final public PathMover createPathMover() {
+	public final PathMover createPathMover() {
 		return new PathMoverLocus<>(this);
 	}
 

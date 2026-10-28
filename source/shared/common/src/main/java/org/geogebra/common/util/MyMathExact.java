@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
 import java.math.BigDecimal;
@@ -9,7 +25,7 @@ import org.apache.commons.math3.linear.AnyMatrix;
 /*
  * utilities for "exact" arithmetics
  * of arbitrary precision
- * 
+ *
  */
 public class MyMathExact {
 
@@ -81,8 +97,7 @@ public class MyMathExact {
 		 *            value
 		 */
 		public FixedScaleDecimal(int significance, BigDecimal bd) {
-			impl = new BigDecimal(bd.unscaledValue(), bd.scale())
-					.setScale(significance, roundingMode);
+			impl = new BigDecimal(bd.unscaledValue(), bd.scale()).setScale(significance, roundingMode);
 			fixedScale = significance;
 		}
 
@@ -141,8 +156,8 @@ public class MyMathExact {
 		 * @return this / md
 		 */
 		public FixedScaleDecimal divide(FixedScaleDecimal md) {
-			return new FixedScaleDecimal(this.getScale(), impl.divide(md.getImpl(),
-					this.getScale(), BigDecimal.ROUND_HALF_EVEN));
+			return new FixedScaleDecimal(
+					this.getScale(), impl.divide(md.getImpl(), this.getScale(), BigDecimal.ROUND_HALF_EVEN));
 		}
 
 		/**
@@ -164,9 +179,13 @@ public class MyMathExact {
 			FixedScaleDecimal radicand = new FixedScaleDecimal(thisScalePlusOne, impl);
 
 			int iterCount = 0;
-			while (ret.multiply(ret).subtract(radicand).divide(radicand)
-					.divide(new FixedScaleDecimal(thisScalePlusOne, lower_bound * 2))
-					.abs().doubleValue() > Math.pow(10, -thisScale)
+			while (ret.multiply(ret)
+									.subtract(radicand)
+									.divide(radicand)
+									.divide(new FixedScaleDecimal(thisScalePlusOne, lower_bound * 2))
+									.abs()
+									.doubleValue()
+							> Math.pow(10, -thisScale)
 					&& iterCount < 5) {
 				ret = ret.add(radicand.divide(ret)).divide(TWO);
 				iterCount++;
@@ -350,8 +369,7 @@ public class MyMathExact {
 
 			for (int i = 0; i < m; i++) {
 				for (int j = 0; j < n; j++) {
-					ret = ret.add(matrix.getEntry(i, j)
-							.multiply(matrix.getEntry(i, j)));
+					ret = ret.add(matrix.getEntry(i, j).multiply(matrix.getEntry(i, j)));
 				}
 			}
 
@@ -371,17 +389,15 @@ public class MyMathExact {
 								+ getColumnDimension() + " and "
 								+ m.getRowDimension() + " x "
 								+ m.getColumnDimension() + "matrices!");
-
 			}
 
-			FixedScaleDecimalMatrix ret = new FixedScaleDecimalMatrix(this.getScale(),
-					this.getRowDimension(), m.getColumnDimension());
+			FixedScaleDecimalMatrix ret = new FixedScaleDecimalMatrix(
+					this.getScale(), this.getRowDimension(), m.getColumnDimension());
 			for (int i = 0; i < this.getRowDimension(); i++) {
 				for (int j = 0; j < m.getColumnDimension(); j++) {
 					FixedScaleDecimal entry = new FixedScaleDecimal(this.fixedScale, 0);
 					for (int k = 0; k < this.getColumnDimension(); k++) {
-						entry = entry.add(
-								this.getEntry(i, k).multiply(m.getEntry(k, j)));
+						entry = entry.add(this.getEntry(i, k).multiply(m.getEntry(k, j)));
 					}
 					ret.setEntry(i, j, entry);
 				}

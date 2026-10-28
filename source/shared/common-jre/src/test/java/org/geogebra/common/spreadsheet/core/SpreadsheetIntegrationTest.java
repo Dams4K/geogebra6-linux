@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.spreadsheet.core;
 
 import static org.geogebra.common.spreadsheet.core.SpreadsheetTestHelpers.simulateCellMouseClick;
@@ -7,20 +23,37 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.geogebra.common.SuiteSubApp;
 import org.geogebra.common.awt.GColor;
+import org.geogebra.common.awt.GGraphicsCommon;
 import org.geogebra.common.factories.FormatFactory;
 import org.geogebra.common.gui.GuiManager;
+import org.geogebra.common.gui.colorpicker.ColorHistory;
+import org.geogebra.common.gui.colorpicker.ColorPickerModel;
 import org.geogebra.common.io.FactoryProviderCommon;
 import org.geogebra.common.jre.factory.FormatFactoryJre;
 import org.geogebra.common.kernel.Construction;
+import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.kernel.geos.GeoText;
+import org.geogebra.common.main.GeoGebraColorConstants;
 import org.geogebra.common.main.settings.SpreadsheetSettings;
 import org.geogebra.common.main.undo.UndoManager;
+import org.geogebra.common.properties.aliases.ColorProperty;
+import org.geogebra.common.properties.impl.undo.UndoSavingPropertyObserver;
+import org.geogebra.common.spreadsheet.StringCapturingGraphics;
+import org.geogebra.common.spreadsheet.kernel.GeoElementCellRendererFactory;
 import org.geogebra.common.spreadsheet.kernel.KernelTabularDataAdapter;
 import org.geogebra.common.spreadsheet.settings.SpreadsheetSettingsAdapter;
 import org.geogebra.common.spreadsheet.style.SpreadsheetStyling;
@@ -31,6 +64,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
 import com.himamis.retex.renderer.share.platform.FactoryProvider;
@@ -38,13 +73,13 @@ import com.himamis.retex.renderer.share.platform.FactoryProvider;
 /**
  * A Spreadsheet test with App, Kernel, and GuiManager (for full undo testing) integration.
  */
-public final class SpreadsheetIntegrationTest extends BaseAppTestSetup {
+final class SpreadsheetIntegrationTest extends BaseAppTestSetup {
 
-	private Spreadsheet spreadsheet;
-	private TabularData<?> tabularData;
+	private Spreadsheet<GeoElement> spreadsheet;
+	private KernelTabularDataAdapter tabularData;
 
 	@BeforeAll
-	public static void setupOnce() {
+	static void setupOnce() {
 		// required by MathField
 		FactoryProvider.setInstance(new FactoryProviderCommon());
 		// required by StringTemplate static initializer
@@ -52,7 +87,7 @@ public final class SpreadsheetIntegrationTest extends BaseAppTestSetup {
 	}
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		setupApp(SuiteSubApp.GRAPHING);
 		getApp().setGuiManager(Mockito.mock(GuiManager.class));
 		getApp().enableUseFullGui();
@@ -61,12 +96,15 @@ public final class SpreadsheetIntegrationTest extends BaseAppTestSetup {
 		UndoProvider undoProvider = getApp().getUndoManager();
 
 		tabularData = new KernelTabularDataAdapter(getApp());
-		getKernel().attach((KernelTabularDataAdapter) tabularData);
-		spreadsheet = new Spreadsheet(tabularData,
-				new TestCellRenderableFactory(),
+		getKernel().attach(tabularData);
+		spreadsheet = new Spreadsheet<>(
+				tabularData,
+				new GeoElementCellRendererFactory(graphics -> null, getApp()::getFontSizeDouble),
+				null,
 				undoProvider);
 		spreadsheet.setViewportAdjustmentHandler(new DummyViewportAdjuster());
-		new SpreadsheetSettingsAdapter(spreadsheet, getApp()).registerListeners();
+		spreadsheet.setSelectionDelegate(getApp().getSelectionManager()::setSelectedGeos);
+		new SpreadsheetSettingsAdapter<>(spreadsheet, getApp()).registerListeners();
 
 		spreadsheet.setHeightForRows(20, 0, 5);
 		spreadsheet.setWidthForColumns(40, 0, 5);
@@ -75,33 +113,55 @@ public final class SpreadsheetIntegrationTest extends BaseAppTestSetup {
 
 	@Test
 	@Issue("APPS-6566")
-	public void testInitialSize() {
+	void testInitialSize() {
 		SpreadsheetSettings spreadsheetSettings = getApp().getSettings().getSpreadsheet();
 		spreadsheetSettings.setColumnsNoFire(3);
 		spreadsheetSettings.getColumnWidths().put(1, 500.0);
-		Spreadsheet spreadsheet = new Spreadsheet(tabularData,
-				new TestCellRenderableFactory(),
-				null);
-		new SpreadsheetSettingsAdapter(spreadsheet, getApp()).registerListeners();
+		Spreadsheet<?> spreadsheet =
+				new Spreadsheet<>(tabularData, new TestCellRenderableFactory(), null, null);
+		new SpreadsheetSettingsAdapter<>(spreadsheet, getApp()).registerListeners();
 		Assertions.assertEquals(500 + 2 * 120 + 52, spreadsheet.getTotalWidth());
 	}
 
 	@Test
-	public void testDefaultTextAlignment() {
+	@Issue("APPS-6566")
+	void testInitialSettings() {
+		SpreadsheetSettings spreadsheetSettings = getApp().getSettings().getSpreadsheet();
+		spreadsheetSettings.setColumnsNoFire(3);
+		spreadsheetSettings.setRowsNoFire(3);
+		spreadsheetSettings.setShowRowHeader(false);
+		spreadsheetSettings.setShowColumnHeader(false);
+		spreadsheetSettings.setShowGrid(false);
+		Spreadsheet<?> spreadsheet =
+				new Spreadsheet<>(tabularData, new TestCellRenderableFactory(), null, null);
+		new SpreadsheetSettingsAdapter<>(spreadsheet, getApp()).registerListeners();
+		Assertions.assertEquals(3 * 120, spreadsheet.getTotalWidth());
+		Assertions.assertEquals(3 * 36, spreadsheet.getTotalHeight());
+		StringCapturingGraphics graphics = spy(new StringCapturingGraphics());
+		spreadsheet.draw(graphics);
+		assertEquals("", graphics.toString());
+		verify(graphics, never()).draw(any());
+		verify(graphics, never()).drawStraightLine(anyDouble(), anyDouble(), anyDouble(), anyDouble());
+	}
+
+	@Test
+	void testDefaultTextAlignment() {
 		Construction construction = getKernel().getConstruction();
 		tabularData.setContent(0, 0, new GeoText(construction, "GeoText"));
 		tabularData.setContent(1, 0, new GeoNumeric(construction, 123));
 		spreadsheet.getController().select(new TabularRange(0, 0), false, false);
-		assertEquals(SpreadsheetStyling.TextAlignment.LEFT,
+		assertEquals(
+				SpreadsheetStyling.TextAlignment.LEFT,
 				spreadsheet.getStyleBarModel().getState().textAlignment);
 		spreadsheet.getController().select(new TabularRange(2, 0), false, false);
-		assertEquals(SpreadsheetStyling.TextAlignment.RIGHT,
+		assertEquals(
+				SpreadsheetStyling.TextAlignment.RIGHT,
 				spreadsheet.getStyleBarModel().getState().textAlignment);
 	}
 
 	@Test
-	public void testUndoStyleChange() {
-		UndoManager undoManager = getApp().getUndoManager();
+	void testUndoStyleChange() {
+		final UndoManager undoManager = getApp().getUndoManager();
 		Construction construction = getKernel().getConstruction();
 		SpreadsheetStyleBarModel styleBarModel = spreadsheet.getStyleBarModel();
 
@@ -112,8 +172,8 @@ public final class SpreadsheetIntegrationTest extends BaseAppTestSetup {
 
 		// apply styling
 		styleBarModel.setItalic(true);
-		assertTrue(spreadsheet.getStyling().getFontTraits(0, 0)
-				.contains(SpreadsheetStyling.FontTrait.ITALIC));
+		assertTrue(
+				spreadsheet.getStyling().getFontTraits(0, 0).contains(SpreadsheetStyling.FontTrait.ITALIC));
 		String xmlAfterStyling = construction.getCurrentUndoXML(false).toString();
 		assertNotEquals(xmlBeforeStyling, xmlAfterStyling);
 		assertEquals("0,0,f,2", spreadsheet.getStyling().getCellFormatXml());
@@ -122,26 +182,48 @@ public final class SpreadsheetIntegrationTest extends BaseAppTestSetup {
 		undoManager.undo();
 		String xmlAfterUndo = construction.getCurrentUndoXML(false).toString();
 		assertEquals(xmlBeforeStyling, xmlAfterUndo);
-		assertFalse(spreadsheet.getStyling().getFontTraits(0, 0)
-				.contains(SpreadsheetStyling.FontTrait.ITALIC));
+		assertFalse(
+				spreadsheet.getStyling().getFontTraits(0, 0).contains(SpreadsheetStyling.FontTrait.ITALIC));
 		assertNull(spreadsheet.getStyling().getCellFormatXml());
 
 		// redo the styling change
 		undoManager.redo();
 		String xmlAfterRedo = construction.getCurrentUndoXML(false).toString();
 		assertEquals(xmlAfterStyling, xmlAfterRedo);
-		assertTrue(spreadsheet.getStyling().getFontTraits(0, 0)
-				.contains(SpreadsheetStyling.FontTrait.ITALIC));
+		assertTrue(
+				spreadsheet.getStyling().getFontTraits(0, 0).contains(SpreadsheetStyling.FontTrait.ITALIC));
 		assertEquals("0,0,f,2", spreadsheet.getStyling().getCellFormatXml());
 
 		simulateCellMouseClick(spreadsheet.getController(), 0, 0, 1);
-		assertTrue(styleBarModel.getState().fontTraits
-				.contains(SpreadsheetStyling.FontTrait.ITALIC));
+		assertTrue(styleBarModel.getState().fontTraits.contains(SpreadsheetStyling.FontTrait.ITALIC));
 	}
 
 	@Test
-	public void testUndoColumnResize() {
+	@Issue("MOW-1928")
+	void testColorPickerSessionStoresOneUndoPoint() {
 		UndoManager undoManager = getApp().getUndoManager();
+		simulateCellMouseClick(spreadsheet.getController(), 0, 0, 1);
+		int historySize = undoManager.getHistorySize();
+
+		ColorProperty property = spreadsheet.createCellBackgroundColorProperty(getLocalization());
+		property.addValueObserver(new UndoSavingPropertyObserver(undoManager));
+		ColorPickerModel picker = new ColorPickerModel(property, new ColorHistory());
+		picker.selectColor(GColor.RED);
+		picker.selectColor(GColor.BLUE);
+		// live preview, but no undo point yet
+		assertEquals(GColor.BLUE, spreadsheet.getStyling().getBackgroundColor(0, 0, null));
+		assertEquals(historySize, undoManager.getHistorySize());
+
+		picker.finish();
+		assertEquals(historySize + 1, undoManager.getHistorySize());
+
+		undoManager.undo();
+		assertNull(spreadsheet.getStyling().getBackgroundColor(0, 0, null));
+	}
+
+	@Test
+	void testUndoColumnResize() {
+		final UndoManager undoManager = getApp().getUndoManager();
 		Construction construction = getKernel().getConstruction();
 		String initialXml = construction.getCurrentUndoXML(false).toString();
 
@@ -173,7 +255,7 @@ public final class SpreadsheetIntegrationTest extends BaseAppTestSetup {
 
 	@Issue("APPS-6783")
 	@Test
-	public void testUndoColumnDeletion() {
+	void testUndoColumnDeletion() {
 		// select first two columns (out of 26 total)
 		spreadsheet.selectColumn(0, false, false);
 		spreadsheet.selectColumn(1, true, false);
@@ -185,15 +267,152 @@ public final class SpreadsheetIntegrationTest extends BaseAppTestSetup {
 		assertEquals(26, spreadsheet.getController().getLayout().numberOfColumns());
 	}
 
-	@Issue("APPS-6925")
 	@Test
-	public void testClearAllClearsStyles() {
-		spreadsheet.getStyling().setBackgroundColor(GColor.BLUE,
-				Collections.singletonList(new TabularRange(0, 0)));
-		getApp().clearConstruction();
-		GColor background = spreadsheet
+	@Issue("APPS-6925")
+	void testClearAllClearsStyles() {
+		spreadsheet
 				.getStyling()
-				.getBackgroundColor(0, 0, null);
+				.setBackgroundColor(GColor.BLUE, Collections.singletonList(new TabularRange(0, 0)));
+		getApp().clearConstruction();
+		GColor background = spreadsheet.getStyling().getBackgroundColor(0, 0, null);
 		assertNotEquals(GColor.BLUE, background);
+	}
+
+	@Test
+	@Issue("APPS-6619")
+	void spreadsheetShouldReflectColorChanges() {
+		getKernel().attach(tabularData);
+		spreadsheet.setViewport(new Rectangle(0, 300, 0, 300));
+		evaluate("A1 = 1");
+		spreadsheet.draw(new GGraphicsCommon());
+		evaluate("SetBackgroundColor(A1,red)");
+		Set<GColor> usedColors = new HashSet<>();
+		spreadsheet.draw(getColorCollectingGraphics(usedColors));
+		assertTrue(usedColors.contains(GColor.RED), "Should contain red:" + usedColors);
+	}
+
+	@Test
+	@Issue("APPS-7335")
+	void testDynamicColor() {
+		GeoElement point = evaluateGeoElement("A1=(0,0)");
+		point.setColorFunction(evaluateGeoElement("{x(A1),0,0}"));
+		Set<GColor> colors = new HashSet<>();
+		GGraphicsCommon graphics = getColorCollectingGraphics(colors);
+		spreadsheet.draw(graphics);
+		assertEquals(
+				Set.of(
+						GeoGebraColorConstants.NEUTRAL_900,
+						GeoGebraColorConstants.NEUTRAL_200,
+						GeoGebraColorConstants.NEUTRAL_300),
+				colors);
+		evaluate("SetValue(A1,1)");
+		colors.clear();
+		spreadsheet.draw(graphics);
+		assertEquals(
+				Set.of(
+						GeoGebraColorConstants.NEUTRAL_900,
+						GeoGebraColorConstants.NEUTRAL_200,
+						GeoGebraColorConstants.NEUTRAL_300,
+						GColor.RED),
+				colors);
+	}
+
+	@Test
+	@Issue("APPS-7336")
+	void shouldIgnoreSliderLineColor() {
+		getKernel().attach(tabularData);
+		spreadsheet.setViewport(new Rectangle(0, 300, 0, 300));
+		evaluate("A1 = Slider(1,2)");
+		lookup("A1").setBackgroundColor(GColor.RED);
+		evaluate("A2 = \"1\"");
+		lookup("A2").setBackgroundColor(GColor.BLUE);
+		Set<GColor> usedColors = new HashSet<>();
+		spreadsheet.draw(getColorCollectingGraphics(usedColors));
+		spreadsheet.draw(new GGraphicsCommon());
+		assertFalse(usedColors.contains(GColor.RED), "Should not contain red:" + usedColors);
+		assertTrue(usedColors.contains(GColor.BLUE), "Should contain blue:" + usedColors);
+	}
+
+	@Test
+	void testEnsureDimensions() {
+		getKernel().attach(tabularData);
+		getApp().getSettings().getSpreadsheet().setPreferredColumnWidth(120);
+		assertEquals(3636.0, spreadsheet.getTotalHeight(), 0.0);
+		assertEquals(3172.0, spreadsheet.getTotalWidth(), 0.0);
+		getApp().getSettings().getSpreadsheet().ensureDimensions(300, 5);
+		assertEquals(10836.0, spreadsheet.getTotalHeight(), 0.0);
+		// changing spreadsheet dimensions normalizes column widths
+		assertEquals(3172.0, spreadsheet.getTotalWidth(), 0.0);
+	}
+
+	@Test
+	@Issue("APPS-7662")
+	void testGrowingSpreadsheetSizeWithCommands() {
+		evaluate("l1 = Sequence(k, k, 1, 150)");
+		evaluate("FillColumn(1, l1)");
+
+		assertEquals(150, tabularData.numberOfRows());
+		assertEquals(150, spreadsheet.getController().getLayout().numberOfRows());
+
+		spreadsheet.getController().selectCell(149, 0, false, false);
+		spreadsheet.getController().moveDown(false);
+
+		assertEquals(151, tabularData.numberOfRows());
+		assertEquals(151, spreadsheet.getController().getLayout().numberOfRows());
+	}
+
+	@Test
+	@Issue("APPS-7826")
+	void testSelectionDelegate() {
+		evaluate("l1 = Sequence(k, k, 1, 10)");
+		evaluate("FillColumn(1, l1)");
+		simulateCellMouseClick(spreadsheet.getController(), 9, 0, 1);
+		List<GeoElement> selectedGeos = getApp().getSelectionManager().getSelectedGeos();
+		assertEquals(1, selectedGeos.size());
+		assertEquals("A10", selectedGeos.get(0).getLabelSimple());
+	}
+
+	@ParameterizedTest
+	@ValueSource(booleans = {false, true})
+	@Issue("APPS-8028")
+	void testPasteExpandingSpreadsheet(boolean internalClipboard) {
+		SpreadsheetController<GeoElement> controller = spreadsheet.getController();
+		TestClipboard clipboard = new TestClipboard();
+		CopyPasteCutTabularDataImpl<GeoElement> copyPasteCut = new CopyPasteCutTabularDataImpl<>(
+				tabularData, clipboard, controller.getLayout(), controller.selectionController);
+		controller.setCopyPasteCut(copyPasteCut);
+		if (internalClipboard) {
+			evaluate("A1 = 1");
+			evaluate("B1 = 2");
+			evaluate("A2 = 3");
+			evaluate("B2 = 4");
+			copyPasteCut.copyDeep(new TabularRange(0, 0, 1, 1));
+		} else {
+			clipboard.setContent("1\t2\n3\t4", null);
+		}
+		int row = tabularData.numberOfRows() - 1;
+		int column = tabularData.numberOfColumns() - 1;
+		controller.selectCell(row, column, false, false);
+
+		controller.pasteCells(row, column);
+
+		assertEquals(row + 2, tabularData.numberOfRows());
+		assertEquals(column + 2, tabularData.numberOfColumns());
+		assertEquals(1, tabularData.contentAt(row, column).evaluateDouble());
+		assertEquals(2, tabularData.contentAt(row, column + 1).evaluateDouble());
+		assertEquals(3, tabularData.contentAt(row + 1, column).evaluateDouble());
+		assertEquals(4, tabularData.contentAt(row + 1, column + 1).evaluateDouble());
+		assertEquals(
+				List.of(new TabularRange(row, column, row + 1, column + 1)),
+				controller.getSelections().map(Selection::getRange).toList());
+	}
+
+	private GGraphicsCommon getColorCollectingGraphics(Set<GColor> colors) {
+		return new GGraphicsCommon() {
+			@Override
+			public void setColor(GColor color) {
+				colors.add(color);
+			}
+		};
 	}
 }

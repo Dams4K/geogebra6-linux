@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.discrete;
@@ -31,11 +35,10 @@ import org.geogebra.common.util.DoubleUtil;
 
 /**
  * Convex hull of a set of points
- * 
+ *
  * @author Michael Borcherds
- * 
+ *
  */
-
 public class AlgoConvexHull extends AlgoElement implements GraphAlgo {
 
 	private GeoList inputList; // input
@@ -141,9 +144,7 @@ public class AlgoConvexHull extends AlgoElement implements GraphAlgo {
 
 		for (int i = 0; i < hull.size(); i++) {
 			Point2D p = hull.get(i);
-			al.add(new MyPoint(p.getX(), p.getY(), i != 0 ? SegmentType.LINE_TO
-					: SegmentType.MOVE_TO));
-
+			al.add(new MyPoint(p.getX(), p.getY(), i != 0 ? SegmentType.LINE_TO : SegmentType.MOVE_TO));
 		}
 
 		if (hull.size() == 0) {
@@ -157,11 +158,9 @@ public class AlgoConvexHull extends AlgoElement implements GraphAlgo {
 
 		locus.setPoints(al);
 		locus.setDefined(true);
-
 	}
 
-	private static boolean contains(ArrayList<Point2D> vl2, double x,
-			double y) {
+	private static boolean contains(ArrayList<Point2D> vl2, double x, double y) {
 		for (int i = 0; i < vl2.size(); i++) {
 			Point2D p = vl2.get(i);
 			if (DoubleUtil.isEqual(p.getX(), x) && DoubleUtil.isEqual(p.getY(), y)) {
@@ -171,5 +170,4 @@ public class AlgoConvexHull extends AlgoElement implements GraphAlgo {
 
 		return false;
 	}
-
 }

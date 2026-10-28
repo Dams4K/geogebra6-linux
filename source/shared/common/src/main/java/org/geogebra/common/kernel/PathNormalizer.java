@@ -1,15 +1,31 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel;
 
 /**
  * Normalized path that uses a path parameter in range [0,1].
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class PathNormalizer {
 
 	/**
 	 * Converts path parameter value tn from range [0, 1] to [min, max].
-	 * 
+	 *
 	 * @param parameter
 	 *            parameter value in [0,1]
 	 * @param min
@@ -18,8 +34,7 @@ public class PathNormalizer {
 	 *            of range [min, max]
 	 * @return parameter value in [min, max]
 	 */
-	public static double toParentPathParameter(double parameter, double min,
-			double max) {
+	public static double toParentPathParameter(double parameter, double min, double max) {
 		double tn = parameter;
 		// for Points as Paths (min=max=0)
 		if (min == max) {
@@ -54,18 +69,17 @@ public class PathNormalizer {
 
 	/**
 	 * Converts path parameter value t from range [min, max] to [0, 1].
-	 * 
+	 *
 	 * @param p
 	 *            parameter to be normalized
-	 * 
+	 *
 	 * @param min
 	 *            of range [min, max]
 	 * @param max
 	 *            of range [min, max]
 	 * @return parameter value in [0,1]
 	 */
-	public static double toNormalizedPathParameter(double p, double min,
-			double max) {
+	public static double toNormalizedPathParameter(double p, double min, double max) {
 		double t = p;
 		// for Points as Paths (min=max=0)
 		if (min == max) {
@@ -110,7 +124,7 @@ public class PathNormalizer {
 
 	/**
 	 * Function t: (-1, 1) -&gt; (-inf, +inf)
-	 * 
+	 *
 	 * @param t
 	 *            parameter from (-1,1)
 	 * @return parameter in (-1,1) to be mapped into all reals
@@ -121,7 +135,7 @@ public class PathNormalizer {
 
 	/**
 	 * Function z: (-inf, +inf) -&gt; (-1, 1)
-	 * 
+	 *
 	 * @param z
 	 *            arbitrary parameter
 	 * @return arbitrary parameter to be mapped into (-1,1)

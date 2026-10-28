@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -15,6 +19,7 @@ package org.geogebra.common.kernel.algos;
 import java.util.ArrayList;
 
 import org.geogebra.common.euclidian.EuclidianConstants;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.MyPoint;
 import org.geogebra.common.kernel.StringTemplate;
@@ -22,11 +27,10 @@ import org.geogebra.common.kernel.commands.Commands;
 import org.geogebra.common.kernel.geos.GeoBoolean;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoLocusStroke;
-import org.geogebra.common.util.StringUtil;
 
 /**
  * Creates a PolyLine from a given list of points or point array.
- * 
+ *
  * @author Michael Borcherds
  */
 public class AlgoLocusStroke extends AlgoElement {
@@ -44,7 +48,7 @@ public class AlgoLocusStroke extends AlgoElement {
 		super(cons);
 		poly = new GeoLocusStroke(this.cons);
 		if (!points.isEmpty()) {
-			poly.appendPointArray(points);
+			poly.appendVertexPointArray(points);
 		}
 
 		// updatePointArray already covered compute
@@ -58,7 +62,7 @@ public class AlgoLocusStroke extends AlgoElement {
 
 	@Override
 	public Commands getClassName() {
-		return Commands.PenStroke;
+		return Commands.PenStrokeBezier;
 	}
 
 	@Override
@@ -95,7 +99,7 @@ public class AlgoLocusStroke extends AlgoElement {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		return "";
 	}
 
@@ -103,16 +107,14 @@ public class AlgoLocusStroke extends AlgoElement {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void getExpXML(StringTemplate tpl, StringBuilder sb) {
-		sb.append("<expression");
-		if (/* output != null && */getOutputLength() == 1) {
+	protected void getExpXML(StringTemplate tpl, XMLStringBuilder sb) {
+		sb.startTag("expression", 0);
+		if (getOutputLength() == 1) {
 			if (getOutput(0).isLabelSet()) {
-				sb.append(" label=\"");
-				StringUtil.encodeXML(sb, getOutput(0).getLabel(tpl));
-				sb.append("\"");
+				sb.attr("label", getOutput(0).getLabel(tpl));
 			}
 		}
-		sb.append(" exp=\"PenStroke[]\" />");
+		sb.attrRaw("exp", "PenStroke[]").endTag();
 	}
 
 	@Override
@@ -122,7 +124,7 @@ public class AlgoLocusStroke extends AlgoElement {
 
 	@Override
 	public String getDefinition(StringTemplate tpl) {
-		String def = "PenStroke";
+		String def = "PenStrokeBezier";
 		// #2706
 		if (input == null) {
 			return null;
@@ -135,7 +137,7 @@ public class AlgoLocusStroke extends AlgoElement {
 		}
 
 		sbAE.append(tpl.leftSquareBracket());
-		poly.appendPoints(sbAE);
+		sbAE.append(poly.getPointString());
 		sbAE.append(tpl.rightSquareBracket());
 		return sbAE.toString();
 	}

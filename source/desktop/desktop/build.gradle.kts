@@ -5,10 +5,9 @@ import Desktop_variants_gradle.Variants.nativesWindowsAmd64
 plugins {
     application
     alias(libs.plugins.geogebra.java)
-    alias(libs.plugins.geogebra.checkstyle)
     alias(libs.plugins.geogebra.spotbugs)
     alias(libs.plugins.geogebra.variants)
-    alias(libs.plugins.geogebra.sourcesets)
+    alias(libs.plugins.geogebra.pmd)
 }
 
 description = "Parts of GeoGebra related to desktop platforms"
@@ -18,19 +17,28 @@ val e2eTest: SourceSet by sourceSets.creating {
     runtimeClasspath += sourceSets.main.get().output
 }
 
+tasks.getByName<JavaExec>("run") {
+    javaLauncher = project.javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}
+
 val e2eTestImplementation: Configuration by configurations.getting
 e2eTestImplementation.extendsFrom(configurations.testImplementation.get())
 
 dependencies {
     implementation("org.geogebra:common")
     implementation("org.geogebra:common-jre")
+    implementation(project(":canvas-desktop"))
     implementation(project(":editor-desktop"))
     implementation(project(":jogl2"))
     implementation("org.geogebra:giac-jni")
+    implementation("com.formdev:flatlaf:3.7")
     implementation(libs.jsObject)
     implementation(libs.openGeoProver)
     implementation(libs.jna)
     implementation(libs.echosvg)
+    implementation(libs.mozilla.rhino.engine)
 
     implementation(nativesLinuxAmd64(libs.jogl))
     implementation(nativesWindowsAmd64(libs.jogl))
@@ -52,12 +60,12 @@ dependencies {
     testImplementation(libs.hamcrest)
 
     // Junit 5 support with backward compatibility
-    testImplementation(platform(libs.junit5.bom))
-    testImplementation(libs.junit5.jupiter)
-    testImplementation(libs.junit5.vintage)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.vintage)
     // Add launcher explicitly to avoid legacy loading
     // https://docs.gradle.org/8.12/userguide/upgrading_version_8.html#manually_declaring_dependencies
-    testRuntimeOnly(libs.junit5.launcher)
+    testRuntimeOnly(libs.junit.launcher)
 }
 
 tasks.test {
@@ -66,6 +74,11 @@ tasks.test {
 
 application {
     mainClass = "org.geogebra.desktop.GeoGebra3D"
+ // https://forum.jogamp.org/Unable-to-determine-Graphics-Configuration-Am-I-setting-up-something-wrong-tp4041606p4041636.html
+    applicationDefaultJvmArgs = listOf("--add-exports", "java.base/java.lang=ALL-UNNAMED",
+            "--add-exports", "java.desktop/sun.awt=ALL-UNNAMED",
+            "--add-exports", "java.desktop/sun.java2d=ALL-UNNAMED",
+        "--enable-native-access=ALL-UNNAMED")
 }
 
 run {
@@ -103,10 +116,6 @@ tasks {
             attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(" ") { it.name }
             attributes["Main-Class"] = "org.geogebra.desktop.GeoGebra3D"
         }
-    }
-
-    checkstyleMain {
-        enabled = false
     }
 
     register<Zip>("debugJars") {

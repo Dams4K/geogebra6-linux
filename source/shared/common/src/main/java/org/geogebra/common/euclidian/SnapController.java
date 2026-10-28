@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
 import org.geogebra.common.awt.GPoint;
@@ -38,7 +54,10 @@ public class SnapController {
 	 * SNAPPED_VERTICAL -&gt; FREE SNAPPED_HORIZONTAL -&gt; FREE
 	 */
 	private enum State {
-		MAY_SNAP, SNAPPED_VERTICAL, SNAPPED_HORIZONTAL, FREE
+		MAY_SNAP,
+		SNAPPED_VERTICAL,
+		SNAPPED_HORIZONTAL,
+		FREE
 	}
 
 	private State state;
@@ -89,33 +108,31 @@ public class SnapController {
 		int dy = movedLocation.y - startLocation.y;
 		double distance = startLocation.distance(movedLocation);
 		switch (state) {
-		case FREE:
-			break;
-		case SNAPPED_VERTICAL:
-			if (Math.abs(dx) > MOVE_VIEW_THRESHOLD) {
-				state = State.FREE;
-			}
-			break;
-		case SNAPPED_HORIZONTAL:
-			if (Math.abs(dy) > MOVE_VIEW_THRESHOLD) {
-				state = State.FREE;
-			}
-			break;
-		case MAY_SNAP:
-			if (startLocation.distance(newLocation) > DISTANCE_THRESHOLD) {
-				state = State.FREE;
-			} else {
-				float angle = calculateAngle(startLocation, movedLocation);
-				if (distance > INITIAL_DISTANCE_THRESHOLD) {
-					if (angleInHorizontal(angle)
-							&& Math.abs(dy) <= MOVE_VIEW_THRESHOLD) {
-						state = State.SNAPPED_HORIZONTAL;
-					} else if (angleInVertical(angle)
-							&& Math.abs(dx) <= MOVE_VIEW_THRESHOLD) {
-						state = State.SNAPPED_VERTICAL;
+			case FREE:
+				break;
+			case SNAPPED_VERTICAL:
+				if (Math.abs(dx) > MOVE_VIEW_THRESHOLD) {
+					state = State.FREE;
+				}
+				break;
+			case SNAPPED_HORIZONTAL:
+				if (Math.abs(dy) > MOVE_VIEW_THRESHOLD) {
+					state = State.FREE;
+				}
+				break;
+			case MAY_SNAP:
+				if (startLocation.distance(newLocation) > DISTANCE_THRESHOLD) {
+					state = State.FREE;
+				} else {
+					float angle = calculateAngle(startLocation, movedLocation);
+					if (distance > INITIAL_DISTANCE_THRESHOLD) {
+						if (angleInHorizontal(angle) && Math.abs(dy) <= MOVE_VIEW_THRESHOLD) {
+							state = State.SNAPPED_HORIZONTAL;
+						} else if (angleInVertical(angle) && Math.abs(dx) <= MOVE_VIEW_THRESHOLD) {
+							state = State.SNAPPED_VERTICAL;
+						}
 					}
 				}
-			}
 		}
 	}
 
@@ -131,8 +148,7 @@ public class SnapController {
 	}
 
 	private float calculateAngle(GPoint point1, GPoint point2) {
-		float angle = (float) Math.toDegrees(
-				Math.atan2(point2.y - point1.y, point2.x - point1.x));
+		float angle = (float) Math.toDegrees(Math.atan2(point2.y - point1.y, point2.x - point1.x));
 
 		if (angle < 0) {
 			angle += 360;

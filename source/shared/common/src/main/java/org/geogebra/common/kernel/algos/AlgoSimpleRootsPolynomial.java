@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoSimpleRootsPolynomial.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 27.07.2010, 17:41
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -45,15 +43,12 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 	public AlgoSimpleRootsPolynomial(Construction c) {
 		super(c);
 		eqnSolver = cons.getKernel().getEquationSolver();
-		points = new OutputHandler<>(new ElementFactory<GeoPoint>() {
-			@Override
-			public GeoPoint newElement() {
-				GeoPoint p = new GeoPoint(cons);
-				// p.setCoords(0, 0, 1);
-				p.setUndefined();
-				p.setParentAlgorithm(AlgoSimpleRootsPolynomial.this);
-				return p;
-			}
+		points = new OutputHandler<>(() -> {
+			GeoPoint p = new GeoPoint(cons);
+			// p.setCoords(0, 0, 1);
+			p.setUndefined();
+			p.setParentAlgorithm(this);
+			return p;
 		});
 	}
 
@@ -106,8 +101,7 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 	 *            solver
 	 * @return number of distinct roots
 	 */
-	public static int getRoots(double[] roots,
-			EquationSolverInterface eqnSolver) {
+	public static int getRoots(double[] roots, EquationSolverInterface eqnSolver) {
 		int nrRealRoots = eqnSolver.polynomialRoots(roots, false);
 		if (nrRealRoots > 1) {
 			int c = 0;
@@ -137,8 +131,7 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 		makePoints(roots, nrRealRoots);
 	}
 
-	protected void doCalc(PolynomialFunction rootsPoly, double min,
-			double max) {
+	protected void doCalc(PolynomialFunction rootsPoly, double min, double max) {
 		double[] roots = rootsPoly.getCoefficients();
 		int nrRealRoots = 0;
 		if (roots.length > 1) {
@@ -147,8 +140,7 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 
 		for (int i = 0; i < nrRealRoots; ++i) {
 			if (DoubleUtil.isGreater(roots[i], max, Kernel.STANDARD_PRECISION)
-					|| DoubleUtil.isGreater(min, roots[i],
-							Kernel.STANDARD_PRECISION)) {
+					|| DoubleUtil.isGreater(min, roots[i], Kernel.STANDARD_PRECISION)) {
 				roots[i] = Double.NaN;
 			}
 		}
@@ -156,8 +148,7 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 	}
 
 	private static double distancePairSq(double[] p1, double[] p2) {
-		return (p1[0] - p2[0]) * (p1[0] - p2[0])
-				+ (p1[1] - p2[1]) * (p1[1] - p2[1]);
+		return (p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1]);
 	}
 
 	private void makePoints(double[] roots, int nrRealRoots) {
@@ -168,8 +159,7 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 			for (int j = 0; j < len; j++) {
 				double[] pair = getXYPair(roots[i], j);
 				for (int k = 0; k < valPairs.size(); k++) {
-					if (distancePairSq(pair,
-							valPairs.get(k)) < Kernel.STANDARD_PRECISION) {
+					if (distancePairSq(pair, valPairs.get(k)) < Kernel.STANDARD_PRECISION) {
 						pair = null;
 						break;
 					}
@@ -194,8 +184,7 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 	protected void setPoints(List<double[]> valPairs) {
 		points.adjustOutputSize(valPairs.size());
 		for (int i = 0; i < valPairs.size(); i++) {
-			points.getElement(i).setCoords(valPairs.get(i)[0],
-					valPairs.get(i)[1], 1);
+			points.getElement(i).setCoords(valPairs.get(i)[0], valPairs.get(i)[1], 1);
 		}
 
 		if (setLabels) {
@@ -251,12 +240,11 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 	}
 
 	protected double[] getXYPair(double t, int idx) {
-		return new double[] { getXValue(t, idx), getYValue(t, idx) };
+		return new double[] {getXValue(t, idx), getYValue(t, idx)};
 	}
 
 	@Override
 	public Commands getClassName() {
 		return Commands.Roots;
 	}
-
 }

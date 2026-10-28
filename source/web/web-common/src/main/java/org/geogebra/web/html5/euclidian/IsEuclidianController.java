@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.euclidian;
 
 import org.geogebra.common.euclidian.event.AbstractEvent;
@@ -26,14 +42,13 @@ public interface IsEuclidianController extends LongTouchHandler {
 	 * @param pointerEventType pointer event type
 	 * @param pointerDown whether this was triggered by pointer down event
 	 */
-	void setDefaultEventType(PointerEventType pointerEventType,
-			boolean pointerDown);
+	void setDefaultEventType(PointerEventType pointerEventType, boolean pointerDown);
 
 	/**
 	 * Handle touch move event for two pointers.
-	 * @param x1 first posinter's x-coordinate
+	 * @param x1 first pointer's x-coordinate
 	 * @param y1 first pointer's y-coordinate
-	 * @param x2 second posinter's x-coordinate
+	 * @param x2 second pointer's x-coordinate
 	 * @param y2 second pointer's y-coordinate
 	 */
 	void twoTouchMove(double x1, double y1, double x2, double y2);
@@ -93,4 +108,12 @@ public interface IsEuclidianController extends LongTouchHandler {
 	 * @return mouse, touch and gesture controller
 	 */
 	MouseTouchGestureControllerW getOffsets();
+
+	/**
+	 * Called when pointer event canceled.
+	 * Happens e.g. when device is touched by stylus after being touched by finger
+	 */
+	default void onPointerCancel() {
+		// not needed in 3D
+	}
 }

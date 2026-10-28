@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import org.geogebra.common.euclidian.event.PointerEventType;
@@ -16,9 +32,8 @@ import org.gwtproject.user.client.ui.FlowPanel;
 /**
  * @author Zbynek
  */
-public class MarblePanel extends FlowPanel
-		implements KeyDownHandler, AlgebraItemHeader {
-	
+public final class MarblePanel extends FlowPanel implements KeyDownHandler, AlgebraItemHeader {
+
 	private Marble marble;
 	/** warning triangle / help button */
 	private StandardButton btnWarning;
@@ -90,8 +105,7 @@ public class MarblePanel extends FlowPanel
 	@Override
 	public void updateIcons(boolean warning) {
 		boolean textInput = item.getController().isInputAsText();
-		if (textInput && !item.isInputTreeItem()
-				&& item.getController().isEditing()) {
+		if (textInput && !item.isInputTreeItem() && item.getController().isEditing()) {
 			addStyleName("text");
 		} else {
 			removeStyleName("text");
@@ -111,8 +125,7 @@ public class MarblePanel extends FlowPanel
 			marble.setEnabled(shouldShowMarble());
 			removeStyleName("error");
 		}
-		AriaHelper.setLabel(marble,
-				item.loc.getMenu("ShowHideObject"));
+		AriaHelper.setLabel(marble, item.loc.getMenu("ShowHideObject"));
 	}
 
 	private void initHelpToggle() {
@@ -168,7 +181,7 @@ public class MarblePanel extends FlowPanel
 			cmPlus = new ContextMenuAVPlus(item);
 		}
 		item.cancelEditing();
-		cmPlus.show(btnPlus,  16, 6);
+		cmPlus.show(btnPlus, 16, 6);
 	}
 
 	@Override
@@ -178,7 +191,7 @@ public class MarblePanel extends FlowPanel
 
 	/**
 	 * Shows the help panel
-	 * 
+	 *
 	 * @param item
 	 *            item to show the help in
 	 */
@@ -186,17 +199,16 @@ public class MarblePanel extends FlowPanel
 		Scheduler.get().scheduleDeferred(() -> {
 			item.setFocus(true);
 			item.setShowInputHelpPanel(true);
-			item.app.getGuiManager().getInputHelpPanel()
-					.focusCommand(item.getCommand());
+			item.app.getGuiManager().getInputHelpPanel().focusCommand(item.getCommand());
 		});
 	}
 
 	/**
 	 * Check if item shows error.
-	 * 
+	 *
 	 * @param item
 	 *            to check
-	 * 
+	 *
 	 * @return if there is an error or not.
 	 */
 	public static boolean checkError(final RadioTreeItem item) {

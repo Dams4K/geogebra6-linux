@@ -1,7 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GArea;
 import org.geogebra.common.awt.GEllipse2DDouble;
 import org.geogebra.common.awt.GGraphics2D;
@@ -10,7 +27,6 @@ import org.geogebra.common.awt.GRectangle;
 import org.geogebra.common.euclidian.EuclidianStatic;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.GeneralPathClipped;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.arithmetic.IneqTree;
 import org.geogebra.common.kernel.arithmetic.Inequality;
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -20,12 +36,13 @@ import org.geogebra.common.util.ExtendedBoolean;
 
 /**
  * @author Zbynek
- * 
+ *
  */
 public class DrawInequality1Var extends SetDrawable {
 
 	/** ratio of dot radius and line thickness */
 	public static final double DOT_RADIUS = 1;
+
 	private final IneqTree parentTree;
 	private Inequality ineq;
 	private GeneralPathClipped[] gp;
@@ -35,7 +52,7 @@ public class DrawInequality1Var extends SetDrawable {
 
 	/**
 	 * Creates new drawable inequality
-	 * 
+	 *
 	 * @param view
 	 *            view
 	 * @param geo
@@ -45,8 +62,7 @@ public class DrawInequality1Var extends SetDrawable {
 	 * @param varIsY
 	 *            true if this is inequality in Y
 	 */
-	public DrawInequality1Var(Inequality ineq, EuclidianView view,
-			GeoElement geo, boolean varIsY) {
+	public DrawInequality1Var(Inequality ineq, EuclidianView view, GeoElement geo, boolean varIsY) {
 		super();
 		this.ineq = ineq;
 		this.geo = geo;
@@ -57,7 +73,7 @@ public class DrawInequality1Var extends SetDrawable {
 
 	@Override
 	public void draw(GGraphics2D g2) {
-		for (GLine2D line: lines) {
+		for (GLine2D line : lines) {
 			if (line == null) {
 				continue;
 			}
@@ -70,15 +86,14 @@ public class DrawInequality1Var extends SetDrawable {
 			if (geo.getLineThickness() > 0) {
 				g2.setPaint(getObjectColor());
 				g2.setStroke(
-						EuclidianStatic.getStroke(geo.getLineThickness() / 2.0f,
-								ineq.getFunBorder().lineType));
+						EuclidianStatic.getStroke(geo.getLineThickness() / 2.0f, ineq.getFunBorder().lineType));
 				g2.draw(line);
 			}
 		}
 		if (circle == null) {
 			return;
 		}
-		for (GEllipse2DDouble ellipse: circle) {
+		for (GEllipse2DDouble ellipse : circle) {
 			if (ellipse == null) {
 				continue;
 			}
@@ -90,16 +105,14 @@ public class DrawInequality1Var extends SetDrawable {
 
 			if (geo.getLineThickness() > 0) {
 				g2.setPaint(getObjectColor());
-				g2.setStroke(
-						EuclidianStatic.getStroke(geo.getLineThickness() / 2.0f,
-								EuclidianStyleConstants.LINE_TYPE_FULL));
+				g2.setStroke(EuclidianStatic.getStroke(
+						geo.getLineThickness() / 2.0f, EuclidianStyleConstants.LINE_TYPE_FULL));
 				g2.draw(ellipse);
 				if (!ineq.isStrict()) {
 					g2.fill(ellipse);
 				}
 			}
 		}
-
 	}
 
 	@Override
@@ -140,16 +153,14 @@ public class DrawInequality1Var extends SetDrawable {
 				}
 			}
 			y[numOfX++] = -10;
-			if (numOfX > 2 && y[numOfX - 2] > 0
-					&& y[numOfX - 2] < view.getHeight()) {
+			if (numOfX > 2 && y[numOfX - 2] > 0 && y[numOfX - 2] < view.getHeight()) {
 				yLabel = (int) y[numOfX - 2] - 5;
 			} else {
 				yLabel = 10;
 			}
 			xLabel = (int) view.getXZero() + 6;
 			initGP(numOfX);
-			int j = ineq.getFunBorder().value(
-					view.toRealWorldCoordY(view.getHeight() + 10)) <= 0 ? 1 : 0;
+			int j = ineq.getFunBorder().value(view.toRealWorldCoordY(view.getHeight() + 10)) <= 0 ? 1 : 0;
 			GArea a = AwtFactory.getPrototype().newArea();
 			for (int i = 0; 2 * i + j + 1 < numOfX; i++) {
 				gp[i] = new GeneralPathClipped(view);
@@ -162,7 +173,7 @@ public class DrawInequality1Var extends SetDrawable {
 				gp[i].closePath();
 				lines[2 * i] = horizontalLine(yRW[2 * i + j], y[2 * i + j]);
 				lines[2 * i + 1] = horizontalLine(yRW[2 * i + j + 1], y[2 * i + j + 1]);
-				a.add(AwtFactory.getPrototype().newArea(gp[i]));
+				a.add(AwtFactory.getPrototype().newArea(gp[i].getGeneralPath()));
 			}
 			setShape(a);
 		} else {
@@ -182,8 +193,7 @@ public class DrawInequality1Var extends SetDrawable {
 			xRW[numOfX] = view.getXmax() + 1;
 			x[numOfX++] = view.getWidth() + 10;
 
-			if (numOfX > 2 && x[numOfX - 2] > 0
-					&& x[numOfX - 2] < view.getHeight()) {
+			if (numOfX > 2 && x[numOfX - 2] > 0 && x[numOfX - 2] < view.getHeight()) {
 				xLabel = (int) x[numOfX - 2] - 10;
 			} else {
 				xLabel = 10;
@@ -194,8 +204,7 @@ public class DrawInequality1Var extends SetDrawable {
 
 			GArea a = AwtFactory.getPrototype().newArea();
 			int circleCount = 0;
-			if ((geo instanceof GeoFunction)
-					&& ((GeoFunction) geo).showOnAxis()) {
+			if ((geo instanceof GeoFunction) && ((GeoFunction) geo).showOnAxis()) {
 				circle = new GEllipse2DDouble[numOfX];
 				for (int i = 0; i < numOfX; i++) {
 					if (x[i] < 0) {
@@ -207,17 +216,14 @@ public class DrawInequality1Var extends SetDrawable {
 					if (!isVisibleRoot(xRW[i])) {
 						break;
 					}
-					circle[circleCount] = AwtFactory.getPrototype()
-							.newEllipse2DDouble();
+					circle[circleCount] = AwtFactory.getPrototype().newEllipse2DDouble();
 					double radius = geo.getLineThickness() * DOT_RADIUS;
-					circle[circleCount].setFrame(x[i] - radius,
-							view.toScreenCoordY(0) - radius, 2 * radius,
-							2 * radius);
+					circle[circleCount].setFrame(
+							x[i] - radius, view.toScreenCoordY(0) - radius, 2 * radius, 2 * radius);
 					circleCount++;
 				}
 			} else {
-				int j = ineq.getFunBorder()
-						.value(view.toRealWorldCoordX(-10)) <= 0 ? 1 : 0;
+				int j = ineq.getFunBorder().value(view.toRealWorldCoordX(-10)) <= 0 ? 1 : 0;
 
 				for (int i = 0; 2 * i + j + 1 < numOfX; i++) {
 					gp[i] = new GeneralPathClipped(view);
@@ -230,7 +236,7 @@ public class DrawInequality1Var extends SetDrawable {
 					gp[i].closePath();
 					lines[2 * i] = verticalLine(xRW[2 * i + j], x[2 * i + j]);
 					lines[2 * i + 1] = verticalLine(xRW[2 * i + 1 + j], x[2 * i + 1 + j]);
-					a.add(AwtFactory.getPrototype().newArea(gp[i]));
+					a.add(AwtFactory.getPrototype().newArea(gp[i].getGeneralPath()));
 				}
 			}
 			setShape(a);
@@ -259,8 +265,7 @@ public class DrawInequality1Var extends SetDrawable {
 	}
 
 	private boolean isVisibleRoot(double val) {
-		return parentTree == null
-				|| parentTree.valueAround(val, 0) == ExtendedBoolean.UNKNOWN;
+		return parentTree == null || parentTree.valueAround(val, 0) == ExtendedBoolean.UNKNOWN;
 	}
 
 	private void initGP(int numOfX) {

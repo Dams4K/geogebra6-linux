@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import java.util.HashMap;
@@ -7,15 +23,14 @@ import org.geogebra.common.plugin.Event;
 import org.geogebra.common.plugin.EventType;
 import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.common.util.StringUtil;
+import org.geogebra.editor.share.event.MathFieldListener;
+import org.geogebra.editor.share.input.KeyboardInputAdapter;
+import org.geogebra.editor.web.MathFieldW;
 import org.geogebra.web.full.gui.inputfield.AutoCompletePopup;
 import org.geogebra.web.html5.gui.util.CancelEventTimer;
 import org.gwtproject.core.client.Scheduler;
 import org.gwtproject.event.dom.client.BlurEvent;
 import org.gwtproject.event.dom.client.BlurHandler;
-
-import com.himamis.retex.editor.share.event.MathFieldListener;
-import com.himamis.retex.editor.share.input.KeyboardInputAdapter;
-import com.himamis.retex.editor.web.MathFieldW;
 
 /**
  * @author Laszlo
@@ -25,8 +40,8 @@ public class LatexTreeItemController extends RadioTreeItemController
 		implements MathFieldListener, BlurHandler {
 
 	private AutoCompletePopup autocomplete;
-	private RetexKeyboardListener retexListener;
 	private final EvaluateInput evalInput;
+	private String lastInput = "";
 
 	/**
 	 * @param item
@@ -35,7 +50,6 @@ public class LatexTreeItemController extends RadioTreeItemController
 	public LatexTreeItemController(RadioTreeItem item) {
 		super(item);
 		evalInput = new EvaluateInput(item, this, item.getAV().getSelectionCallback());
-		evalInput.setUsingValidInput(app.getActivity().useValidInput());
 	}
 
 	@Override
@@ -45,6 +59,16 @@ public class LatexTreeItemController extends RadioTreeItemController
 		} else {
 			super.startEdit(ctrl);
 		}
+		// store the initial input when activated using mouse
+		storeInitialInput();
+	}
+
+	/**
+	 * Stores the initial input that should be restored upon pressing Escape.
+	 * Make sure to call this method upon edit start.
+	 */
+	void storeInitialInput() {
+		lastInput = item.getText();
 	}
 
 	@Override
@@ -53,6 +77,9 @@ public class LatexTreeItemController extends RadioTreeItemController
 			item.resetInputBarOnBlur();
 			if (preventBlur || isSuggesting()) {
 				return;
+			}
+			if (getMathField() != null) {
+				getMathField().getInternal().moveCursorToFirstEditablePart();
 			}
 
 			onEnter(false);
@@ -68,20 +95,16 @@ public class LatexTreeItemController extends RadioTreeItemController
 		});
 	}
 
-	private void keepFocusInApp() {
-		if (item.geo != null) {
-			app.getAccessibilityManager().focusGeo(item.geo);
-		} else {
-			app.getActiveEuclidianView().requestFocus();
-		}
-	}
-
 	@Override
 	public void onEnter(final boolean keepFocus) {
 		if (isEditing()) {
 			dispatchEditEvent(EventType.EDITOR_STOP);
 		}
+		if (keepFocus) {
+			app.getAccessibilityManager().resetTabOverGeos();
+		}
 		if (item.isInputTreeItem() && item.isEmpty()) {
+			hideKeyboardIfNotLast();
 			item.styleEditor();
 			item.addDummyLabel();
 			setEditing(false);
@@ -89,24 +112,37 @@ public class LatexTreeItemController extends RadioTreeItemController
 		}
 		item.setShowInputHelpPanel(false);
 		if (item.geo == null && isEditing()) {
+			hideKeyboardIfNotLast();
 			if (StringUtil.empty(item.getText())) {
 				return;
 			}
 			item.getAV().setLaTeXLoaded();
+			app.getSelectionManager().resetKeyboardSelection();
 			evalInput.createGeoFromInput(keepFocus);
 			setEditing(false);
 			return;
 		}
 		if (!isEditing()) {
+			hideKeyboardIfNotLast();
 			return;
 		}
-
-		item.stopEditing(item.getText(), obj -> {
-			if (obj != null && !keepFocus) {
+		boolean accepted = item.stopEditing(item.getText(), item.getPreviewText(), obj -> {
+			hideKeyboardIfNotLast();
+			if (!keepFocus) {
 				app.setScrollToShow(true);
 				obj.update();
 			}
-		}, keepFocus);
+		});
+		if (!accepted && keepFocus) {
+			setEditing(true);
+			setFocus(true);
+		}
+	}
+
+	private void hideKeyboardIfNotLast() {
+		if (!item.isLastRadioTreeItem()) {
+			app.hideKeyboard();
+		}
 	}
 
 	@Override
@@ -128,6 +164,7 @@ public class LatexTreeItemController extends RadioTreeItemController
 			// to clear preview points
 			app.getSelectionManager().clearSelectedGeos();
 		}
+		setEditing(true);
 		item.onKeyTyped();
 		dispatchKeyTypeEvent(key);
 	}
@@ -167,7 +204,7 @@ public class LatexTreeItemController extends RadioTreeItemController
 	public GeoElementND evaluateToGeo() {
 		return evalInput.evaluateToGeo();
 	}
-	
+
 	/**
 	 * @param afterCb additional callback that runs after creation.
 	 */
@@ -184,26 +221,10 @@ public class LatexTreeItemController extends RadioTreeItemController
 	}
 
 	/**
-	 * @return keyboard listener
-	 */
-	public RetexKeyboardListener getRetexListener() {
-		return retexListener;
-	}
-
-	/**
-	 * @param retexListener
-	 *            keyboard listener
-	 */
-	public void setRetexListener(RetexKeyboardListener retexListener) {
-		this.retexListener = retexListener;
-	}
-
-	/**
 	 * Connect keyboard listener to keyboard
 	 */
 	public void setOnScreenKeyboardTextField() {
-		app.getKeyboardManager()
-				.setOnScreenKeyboardTextField(item);
+		app.getKeyboardManager().setOnScreenKeyboardTextField(item);
 		// prevent that keyboard is closed on clicks (changing
 		// cursor position)
 		CancelEventTimer.keyboardSetVisible();
@@ -214,8 +235,6 @@ public class LatexTreeItemController extends RadioTreeItemController
 	 *            whether to show keyboard
 	 */
 	public void initAndShowKeyboard(boolean show) {
-		retexListener = new RetexKeyboardListener(item.canvas, getMathField());
-		retexListener.setAcceptsCommandInserts(true);
 		if (show) {
 			app.getAppletFrame().showKeyboard(true, item, false);
 		}
@@ -239,28 +258,20 @@ public class LatexTreeItemController extends RadioTreeItemController
 	public boolean onEscape() {
 		if (autocomplete != null && autocomplete.isSuggesting()) {
 			autocomplete.hide();
-			return true;
+		} else {
+			item.setText(lastInput);
 		}
-		if (item.geo != null || StringUtil.empty(item.getText())) {
-			boolean isAlgebraViewFocused = app.isAlgebraViewFocused();
-			onBlur(null);
-			keepFocusInApp();
-			if (isAlgebraViewFocused) {
-				setAlgebraViewAsFocusedPanel();
-			}
-			return true;
-		}
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean onTab(boolean shiftDown) {
-		onEnter(false);
+		boolean handled;
 		if (item.isInputTreeItem()) {
 			item.setItemWidth(item.getAV().getFullWidth());
-		}
-		boolean handled;
-		if (shiftDown) {
+			item.setFocus(false);
+			handled = item.getAV().focusAdjacentFromInput(shiftDown);
+		} else if (shiftDown) {
 			handled = app.getAccessibilityManager().focusPrevious();
 		} else {
 			handled = app.getAccessibilityManager().focusNext();

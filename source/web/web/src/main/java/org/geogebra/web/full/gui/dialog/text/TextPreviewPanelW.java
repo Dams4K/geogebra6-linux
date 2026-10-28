@@ -1,5 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.dialog.text;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GFont;
 import org.geogebra.common.awt.GRectangle;
@@ -7,7 +24,6 @@ import org.geogebra.common.euclidian.EuclidianController;
 import org.geogebra.common.euclidian.EuclidianStatic;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.draw.DrawText;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.gui.dialog.TextPreviewer;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.geos.GeoText;
@@ -23,13 +39,13 @@ import org.gwtproject.user.client.ui.Panel;
 import org.gwtproject.user.client.ui.Widget;
 
 /**
- * 
+ *
  * Web implementation of TextPreviewPanel
- * 
+ *
  * @author G. Sturr
- * 
+ *
  */
-public class TextPreviewPanelW extends TextPreviewer {
+public final class TextPreviewPanelW extends TextPreviewer {
 
 	private TextPreviewEuclidianViewPanelW evPanel;
 
@@ -53,39 +69,54 @@ public class TextPreviewPanelW extends TextPreviewer {
 	 * the given preview geo. This forces the enclosing scrollpane to show
 	 * scrollbars when the size of the preview geo grows larger than the
 	 * scrollpane viewport.
-	 * 
+	 *
 	 * Note: The preview geo uses absolute screen coords, so we can't easily get
 	 * the bounding box dimensions and must use dummy containers to estimate
 	 * these dimensions.
-	 * 
+	 *
 	 * @param previewGeo
 	 *            preview content
 	 */
 	@Override
 	protected void updateViewportSize(GeoText previewGeo) {
-		
+
 		int padding = 5; // account for inset
-		
+
 		boolean isLatex = previewGeo.isLaTeX();
 		boolean serif = previewGeo.isSerifFont();
-		
-		int size = (int) (previewGeo.getFontSizeMultiplier() * getApp()
-				.getFontSize());
+
+		int size = (int) (previewGeo.getFontSizeMultiplier() * getApp().getFontSize());
 		GFont textFont = getApp().getFontCommon(serif, previewGeo.getFontStyle(), size);
 
 		GRectangle rect = AwtFactory.getPrototype().newRectangle();
 		if (isLatex) {
-			EuclidianStatic.drawMultilineLaTeX(getApp(),
-					ev.getTempGraphics2D(textFont), previewGeo,
-					ev.getTempGraphics2D(textFont), textFont, GColor.BLACK,
+			EuclidianStatic.drawMultilineLaTeX(
+					getApp(),
+					ev.getTempGraphics2D(textFont),
+					previewGeo,
+					ev.getTempGraphics2D(textFont),
+					textFont,
+					GColor.BLACK,
 					GColor.WHITE,
-					previewGeo.getTextString(), 0, 0, serif, null, rect);
-			
+					previewGeo.getTextString(),
+					0,
+					0,
+					serif,
+					null,
+					rect);
+
 		} else {
-			EuclidianStatic.drawMultiLineText(getApp(),
-					previewGeo.getTextString(), 0, 0,
+			EuclidianStatic.drawMultiLineText(
+					getApp(),
+					previewGeo.getTextString(),
+					0,
+					0,
 					((EuclidianViewW) ev).getG2P(),
-					serif, textFont, rect, null, DrawText.DEFAULT_MARGIN);
+					serif,
+					textFont,
+					rect,
+					null,
+					DrawText.DEFAULT_MARGIN);
 		}
 		int w = (int) rect.getWidth() + padding;
 		int h = (int) rect.getHeight() + padding;
@@ -95,16 +126,14 @@ public class TextPreviewPanelW extends TextPreviewer {
 
 	@Override
 	protected void removeEVMouseListeners() {
-		// ev.removeMouseListener(ev.getEuclidianController());
-		// ev.removeMouseMotionListener(ev.getEuclidianController());
-		// ev.removeMouseWheelListener(ev.getEuclidianController());
+		// nothing to do here
 	}
 
 	@Override
 	protected EuclidianViewW getEuclidianView() {
 		if (ev == null) {
-			ev = new PreviewEuclidianView(getEVPanel(), new EuclidianControllerW(
-					kernel), EuclidianView.EVNO_GENERAL, null);
+			ev = new PreviewEuclidianView(
+					getEVPanel(), new EuclidianControllerW(kernel), EuclidianView.EVNO_GENERAL, null);
 		}
 		return (EuclidianViewW) ev;
 	}
@@ -123,14 +152,16 @@ public class TextPreviewPanelW extends TextPreviewer {
 		getEVPanel().onResize();
 	}
 
-	/****************************************************************************
-	 * Extension of EuclidianViewD for displaying preview text strings
-	 * 
+	/**
+	 * Extension of EuclidianViewW for displaying preview text strings.
 	 */
-	private static class PreviewEuclidianView extends EuclidianViewW {
+	private static final class PreviewEuclidianView extends EuclidianViewW {
 
-		public PreviewEuclidianView(TextPreviewEuclidianViewPanelW panel,
-				EuclidianController ec, int evno, EuclidianSettings settings) {
+		private PreviewEuclidianView(
+				TextPreviewEuclidianViewPanelW panel,
+				EuclidianController ec,
+				int evno,
+				EuclidianSettings settings) {
 			super(panel, ec, evno, settings);
 
 			// the show axis and show grid parameters currently do nothing, so
@@ -159,16 +190,15 @@ public class TextPreviewPanelW extends TextPreviewer {
 		}
 	}
 
-	/****************************************************************************
-	 * Panel for EuclidianView
-	 * 
+	/**
+	 * Panel for EuclidianView.
 	 */
-	private class TextPreviewEuclidianViewPanelW extends AbsolutePanel implements
-	        EuclidianPanelWAbstract {
+	private final class TextPreviewEuclidianViewPanelW extends AbsolutePanel
+			implements EuclidianPanelWAbstract {
 
-		private Canvas canvas;
+		private final Canvas canvas;
 
-		public TextPreviewEuclidianViewPanelW() {
+		private TextPreviewEuclidianViewPanelW() {
 			super();
 			canvas = Canvas.createIfSupported();
 			canvas.getElement().getStyle().setPosition(Position.ABSOLUTE);
@@ -220,7 +250,5 @@ public class TextPreviewPanelW extends TextPreviewer {
 		public void enableZoomPanelEvents(boolean enable) {
 			// not needed
 		}
-
 	}
-
 }

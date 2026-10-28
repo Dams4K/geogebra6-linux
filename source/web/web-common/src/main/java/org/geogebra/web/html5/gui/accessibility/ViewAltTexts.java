@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.accessibility;
 
 import java.util.ArrayList;
@@ -16,12 +32,9 @@ import org.geogebra.common.main.App;
  * @author laszlo
  */
 public class ViewAltTexts {
-	private static final List<Integer> availableViews = Arrays.asList(
-			App.VIEW_EUCLIDIAN,
-			App.VIEW_EUCLIDIAN2,
-			App.VIEW_EUCLIDIAN3D);
-	private static final HashMap<Integer, String>
-			altTextsPerView = new HashMap<>();
+	private static final List<Integer> availableViews =
+			Arrays.asList(App.VIEW_EUCLIDIAN, App.VIEW_EUCLIDIAN2, App.VIEW_EUCLIDIAN3D);
+	private static final HashMap<Integer, String> altTextsPerView = new HashMap<>();
 	private List<Integer> visibleViews;
 
 	static {
@@ -65,10 +78,11 @@ public class ViewAltTexts {
 	 * specified by viewIndex.
 	 */
 	public GeoElement getAltGeo(int viewIndex) {
-		GeoElement geoElement = kernel.lookupLabel(get(viewIndex));
-		return (geoElement == null || geoElement.isEuclidianVisible())
-				? null
-				: geoElement;
+		// viewIndex may be -1 in SciCalc
+		GeoElement geoElement = viewIndex >= 0 && viewIndex < visibleViews.size()
+				? kernel.lookupLabel(get(viewIndex))
+				: null;
+		return (geoElement == null || geoElement.isEuclidianVisible()) ? null : geoElement;
 	}
 
 	private String get(int index) {

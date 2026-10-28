@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.statistics;
 
 import org.apache.commons.math3.distribution.BinomialDistribution;
@@ -19,11 +35,12 @@ public class AlgoInverseBinomialMinimumTrials extends AlgoDistribution {
 	 * @param probability success probability
 	 * @param numberOfTrials number of trials
 	 */
-	public AlgoInverseBinomialMinimumTrials(Construction c,
-			GeoNumberValue cumulativeProbability, GeoNumberValue probability,
+	public AlgoInverseBinomialMinimumTrials(
+			Construction c,
+			GeoNumberValue cumulativeProbability,
+			GeoNumberValue probability,
 			GeoNumberValue numberOfTrials) {
 		super(c, cumulativeProbability, probability, numberOfTrials, null);
-
 	}
 
 	@Override
@@ -42,8 +59,7 @@ public class AlgoInverseBinomialMinimumTrials extends AlgoDistribution {
 			num.setUndefined();
 			return;
 		}
-		if (input[0].isDefined() && input[1].isDefined()
-				&& input[2].isDefined()) {
+		if (input[0].isDefined() && input[1].isDefined() && input[2].isDefined()) {
 			try {
 				int count = countCumulativeProbabilityAccepted();
 				if (count == MAX_ITERATIONS) {
@@ -62,8 +78,7 @@ public class AlgoInverseBinomialMinimumTrials extends AlgoDistribution {
 
 	private int countCumulativeProbabilityAccepted() {
 		int count = 0;
-		while (isCumulativeProbabilityAccepted(count, getTrials())
-				&& count < MAX_ITERATIONS) {
+		while (isCumulativeProbabilityAccepted(count, getTrials()) && count < MAX_ITERATIONS) {
 			count++;
 		}
 		return count;
@@ -87,9 +102,7 @@ public class AlgoInverseBinomialMinimumTrials extends AlgoDistribution {
 	}
 
 	private boolean isInvalidArguments() {
-		return isProbabilityOutOfRange()
-				|| isCumulativeProbabilityOutOfRange()
-				|| isInvalidTrials();
+		return isProbabilityOutOfRange() || isCumulativeProbabilityOutOfRange() || isInvalidTrials();
 	}
 
 	private boolean isProbabilityOutOfRange() {

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.export.pstricks;
 
 import org.geogebra.common.kernel.geos.GeoNumeric;
@@ -20,7 +36,7 @@ public class ExportFrameMinimal implements ExportSettings {
 	private int format = 0;
 	private double yMax;
 	private double yMin;
-	private GeoNumeric cbitem;
+	private GeoNumeric slider;
 
 	/**
 	 * @param ymin2
@@ -129,11 +145,14 @@ public class ExportFrameMinimal implements ExportSettings {
 
 	@Override
 	public GeoNumeric getcbSlidersItem() {
-		return cbitem;
+		return slider;
 	}
 
+	/**
+	 * @param slider slider
+	 */
 	public void setSlider(GeoNumeric slider) {
-		cbitem = slider;
+		this.slider = slider;
 	}
 
 	/**

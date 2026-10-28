@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoQuadric3DLimited;
@@ -28,16 +44,14 @@ public class AlgoQuadricSide extends AlgoQuadric {
 	 * @param bottom
 	 *            quadric bottom
 	 */
-	public AlgoQuadricSide(Construction c, GeoQuadric3DLimited inputQuadric,
-			boolean isHelperAlgo, GeoConicND bottom) {
-		super(c, inputQuadric, null, new AlgoQuadricComputerSide(),
-				!isHelperAlgo);
+	public AlgoQuadricSide(
+			Construction c, GeoQuadric3DLimited inputQuadric, boolean isHelperAlgo, GeoConicND bottom) {
+		super(c, inputQuadric, null, new AlgoQuadricComputerSide(), !isHelperAlgo);
 
 		this.isHelperAlgo = isHelperAlgo;
 		this.bottom = bottom;
 		if (!isHelperAlgo) {
-			setInputOutput(new GeoElement[] { inputQuadric },
-					new GeoElement[] { getQuadric() });
+			setInputOutput(new GeoElement[] {inputQuadric}, new GeoElement[] {getQuadric()});
 		}
 
 		compute();
@@ -71,11 +85,16 @@ public class AlgoQuadricSide extends AlgoQuadric {
 		// compute the quadric
 		getQuadric().setDefined();
 		getQuadric().setType(getInputQuadric().getType());
-		getComputer().setQuadric(getQuadric(), getInputQuadric().getOrigin(),
-				getInputQuadric().getDirection(), eigen, r1, r2);
-		getQuadric().setLimits(
-				getInputQuadric().getBottomParameter(),
-				getInputQuadric().getTopParameter());
+		getComputer()
+				.setQuadric(
+						getQuadric(),
+						getInputQuadric().getOrigin(),
+						getInputQuadric().getDirection(),
+						eigen,
+						r1,
+						r2);
+		getQuadric()
+				.setLimits(getInputQuadric().getBottomParameter(), getInputQuadric().getTopParameter());
 
 		((GeoQuadric3DPart) getQuadric()).calcArea();
 	}
@@ -107,5 +126,4 @@ public class AlgoQuadricSide extends AlgoQuadric {
 	public Commands getClassName() {
 		return Commands.QuadricSide;
 	}
-
 }

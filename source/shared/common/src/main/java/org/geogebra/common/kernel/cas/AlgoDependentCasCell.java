@@ -1,7 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.cas;
 
 import java.util.TreeSet;
 
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.AlgoCasCellInterface;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.algos.AlgoElement;
@@ -15,11 +32,10 @@ import org.geogebra.common.main.MyError.Errors;
  * construction. This algorithm updates a given output GeoCasCell (e.g. m := c +
  * 3) and possibly a twin GeoElement object (e.g. GeoNumeric m = c + 3 when c is
  * defined).
- * 
+ *
  * @author Markus Hohenwarter
  */
-public class AlgoDependentCasCell extends AlgoElement
-		implements AlgoCasCellInterface {
+public class AlgoDependentCasCell extends AlgoElement implements AlgoCasCellInterface {
 	/** error key for undefined var */
 	public static final String UNDEFINED_VARIABLE = "UndefinedVariable";
 	// output CAS cell of this algorithm
@@ -27,7 +43,7 @@ public class AlgoDependentCasCell extends AlgoElement
 
 	/**
 	 * Creates a new algorithm to handle updates of the given cell.
-	 * 
+	 *
 	 * @param casCell
 	 *            the output cell that this algorithm should update.
 	 */
@@ -56,8 +72,7 @@ public class AlgoDependentCasCell extends AlgoElement
 		// setLabel of twinGeo if we got one
 		casCell.setLabelOfTwinGeo();
 
-		if (casCell.getInputVE() != null
-				&& casCell.getInputVE().isTopLevelCommand("SlopeField")) {
+		if (casCell.getInputVE() != null && casCell.getInputVE().isTopLevelCommand("SlopeField")) {
 			cons.registerEuclidianViewCE(this);
 		}
 	}
@@ -85,7 +100,6 @@ public class AlgoDependentCasCell extends AlgoElement
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -147,7 +161,7 @@ public class AlgoDependentCasCell extends AlgoElement
 	 * in that case we want to show the symbolic version
 	 */
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// return input string, e.g. "m := c + 3"
 		return casCell.getLabel(tpl);
 	}
@@ -156,8 +170,8 @@ public class AlgoDependentCasCell extends AlgoElement
 	 * Returns &lt;cellPair&lt; tag instead of &lt;expression&gt; XML
 	 */
 	@Override
-	protected void getExpXML(StringTemplate tpl, StringBuilder sb) {
-		sb.append(casCell.getXML());
+	protected void getExpXML(StringTemplate tpl, XMLStringBuilder sb) {
+		casCell.getXML(false, sb);
 	}
 
 	@Override
@@ -169,7 +183,6 @@ public class AlgoDependentCasCell extends AlgoElement
 			return getCasCell().getInputVE().toString(tpl);
 		}
 		return super.getDefinition(tpl);
-
 	}
 
 	@Override
@@ -186,7 +199,7 @@ public class AlgoDependentCasCell extends AlgoElement
 		compute();
 
 		if (!hadTwinGeo && casCell.hasTwinGeo()) { // we got a new twin
-													// GeoElement
+			// GeoElement
 			// reinitialize algo object
 			setInputOutput();
 			// set label of the newly created twin GeoElement

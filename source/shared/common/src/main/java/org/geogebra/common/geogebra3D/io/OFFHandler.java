@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.io;
 
 import java.util.ArrayList;
@@ -15,9 +31,9 @@ import org.geogebra.common.util.opencsv.CSVException;
 import org.geogebra.common.util.opencsv.CSVParser;
 
 /**
- * 
+ *
  * A handler for OFF file
- * 
+ *
  * @author Shamshad Alam
  *
  */
@@ -32,12 +48,13 @@ public class OFFHandler {
 	public List<int[]> faces;
 	/** colors of faces */
 	public GColor[] facesColor;
+
 	private CSVParser parser;
 	private static final String OFF = "OFF";
 	private static final String COMMENT_PREFIX = "#";
 
 	/**
-	 * 
+	 *
 	 * @param construction
 	 *            construction
 	 */
@@ -72,8 +89,7 @@ public class OFFHandler {
 				geoPs[i] = vert[fs[i]];
 			}
 			// FIXME: better to add a method in AlgoDispatcher for this
-			AlgoPolygon3D algo = new AlgoPolygon3D(construction, geoPs, false,
-					null);
+			AlgoPolygon3D algo = new AlgoPolygon3D(construction, geoPs, false, null);
 			GeoPolygon3D polygon = (GeoPolygon3D) algo.getOutput()[0];
 			boolean hasColor = hasColor(index);
 			if (polygon.isDefined()) {
@@ -85,8 +101,8 @@ public class OFFHandler {
 				algo.remove();
 				// FIXME: It works only only if polygon is convex
 				for (int i = 2; i < s; i++) {
-					algo = new AlgoPolygon3D(construction, new GeoPointND[] {
-							geoPs[0], geoPs[i - 1], geoPs[i] }, false, null);
+					algo = new AlgoPolygon3D(
+							construction, new GeoPointND[] {geoPs[0], geoPs[i - 1], geoPs[i]}, false, null);
 
 					polygon = (GeoPolygon3D) algo.getOutput()[0];
 					polygon.setLabel(null);
@@ -108,7 +124,7 @@ public class OFFHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param faceIndex
 	 *            index of the face
 	 * @return color associated with the face
@@ -125,7 +141,7 @@ public class OFFHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param faceIndex
 	 *            face index
 	 * @return true if face color is specified in the file
@@ -136,7 +152,7 @@ public class OFFHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return faceCount
 	 */
 	public int getFaceCount() {
@@ -144,7 +160,7 @@ public class OFFHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return edgeCount
 	 */
 	public int getEdgeCount() {
@@ -152,7 +168,7 @@ public class OFFHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return vertexCount
 	 */
 	public int getVertexCount() {
@@ -160,7 +176,7 @@ public class OFFHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return unmodifiable list of faces
 	 */
 	private List<int[]> getFaces() {
@@ -168,7 +184,7 @@ public class OFFHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return unmodifiable list of vertices
 	 */
 	private List<Coords> getVertices() {
@@ -183,7 +199,6 @@ public class OFFHandler {
 		facesColor = new GColor[faceCount];
 		faces = new ArrayList<>(faceCount);
 		vertices = new ArrayList<>(vertexCount);
-
 	}
 
 	private static boolean isCommentOrOffHeader(String line) {
@@ -203,18 +218,15 @@ public class OFFHandler {
 	private static GColor tryReadColor(String[] in, int offset) {
 		GColor color = null;
 		try {
-			if (in.length > offset && in[offset] != null
-					&& in[offset].indexOf('.') < 0) {
+			if (in.length > offset && in[offset] != null && in[offset].indexOf('.') < 0) {
 				int r = Integer.parseInt(in[offset]);
-				int g = 0;
-				int b = 0;
-				int a = 0xff;
+				int g;
+				int b;
+				int a;
 				if (in.length > offset + 1) {
 					g = Integer.parseInt(in[offset + 1]);
-					b = in.length > offset + 2
-							? Integer.parseInt(in[offset + 2]) : 0;
-					a = in.length > offset + 3
-							? Integer.parseInt(in[offset + 3]) : 0xff;
+					b = in.length > offset + 2 ? Integer.parseInt(in[offset + 2]) : 0;
+					a = in.length > offset + 3 ? Integer.parseInt(in[offset + 3]) : 0xff;
 				} else {
 					a = r & 0xff;
 					b = (r >>> 8) & 0xff;
@@ -222,9 +234,7 @@ public class OFFHandler {
 					r = r >>> 24;
 				}
 				color = GColor.newColor(r, g, b, a);
-			}
-
-			else if (in.length > offset) {
+			} else if (in.length > offset) {
 				float h = Float.parseFloat(in[offset]);
 				h = Math.min(1, h);
 				if (in.length > offset + 1) {
@@ -263,26 +273,21 @@ public class OFFHandler {
 			faces.add(v);
 
 			// check whether face color is specified;
-			facesColor[faces.size() - 1] = OFFHandler.tryReadColor(aux,
-					vCount + 1);
-
+			facesColor[faces.size() - 1] = OFFHandler.tryReadColor(aux, vCount + 1);
 		}
-
 	}
 
 	private void addVertexLine(String line) throws CSVException {
 		if (!OFFHandler.isComment(line)) {
 			String[] aux = nonempty(parser.parseLine(line));
-			vertices.add(new Coords(Double.parseDouble(aux[0]),
-					Double.parseDouble(aux[1]), Double.parseDouble(aux[2]),
-					1.0));
+			vertices.add(new Coords(
+					Double.parseDouble(aux[0]), Double.parseDouble(aux[1]), Double.parseDouble(aux[2]), 1.0));
 		}
-
 	}
 
 	/**
 	 * Filter non-empty lines
-	 * 
+	 *
 	 * @param parseLine
 	 *            original lines
 	 * @return non-empty lines
@@ -291,8 +296,9 @@ public class OFFHandler {
 		String[] nonempty = new String[parseLine.length];
 		int j = 0;
 		for (int i = 0; i < parseLine.length; i++) {
-			if (parseLine[i].trim().length() > 0) {
-				nonempty[j++] = parseLine[i].trim();
+			String current = parseLine[i].trim();
+			if (!current.isEmpty()) {
+				nonempty[j++] = current;
 			}
 		}
 		return nonempty;
@@ -310,8 +316,7 @@ public class OFFHandler {
 		}
 		if (vertexCount == 0) {
 			String[] aux = nonempty(parser.parseLine(line));
-			setCounts(Integer.parseInt(aux[0]), Integer.parseInt(aux[1]),
-					Integer.parseInt(aux[2]));
+			setCounts(Integer.parseInt(aux[0]), Integer.parseInt(aux[1]), Integer.parseInt(aux[2]));
 			return;
 		}
 		// read all vertices
@@ -322,9 +327,7 @@ public class OFFHandler {
 
 		if (getFaces().size() < faceCount) {
 			addFaceLine(line);
-			return;
 		}
-
 	}
 
 	/**
@@ -332,6 +335,5 @@ public class OFFHandler {
 	 */
 	public void reset() {
 		this.vertexCount = 0;
-
 	}
 }

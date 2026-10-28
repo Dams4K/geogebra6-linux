@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.statistics;
 
 import org.geogebra.common.kernel.Kernel;
@@ -18,7 +34,7 @@ public class CmdFillColumn extends CommandProcessor {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -27,7 +43,7 @@ public class CmdFillColumn extends CommandProcessor {
 	}
 
 	@Override
-	final public GeoElement[] process(Command c, EvalInfo info) throws MyError {
+	public final GeoElement[] process(Command c, EvalInfo info) throws MyError {
 		if (!info.isScripting()) {
 			return new GeoElement[0];
 		}
@@ -36,47 +52,45 @@ public class CmdFillColumn extends CommandProcessor {
 		GeoElement[] arg;
 
 		switch (n) {
-		case 2:
-			arg = resArgs(c, info);
-			if ((ok[0] = arg[0].isGeoNumeric())
-					&& (ok[1] = arg[1].isGeoList())) {
+			case 2:
+				arg = resArgs(c, info);
+				if ((ok[0] = arg[0].isGeoNumeric()) && (ok[1] = arg[1].isGeoList())) {
 
-				int col = -1 + (int) ((GeoNumeric) arg[0]).getDouble();
+					int col = -1 + (int) ((GeoNumeric) arg[0]).getDouble();
 
-				if (col < 0 || col > Spreadsheet.MAX_COLUMNS) {
-					throw argErr(c, arg[0]);
-				}
-
-				GeoList list = (GeoList) arg[1];
-				GeoElement[] ret = { list };
-
-				if (list.size() == 0) {
-					return ret;
-				}
-
-				for (int row = 0; row < list.size(); row++) {
-					GeoElement cellGeo = list.get(row).copy();
-
-					try {
-						kernel.getGeoElementSpreadsheet()
-								.setSpreadsheetCell(app, row, col, cellGeo);
-					} catch (Exception e) {
-						Log.debug(e);
-						throw argErr(c.getName(), arg[1], e);
+					if (col < 0 || col > Spreadsheet.MAX_COLUMNS) {
+						throw argErr(c, arg[0]);
 					}
+
+					GeoList list = (GeoList) arg[1];
+					GeoElement[] ret = {list};
+
+					if (list.size() == 0) {
+						return ret;
+					}
+
+					for (int row = 0; row < list.size(); row++) {
+						GeoElement cellGeo = list.get(row).copy();
+
+						try {
+							kernel.getGeoElementSpreadsheet().setSpreadsheetCell(app, row, col, cellGeo);
+						} catch (Exception e) {
+							Log.debug(e);
+							throw argErr(c.getName(), arg[1], e);
+						}
+					}
+
+					app.storeUndoInfo();
+					return ret;
+
+				} else if (!ok[0]) {
+					throw argErr(c, arg[0]);
+				} else {
+					throw argErr(c, arg[1]);
 				}
 
-				app.storeUndoInfo();
-				return ret;
-
-			} else if (!ok[0]) {
-				throw argErr(c, arg[0]);
-			} else {
-				throw argErr(c, arg[1]);
-			}
-
-		default:
-			throw argNumErr(c);
+			default:
+				throw argNumErr(c);
 		}
 	}
 }

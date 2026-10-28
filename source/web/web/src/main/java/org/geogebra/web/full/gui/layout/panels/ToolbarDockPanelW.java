@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.layout.panels;
 
 import org.geogebra.common.io.layout.DockPanelData;
@@ -18,8 +34,7 @@ import elemental2.dom.CanvasRenderingContext2D;
  * @author Laszlo Gal
  *
  */
-public class ToolbarDockPanelW extends DockPanelW
-		implements AlgebraPanelInterface {
+public final class ToolbarDockPanelW extends DockPanelW implements AlgebraPanelInterface {
 
 	private ToolbarPanel toolbar;
 	private DockPanelData.TabIds tabId;
@@ -34,7 +49,7 @@ public class ToolbarDockPanelW extends DockPanelW
 		super(App.VIEW_ALGEBRA, null, false);
 		this.decorator = decorator;
 	}
-	
+
 	@Override
 	protected Widget loadComponent() {
 		toolbar = new ToolbarPanel(app, decorator);
@@ -66,7 +81,7 @@ public class ToolbarDockPanelW extends DockPanelW
 
 	@Override
 	public void deferredOnResize() {
-		Scheduler.get().scheduleDeferred(() -> toolbar.resize());
+		Scheduler.get().scheduleDeferred(toolbar::resize);
 	}
 
 	@Override
@@ -76,7 +91,7 @@ public class ToolbarDockPanelW extends DockPanelW
 
 	/**
 	 * Delegating to toolbar.
-	 * 
+	 *
 	 * @param ml
 	 *            the litstener
 	 * @return the updated listener;
@@ -93,7 +108,7 @@ public class ToolbarDockPanelW extends DockPanelW
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the tabbed toolbar.
 	 */
 	public ToolbarPanel getToolbar() {
@@ -122,17 +137,7 @@ public class ToolbarDockPanelW extends DockPanelW
 	public void setTabId(DockPanelData.TabIds tabId) {
 		if (toolbar != null) {
 			// open with false: no fading here.
-			if (tabId == DockPanelData.TabIds.TOOLS) {
-				toolbar.openTools(false);
-			} else if (tabId == DockPanelData.TabIds.TABLE) {
-				toolbar.openTableView(false);
-			} else if (tabId == DockPanelData.TabIds.DISTRIBUTION) {
-				toolbar.openDistributionView(false);
-			} else if (tabId == DockPanelData.TabIds.SPREADSHEET) {
-				toolbar.openSpreadsheetView(false);
-			} else {
-				toolbar.openAlgebra(false);
-			}
+			toolbar.openTab(tabId, false);
 			toolbar.updateHeader();
 		}
 		doSetTabId(tabId);
@@ -168,7 +173,7 @@ public class ToolbarDockPanelW extends DockPanelW
 
 	@Override
 	public int getInnerWidth() {
-		return getOffsetWidth();
+		return decorator.getAlgebraViewWidth(getOffsetWidth() - getNavigationRailWidth());
 	}
 
 	@Override
@@ -190,8 +195,7 @@ public class ToolbarDockPanelW extends DockPanelW
 
 	@Override
 	public double getMinVHeight(boolean keyboard) {
-		int rows = keyboard ? MIN_ROWS_WITH_KEYBOARD
-				: MIN_ROWS_WITHOUT_KEYBOARD;
+		int rows = keyboard ? MIN_ROWS_WITH_KEYBOARD : MIN_ROWS_WITHOUT_KEYBOARD;
 		return rows * ToolbarPanel.CLOSED_HEIGHT_PORTRAIT;
 	}
 
@@ -221,8 +225,8 @@ public class ToolbarDockPanelW extends DockPanelW
 	}
 
 	@Override
-	public void paintToCanvas(CanvasRenderingContext2D context2d,
-			ViewCounter counter, int left, int top) {
+	public void paintToCanvas(
+			CanvasRenderingContext2D context2d, ViewCounter counter, int left, int top) {
 		if (toolbar != null) {
 			drawWhiteBackground(context2d, left, top);
 			toolbar.paintToCanvas(context2d, counter, left, top);
@@ -233,7 +237,22 @@ public class ToolbarDockPanelW extends DockPanelW
 
 	@Override
 	public boolean isExpanded() {
-		return toolbar != null && toolbar.isOpen()
+		return toolbar != null
+				&& toolbar.isOpen()
 				&& (isAlone() || DockSplitPaneW.getSize(getLayoutData()) > 0);
+	}
+
+	@Override
+	public int getFocusedViewId() {
+		DockPanelData.TabIds selectedTabId = toolbar.getSelectedTabId();
+		if (selectedTabId == null) {
+			return App.VIEW_ALGEBRA;
+		}
+		return switch (selectedTabId) {
+			case ALGEBRA, TOOLS -> App.VIEW_ALGEBRA;
+			case DISTRIBUTION -> App.VIEW_PROBABILITY_CALCULATOR;
+			case TABLE -> App.VIEW_TABLE;
+			case SPREADSHEET -> App.VIEW_SPREADSHEET;
+		};
 	}
 }

@@ -1,6 +1,20 @@
-package org.geogebra.common.properties.impl;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
+package org.geogebra.common.properties.impl;
 
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.arithmetic.NumberValue;
@@ -8,6 +22,7 @@ import org.geogebra.common.kernel.commands.AlgebraProcessor;
 import org.geogebra.common.kernel.geos.GeoNumberValue;
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.properties.aliases.StringProperty;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract implementation of a Double value property that has the maximal range of a Double value:
@@ -15,11 +30,11 @@ import org.geogebra.common.properties.aliases.StringProperty;
 public abstract class AbstractNumericProperty extends AbstractValuedProperty<String>
 		implements StringProperty {
 
-	private final NumericPropertyUtil util;
+	protected final NumericPropertyUtil util;
 
 	/***/
-	public AbstractNumericProperty(AlgebraProcessor algebraProcessor, Localization localization,
-			String name) {
+	public AbstractNumericProperty(
+			AlgebraProcessor algebraProcessor, Localization localization, String name) {
 		super(localization, name);
 		this.util = new NumericPropertyUtil(algebraProcessor);
 	}
@@ -40,7 +55,7 @@ public abstract class AbstractNumericProperty extends AbstractValuedProperty<Str
 	}
 
 	@Override
-	public @CheckForNull String validateValue(String value) {
+	public @Nullable String validateValue(String value) {
 		if (!util.isNumber(value)) {
 			return getLocalization().getError("InvalidInput");
 		}

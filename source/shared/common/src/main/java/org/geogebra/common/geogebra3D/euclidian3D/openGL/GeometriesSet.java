@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.openGL;
 
 import java.util.ArrayList;
@@ -7,7 +23,7 @@ import org.geogebra.common.geogebra3D.euclidian3D.openGL.ManagerShaders.TypeElem
 
 /**
  * Set of geometries
- * 
+ *
  * @author mathieu
  *
  */
@@ -17,13 +33,14 @@ public class GeometriesSet extends ArrayList<Geometry> {
 	private Geometry currentGeometry;
 	/** current geometry index */
 	protected int currentGeometryIndex;
+
 	private int geometriesLength;
 	/** manager */
 	protected final ManagerShaders manager;
 
 	/**
 	 * Creates geometry set.
-	 * 
+	 *
 	 * @param manager
 	 *            manager
 	 */
@@ -34,7 +51,7 @@ public class GeometriesSet extends ArrayList<Geometry> {
 
 	/**
 	 * set index and color
-	 * 
+	 *
 	 * @param index
 	 *            index
 	 * @param color
@@ -62,7 +79,7 @@ public class GeometriesSet extends ArrayList<Geometry> {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return geometries length
 	 */
 	public int getGeometriesLength() {
@@ -71,7 +88,7 @@ public class GeometriesSet extends ArrayList<Geometry> {
 
 	/**
 	 * start a new geometry
-	 * 
+	 *
 	 * @param type
 	 *            type of primitives
 	 */
@@ -99,7 +116,7 @@ public class GeometriesSet extends ArrayList<Geometry> {
 
 	/**
 	 * allocate buffers of current geometry
-	 * 
+	 *
 	 * @param size
 	 *            memory size
 	 */
@@ -109,8 +126,8 @@ public class GeometriesSet extends ArrayList<Geometry> {
 
 	/**
 	 * put vertex values into buffer
-	 * 
-	  * @param x
+	 *
+	 * @param x
 	 *            x-coord
 	 * @param y
 	 *            y-coord
@@ -123,7 +140,7 @@ public class GeometriesSet extends ArrayList<Geometry> {
 
 	/**
 	 * put normal values into buffer
-	 * 
+	 *
 	 * @param x
 	 *            x-coord
 	 * @param y
@@ -144,7 +161,7 @@ public class GeometriesSet extends ArrayList<Geometry> {
 
 	/**
 	 * bind current geometry to its buffer
-	 * 
+	 *
 	 * @param size
 	 *            indices size
 	 * @param type
@@ -156,7 +173,7 @@ public class GeometriesSet extends ArrayList<Geometry> {
 
 	/**
 	 * set vertices for current geometry
-	 * 
+	 *
 	 * @param vertices
 	 *            vertices
 	 * @param length
@@ -169,7 +186,7 @@ public class GeometriesSet extends ArrayList<Geometry> {
 
 	/**
 	 * Set normals of current geometry.
-	 * 
+	 *
 	 * @param normals
 	 *            normals
 	 * @param length
@@ -185,7 +202,7 @@ public class GeometriesSet extends ArrayList<Geometry> {
 
 	/**
 	 * Set colors of current geometry.
-	 * 
+	 *
 	 * @param textures
 	 *            textures
 	 * @param length
@@ -201,7 +218,7 @@ public class GeometriesSet extends ArrayList<Geometry> {
 
 	/**
 	 * Set colors of current geometry.
-	 * 
+	 *
 	 * @param colors
 	 *            colors
 	 * @param length
@@ -231,7 +248,7 @@ public class GeometriesSet extends ArrayList<Geometry> {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return current geometry
 	 */
 	public Geometry getCurrentGeometry() {

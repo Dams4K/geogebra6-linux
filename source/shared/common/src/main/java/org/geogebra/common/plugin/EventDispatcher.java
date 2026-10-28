@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.plugin;
 
 import java.util.ArrayList;
@@ -24,20 +40,21 @@ import com.google.j2objc.annotations.Weak;
  * and register with the application's event dispatcher (via
  * app.getEventDispatcher().addEventListener(...)). It will then obtain events
  * via the sendEvent() method.
- * 
+ *
  * EventDispatcher registers itself as a view so it can listen to most event
  * types and forward them to listeners. Click events are handled differently
  * because they are not part of the View interface (the clicked GeoElement is
  * responsible for relaying the event to the event dispatcher)
- * 
+ *
  * @author arno
- * 
+ *
  */
 public class EventDispatcher implements ClientView {
 
 	@Weak
 	private App app;
-	private final ArrayList<EventListener> listeners = new ArrayList<>();
+
+	private final List<EventListener> listeners = new ArrayList<>();
 	protected boolean listenersEnabled = true;
 
 	private final Set<ScriptType> disabledScriptTypes = new HashSet<>();
@@ -53,12 +70,14 @@ public class EventDispatcher implements ClientView {
 
 	/**
 	 * Add a new EventListener object
-	 * 
+	 *
 	 * @param listener
 	 *            the object that wants to receive notifications of events
 	 */
 	public void addEventListener(EventListener listener) {
-		listeners.add(listener);
+		if (!listeners.contains(listener)) {
+			listeners.add(listener);
+		}
 	}
 
 	/**
@@ -75,20 +94,19 @@ public class EventDispatcher implements ClientView {
 	 * For tests only.
 	 * @return listeners
 	 */
-	ArrayList<EventListener> getListeners() {
+	List<EventListener> getListeners() {
 		return listeners;
 	}
 
 	/**
 	 * Dispatch an event to all registered event listeners
-	 * 
+	 *
 	 * @param evt
 	 *            the event to be dispatched
 	 */
 	public void dispatchEvent(Event evt) {
 		if (listenersEnabled) {
-			boolean affectsSelfGeo = app.getKernel().getConstruction() != null
-					&& evt.target != null;
+			boolean affectsSelfGeo = app.getKernel().getConstruction() != null && evt.target != null;
 			if (affectsSelfGeo) {
 				app.getKernel().getConstruction().setSelfGeo(evt.target);
 			}
@@ -135,7 +153,7 @@ public class EventDispatcher implements ClientView {
 
 	/**
 	 * Convenience method for dispatching an event
-	 * 
+	 *
 	 * @param evtType
 	 *            the type of the event
 	 * @param geo
@@ -152,7 +170,7 @@ public class EventDispatcher implements ClientView {
 
 	/**
 	 * Convenience method for dispatching an event
-	 * 
+	 *
 	 * @param evtType
 	 *            the type of the event
 	 * @param geo
@@ -247,7 +265,6 @@ public class EventDispatcher implements ClientView {
 	@Override
 	public void setMode(int mode, ModeSetter m) {
 		this.dispatchEvent(new Event(EventType.SET_MODE, null, mode + ""));
-
 	}
 
 	@Override
@@ -348,7 +365,7 @@ public class EventDispatcher implements ClientView {
 				updated.addAll(Arrays.asList(algo.getOutput()));
 			}
 		}
-		for (GeoElement el: updated) {
+		for (GeoElement el : updated) {
 			if (el.isLabelSet()) {
 				dispatchEvent(new Event(EventType.UPDATE, el));
 			}
@@ -360,7 +377,7 @@ public class EventDispatcher implements ClientView {
 	 */
 	public List<ScriptType> availableTypes() {
 		return Arrays.stream(ScriptType.values())
-				.filter(t -> !disabledScriptTypes.contains(t)).collect(Collectors.toList());
+				.filter(t -> !disabledScriptTypes.contains(t))
+				.collect(Collectors.toList());
 	}
-
 }

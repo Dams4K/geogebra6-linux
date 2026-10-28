@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.main;
 
 import static org.geogebra.common.GeoGebraConstants.CAS_APPCODE;
@@ -11,10 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import javax.annotation.CheckForNull;
-
 import org.geogebra.common.GeoGebraConstants.Platform;
 import org.geogebra.common.SuiteSubApp;
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GDimension;
 import org.geogebra.common.awt.GFont;
@@ -24,12 +39,10 @@ import org.geogebra.common.euclidian.EmbedManager;
 import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.euclidian.EuclidianController;
 import org.geogebra.common.euclidian.EuclidianView;
-import org.geogebra.common.exam.ExamController;
 import org.geogebra.common.export.pstricks.GeoGebraExport;
 import org.geogebra.common.export.pstricks.GeoGebraToAsymptote;
 import org.geogebra.common.export.pstricks.GeoGebraToPgf;
 import org.geogebra.common.export.pstricks.GeoGebraToPstricks;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.factories.CASFactory;
 import org.geogebra.common.factories.Factory;
 import org.geogebra.common.factories.FormatFactory;
@@ -40,6 +53,7 @@ import org.geogebra.common.gui.inputfield.HasLastItem;
 import org.geogebra.common.gui.view.algebra.AlgebraView.SortMode;
 import org.geogebra.common.io.MyXMLio;
 import org.geogebra.common.io.XMLParseException;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.io.layout.Perspective;
 import org.geogebra.common.javax.swing.GImageIcon;
 import org.geogebra.common.kernel.Construction;
@@ -75,6 +89,7 @@ import org.geogebra.common.move.ggtapi.models.Pagination;
 import org.geogebra.common.move.ggtapi.requests.MaterialCallbackI;
 import org.geogebra.common.move.operations.NetworkOperation;
 import org.geogebra.common.ownership.GlobalScope;
+import org.geogebra.common.ownership.SuiteScope;
 import org.geogebra.common.plugin.Event;
 import org.geogebra.common.plugin.EventDispatcher;
 import org.geogebra.common.plugin.EventType;
@@ -82,8 +97,6 @@ import org.geogebra.common.plugin.ScriptManager;
 import org.geogebra.common.plugin.ScriptType;
 import org.geogebra.common.sound.SoundManager;
 import org.geogebra.common.util.AsyncOperation;
-import org.geogebra.common.util.GTimer;
-import org.geogebra.common.util.GTimerListener;
 import org.geogebra.common.util.MD5Checksum;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.debug.Analytics;
@@ -96,9 +109,11 @@ import org.geogebra.gwtutil.SafeExamBrowser;
 import org.geogebra.gwtutil.SecureBrowser;
 import org.geogebra.regexp.client.NativeRegExpFactory;
 import org.geogebra.regexp.shared.RegExpFactory;
+import org.geogebra.web.awt.AwtFactoryW;
+import org.geogebra.web.awt.GFontW;
+import org.geogebra.web.awt.MyImageW;
 import org.geogebra.web.html5.Browser;
 import org.geogebra.web.html5.GeoGebraGlobal;
-import org.geogebra.web.html5.awt.GFontW;
 import org.geogebra.web.html5.css.GuiResourcesSimple;
 import org.geogebra.web.html5.euclidian.EuclidianControllerW;
 import org.geogebra.web.html5.euclidian.EuclidianPanelWAbstract;
@@ -106,7 +121,6 @@ import org.geogebra.web.html5.euclidian.EuclidianViewW;
 import org.geogebra.web.html5.euclidian.EuclidianViewWInterface;
 import org.geogebra.web.html5.euclidian.profiler.FpsProfilerW;
 import org.geogebra.web.html5.export.ExportGraphicsFactoryW;
-import org.geogebra.web.html5.factories.AwtFactoryW;
 import org.geogebra.web.html5.factories.FactoryW;
 import org.geogebra.web.html5.factories.FormatFactoryW;
 import org.geogebra.web.html5.factories.UtilFactoryW;
@@ -138,17 +152,17 @@ import org.geogebra.web.html5.io.MyXMLioW;
 import org.geogebra.web.html5.kernel.GeoElementGraphicsAdapterW;
 import org.geogebra.web.html5.kernel.UndoManagerW;
 import org.geogebra.web.html5.kernel.commands.CommandDispatcherW;
+import org.geogebra.web.html5.main.general.DefaultGeneralIconProvider;
+import org.geogebra.web.html5.main.general.GeneralIconResource;
+import org.geogebra.web.html5.main.general.MebisGeneralIconProvider;
 import org.geogebra.web.html5.main.settings.DefaultSettingsW;
 import org.geogebra.web.html5.main.settings.SettingsBuilderW;
 import org.geogebra.web.html5.main.toolbox.DefaultToolboxIconProvider;
+import org.geogebra.web.html5.main.toolbox.FaIconSpec;
 import org.geogebra.web.html5.main.toolbox.MebisToolboxIconProvider;
 import org.geogebra.web.html5.main.toolbox.ToolboxIconResource;
-import org.geogebra.web.html5.main.topbar.DefaultTopBarIconProvider;
-import org.geogebra.web.html5.main.topbar.MebisTopBarIconProvider;
-import org.geogebra.web.html5.main.topbar.TopBarIconResource;
 import org.geogebra.web.html5.move.googledrive.GoogleDriveOperation;
 import org.geogebra.web.html5.safeimage.ImageLoader;
-import org.geogebra.web.html5.sound.GTimerW;
 import org.geogebra.web.html5.sound.SoundManagerW;
 import org.geogebra.web.html5.util.AppletParameters;
 import org.geogebra.web.html5.util.ArchiveEntry;
@@ -170,6 +184,8 @@ import org.gwtproject.timer.client.Timer;
 import org.gwtproject.user.client.ui.RequiresResize;
 import org.gwtproject.user.client.ui.RootPanel;
 import org.gwtproject.user.client.ui.Widget;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -200,6 +216,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 
 	private DrawEquationW drawEquation;
 
+	protected SuiteScope suiteScope;
 	protected GgbAPIW ggbapi;
 	private final LocalizationW loc;
 	private ImageManagerW imageManager;
@@ -265,9 +282,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	private Widget lastFocusableWidget;
 	private FullScreenState fullscreenState;
 	private ToolTipManagerW toolTipManager;
-	private final ExamController examController = GlobalScope.examController;
 	private ToolboxIconResource toolboxIconResource;
-	private TopBarIconResource topBarIconResource;
+	private GeneralIconResource generalIconResource;
 
 	/**
 	 * @param geoGebraElement
@@ -278,14 +294,21 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 * @param laf
 	 *            (null for webSimple) {@link GLookAndFeelI}
 	 */
-	protected AppW(GeoGebraElement geoGebraElement, AppletParameters appletParameters,
-			int dimension, GLookAndFeelI laf) {
+	protected AppW(
+			GeoGebraElement geoGebraElement,
+			AppletParameters appletParameters,
+			int dimension,
+			GLookAndFeelI laf) {
 		super(getPlatform(appletParameters, dimension, laf));
 		this.geoGebraElement = geoGebraElement;
 		this.appletParameters = appletParameters;
+
+		suiteScope = GlobalScope.registerNewSuiteScope();
+		suiteScope.registerApp(this);
+
 		// laf = null in webSimple
-		boolean hasUndo = appletParameters.getDataParamEnableUndoRedo()
-				&& (laf == null || laf.undoRedoSupported());
+		boolean hasUndo =
+				appletParameters.getDataParamEnableUndoRedo() && (laf == null || laf.undoRedoSupported());
 		setUndoRedoMode(hasUndo ? UndoRedoMode.GUI : UndoRedoMode.DISABLED);
 
 		this.loc = new LocalizationW(getConfig(), dimension);
@@ -297,11 +320,10 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			fitSizeToScreen();
 			windowResized();
 		});
-		if (!StringUtil
-				.empty(getAppletParameters().getParamScaleContainerClass())) {
-			getGlobalHandlers().add(
-					Browser.addMutationObserver(getParent(
-							getAppletParameters().getParamScaleContainerClass()),
+		if (!StringUtil.empty(getAppletParameters().getParamScaleContainerClass())) {
+			getGlobalHandlers()
+					.add(Browser.addMutationObserver(
+							getParent(getAppletParameters().getParamScaleContainerClass()),
 							this::checkScaleContainer));
 		}
 		if (getAppletParameters().getDataParamApp()) {
@@ -325,16 +347,14 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			return;
 		}
 		Log.debug("RESIZE: Start");
-		if (!StringUtil
-				.empty(getAppletParameters().getParamScaleContainerClass())) {
-			Element parent = getParent(
-					getAppletParameters().getParamScaleContainerClass());
+		if (!StringUtil.empty(getAppletParameters().getParamScaleContainerClass())) {
+			Element parent = getParent(getAppletParameters().getParamScaleContainerClass());
 			if (parent != null) {
-				scaleTo(parent.getOffsetWidth(),
+				scaleTo(
+						parent.getOffsetWidth(),
 						Math.max(
-								getAppletParameters().getParamAutoHeight()
-								? parent.getOffsetWidth()
-								: 0, parent.getOffsetHeight()));
+								getAppletParameters().getParamAutoHeight() ? parent.getOffsetWidth() : 0,
+								parent.getOffsetHeight()));
 				if (parent != this.getScalerParent()) {
 					resizeContainer();
 				}
@@ -345,7 +365,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			// iframes
 			if (this.getAbsLeft() > 0) {
 				border = NavigatorUtil.getWindowWidth() > SCREEN_WIDTH_THRESHOLD
-					? BIG_SCREEN_MARGIN : SMALL_SCREEN_MARGIN;
+						? BIG_SCREEN_MARGIN
+						: SMALL_SCREEN_MARGIN;
 			}
 			int width = NavigatorUtil.getWindowWidth() - (int) getAbsLeft() - border;
 			scaleTo(width, NavigatorUtil.getWindowHeight());
@@ -369,7 +390,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	}
 
 	private Element getScalerParent() {
-		return geoGebraElement.getParentElement() == null ? null
+		return geoGebraElement.getParentElement() == null
+				? null
 				: geoGebraElement.getParentElement().getParentElement();
 	}
 
@@ -424,17 +446,15 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 		// TODO listener (?)
 	}
 
-	private static Platform getPlatform(AppletParameters ae,
-										int dimension,
-										GLookAndFeelI laf2) {
-		return laf2 == null ? Platform.WEB
-				: laf2.getPlatform(dimension, ae.getDataParamAppName());
+	private static Platform getPlatform(AppletParameters ae, int dimension, GLookAndFeelI laf2) {
+		return laf2 == null ? Platform.WEB : laf2.getPlatform(dimension, ae.getDataParamAppName());
 	}
 
 	/**
 	 * handler for window resize
 	 */
-	protected final void windowResized() {
+	public final void windowResized() {
+		geoGebraElement.resetScale();
 		for (RequiresResize mtg : this.euclidianHandlers) {
 			mtg.onResize();
 		}
@@ -530,7 +550,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	}
 
 	@Override
-	final public GlobalKeyDispatcherW getGlobalKeyDispatcher() {
+	public final GlobalKeyDispatcherW getGlobalKeyDispatcher() {
 		if (globalKeyDispatcher == null) {
 			globalKeyDispatcher = new GlobalKeyDispatcherW(this);
 		}
@@ -604,8 +624,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 
 	@Override
 	public void setLanguage(final String browserLang) {
-		Language language1 = Language
-				.fromLanguageTagOrLocaleString(browserLang);
+		Language language1 = Language.fromLanguageTagOrLocaleString(browserLang);
 		final String languageTag = language1.toLanguageTag();
 		getLocalization().cancelCallback();
 		if (languageTag.equals(loc.getLanguageTag())) {
@@ -620,8 +639,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			return;
 		}
 
-		Log.debug("setting language to:" + languageTag + ", browser languageTag:"
-				+ browserLang);
+		Log.debug("setting language to:" + languageTag + ", browser languageTag:" + browserLang);
 		getLocalization().loadScript(language1, this);
 	}
 
@@ -633,8 +651,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 */
 	public void setLanguage(String language, String country) {
 		if (StringUtil.empty(language)) {
-			Log.warn("error calling setLanguage(), setting to English (US): "
-					+ language + "_" + country);
+			Log.warn("error calling setLanguage(), setting to English (US): " + language + "_" + country);
 			setLanguage("en");
 			return;
 		}
@@ -660,20 +677,19 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 * @return internal command name
 	 */
 	@Override
-	final public String getInternalCommand(String localizedCommandName) {
+	public final String getInternalCommand(String localizedCommandName) {
 		initTranslatedCommands();
 		String s;
 		String cmdLower = StringUtil.toLowerCaseUS(localizedCommandName);
 		Commands[] values = Commands.values();
 		if (revTranslateCommandTable.isEmpty()) { // we should clear this cache
-													// on language change!
+			// on language change!
 			for (Commands c : values) { // and fill it now if needed
 				s = Commands.englishToInternal(c).name();
 
 				// make sure that when si[] is typed in script, it's changed to
 				// Si[] etc
-				String lowerCaseCmd = StringUtil
-						.toLowerCaseUS(getLocalization().getCommand(s));
+				String lowerCaseCmd = StringUtil.toLowerCaseUS(getLocalization().getCommand(s));
 				revTranslateCommandTable.put(lowerCaseCmd, s);
 			}
 			// add renamed commands
@@ -704,7 +720,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 		try {
 			loadFile(archiveContent, asSlide);
 		} catch (Exception e) {
-			// nothing
+			Log.debug(e);
 		}
 
 		if (!algebraSettings.isModeChanged()) {
@@ -756,8 +772,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 		getImageManager().reset();
 	}
 
-	private void loadFile(GgbFile archiveContent, final boolean asSlide)
-			throws XMLParseException {
+	private void loadFile(GgbFile archiveContent, final boolean asSlide) throws XMLParseException {
 		if (archiveContent.containsKey(GgbFile.STRUCTURE_JSON)) {
 			getAppletParameters().setAttribute("appName", "notes");
 			getAppletFrame().initPageControlPanel(this);
@@ -778,8 +793,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 
 		// Construction (required)
 		if (def.isInvalid()) {
-			throw new XMLParseException(
-					"File is corrupt: No GeoGebra data found");
+			throw new XMLParseException("File is corrupt: No GeoGebra data found");
 		}
 
 		// Library JavaScript (optional)
@@ -808,9 +822,11 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			getGuiManager().updateToolbar();
 			return;
 		}
-		ImageLoader imageLoader = new ImageLoader(this, archive, archiveContent,
-				() -> getAsyncManager().runOrSchedule(
-						() -> runAfterLoadImages(def, asSlide)));
+		ImageLoader imageLoader = new ImageLoader(
+				this,
+				archive,
+				archiveContent,
+				() -> getAsyncManager().runOrSchedule(() -> runAfterLoadImages(def, asSlide)));
 		imageLoader.load();
 	}
 
@@ -830,8 +846,9 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			if (seed != -1) {
 				setRandomSeed(seed);
 			}
-			getXMLio().processXMLString(def.getConstruction(), true, false,
-					getAppletParameters().getParamRandomize());
+			getXMLio()
+					.processXMLString(
+							def.getConstruction(), true, false, getAppletParameters().getParamRandomize());
 			// if we need to load commands for scrips, try now so that we fail early (APPS-6305)
 			loadCommandsForScripting();
 			// defaults (optional)
@@ -844,8 +861,9 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			if (!appletParameters.getDataParamTransparentGraphics()) {
 				// fix for half-pixel not having any color; set AFTER splash screen
 				// fallback compatible with applet-unfocused CSS class
-				getFrameElement().getStyle().setBackgroundColor(
-						appletParameters.getDataParamBorder("#D3D3D3"));
+				getFrameElement()
+						.getStyle()
+						.setBackgroundColor(appletParameters.getDataParamBorder("#D3D3D3"));
 			}
 			afterLoadFileAppOrNot(asSlide);
 		} catch (XMLParseException | RuntimeException e) {
@@ -865,8 +883,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			Macro macro = kernel.getMacro(i);
 			if (macro.getViewId() == null) {
 				int macroMode = EuclidianConstants.MACRO_MODE_ID_OFFSET + i;
-				if (toolbar3D != null
-						&& toolbar3D.contains(String.valueOf(macroMode))) {
+				if (toolbar3D != null && toolbar3D.contains(String.valueOf(macroMode))) {
 					macro.setViewId(App.VIEW_EUCLIDIAN3D);
 				} else {
 					macro.setViewId(App.VIEW_EUCLIDIAN);
@@ -965,15 +982,13 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	}
 
 	@Override
-	public final MyImage getExternalImageAdapter(String fileName, int width,
-			int height) {
+	public final MyImage getExternalImageAdapter(String fileName, int width, int height) {
 		HTMLImageElement im = getImageManager().getExternalImage(fileName, true);
 		return getImageAdapter(im, fileName, width, height);
 	}
 
 	@Override
-	public final MyImage getInternalImageAdapter(String fileName, int width,
-			int height) {
+	public final MyImage getInternalImageAdapter(String fileName, int width, int height) {
 		HTMLImageElement im = getImageManager().getInternalImage(fileName);
 		return getImageAdapter(im, fileName, width, height);
 	}
@@ -1022,6 +1037,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 		resetUniqueId();
 		setLocalID(-1);
 		setActiveMaterial(null);
+		setTmpPerspective(null);
 
 		if (getGoogleDriveOperation() != null) {
 			getGoogleDriveOperation().resetStorageInfo();
@@ -1032,8 +1048,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			pageController.updatePreviewImage();
 		}
 		resetUrl();
-		if (examController.isExamActive()) {
-			setActiveMaterial(examController.getNewTempMaterial());
+		if (suiteScope != null && suiteScope.examController.isExamActive()) {
+			setActiveMaterial(suiteScope.examController.getNewTempMaterial());
 		}
 		reapplyRestrictions();
 		setSaved();
@@ -1084,25 +1100,23 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 */
 	public void tryLoadTemplatesOnFileNew() {
 		if (isWhiteboardActive() && getLoginOperation() != null) {
-			getLoginOperation().getResourcesAPI().getTemplateMaterials(
-					new MaterialCallbackI() {
-						@Override
-						public void onLoaded(List<Material> result, Pagination meta) {
-							if (result.isEmpty()) {
-								resetOnFileNew();
-							} else {
-								getGuiManager().getTemplateController()
-										.fillTemplates(result);
-								getDialogManager().showTemplateChooser();
-							}
-						}
+			getLoginOperation().getResourcesAPI().getTemplateMaterials(new MaterialCallbackI() {
+				@Override
+				public void onLoaded(List<Material> result, Pagination meta) {
+					if (result.isEmpty()) {
+						resetOnFileNew();
+					} else {
+						getGuiManager().getTemplateController().fillTemplates(result);
+						getDialogManager().showTemplateChooser();
+					}
+				}
 
-						@Override
-						public void onError(Throwable exception) {
-							Log.error("Error on templates load");
-							resetOnFileNew();
-						}
-					});
+				@Override
+				public void onError(Throwable exception) {
+					Log.error("Error on templates load");
+					resetOnFileNew();
+				}
+			});
 		} else {
 			resetOnFileNew();
 		}
@@ -1328,8 +1342,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 
 		FileReader reader = new FileReader();
 		if (fileName.matches(".*\\.(ggb|ggt|ggs)$")) {
-			reader.addEventListener("load",
-					(event) -> loadOrEmbedGgbFile(reader.result.asArrayBuffer(), fileName));
+			reader.addEventListener(
+					"load", (event) -> loadOrEmbedGgbFile(reader.result.asArrayBuffer(), fileName));
 			reader.readAsArrayBuffer(fileToHandle);
 		} else {
 			reader.addEventListener("load", (event) -> {
@@ -1372,11 +1386,10 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	protected void initNetworkEventFlow() {
 		networkOperation = new NetworkOperation(Browser.isOnline());
 		EventTarget[] targets = {DomGlobal.window, DomGlobal.document};
-		for (EventTarget target: targets) {
-			getGlobalHandlers().addEventListener(target, "offline",
-					e -> networkOperation.setOnline(false));
-			getGlobalHandlers().addEventListener(target, "online",
-					e -> networkOperation.setOnline(true));
+		for (EventTarget target : targets) {
+			getGlobalHandlers()
+					.addEventListener(target, "offline", e -> networkOperation.setOnline(false));
+			getGlobalHandlers().addEventListener(target, "online", e -> networkOperation.setOnline(true));
 		}
 	}
 
@@ -1460,8 +1473,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 *            corner 4 expression
 	 * @return image
 	 */
-	public GeoImage urlDropHappened(String url, String corner1, String corner2,
-			String corner4) {
+	public GeoImage urlDropHappened(String url, String corner1, String corner2, String corner4) {
 
 		// Filename is temporarily set until a better solution is found
 		// TODO: image file name should be reset after the file data is
@@ -1484,9 +1496,9 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 		// "a04c62e6a065b47476607ac815d022cc\liar.gif"
 		imgFileName = zipDirectory + '/' + fn;
 
-		SafeGeoImageFactory factory =
-				new SafeGeoImageFactory(this).withAutoCorners(corner1 == null)
-						.withCorners(corner1, corner2, corner4);
+		SafeGeoImageFactory factory = new SafeGeoImageFactory(this)
+				.withAutoCorners(corner1 == null)
+				.withCorners(corner1, corner2, corner4);
 		GeoImage geoImage = factory.create(imgFileName, url, null);
 		if (insertImageCallback != null) {
 			this.insertImageCallback.run();
@@ -1513,12 +1525,15 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 *            filename
 	 */
 	@Override
-	public GeoImage createImageFromString(final String imgFileName,
-			String imageAsString, GeoImage imageOld,
-			final boolean autoCorners, final GeoPointND c1, final GeoPointND c2) {
+	public GeoImage createImageFromString(
+			final String imgFileName,
+			String imageAsString,
+			GeoImage imageOld,
+			final boolean autoCorners,
+			final GeoPointND c1,
+			final GeoPointND c2) {
 		SafeGeoImageFactory factory =
-				new SafeGeoImageFactory(this, imageOld).withAutoCorners(c1 == null)
-						.withCorners(c1, c2);
+				new SafeGeoImageFactory(this, imageOld).withAutoCorners(c1 == null).withCorners(c1, c2);
 		return factory.create(imgFileName, imageAsString, null);
 	}
 
@@ -1639,7 +1654,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 *            application
 	 * @return a kernel
 	 */
-	protected Kernel newKernel(App thisApp) {
+	protected Kernel newKernel(@NonNull App thisApp) {
 		return new Kernel(thisApp, new GeoFactory());
 	}
 
@@ -1661,7 +1676,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 		setFontSize(16, true);
 
 		getScriptManager(); // gbOnInit() is only called after file loads
-							// completely
+		// completely
 		FileDropHandlerW.registerDropHandler(getFrameElement(), this, dropHandlers);
 		setViewsEnabled();
 
@@ -1678,32 +1693,38 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 
 	@Override
 	public boolean is3DViewEnabled() {
-		return getAppletParameters().getDataParamEnable3D(true) && super.is3DViewEnabled();
+		return getAppletParameters().getParamEnable3D(true) && super.is3DViewEnabled();
 	}
 
 	private void setViewsEnabled() {
 		if (!getConfig().isCASEnabled()) {
 			getSettings().getCasSettings().setEnabled(false);
-		} else if (getAppletParameters().getDataParamEnableCAS(false)
-				|| !getAppletParameters().getDataParamEnableCAS(true)) {
-			getSettings().getCasSettings().setEnabled(
-					getAppletParameters().getDataParamEnableCAS(false));
+		} else if (getAppletParameters().getParamEnableCAS(false)
+				|| !getAppletParameters().getParamEnableCAS(true)) {
+			getSettings().getCasSettings().setEnabled(getAppletParameters().getParamEnableCAS(false));
 		}
 		if (getSettings().getCasSettings().isEnabled()) {
 			getKernel().setSymbolicMode(getConfig().getSymbolicMode());
 		}
 
 		if (getSettings().getEuclidian(-1) != null) {
-			if (getAppletParameters().getDataParamEnable3D(false)
-					|| !getAppletParameters().getDataParamEnable3D(true)) {
-				getSettings().getEuclidian(-1)
-						.setEnabled(getAppletParameters().getDataParamEnable3D(false));
+			if (getAppletParameters().getParamEnable3D(false)
+					|| !getAppletParameters().getParamEnable3D(true)) {
+				getSettings().getEuclidian(-1).setEnabled(getAppletParameters().getParamEnable3D(false));
 			}
+		}
+
+		if (getAppletParameters().getParamEnableProbability(false)
+				|| !getAppletParameters().getParamEnableProbability(true)) {
+			getSettings()
+					.getProbCalcSettings()
+					.setEnabled(getAppletParameters().getParamEnableProbability(false));
 		}
 
 		String disableCAS = NavigatorUtil.getUrlParameter("disableCAS");
 		if ("".equals(disableCAS) || "true".equals(disableCAS)) {
-			kernel.getAlgebraProcessor()
+			kernel
+					.getAlgebraProcessor()
 					.addCommandFilter(CommandFilterFactory.createNoCasCommandFilter());
 			enableCAS(false);
 		}
@@ -1788,8 +1809,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	@Override
 	public SpreadsheetTableModel getSpreadsheetTableModel() {
 		if (tableModel == null) {
-			tableModel = new SpreadsheetTableModelSimple(this, App.SPREADSHEET_INI_ROWS,
-					App.SPREADSHEET_INI_COLS);
+			tableModel =
+					new SpreadsheetTableModelSimple(this, App.SPREADSHEET_INI_ROWS, App.SPREADSHEET_INI_COLS);
 		}
 		return tableModel;
 	}
@@ -1870,11 +1891,14 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	}
 
 	@Override
-	protected EuclidianView newEuclidianView(boolean[] showEvAxes,
-			boolean showEvGrid) {
+	protected EuclidianView newEuclidianView(boolean[] showEvAxes, boolean showEvGrid) {
 
-		euclidianView = newEuclidianView(euclidianViewPanel,
-				getEuclidianController(), showEvAxes, showEvGrid, 1,
+		euclidianView = newEuclidianView(
+				euclidianViewPanel,
+				getEuclidianController(),
+				showEvAxes,
+				showEvGrid,
+				1,
 				getSettings().getEuclidian(1));
 		return euclidianView;
 	}
@@ -1895,9 +1919,13 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 *            view settings
 	 * @return new euclidian view
 	 */
-	public EuclidianViewW newEuclidianView(EuclidianPanelWAbstract evPanel,
-			EuclidianController ec, boolean[] showEvAxes, boolean showEvGrid,
-			int id, EuclidianSettings evSettings) {
+	public EuclidianViewW newEuclidianView(
+			EuclidianPanelWAbstract evPanel,
+			EuclidianController ec,
+			boolean[] showEvAxes,
+			boolean showEvGrid,
+			int id,
+			EuclidianSettings evSettings) {
 		return new EuclidianViewW(evPanel, ec, id, evSettings);
 	}
 
@@ -1929,8 +1957,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 
 	@Override
 	public boolean hasEuclidianView2EitherShowingOrNot(int idx) {
-		return (getGuiManager() != null)
-				&& getGuiManager().hasEuclidianView2EitherShowingOrNot(idx);
+		return (getGuiManager() != null) && getGuiManager().hasEuclidianView2EitherShowingOrNot(idx);
 	}
 
 	@Override
@@ -1991,8 +2018,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	protected void setTitle() {
 		String titleTransKey = getVendorSettings().getAppTitle(getConfig());
 		String title = getLocalization().getMenu(titleTransKey);
-		if (getAppletParameters().getLoginAPIurl() != null
-				&& getAppletParameters().getDataParamApp()) {
+		if (getAppletParameters().getLoginAPIurl() != null && getAppletParameters().getDataParamApp()) {
 			Browser.changeMetaTitle(title);
 		}
 		geoGebraElement.getElement().setAttribute("aria-label", title);
@@ -2000,13 +2026,6 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 
 	protected void translateHeader() {
 		UserPreferredLanguage.translate(this, ".GeoGebraHeader");
-	}
-
-	@Override
-	public boolean letRedefine() {
-		// TODO
-		// Auto-generated
-		return true;
 	}
 
 	// ============================================
@@ -2017,8 +2036,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 * @return refresh applet image
 	 */
 	public HTMLImageElement getRefreshViewImage() {
-		HTMLImageElement imgE = ImageManagerW
-				.getInternalImage(GuiResourcesSimple.INSTANCE.viewRefresh());
+		HTMLImageElement imgE =
+				ImageManagerW.getInternalImage(GuiResourcesSimple.INSTANCE.viewRefresh());
 		imgE.addEventListener("load", (event) -> getActiveEuclidianView().updateBackground());
 		return imgE;
 	}
@@ -2034,8 +2053,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 * @return pause image
 	 */
 	public HTMLImageElement getPauseImage() {
-		return ImageManagerW.getInternalImage(
-				GuiResourcesSimple.INSTANCE.pause_circle());
+		return ImageManagerW.getInternalImage(GuiResourcesSimple.INSTANCE.pause_circle());
 	}
 
 	/**
@@ -2077,13 +2095,11 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	}
 
 	@Override
-	protected void getLayoutXML(StringBuilder sb, boolean asPreference) {
+	protected void getLayoutXML(XMLStringBuilder sb, boolean asPreference) {
 		if (getGuiManager() == null) {
 			initGuiManager();
 		}
-		if (getGuiManager() != null) {
-			getGuiManager().getLayout().getXml(sb, asPreference);
-		}
+		super.getLayoutXML(sb, asPreference);
 	}
 
 	// ============================================
@@ -2118,8 +2134,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 */
 	public final void exportView(EuclidianViewW ev) {
 		String image = ev.getExportImageDataUrl(3, true, false);
-		String title = ev.getApplication().getKernel().getConstruction()
-				.getTitle();
+		String title = ev.getApplication().getKernel().getConstruction().getTitle();
 		title = "".equals(title) ? "GeoGebraImage" : title;
 		getFileManager().exportImage(image, title, "png");
 	}
@@ -2179,7 +2194,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	public void afterLoadFileAppOrNot(boolean asSlide) {
 		loadCommandsForScripting();
 		for (GeoElement geo : kernel.getConstruction().getGeoSetConstructionOrder()) {
-			if (geo instanceof GeoText && geo.getLabelSimple() != null
+			if (geo instanceof GeoText
+					&& geo.getLabelSimple() != null
 					&& geo.getLabelSimple().startsWith("altText")) {
 				getAccessibilityManager().preloadAltText((GeoText) geo);
 			}
@@ -2208,7 +2224,9 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 *            popup
 	 */
 	public void registerPopup(HasHide widget) {
-		popups.add(widget);
+		if (!popups.contains(widget)) {
+			popups.add(widget);
+		}
 	}
 
 	/**
@@ -2223,14 +2241,12 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 		closePopupsNoTooltips();
 		getToolTipManager().hideTooltip();
 
-		if (!isUnbundled() && getGuiManager() != null
-				&& getGuiManager().hasAlgebraView()) {
+		if (!isUnbundled() && getGuiManager() != null && getGuiManager().hasAlgebraView()) {
 			getAlgebraView().resetItems(false);
 		}
 
 		if (getActiveEuclidianView() != null) {
-			getActiveEuclidianView().getEuclidianController()
-					.setObjectMenuActive(false);
+			getActiveEuclidianView().getEuclidianController().setObjectMenuActive(false);
 		}
 	}
 
@@ -2246,12 +2262,11 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 
 	/**
 	 * @param el
-	 *            element that can be cliked without closingpopups
+	 *            element that can be clicked without closingpopups
 	 */
 	public void addAsAutoHidePartnerForPopups(Element el) {
 		for (HasHide popup : popups) {
-			if (popup instanceof GPopupPanel
-					&& ((GPopupPanel) popup).isModal()) {
+			if (popup instanceof GPopupPanel && ((GPopupPanel) popup).isModal()) {
 				((GPopupPanel) popup).addAutoHidePartner(el);
 			}
 		}
@@ -2319,7 +2334,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	public int getInnerAppletWidth() {
 		int border = getAppletParameters().getBorderThickness();
 		return getAppletWidth() - border <= 0 && (getPreferredSize() != null)
-				? getPreferredSize().getWidth() : getAppletWidth() - border;
+				? getPreferredSize().getWidth()
+				: getAppletWidth() - border;
 	}
 
 	/**
@@ -2328,7 +2344,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	public int getInnerAppletHeight() {
 		int border = getAppletParameters().getBorderThickness();
 		return getAppletHeight() - border <= 0 && (getPreferredSize() != null)
-				? getPreferredSize().getHeight() : getAppletHeight() - border;
+				? getPreferredSize().getHeight()
+				: getAppletHeight() - border;
 	}
 
 	/**
@@ -2359,7 +2376,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 */
 	public int getHeightForSplitPanel(int fallback) {
 		// border excluded
-		int windowHeight = getAppletHeight() - getAppletParameters().getBorderThickness()
+		int windowHeight = getAppletHeight()
+				- getAppletParameters().getBorderThickness()
 				- getToolbarAndInputBarHeight();
 
 		// menubar height is always 0
@@ -2389,10 +2407,12 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	public boolean supportsView(int viewID) {
 		if (viewID == App.VIEW_CAS) {
 			return getSettings().getCasSettings().isEnabled()
-					&& getAppletParameters().getDataParamEnableCAS(true)
+					&& getAppletParameters().getParamEnableCAS(true)
 					&& getCASFactory().isEnabled();
 		}
-
+		if (viewID == App.VIEW_PROBABILITY_CALCULATOR) {
+			return getSettings().getProbCalcSettings().isEnabled();
+		}
 		return viewID != App.VIEW_EUCLIDIAN3D;
 	}
 
@@ -2522,8 +2542,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			script = "arg=\"" + arg + "\";" + script;
 		}
 		if (appletParameters.getParamSandbox()) {
-			((ScriptManagerW) getScriptManager()).getSandbox()
-					.run(script);
+			((ScriptManagerW) getScriptManager()).getSandbox().run(script);
 		} else {
 			ScriptManagerW.export("ggbApplet", exportedApi);
 			JsEval.evalScriptNative(script, getGgbApi());
@@ -2561,8 +2580,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	@Override
 	public void updateMenubar() {
 		// TODO autogenerated
-		Log.debug(
-				"AppW.updateMenubar() - implementation needed - just finishing");
+		Log.debug("AppW.updateMenubar() - implementation needed - just finishing");
 		// Don't remove this debug message, it is required in
 		// test/scripts/benchmark/art-plotter/runtests-sql
 	}
@@ -2616,8 +2634,9 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	public void ggwGraphicsViewDimChanged(int width, int height) {
 		// Log.debug("dim changed" + getSettings().getEuclidian(1));
 		if (width > 0 && height > 0) {
-			getSettings().getEuclidian(1).setPreferredSize(
-					AwtFactory.getPrototype().newDimension(width, height));
+			getSettings()
+					.getEuclidian(1)
+					.setPreferredSize(AwtFactory.getPrototype().newDimension(width, height));
 		}
 
 		// Log.debug("syn size");
@@ -2635,8 +2654,9 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 */
 	public void ggwGraphicsView2DimChanged(int width, int height) {
 		if (width > 0 && height > 0) {
-			getSettings().getEuclidian(2).setPreferredSize(
-					AwtFactory.getPrototype().newDimension(width, height));
+			getSettings()
+					.getEuclidian(2)
+					.setPreferredSize(AwtFactory.getPrototype().newDimension(width, height));
 		}
 		// simple setting temp.
 		// appCanvasHeight = height;
@@ -2677,8 +2697,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 *            whether it must appear now
 	 * @return whether keyboard is shown
 	 */
-	public boolean showKeyboard(MathKeyboardListener textField,
-			boolean forceShow) {
+	public boolean showKeyboard(MathKeyboardListener textField, boolean forceShow) {
 		return false; // Overwritten in subclass
 	}
 
@@ -2714,8 +2733,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 */
 	public void updateURL(URL url) {
 		if (url != null) {
-			DomGlobal.window.history
-					.replaceState(null, DomGlobal.document.title, url.toString());
+			DomGlobal.window.history.replaceState(null, DomGlobal.document.title, url.toString());
 		}
 	}
 
@@ -2787,7 +2805,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 */
 	public boolean enableOnlineFileFeatures() {
 		return this.appletParameters.getDataParamEnableFileFeatures()
-				&& getLAF() != null && getLAF().hasLoginButton();
+				&& getLAF() != null
+				&& getLAF().hasLoginButton();
 	}
 
 	/**
@@ -2827,8 +2846,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 		}
 
 		for (int key : showConstProtNavigationNeedsUpdate.keySet()) {
-			getGuiManager().getLayout().getDockManager().getPanel(key)
-					.updateNavigationBar();
+			getGuiManager().getLayout().getDockManager().getPanel(key).updateNavigationBar();
 		}
 	}
 
@@ -2915,11 +2933,6 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 				|| !getAppletParameters().getDataParamJSON().isEmpty()
 				|| (getAppletParameters().getDataParamApp()
 						&& NavigatorUtil.getUrlParameter("state") != null);
-	}
-
-	@Override
-	public GTimer newTimer(GTimerListener listener, int delay) {
-		return new GTimerW(listener, delay);
 	}
 
 	/**
@@ -3040,8 +3053,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	}
 
 	@Override
-	public void newGeoGebraToPstricks(
-			final AsyncOperation<GeoGebraExport> callback) {
+	public void newGeoGebraToPstricks(final AsyncOperation<GeoGebraExport> callback) {
 		GWT.runAsync(GeoGebraExport.class, new RunAsyncCallback() {
 
 			@Override
@@ -3054,14 +3066,12 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			public void onSuccess() {
 				LoggerW.loaded("export");
 				callback.callback(new GeoGebraToPstricks(AppW.this, new ExportGraphicsFactoryW()));
-
 			}
 		});
 	}
 
 	@Override
-	public void newGeoGebraToAsymptote(
-			final AsyncOperation<GeoGebraExport> callback) {
+	public void newGeoGebraToAsymptote(final AsyncOperation<GeoGebraExport> callback) {
 		GWT.runAsync(GeoGebraExport.class, new RunAsyncCallback() {
 
 			@Override
@@ -3074,14 +3084,12 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			public void onSuccess() {
 				LoggerW.loaded("export");
 				callback.callback(new GeoGebraToAsymptote(AppW.this, new ExportGraphicsFactoryW()));
-
 			}
 		});
 	}
 
 	@Override
-	public void newGeoGebraToPgf(
-			final AsyncOperation<GeoGebraExport> callback) {
+	public void newGeoGebraToPgf(final AsyncOperation<GeoGebraExport> callback) {
 		GWT.runAsync(GeoGebraExport.class, new RunAsyncCallback() {
 
 			@Override
@@ -3094,7 +3102,6 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			public void onSuccess() {
 				LoggerW.loaded("export");
 				callback.callback(new GeoGebraToPgf(AppW.this, new ExportGraphicsFactoryW()));
-
 			}
 		});
 	}
@@ -3209,13 +3216,10 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 
 		dispatchEvent(new Event(EventType.OPEN_DIALOG, null, "export3D"));
 		if (showDialog) {
-			getFileManager().showExportAsPictureDialog(url, getExportTitle(),
-					extension, "Export", this);
+			getFileManager().showExportAsPictureDialog(url, getExportTitle(), extension, "Export", this);
 		} else {
-			getFileManager().exportImage(url,  getExportTitle() + "." + extension,
-					extension);
-			dispatchEvent(new Event(EventType.EXPORT, null,
-					"[\"" + extension + "\"]"));
+			getFileManager().exportImage(url, getExportTitle() + "." + extension, extension);
+			dispatchEvent(new Event(EventType.EXPORT, null, "[\"" + extension + "\"]"));
 		}
 	}
 
@@ -3244,10 +3248,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 			getDialogManager().showExportImageDialog(base64image);
 
 		} else {
-			LightBox.showImage(base64image,
-					base64image.startsWith(StringUtil.pdfMarker));
+			LightBox.showImage(base64image, base64image.startsWith(StringUtil.pdfMarker));
 		}
-
 	}
 
 	@Override
@@ -3319,7 +3321,6 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 */
 	public void deferredForceResize() {
 		invokeLater(() -> EuclidianViewW.forceResize(getEuclidianView1()));
-
 	}
 
 	/**
@@ -3415,7 +3416,10 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 
 	@Override
 	public void testDraw() {
-		getEuclidianController().getMouseTouchGestureController().getDrawingEmulator().draw();
+		getEuclidianController()
+				.getMouseTouchGestureController()
+				.getDrawingEmulator()
+				.draw();
 	}
 
 	@Override
@@ -3436,7 +3440,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	/**
 	 * @return manager for showing/hiding keyboard
 	 */
-	public @CheckForNull KeyboardManagerInterface getKeyboardManager() {
+	public @Nullable KeyboardManagerInterface getKeyboardManager() {
 		return null;
 	}
 
@@ -3454,8 +3458,7 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 */
 	public AccessibilityView getAccessibilityView() {
 		if (this.accessibilityView == null) {
-			accessibilityView = new AccessibilityView(this,
-					new BaseWidgetFactory());
+			accessibilityView = new AccessibilityView(this, new BaseWidgetFactory());
 		}
 		return accessibilityView;
 	}
@@ -3469,6 +3472,9 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 		}
 	}
 
+	/**
+	 * @return sign-in controller
+	 */
 	public SignInControllerI getSignInController() {
 		return getLAF().getSignInController(this);
 	}
@@ -3535,8 +3541,8 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 
 	@Override
 	public StringTemplate getScreenReaderTemplate() {
-		return getAppletParameters().getParamScreenReaderMode(NavigatorUtil.isMobile()
-				|| NavigatorUtil.isMacOS())
+		return getAppletParameters()
+						.getParamScreenReaderMode(NavigatorUtil.isMobile() || NavigatorUtil.isMacOS())
 				? StringTemplate.screenReaderAscii
 				: StringTemplate.screenReaderUnicode;
 	}
@@ -3572,15 +3578,15 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 */
 	public boolean isLockedExam() {
 		return !StringUtil.empty(getAppletParameters().getParamFeatureSet())
-				&& (isSecuredBrowser() && supportsExamUI()
-					|| getAppletParameters().getParamExamMode());
+				&& (isSecuredBrowser() && supportsExamUI() || getAppletParameters().getParamExamMode());
 	}
 
 	/**
 	 * @return whether the browser has some level of security features
 	 */
 	public boolean isSecuredBrowser() {
-		return SecureBrowser.get() != null || SafeExamBrowser.get() != null
+		return SecureBrowser.get() != null
+				|| SafeExamBrowser.get() != null
 				|| getLAF().hasLockedEnvironment();
 	}
 
@@ -3594,7 +3600,10 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 */
 	public boolean isToolboxCategoryEnabled(String category) {
 		List<String> tools = getAppletParameters().getDataParamCustomToolbox();
-		return tools.contains(category) || tools.isEmpty();
+		if (tools.isEmpty()) {
+			return true;
+		}
+		return tools.stream().anyMatch(tool -> tool.split("\\.")[0].equals(category));
 	}
 
 	/**
@@ -3609,23 +3618,23 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	 */
 	public ToolboxIconResource getToolboxIconResource() {
 		if (toolboxIconResource == null) {
-			toolboxIconResource = new ToolboxIconResource(isUsingFontAwesome()
-					? new MebisToolboxIconProvider() : new DefaultToolboxIconProvider());
+			toolboxIconResource = new ToolboxIconResource(
+					isUsingFontAwesome() ? new MebisToolboxIconProvider() : new DefaultToolboxIconProvider());
 		}
 
 		return toolboxIconResource;
 	}
 
 	/**
-	 * @return top bar icon resource provider
+	 * @return general icon resource provider
 	 */
-	public TopBarIconResource getTopBarIconResource() {
-		if (topBarIconResource == null) {
-			topBarIconResource = new TopBarIconResource(isUsingFontAwesome()
-					? new MebisTopBarIconProvider() : new DefaultTopBarIconProvider());
+	public GeneralIconResource getGeneralIconResource() {
+		if (generalIconResource == null) {
+			generalIconResource = new GeneralIconResource(
+					isUsingFontAwesome() ? new MebisGeneralIconProvider() : new DefaultGeneralIconProvider());
 		}
 
-		return topBarIconResource;
+		return generalIconResource;
 	}
 
 	private void loadCommandsForScripting() {
@@ -3640,13 +3649,23 @@ public abstract class AppW extends App implements SetLabels, HasLanguage {
 	private void initializeAnalytics() {
 		try {
 			Analytics.setInstance(new AnalyticsW());
+			Analytics.updateDefaultAnalyticsParameters(getConfig());
 		} catch (Throwable e) {
 			Log.debug("Could not initialize analytics object." + e);
 		}
 	}
 
+	/**
+	 * Check whether to use FA and update the theme.
+	 * @return whether to use FA
+	 */
 	public boolean isUsingFontAwesome() {
-		return getAppletParameters().getParamFontAwesome(isByCS());
+		String theme = getAppletParameters().getParamFontAwesome(isByCS() ? "light" : null);
+		if (StringUtil.empty(theme) || "false".equals(theme)) {
+			return false;
+		}
+		FaIconSpec.setTheme(theme);
+		return true;
 	}
 
 	/**

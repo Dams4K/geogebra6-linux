@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.modes;
 
 import org.geogebra.common.euclidian.EuclidianConstants;
@@ -12,8 +28,7 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.main.SelectionManager;
 import org.geogebra.common.util.AsyncOperation;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 /**
  * Macro mode handler.
@@ -40,7 +55,7 @@ public class ModeMacro {
 
 	/**
 	 * If enough inputs are selected, process macro.
-	 * 
+	 *
 	 * @param callback2
 	 *            callback
 	 * @return whether macro was processed
@@ -71,8 +86,8 @@ public class ModeMacro {
 	 *            whether this is for preview
 	 * @return whether macro was successfully processed
 	 */
-	public final boolean macro(Hits hits0, final AsyncOperation<Boolean> callback2,
-			boolean selPreview) {
+	public final boolean macro(
+			Hits hits0, final AsyncOperation<Boolean> callback2, boolean selPreview) {
 		// try to get next needed type of macroInput
 		index = ec.selGeos();
 		Hits hits = hits0;
@@ -81,8 +96,14 @@ public class ModeMacro {
 			hits = hits.getPolyhedronsIncludingMetaHits();
 		}
 		// standard case: try to get one object of needed input type
-		boolean objectFound = 1 == ec.handleAddSelected(hits, macroInput.length, false,
-				selection.getSelectedGeoList(), macroInput[index], selPreview);
+		boolean objectFound = 1
+				== ec.handleAddSelected(
+						hits,
+						macroInput.length,
+						false,
+						selection.getSelectedGeoList(),
+						macroInput[index],
+						selPreview);
 
 		// we're done if in selection preview
 		if (selPreview) {
@@ -93,8 +114,9 @@ public class ModeMacro {
 		}
 
 		// only one point needed: try to create it
-		if (!objectFound && (macroInput[index].equals(TestGeo.GEOPOINT)
-				|| macroInput[index].equals(TestGeo.GEOPOINTND))) {
+		if (!objectFound
+				&& (macroInput[index].equals(TestGeo.GEOPOINT)
+						|| macroInput[index].equals(TestGeo.GEOPOINTND))) {
 			GeoPointND newPoint = ec.createNewPoint(hits, true, false, true, false, false);
 			if (newPoint != null) {
 				// take movedGeoPoint which is the newly created point
@@ -106,19 +128,19 @@ public class ModeMacro {
 		}
 
 		// object found in handleAddSelected()
-		if (objectFound || macroInput[index].equals(TestGeo.GEONUMERIC)
+		if (objectFound
+				|| macroInput[index].equals(TestGeo.GEONUMERIC)
 				|| macroInput[index].equals(TestGeo.GEOANGLE)) {
 			if (!objectFound) {
 				index--;
 			}
 
-			AsyncOperation<GeoNumberValue> callback3 = new AsyncOperation<GeoNumberValue>() {
+			AsyncOperation<GeoNumberValue> callback3 = new AsyncOperation<>() {
 
 				@Override
 				public void callback(GeoNumberValue num) {
 					handleNumber(num, callback2, this);
 				}
-
 			};
 			// look ahead if we need a number or an angle next
 			readNumberOrAngleIfNeeded(callback3);
@@ -127,7 +149,9 @@ public class ModeMacro {
 		return macroProcess(callback2);
 	}
 
-	protected void handleNumber(GeoNumberValue num, AsyncOperation<Boolean> callback2,
+	protected void handleNumber(
+			GeoNumberValue num,
+			AsyncOperation<Boolean> callback2,
 			AsyncOperation<GeoNumberValue> callback3) {
 		if (num == null) {
 			// no success: reset mode
@@ -149,12 +173,11 @@ public class ModeMacro {
 				ec.storeUndoInfo();
 			}
 		}
-
 	}
 
 	/**
 	 * Wait for number or angle for a macro.
-	 * 
+	 *
 	 * @param callback3
 	 *            callback
 	 */
@@ -163,25 +186,31 @@ public class ModeMacro {
 
 			// maybe we need a number
 			if (macroInput[index].equals(TestGeo.GEONUMERIC)) {
-				kernel.getApplication().getDialogManager().showNumberInputDialog(
-						macro.getToolOrCommandName(),
-						localization.getMenu("Numeric"), null, callback3);
+				kernel
+						.getApplication()
+						.getDialogManager()
+						.showNumberInputDialog(
+								macro.getToolOrCommandName(), localization.getMenu("Numeric"), null, callback3);
 
 			}
 
 			// maybe we need an angle
 			else if (macroInput[index].equals(TestGeo.GEOANGLE)) {
-				kernel.getApplication().getDialogManager().showAngleInputDialog(
-						macro.getToolOrCommandName(),
-						localization.getMenu("Angle"), Unicode.FORTY_FIVE_DEGREES_STRING,
-						callback3);
+				kernel
+						.getApplication()
+						.getDialogManager()
+						.showAngleInputDialog(
+								macro.getToolOrCommandName(),
+								localization.getMenu("Angle"),
+								Unicode.FORTY_FIVE_DEGREES_STRING,
+								callback3);
 			}
 		}
 	}
 
 	/**
 	 * Set macro mode.
-	 * 
+	 *
 	 * @param mode1
 	 *            app mode
 	 */

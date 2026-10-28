@@ -1,7 +1,20 @@
-package org.geogebra.web.full.euclidian.quickstylebar.components;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import static org.geogebra.web.full.euclidian.quickstylebar.QuickStyleBar.POPUP_MENU_DISTANCE;
-import static org.geogebra.web.full.euclidian.quickstylebar.QuickStyleBar.QUICK_STYLE_BAR_HEIGHT;
+package org.geogebra.web.full.euclidian.quickstylebar.components;
 
 import java.util.List;
 
@@ -9,40 +22,49 @@ import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.properties.IconsEnumeratedProperty;
 import org.geogebra.common.properties.Property;
 import org.geogebra.common.properties.PropertySupplier;
+import org.geogebra.common.properties.PropertyView;
 import org.geogebra.common.properties.RangeProperty;
-import org.geogebra.common.properties.impl.collections.ColorPropertyCollection;
-import org.geogebra.common.properties.impl.collections.FlagListPropertyCollection;
-import org.geogebra.common.properties.impl.collections.NamedEnumeratedPropertyCollection;
-import org.geogebra.common.properties.impl.collections.RangePropertyCollection;
-import org.geogebra.common.properties.impl.collections.StringPropertyCollection;
+import org.geogebra.common.properties.ToggleableIconProperty;
+import org.geogebra.common.properties.impl.facade.BooleanPropertyListFacade;
+import org.geogebra.common.properties.impl.facade.ColorPropertyListFacade;
+import org.geogebra.common.properties.impl.facade.FlagListPropertyListFacade;
+import org.geogebra.common.properties.impl.facade.IconsEnumeratedPropertyListFacade;
+import org.geogebra.common.properties.impl.facade.NamedEnumeratedPropertyListFacade;
+import org.geogebra.common.properties.impl.facade.RangePropertyListFacade;
+import org.geogebra.common.properties.impl.facade.StringPropertyListFacade;
 import org.geogebra.common.properties.impl.objects.BorderColorProperty;
-import org.geogebra.common.properties.impl.objects.BorderThicknessProperty;
+import org.geogebra.common.properties.impl.objects.BorderWidthProperty;
 import org.geogebra.common.properties.impl.objects.CellBorderThicknessProperty;
-import org.geogebra.common.properties.impl.objects.NotesThicknessProperty;
 import org.geogebra.common.properties.impl.objects.TextBackgroundColorProperty;
-import org.geogebra.web.full.css.MaterialDesignResources;
+import org.geogebra.common.properties.impl.objects.ThicknessProperty;
 import org.geogebra.web.full.euclidian.LabelSettingsPanel;
 import org.geogebra.web.full.euclidian.LabelValuePanel;
-import org.geogebra.web.full.euclidian.quickstylebar.PropertiesIconAdapter;
 import org.geogebra.web.full.euclidian.quickstylebar.PropertyWidgetAdapter;
+import org.geogebra.web.full.euclidian.quickstylebar.SpecialSymbolProperty;
 import org.geogebra.web.full.gui.toolbar.mow.popupcomponents.ColorChooserPanel;
 import org.geogebra.web.full.gui.toolbar.mow.toolbox.components.IconButton;
 import org.geogebra.web.full.javax.swing.GPopupMenuW;
+import org.geogebra.web.full.main.AppWFull;
+import org.geogebra.web.html5.gui.BaseWidgetFactory;
 import org.geogebra.web.html5.gui.GPopupPanel;
 import org.geogebra.web.html5.gui.util.AriaHelper;
 import org.geogebra.web.html5.gui.util.Dom;
-import org.geogebra.web.html5.gui.view.ImageIconSpec;
+import org.geogebra.web.html5.gui.view.IconSpec;
 import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.main.AppW;
-import org.geogebra.web.resources.SVGResource;
+import org.geogebra.web.html5.main.general.GeneralIcon;
+import org.gwtproject.dom.style.shared.Overflow;
 import org.gwtproject.user.client.ui.FlowPanel;
+import org.gwtproject.user.client.ui.Label;
 
-public class IconButtonWithProperty extends IconButton {
+public final class IconButtonWithProperty extends IconButton {
+	private static final int MARGIN_FROM_SCREEN = 32;
+	private static final int MENU_ITEM_HEIGHT = 32;
+	private static final int VERTICAL_OFFSET = 16;
 	private final AppW appW;
 	private final List<GeoElement> geos;
 	private GPopupPanel propertyPopup;
 	private SliderWithProperty lineThicknessSlider;
-	private LabelValuePanel labelPanel;
 	private final PropertyWidgetAdapter widgetAdapter;
 	private PopupColorHandler popupHandler;
 
@@ -56,9 +78,15 @@ public class IconButtonWithProperty extends IconButton {
 	 * @param closePopupOnAction - weather should close popup after clicking on popup element
 	 * @param properties - array of applicable properties
 	 */
-	public IconButtonWithProperty(AppW appW, String className, SVGResource icon, String ariaLabel,
-			List<GeoElement> geos, boolean closePopupOnAction, PropertySupplier... properties) {
-		super(appW, new ImageIconSpec(icon), ariaLabel, ariaLabel, () -> {}, null);
+	public IconButtonWithProperty(
+			AppW appW,
+			String className,
+			IconSpec icon,
+			String ariaLabel,
+			List<GeoElement> geos,
+			boolean closePopupOnAction,
+			PropertySupplier... properties) {
+		super(appW, icon, ariaLabel, ariaLabel, () -> {}, null);
 		this.appW = appW;
 		this.geos = geos;
 		widgetAdapter = new PropertyWidgetAdapter(appW, closePopupOnAction);
@@ -101,34 +129,45 @@ public class IconButtonWithProperty extends IconButton {
 
 	private void processProperty(PropertySupplier propertySupplier, FlowPanel parent) {
 		Property property = propertySupplier.get();
+		if (property instanceof IconsEnumeratedPropertyListFacade<?, ?> iconsListFacade) {
+			IconsEnumeratedProperty<?> firstProperty = iconsListFacade.getFirstProperty();
+			if (firstProperty instanceof BorderWidthProperty
+					|| firstProperty instanceof CellBorderThicknessProperty) {
+				IconsEnumeratedProperty<Integer> intValued =
+						(IconsEnumeratedProperty<Integer>) iconsListFacade;
+				FlowPanel borderThickness = widgetAdapter.getBorderThicknessWidget(intValued);
+				parent.add(borderThickness);
+				return;
+			}
+		}
 		if (property instanceof IconsEnumeratedProperty) {
 			FlowPanel enumeratedPropertyButtonPanel = widgetAdapter.getIconListPanel(
 					(IconsEnumeratedProperty<?>) property, propertySupplier, (index) -> {
 						if (lineThicknessSlider != null) {
-							lineThicknessSlider.setLineType(index);
+							lineThicknessSlider.updateUnitLabel();
 						}
-						setIcon(PropertiesIconAdapter.getIcon(((IconsEnumeratedProperty<?>)
-								property).getValueIcons()[index]));
+						setIcon(((AppWFull) appW)
+								.getPropertiesIconResource()
+								.getImageResource(((IconsEnumeratedProperty<?>) property).getValueIcons()[index]));
 					});
 			parent.add(enumeratedPropertyButtonPanel);
 		}
 
-		if (property instanceof NamedEnumeratedPropertyCollection) {
-			GPopupMenuW fontSizeMenu = widgetAdapter.getMenuWidget(
-					(NamedEnumeratedPropertyCollection<?, ?>) property);
-			parent.add(fontSizeMenu.getPopupMenu());
+		if (property instanceof NamedEnumeratedPropertyListFacade<?, ?> namedFacade) {
+			GPopupMenuW menu;
+			menu = widgetAdapter.getMenuWidget(PropertyView.createDropdown(namedFacade));
+			parent.add(menu.getPopupMenu());
 		}
 
-		if (property instanceof ColorPropertyCollection<?>) {
-			ColorPropertyCollection<?> colorProperty = (ColorPropertyCollection<?>) property;
-			ColorChooserPanel colorPanel = new ColorChooserPanel(appW,
-					colorProperty.getValues(), color -> {
-				if (popupHandler != null) {
-					ColorPropertyCollection<?> updatedProperty =
-							(ColorPropertyCollection<?>) propertySupplier.updateAndGet();
-					popupHandler.fireActionPerformed(updatedProperty, color);
-				}
-			});
+		if (property instanceof ColorPropertyListFacade<?> colorProperty) {
+			ColorChooserPanel colorPanel =
+					new ColorChooserPanel(appW, colorProperty.getValues(), color -> {
+						if (popupHandler != null) {
+							ColorPropertyListFacade<?> updatedProperty =
+									(ColorPropertyListFacade<?>) propertySupplier.updateAndGet();
+							popupHandler.fireActionPerformed(updatedProperty, color);
+						}
+					});
 			if (colorProperty.getFirstProperty() instanceof BorderColorProperty) {
 				colorPanel.addStyleName("withMargin");
 			}
@@ -136,9 +175,9 @@ public class IconButtonWithProperty extends IconButton {
 			parent.add(colorPanel);
 
 			if (colorProperty.getFirstProperty() instanceof TextBackgroundColorProperty) {
-				StandardButton noColorButton = new StandardButton(MaterialDesignResources.INSTANCE
-						.no_color(), appW.getLocalization().getMenu("noColor"), 24);
-				noColorButton.addStyleName("noColBtn");
+				StandardButton noColorButton = BaseWidgetFactory.INSTANCE.newTextButton(
+						appW.getGeneralIconResource().getImageResource(GeneralIcon.NO_COLOR),
+						appW.getLocalization().getMenu("noColor"));
 				noColorButton.addFastClickHandler(source -> {
 					if (popupHandler != null) {
 						popupHandler.fireActionPerformed(colorProperty, null);
@@ -147,35 +186,51 @@ public class IconButtonWithProperty extends IconButton {
 				parent.add(noColorButton);
 			}
 		}
-		if (property instanceof RangePropertyCollection<?>) {
-			RangePropertyCollection<?> rangeProperty = (RangePropertyCollection<?>) property;
+		if (property instanceof RangePropertyListFacade<?> rangeProperty) {
 			RangeProperty<?> firstProperty = rangeProperty.getFirstProperty();
-			if (firstProperty instanceof NotesThicknessProperty) {
-				lineThicknessSlider = widgetAdapter.getSliderWidget(rangeProperty,
-						propertySupplier, geos.get(0));
+			if (firstProperty instanceof ThicknessProperty) {
+				lineThicknessSlider = widgetAdapter.getSliderWidget(rangeProperty, propertySupplier);
 				parent.add(lineThicknessSlider);
-			} else if (firstProperty instanceof CellBorderThicknessProperty
-					|| firstProperty instanceof BorderThicknessProperty) {
-				FlowPanel borderThickness = widgetAdapter.getBorderThicknessWidget(
-						rangeProperty);
-				parent.add(borderThickness);
 			} else {
-				SliderWithProperty sliderWithProperty = widgetAdapter.getSliderWidget(
-						rangeProperty, propertySupplier, geos.get(0));
+				SliderWithProperty sliderWithProperty =
+						widgetAdapter.getSliderWidget(rangeProperty, propertySupplier);
 				parent.add(sliderWithProperty);
 			}
 		}
 
-		if (property instanceof StringPropertyCollection<?>) {
-			labelPanel = new LabelValuePanel(appW, (StringPropertyCollection<?>) property, geos);
+		if (property instanceof StringPropertyListFacade<?>) {
+			LabelValuePanel labelPanel =
+					new LabelValuePanel(appW, (StringPropertyListFacade<?>) property, geos);
 			propertyPopup.addCloseHandler(labelPanel);
 			parent.add(labelPanel);
 		}
 
-		if (property instanceof FlagListPropertyCollection<?>) {
-			FlagListPropertyCollection<?> valuedProperty = (FlagListPropertyCollection<?>) property;
+		if (property instanceof FlagListPropertyListFacade<?> valuedProperty) {
 			LabelSettingsPanel labelStylePanel = widgetAdapter.getLabelPanel(valuedProperty);
 			parent.add(labelStylePanel);
+		}
+		if (property instanceof ToggleableIconProperty iconProperty) {
+			IconButton button = new IconButton(
+					appW,
+					null,
+					((AppWFull) appW).getPropertiesIconResource().getImageResource(iconProperty.getIcon()),
+					iconProperty.getName());
+			button.setActive(iconProperty.getValue());
+			button.addFastClickHandler(source -> {
+				button.setActive(!button.isActive());
+				iconProperty.setValue(!iconProperty.getValue());
+			});
+			parent.add(button);
+			parent.addStyleName("buttonList");
+		}
+		if (property instanceof BooleanPropertyListFacade<?> booleanProperty) {
+			parent.add(widgetAdapter.getCheckBox(booleanProperty, appW.getLocalization()));
+		}
+		if (property instanceof SpecialSymbolProperty symbolProperty) {
+			Label groupLabel = new Label(symbolProperty.getGroupName());
+			groupLabel.addStyleName("symbolGroup");
+			parent.add(groupLabel);
+			parent.add(new SymbolButtonGroup(symbolProperty));
 		}
 	}
 
@@ -188,7 +243,7 @@ public class IconButtonWithProperty extends IconButton {
 
 	private void update() {
 		if (lineThicknessSlider != null) {
-			lineThicknessSlider.setLineColor(geos.get(0).getObjectColor());
+			lineThicknessSlider.updateUnitLabel();
 		}
 	}
 
@@ -200,19 +255,46 @@ public class IconButtonWithProperty extends IconButton {
 	}
 
 	private void positionPopup() {
-		int left = (int) (getAbsoluteLeft() - appW.getAbsLeft());
-		int top = (int) (getAbsoluteTop() + getOffsetHeight() - appW.getAbsTop())
-				+ 2 * POPUP_MENU_DISTANCE;
+		int anchorBottom =
+				(int) (getElement().getAbsoluteBottom() - appW.getAbsTop() + VERTICAL_OFFSET);
+		int spaceBottom = (int) (appW.getHeight() - anchorBottom);
+		int spaceTop = (int) (getElement().getAbsoluteTop() - appW.getAbsTop() - MARGIN_FROM_SCREEN);
+		int minSpaceBottom = 3 * MENU_ITEM_HEIGHT + MARGIN_FROM_SCREEN + 8;
+		int popupHeight = propertyPopup.getOffsetHeight();
 
-		if (top + propertyPopup.getOffsetHeight() > appW.getHeight()) {
-			top = top - propertyPopup.getOffsetHeight()
-					- 2 * POPUP_MENU_DISTANCE - QUICK_STYLE_BAR_HEIGHT;
+		if (spaceBottom < minSpaceBottom || (spaceBottom < popupHeight && spaceTop >= popupHeight)) {
+			showAtTopOfAnchor(popupHeight, spaceTop);
+		} else {
+			showAtBottomOfAnchor(popupHeight, anchorBottom);
 		}
-		if (left + propertyPopup.getOffsetWidth() > appW.getWidth()) {
-			left = (int) (appW.getWidth() - propertyPopup.getOffsetWidth());
-		}
+	}
 
-		propertyPopup.setPopupPosition(left, top);
+	private void showAtTopOfAnchor(int popupHeight, int spaceTop) {
+		int popupTop = popupHeight > spaceTop
+				? MARGIN_FROM_SCREEN
+				: (int) (getAbsoluteTop() - appW.getAbsTop() - popupHeight - VERTICAL_OFFSET);
+		propertyPopup.setPopupPosition(getLeft(), popupTop);
+
+		if (popupHeight > spaceTop) {
+			setPopupHeight(spaceTop + "px");
+		}
+	}
+
+	private void showAtBottomOfAnchor(int popupHeight, int bottomPos) {
+		propertyPopup.setPopupPosition(getLeft(), bottomPos);
+		int spaceBottom = (int) (appW.getHeight() - bottomPos);
+		if (popupHeight > spaceBottom) {
+			setPopupHeight(spaceBottom - (MARGIN_FROM_SCREEN + 8) + "px");
+		}
+	}
+
+	private void setPopupHeight(String height) {
+		propertyPopup.setHeight(height);
+		propertyPopup.getElement().getStyle().setOverflowY(Overflow.AUTO);
+	}
+
+	private int getLeft() {
+		return (int) (getAbsoluteLeft() - appW.getAbsLeft());
 	}
 
 	/**
@@ -226,8 +308,8 @@ public class IconButtonWithProperty extends IconButton {
 	 * close popup of button if it doesn't contain sliders
 	 */
 	public void closePopup() {
-		if (propertyPopup != null && Dom.querySelectorForElement(
-				propertyPopup.getElement(), "[type=range]") == null) {
+		if (propertyPopup != null
+				&& Dom.querySelectorForElement(propertyPopup.getElement(), "[type=range]") == null) {
 			propertyPopup.hide();
 		}
 	}

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.geos;
@@ -25,7 +29,7 @@ import org.geogebra.common.plugin.GeoClass;
 
 /**
  * Cartesian axis
- * 
+ *
  * @author Markus
  */
 public class GeoAxis extends GeoLine implements GeoAxisND {
@@ -39,7 +43,7 @@ public class GeoAxis extends GeoLine implements GeoAxisND {
 
 	/**
 	 * Creates new axis
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param type
@@ -53,24 +57,24 @@ public class GeoAxis extends GeoLine implements GeoAxisND {
 		setStartPoint(origin);
 
 		GeoPoint end = new GeoPoint(cons);
-		
-		switch (type) {
-		default:
-		case X_AXIS:
-			setCoords(0, 1, 0);
-			label = "xAxis";
-			coloredColorFor3D = GColor.RED;
-			end.setCoords(1, 0, 1);
-			setEndPoint(end);
-			break;
 
-		case Y_AXIS:
-			setCoords(-1, 0, 0);
-			label = "yAxis";
-			coloredColorFor3D = GColor.DARK_GREEN;
-			end.setCoords(0, 1, 1);
-			setEndPoint(end);
-			break;
+		switch (type) {
+			default:
+			case X_AXIS:
+				setCoords(0, 1, 0);
+				label = "xAxis";
+				coloredColorFor3D = GColor.RED;
+				end.setCoords(1, 0, 1);
+				setEndPoint(end);
+				break;
+
+			case Y_AXIS:
+				setCoords(-1, 0, 0);
+				label = "yAxis";
+				coloredColorFor3D = GColor.DARK_GREEN;
+				end.setCoords(0, 1, 1);
+				setEndPoint(end);
+				break;
 		}
 
 		setLabelSet(true);
@@ -101,12 +105,11 @@ public class GeoAxis extends GeoLine implements GeoAxisND {
 			return getLoc().getMenu(label);
 		}
 		return label;
-
 	}
 
 	/**
 	 * Returns whether str is equal to this axis' label.
-	 * 
+	 *
 	 * @param str
 	 *            string for comparison
 	 * @return whether str is equal to this axis' label.
@@ -192,7 +195,7 @@ public class GeoAxis extends GeoLine implements GeoAxisND {
 
 		return true;
 	}
-	
+
 	@Override
 	public int getLineThickness() {
 		return EuclidianStyleConstants.AXES_THICKNESS;
@@ -211,5 +214,4 @@ public class GeoAxis extends GeoLine implements GeoAxisND {
 			setObjColor(GColor.BLACK);
 		}
 	}
-
 }

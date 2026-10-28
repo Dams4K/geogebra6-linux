@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.advanced;
 
 import java.math.BigInteger;
@@ -13,7 +29,7 @@ import org.geogebra.common.util.StringUtil;
 
 /**
  * Allows conversion of numbers to different bases via ToBase[number, base]
- * 
+ *
  * @author zbynek
  *
  */
@@ -33,8 +49,7 @@ public class AlgoToBase extends AlgoElement {
 	 * @param number
 	 *            number
 	 */
-	public AlgoToBase(Construction c, String label, GeoNumberValue number,
-			GeoNumberValue base) {
+	public AlgoToBase(Construction c, String label, GeoNumberValue number, GeoNumberValue base) {
 		super(c);
 		this.base = base;
 		this.number = number;
@@ -46,7 +61,7 @@ public class AlgoToBase extends AlgoElement {
 
 	@Override
 	protected void setInputOutput() {
-		input = new GeoElement[] { number.toGeoElement(), base.toGeoElement() };
+		input = new GeoElement[] {number.toGeoElement(), base.toGeoElement()};
 		setOnlyOutput(result);
 		setDependencies();
 	}
@@ -69,8 +84,7 @@ public class AlgoToBase extends AlgoElement {
 			result.setUndefined();
 			return;
 		}
-		int digits = kernel.format(1.0 / 9.0, result.getStringTemplate())
-				.length() - 2;
+		int digits = kernel.format(1.0 / 9.0, result.getStringTemplate()).length() - 2;
 		double power = Math.round(Math.pow(b, digits));
 		double in = number.getDouble();
 		in = in + 1 / power > Math.ceil(in) ? Math.ceil(in) : in;
@@ -80,8 +94,7 @@ public class AlgoToBase extends AlgoElement {
 			result.setTextString(intPart);
 		} else {
 
-			double decimal = Math.round(power
-					* (number.getDouble() - Math.floor(number.getDouble())));
+			double decimal = Math.round(power * (number.getDouble() - Math.floor(number.getDouble())));
 			bi = BigInteger.valueOf((long) decimal);
 			String decimalPart = StringUtil.toUpperCaseUS(bi.toString(b));
 			StringBuilder sb = new StringBuilder(digits);
@@ -93,12 +106,10 @@ public class AlgoToBase extends AlgoElement {
 			sb.append(decimalPart);
 			result.setTextString(sb.toString());
 		}
-
 	}
 
 	@Override
 	public Commands getClassName() {
 		return Commands.ToBase;
 	}
-
 }

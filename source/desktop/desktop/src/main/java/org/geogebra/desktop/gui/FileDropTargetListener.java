@@ -1,13 +1,17 @@
 /*
- * GeoGebra - Dynamic Mathematics for Everyone 
- * http://www.geogebra.org
- * 
- * This file is part of GeoGebra.
- * 
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.desktop.gui;
@@ -37,10 +41,9 @@ public class FileDropTargetListener implements DropTargetListener {
 
 	static {
 		try {
-			urlFlavor = new DataFlavor(
-					"application/x-java-url; class=java.net.URL");
+			urlFlavor = new DataFlavor("application/x-java-url; class=java.net.URL");
 		} catch (ClassNotFoundException cnfe) {
-			cnfe.printStackTrace();
+			Log.debug(cnfe);
 		}
 	}
 
@@ -85,13 +88,12 @@ public class FileDropTargetListener implements DropTargetListener {
 		}
 
 		event.dropComplete(handleFileDrop(event.getTransferable()));
-
 	}
 
 	/**
 	 * Determines if a transferable contains ggb/ggt files and attempts to open
 	 * them.
-	 * 
+	 *
 	 * @param t trnaferable
 	 * @return whether ggb/ggt files were found
 	 */
@@ -104,8 +106,7 @@ public class FileDropTargetListener implements DropTargetListener {
 
 		boolean allGGT = true;
 		for (int i = al.size() - 1; i >= 0; i--) {
-			if (!isGGBFile(al.get(i).getName())
-					&& !isGGTFile(al.get(i).getName())) {
+			if (!isGGBFile(al.get(i).getName()) && !isGGTFile(al.get(i).getName())) {
 				al.remove(i);
 			} else {
 				if (!isGGTFile(al.get(i).getName())) {
@@ -116,9 +117,7 @@ public class FileDropTargetListener implements DropTargetListener {
 
 		if (al.size() == 0) {
 			return false;
-		}
-
-		else if (allGGT || app.isSaved() || app.saveCurrentFile()) {
+		} else if (allGGT || app.isSaved() || app.saveCurrentFile()) {
 			File[] files = new File[al.size()];
 			for (int i = 0; i < al.size(); i++) {
 				files[i] = al.get(i);
@@ -131,18 +130,17 @@ public class FileDropTargetListener implements DropTargetListener {
 
 	/**
 	 * Tests if a file has the GeoGebra ggb extension
-	 * 
+	 *
 	 * @param fileName filename
 	 * @return whether it has .ggb extension
 	 */
 	private static boolean isGGBFile(String fileName) {
-		return StringUtil.getFileExtension(fileName)
-				.equals(FileExtensions.GEOGEBRA);
+		return StringUtil.getFileExtension(fileName).equals(FileExtensions.GEOGEBRA);
 	}
 
 	/**
 	 * Tests if a file has the GeoGebra ggt extension
-	 * 
+	 *
 	 * @param fileName filename
 	 * @return whether it has .ggt extension
 	 */
@@ -161,28 +159,22 @@ public class FileDropTargetListener implements DropTargetListener {
 				Log.debug("image flavor not supported");
 				// Image img = (Image) trans.getTransferData
 				// (DataFlavor.imageFlavor);
-			} else if (transferable
-					.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-				List<File> list = (List<File>) transferable
-						.getTransferData(DataFlavor.javaFileListFlavor);
+			} else if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+				List<File> list = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
 				ListIterator<File> it = list.listIterator();
 				while (it.hasNext()) {
 					File f = it.next();
 					al.add(f);
 				}
-			} else if (transferable
-					.isDataFlavorSupported(GuiManagerD.uriListFlavor)) {
-				String uris = (String) transferable
-						.getTransferData(GuiManagerD.uriListFlavor);
+			} else if (transferable.isDataFlavorSupported(GuiManagerD.uriListFlavor)) {
+				String uris = (String) transferable.getTransferData(GuiManagerD.uriListFlavor);
 
 				// url-lists are defined by rfc 2483 as crlf-delimited
 				StringTokenizer st = new StringTokenizer(uris, "\r\n");
 				while (st.hasMoreTokens()) {
 					String uriString = st.nextToken();
-					if (uriString.startsWith("http://")
-							&& isGGBFile(uriString)) {
-						((GuiManagerD) app.getGuiManager()).loadURL(uriString,
-								true);
+					if (uriString.startsWith("http://") && isGGBFile(uriString)) {
+						((GuiManagerD) app.getGuiManager()).loadURL(uriString, true);
 					} else {
 						URI uri = new URI(uriString);
 						al.add(new File(uri));
@@ -195,7 +187,7 @@ public class FileDropTargetListener implements DropTargetListener {
 				Log.debug("flavor not supported: " + transferable);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.debug(e);
 		}
 
 		return al;

@@ -1,40 +1,18 @@
-
-/* DefaultRGHChooserPanel.java --
- Copyright (C) 2004 Free Software Foundation, Inc.
-
- This file is part of GNU Classpath.
-
- GNU Classpath is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2, or (at your option)
- any later version.
-
- GNU Classpath is distributed in the hope that it will be useful, but
- WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with GNU Classpath; see the file COPYING.  If not, write to the
- Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- 02111-1307 USA.
-
- Linking this library statically or dynamically with other modules is
- making a combined work based on this library.  Thus, the terms and
- conditions of the GNU General Public License cover the whole
- combination.
-
- As a special exception, the copyright holders of this library give you
- permission to link this library with independent modules to produce an
- executable, regardless of the license terms of these independent
- modules, and to copy and distribute the resulting executable under
- terms of your choice, provided that you also meet, for each linked
- independent module, the terms and conditions of the license of that
- module.  An independent module is a module which is not derived from
- or based on this library.  If you modify this library, you may extend
- this exception to your version of the library, but you are not
- obligated to do so.  If you do not wish to do so, delete this
- exception statement from your version. */
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
 package org.geogebra.desktop.gui.color;
 
@@ -62,6 +40,8 @@ import org.geogebra.common.main.Localization;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.desktop.main.AppD;
 
+/* Note: this class shares name, but not implementation, with Swing's DefaultRGBChooserPanel,
+copyright notice from https://github.com/geogebra/geogebra/commit/3919aba8 does not apply. */
 /**
  * RGB color chooser panel for the JColorChooser adapted for GeoGebra. The color
  * is selected using three sliders that represent the RGB values.
@@ -197,19 +177,19 @@ public class DefaultRGBChooserPanel extends AbstractColorChooserPanel {
 			R.setValue(red);
 		}
 		if (RSpinner != null) {
-			RSpinner.setValue(Integer.valueOf(red));
+			RSpinner.setValue(red);
 		}
 		if (G != null) {
 			G.setValue(green);
 		}
 		if (GSpinner != null) {
-			GSpinner.setValue(Integer.valueOf(green));
+			GSpinner.setValue(green);
 		}
 		if (B != null) {
 			B.setValue(blue);
 		}
 		if (BSpinner != null) {
-			BSpinner.setValue(Integer.valueOf(blue));
+			BSpinner.setValue(blue);
 		}
 
 		internalChange = false;
@@ -259,12 +239,12 @@ public class DefaultRGBChooserPanel extends AbstractColorChooserPanel {
 		G.setMinorTickSpacing(17);
 		B.setMinorTickSpacing(17);
 
-		RSpinner = new JSpinner(new SpinnerNumberModel(R.getValue(),
-				R.getMinimum(), R.getMaximum(), 1));
-		GSpinner = new JSpinner(new SpinnerNumberModel(G.getValue(),
-				G.getMinimum(), G.getMaximum(), 1));
-		BSpinner = new JSpinner(new SpinnerNumberModel(B.getValue(),
-				B.getMinimum(), B.getMaximum(), 1));
+		RSpinner =
+				new JSpinner(new SpinnerNumberModel(R.getValue(), R.getMinimum(), R.getMaximum(), 1));
+		GSpinner =
+				new JSpinner(new SpinnerNumberModel(G.getValue(), G.getMinimum(), G.getMaximum(), 1));
+		BSpinner =
+				new JSpinner(new SpinnerNumberModel(B.getValue(), B.getMinimum(), B.getMaximum(), 1));
 
 		redLabel.setLabelFor(R);
 		greenLabel.setLabelFor(G);
@@ -395,17 +375,6 @@ public class DefaultRGBChooserPanel extends AbstractColorChooserPanel {
 	}
 
 	/**
-	 * This method paints the default RGB chooser panel.
-	 *
-	 * @param g
-	 *            The Graphics object to paint with.
-	 */
-	@Override
-	public void paint(Graphics g) {
-		super.paint(g);
-	}
-
-	/**
 	 * Sets the labels for the current locale.
 	 */
 	public void setLabels() {
@@ -418,12 +387,12 @@ public class DefaultRGBChooserPanel extends AbstractColorChooserPanel {
 	/**
 	 * Extension of JPanel the displays the currently selected color next to the
 	 * originally chosen color.
-	 * 
+	 *
 	 */
 	static class ColorPreviewPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 
-		public ColorPreviewPanel() {
+		ColorPreviewPanel() {
 			this.setPreferredSize(new Dimension(140, 25));
 			// Border border = BorderFactory.createCompoundBorder(
 			// BorderFactory.createLineBorder(Color.DARK_GRAY, 1),
@@ -432,7 +401,7 @@ public class DefaultRGBChooserPanel extends AbstractColorChooserPanel {
 		}
 
 		@Override
-		public void paintComponent(Graphics g) {
+		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			g.setColor(this.getForeground());
 			g.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
@@ -441,5 +410,4 @@ public class DefaultRGBChooserPanel extends AbstractColorChooserPanel {
 			g.fillRect(0, 0, (getWidth() - 1) / 2, getHeight() - 1);
 		}
 	}
-
 }

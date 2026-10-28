@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.main;
 
 import java.util.ArrayList;
@@ -13,7 +29,7 @@ import elemental2.promise.Promise.PromiseExecutorCallbackFn.ResolveCallbackFn;
 
 /**
  * Async modules manager
- * 
+ *
  * @author Agoston
  */
 public class AsyncManager implements AsyncManagerI {
@@ -21,9 +37,13 @@ public class AsyncManager implements AsyncManagerI {
 	/**
 	 * Preload all but discrete and steps
 	 */
-	private static final AsyncModule[] defaultPreload = { AsyncModule.ADVANCED,
-			AsyncModule.PROVER, AsyncModule.SCRIPTING, AsyncModule.STATS, AsyncModule.CAS,
-			AsyncModule.SPATIAL
+	private static final AsyncModule[] defaultPreload = {
+		AsyncModule.ADVANCED,
+		AsyncModule.PROVER,
+		AsyncModule.SCRIPTING,
+		AsyncModule.STATS,
+		AsyncModule.CAS,
+		AsyncModule.SPATIAL
 	};
 
 	private AppW app;
@@ -51,8 +71,8 @@ public class AsyncManager implements AsyncManagerI {
 	 */
 	public void loadAllCommands() {
 		try {
-			final CommandDispatcher cmdDispatcher = app.getKernel()
-				.getAlgebraProcessor().getCmdDispatcher();
+			final CommandDispatcher cmdDispatcher =
+					app.getKernel().getAlgebraProcessor().getCmdDispatcher();
 
 			cmdDispatcher.getScriptingCommandProcessorFactory();
 			cmdDispatcher.getAdvancedCommandProcessorFactory();
@@ -73,8 +93,7 @@ public class AsyncManager implements AsyncManagerI {
 	 *                   (null -&gt; preload all specified in defaultPreload)
 	 */
 	public void ensureModulesLoaded(String[] modules) {
-		final AsyncModule[] preload = modules == null ? defaultPreload
-				: parse(modules);
+		final AsyncModule[] preload = modules == null ? defaultPreload : parse(modules);
 		for (AsyncModule module : preload) {
 			module.prefetch();
 		}
@@ -84,35 +103,35 @@ public class AsyncManager implements AsyncManagerI {
 	}
 
 	private void ensureAvailable(AsyncModule[] modules, Runnable callback) {
-		for (AsyncModule module: modules) {
-			final CommandDispatcher cmdDispatcher = app.getKernel()
-					.getAlgebraProcessor().getCmdDispatcher();
+		for (AsyncModule module : modules) {
+			final CommandDispatcher cmdDispatcher =
+					app.getKernel().getAlgebraProcessor().getCmdDispatcher();
 			switch (module) {
-			case DISCRETE:
-				cmdDispatcher.getDiscreteCommandProcessorFactory();
-				break;
-			case SCRIPTING:
-				cmdDispatcher.getScriptingCommandProcessorFactory();
-				break;
-			case ADVANCED:
-				cmdDispatcher.getAdvancedCommandProcessorFactory();
-				break;
-			case STATS:
-				cmdDispatcher.getStatsCommandProcessorFactory();
-				break;
-			case PROVER:
-				cmdDispatcher.getProverCommandProcessorFactory();
-				break;
-			case CAS:
-				cmdDispatcher.getCASCommandProcessorFactory();
-				break;
-			case SPATIAL:
-				cmdDispatcher.getSpatialCommandProcessorFactory();
-				break;
-			case GIAC:
-				app.getKernel().getGeoGebraCAS().initCurrentCAS();
-			default:
-				Log.debug("Trying to preload nonexistent module: " + module);
+				case DISCRETE:
+					cmdDispatcher.getDiscreteCommandProcessorFactory();
+					break;
+				case SCRIPTING:
+					cmdDispatcher.getScriptingCommandProcessorFactory();
+					break;
+				case ADVANCED:
+					cmdDispatcher.getAdvancedCommandProcessorFactory();
+					break;
+				case STATS:
+					cmdDispatcher.getStatsCommandProcessorFactory();
+					break;
+				case PROVER:
+					cmdDispatcher.getProverCommandProcessorFactory();
+					break;
+				case CAS:
+					cmdDispatcher.getCASCommandProcessorFactory();
+					break;
+				case SPATIAL:
+					cmdDispatcher.getSpatialCommandProcessorFactory();
+					break;
+				case GIAC:
+					app.getKernel().getGeoGebraCAS().initCurrentCAS();
+				default:
+					Log.debug("Trying to preload nonexistent module: " + module);
 			}
 		}
 		if (callback != null) {
@@ -145,7 +164,7 @@ public class AsyncManager implements AsyncManagerI {
 
 	/**
 	 * Asynchronously evaluate a command
-	 * 
+	 *
 	 * @param command
 	 *            command to evaluate
 	 * @param onSuccess
@@ -153,8 +172,8 @@ public class AsyncManager implements AsyncManagerI {
 	 * @param onFailure
 	 *            function to be called when the execution fails
 	 */
-	public void asyncEvalCommand(final String command, ResolveCallbackFn<String> onSuccess,
-			RejectCallbackFn onFailure) {
+	public void asyncEvalCommand(
+			final String command, ResolveCallbackFn<String> onSuccess, RejectCallbackFn onFailure) {
 		Runnable r = () -> {
 			try {
 				getGgbApi().evalCommand(command);
@@ -178,8 +197,8 @@ public class AsyncManager implements AsyncManagerI {
 	 *                     (with the labels of the created Geos)
 	 * @param onFailure function to be called if the execution fails
 	 */
-	public void asyncEvalCommandGetLabels(final String command, ResolveCallbackFn<String> onSuccess,
-			RejectCallbackFn onFailure) {
+	public void asyncEvalCommandGetLabels(
+			final String command, ResolveCallbackFn<String> onSuccess, RejectCallbackFn onFailure) {
 		Runnable r = () -> {
 			try {
 				onSuccess.onInvoke(getGgbApi().evalCommandGetLabels(command));

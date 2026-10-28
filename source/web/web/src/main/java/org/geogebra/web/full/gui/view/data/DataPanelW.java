@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.data;
 
 import java.util.ArrayList;
@@ -16,8 +32,7 @@ import org.gwtproject.user.client.ui.ScrollPanel;
 import org.gwtproject.user.client.ui.Widget;
 
 /** Data panel */
-public class DataPanelW extends FlowPanel implements StatPanelInterfaceW,
-		RequiresResize {
+public final class DataPanelW extends FlowPanel implements StatPanelInterfaceW, RequiresResize {
 	private DataAnalysisViewW daView;
 	private DataAnalysisControllerW statController;
 	private ComponentCheckbox cbEnableAll;
@@ -29,7 +44,7 @@ public class DataPanelW extends FlowPanel implements StatPanelInterfaceW,
 
 	/*************************************************
 	 * Construct a DataPanel
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param statDialog
@@ -89,20 +104,18 @@ public class DataPanelW extends FlowPanel implements StatPanelInterfaceW,
 		dataTable.setStatTable(maxRows, rowNames, 2, null);
 		for (int row = 0; row < maxRows - 1; row++) {
 			int finalRow = row;
-			ComponentCheckbox cb = new ComponentCheckbox(loc, true, "" + (row + 1),
-					ignore -> onDataClick(finalRow));
+			ComponentCheckbox cb =
+					new ComponentCheckbox(loc, true, "" + (row + 1), ignore -> onDataClick(finalRow));
 			dataTable.getTable().setWidget(row + 1, 0, cb);
 
 			dataTable.setValueAt(
-					dataArray.get(row).toDefinedValueString(
-							StringTemplate.defaultTemplate), row + 1, 1);
+					dataArray.get(row).toDefinedValueString(StringTemplate.defaultTemplate), row + 1, 1);
 		}
 
 		dataTable.getTable().setWidget(0, 0, cbEnableAll);
 		dataTable.setValueAt(titles[0], 0, 1);
 
 		updateSelectionList(dataArray);
-
 	}
 
 	private void populateRegressionDataTable(ArrayList<GeoElement> dataArray) {
@@ -119,8 +132,8 @@ public class DataPanelW extends FlowPanel implements StatPanelInterfaceW,
 
 		for (int row = 0; row < maxRows - 1; ++row) {
 			int finalRow = row;
-			ComponentCheckbox cb = new ComponentCheckbox(loc, true, "" + (row + 1),
-					ignore -> onDataClick(finalRow));
+			ComponentCheckbox cb =
+					new ComponentCheckbox(loc, true, "" + (row + 1), ignore -> onDataClick(finalRow));
 			dataTable.getTable().setWidget(row + 1, 0, cb);
 			GeoPoint pt = (GeoPoint) dataArray.get(row);
 			dataTable.setValueAt(pt.getInhomX() + "", row + 1, 1);
@@ -161,8 +174,7 @@ public class DataPanelW extends FlowPanel implements StatPanelInterfaceW,
 	 */
 	public void onDataClick(int index) {
 		selectionList[index] = !selectionList[index];
-		statController.updateSelectedDataList(index,
-				selectionList[index]);
+		statController.updateSelectedDataList(index, selectionList[index]);
 		cbEnableAll.setSelected(isAllEnabled());
 		cbEnableAll.setDisabled(false);
 	}
@@ -202,5 +214,4 @@ public class DataPanelW extends FlowPanel implements StatPanelInterfaceW,
 	public void onResize() {
 		scrollPane.setHeight(getOffsetHeight() - lblHeader.getOffsetHeight() + "px");
 	}
-
 }

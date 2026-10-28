@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.data;
 
 import java.util.ArrayList;
@@ -21,7 +37,6 @@ public class MultiVarStatTableModel extends StatTableModel {
 
 		@MissingDoc
 		boolean isMinimalTable();
-
 	}
 
 	protected MultiVarStatTableListener getMultiVarListener() {
@@ -83,7 +98,6 @@ public class MultiVarStatTableModel extends StatTableModel {
 			list.add(Statistic.MEDIAN);
 			list.add(Statistic.Q3);
 			list.add(Statistic.MAX);
-
 		}
 
 		return list;
@@ -104,17 +118,14 @@ public class MultiVarStatTableModel extends StatTableModel {
 				Statistic stat = list.get(col);
 
 				if (getMultiVarListener().isValidData() && stat != Statistic.NULL) {
-					AlgoElement algo = getAlgo(stat,
-							(GeoList) dataList.get(row), null);
+					AlgoElement algo = getAlgo(stat, (GeoList) dataList.get(row), null);
 					if (algo != null) {
 						getConstruction().removeFromConstructionList(algo);
-						value = ((GeoNumeric) algo.getGeoElements()[0])
-								.getDouble();
+						value = ((GeoNumeric) algo.getGeoElements()[0]).getDouble();
 						getMultiVarListener().setValueAt(value, row, col);
 					}
 				}
 			}
 		}
 	}
-
 }

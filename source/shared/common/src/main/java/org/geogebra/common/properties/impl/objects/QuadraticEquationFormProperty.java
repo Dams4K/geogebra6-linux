@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.properties.impl.objects;
 
 import static java.util.Map.entry;
@@ -19,14 +35,12 @@ import org.geogebra.common.properties.impl.objects.delegate.QuadraticEquationFor
 
 public class QuadraticEquationFormProperty extends AbstractNamedEnumeratedProperty<Integer> {
 
-	public static final String NAME_KEY = "QuadraticEquationForm"; // TODO add to ggbTranslate
-
 	private final AbstractGeoElementDelegate delegate;
 
 	/***/
 	public QuadraticEquationFormProperty(Localization localization, GeoElement element)
 			throws NotApplicablePropertyException {
-		super(localization, NAME_KEY);
+		super(localization, "Equation");
 		delegate = new QuadraticEquationFormDelegate(element);
 
 		QuadraticEquationRepresentable firstQuadratic =
@@ -38,31 +52,31 @@ public class QuadraticEquationFormProperty extends AbstractNamedEnumeratedProper
 
 		List<Map.Entry<Integer, String>> values = new ArrayList<>();
 		if (allMatch(element, QuadraticEquationRepresentable::isSpecificFormPossible)) {
-			values.add(entry(QuadraticEquationRepresentable.Form.SPECIFIC.rawValue,
+			values.add(entry(
+					QuadraticEquationRepresentable.Form.SPECIFIC.rawValue,
 					firstQuadratic.getSpecificEquationLabelKey()));
 		}
 		if (allMatch(element, QuadraticEquationRepresentable::isExplicitFormPossible)) {
-			values.add(entry(QuadraticEquationRepresentable.Form.EXPLICIT.rawValue,
-					"ExplicitConicEquation"));
+			values.add(
+					entry(QuadraticEquationRepresentable.Form.EXPLICIT.rawValue, "ExplicitConicEquation"));
 		}
 		if (element.getDefinition() != null) {
 			values.add(entry(QuadraticEquationRepresentable.Form.USER.rawValue, "InputForm"));
 		}
-		//if (quadratic.isImplicitFormPossible()) { // TODO always possible?
-		values.add(entry(QuadraticEquationRepresentable.Form.IMPLICIT.rawValue,
+		// if (quadratic.isImplicitFormPossible()) { // TODO always possible?
+		values.add(entry(
+				QuadraticEquationRepresentable.Form.IMPLICIT.rawValue,
 				firstQuadratic.getImplicitEquationLabelKey()));
-		//}
+		// }
 		if (allMatch(element, QuadraticEquationRepresentable::isVertexFormPossible)) {
-			values.add(entry(QuadraticEquationRepresentable.Form.VERTEX.rawValue,
-					"ParabolaVertexForm"));
+			values.add(entry(QuadraticEquationRepresentable.Form.VERTEX.rawValue, "ParabolaVertexForm"));
 		}
 		if (allMatch(element, QuadraticEquationRepresentable::isConicFormPossible)) {
-			values.add(entry(QuadraticEquationRepresentable.Form.CONICFORM.rawValue,
-					"ParabolaConicForm"));
+			values.add(
+					entry(QuadraticEquationRepresentable.Form.CONICFORM.rawValue, "ParabolaConicForm"));
 		}
 		if (allMatch(element, QuadraticEquationRepresentable::isParametricFormPossible)) {
-			values.add(entry(QuadraticEquationRepresentable.Form.PARAMETRIC.rawValue,
-					"ParametricForm"));
+			values.add(entry(QuadraticEquationRepresentable.Form.PARAMETRIC.rawValue, "ParametricForm"));
 		}
 		setNamedValues(values);
 	}
@@ -128,10 +142,12 @@ public class QuadraticEquationFormProperty extends AbstractNamedEnumeratedProper
 			return (QuadraticEquationRepresentable) geoElement;
 		} else if (geoElement instanceof GeoList) {
 			GeoList geoList = (GeoList) geoElement;
-			return geoList.elements()
+			return geoList
+					.elements()
 					.map(QuadraticEquationFormProperty::findFirstQuadraticEquationRepresentable)
 					.filter(Objects::nonNull)
-					.findFirst().orElse(null);
+					.findFirst()
+					.orElse(null);
 		}
 		return null;
 	}

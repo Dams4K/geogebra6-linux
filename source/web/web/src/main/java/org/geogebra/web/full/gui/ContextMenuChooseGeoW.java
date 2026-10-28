@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui;
 
 import java.util.ArrayList;
@@ -13,17 +29,15 @@ import org.geogebra.web.html5.gui.menu.AriaMenuBar;
 import org.geogebra.web.html5.gui.menu.AriaMenuItem;
 import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.event.dom.client.MouseOverEvent;
+import org.gwtproject.resources.client.ResourcePrototype;
 import org.gwtproject.user.client.ui.InlineHTML;
 
 /**
  * Menu for choosing geos
  */
-public class ContextMenuChooseGeoW extends ContextMenuGeoElementW {
+public final class ContextMenuChooseGeoW extends ContextMenuGeoElementW {
 
-	/**
-	 * 
-	 */
-	protected EuclidianView view;
+	private EuclidianView view;
 
 	/**
 	 * polygons/polyhedra parents of segments, polygons, ...
@@ -36,7 +50,7 @@ public class ContextMenuChooseGeoW extends ContextMenuGeoElementW {
 	private ArrayList<GeoElement> tmpAnotherMenuItemList;
 
 	/**
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param view
@@ -48,9 +62,13 @@ public class ContextMenuChooseGeoW extends ContextMenuGeoElementW {
 	 * @param invokerLocation
 	 *            place to show
 	 */
-	public ContextMenuChooseGeoW(AppW app, EuclidianView view,
-								 ArrayList<GeoElement> selectedGeos, ArrayList<GeoElement> geos,
-								 GPoint invokerLocation, ContextMenuItemFactory factory) {
+	public ContextMenuChooseGeoW(
+			AppW app,
+			EuclidianView view,
+			ArrayList<GeoElement> selectedGeos,
+			ArrayList<GeoElement> geos,
+			GPoint invokerLocation,
+			ContextMenuItemFactory factory) {
 		super(app, selectedGeos, factory);
 		// return if just one geo, or if first geos more than one
 		if (geos.size() < 2 || selectedGeos.size() > 1) {
@@ -92,8 +110,8 @@ public class ContextMenuChooseGeoW extends ContextMenuGeoElementW {
 		addOtherItems();
 	}
 
-	private void addGeosToTmpAnotherMenuItemList(TreeSet<GeoElement> metaElements,
-			ArrayList<GeoElement> geos, GeoElement geoSelected) {
+	private void addGeosToTmpAnotherMenuItemList(
+			TreeSet<GeoElement> metaElements, ArrayList<GeoElement> geos, GeoElement geoSelected) {
 		tmpAnotherMenuItemList = new ArrayList<>();
 
 		for (GeoElement geo1 : geos) {
@@ -105,7 +123,6 @@ public class ContextMenuChooseGeoW extends ContextMenuGeoElementW {
 				}
 			}
 		}
-
 	}
 
 	private void addMetas(GeoElement geo1, TreeSet<GeoElement> metaElements) {
@@ -122,10 +139,10 @@ public class ContextMenuChooseGeoW extends ContextMenuGeoElementW {
 			return;
 		}
 
-		AriaMenuItem mi = new AriaMenuItem(new InlineHTML(getDescription(geo, false)),
-				() -> geoActionCmd(geo));
-		mi.addDomHandler(evt -> view.getEuclidianController().doSingleHighlighting(geo),
-				MouseOverEvent.getType());
+		AriaMenuItem mi =
+				new AriaMenuItem(new InlineHTML(getDescription(geo, false)), () -> geoActionCmd(geo));
+		mi.addDomHandler(
+				evt -> view.getEuclidianController().doSingleHighlighting(geo), MouseOverEvent.getType());
 
 		selectAnotherMenu.addItem(mi);
 		if (app.isUnbundledOrWhiteboard()) {
@@ -140,12 +157,10 @@ public class ContextMenuChooseGeoW extends ContextMenuGeoElementW {
 		Localization localization = app.getLocalization();
 		if (EuclidianConstants.isMoveOrSelectionMode(mode)) {
 			selectAnotherMenuItem = new AriaMenuItem(
-					localization.getMenu("SelectAnother"), null,
-					selectAnotherMenu);
+					localization.getMenu("SelectAnother"), (ResourcePrototype) null, selectAnotherMenu);
 		} else {
 			selectAnotherMenuItem = new AriaMenuItem(
-					localization.getMenu("PerformToolOn"), null,
-					selectAnotherMenu);
+					localization.getMenu("PerformToolOn"), (ResourcePrototype) null, selectAnotherMenu);
 		}
 		wrappedPopup.addItem(selectAnotherMenuItem);
 	}

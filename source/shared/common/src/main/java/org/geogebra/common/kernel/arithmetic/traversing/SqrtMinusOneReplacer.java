@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.arithmetic.traversing;
 
 import org.geogebra.common.kernel.Kernel;
@@ -23,15 +39,13 @@ public class SqrtMinusOneReplacer implements Traversing {
 		if (ev.isExpressionNode()) {
 			ExpressionNode node = ev.wrap();
 			ExpressionValue left = node.getLeft();
-			if (node.getOperation() == Operation.SQRT
-					&& left.isNumberValue() && left.isConstant()) {
+			if (node.getOperation() == Operation.SQRT && left.isNumberValue() && left.isConstant()) {
 				if (left.evaluateDouble() == -1) {
 					return kernel.getImaginaryUnit();
 				}
 			}
 		}
-		if (ev instanceof Variable
-				&& "i".equals(ev.toString(StringTemplate.xmlTemplate))) {
+		if (ev instanceof Variable && "i".equals(ev.toString(StringTemplate.xmlTemplate))) {
 			return kernel.getImaginaryUnit();
 		}
 		return ev;

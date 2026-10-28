@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.plugin.script;
 
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -36,7 +52,7 @@ public abstract class Script {
 
 	/**
 	 * Get the script's source code
-	 * 
+	 *
 	 * @return the source code as a string
 	 */
 	public String getText() {
@@ -46,7 +62,7 @@ public abstract class Script {
 	/**
 	 * Get the script's internal text (which could be different from the
 	 * localized text)
-	 * 
+	 *
 	 * @return the internal text
 	 */
 	public String getInternalText() {
@@ -56,7 +72,7 @@ public abstract class Script {
 	/**
 	 * Perform actions necessary (if any) to bind the script to a GeoElement via
 	 * a given EventType
-	 * 
+	 *
 	 * @param geo
 	 *            the geo
 	 * @param evtType
@@ -69,7 +85,7 @@ public abstract class Script {
 	/**
 	 * Perform actions necessary (if any) to unbind the script from a GeoElement
 	 * via a given EventType
-	 * 
+	 *
 	 * @param geo
 	 *            the geo
 	 * @param evtType
@@ -81,7 +97,7 @@ public abstract class Script {
 
 	/**
 	 * Run the script
-	 * 
+	 *
 	 * @param evt
 	 *            the event that triggered the script
 	 * @return success
@@ -92,14 +108,14 @@ public abstract class Script {
 
 	/**
 	 * Get the script's type
-	 * 
+	 *
 	 * @return the script's type
 	 */
 	public abstract ScriptType getType();
 
 	/**
 	 * Get the language name of the script (convenience function)
-	 * 
+	 *
 	 * @return the language name
 	 */
 	public String getLanguageName() {
@@ -109,7 +125,7 @@ public abstract class Script {
 	/**
 	 * @return the XML attribute name for serialization to file
 	 */
-	public Object getXMLName() {
+	public String getXMLName() {
 		return this.getType().getXMLName();
 	}
 
@@ -121,12 +137,12 @@ public abstract class Script {
 	/**
 	 * The text of this script is modified by changing every whole word oldLabel
 	 * to newLabel.
-	 * 
+	 *
 	 * @param oldLabel
 	 *            old label
 	 * @param newLabel
 	 *            new label
-	 * 
+	 *
 	 * @return whether any renaming happened
 	 */
 	public abstract boolean renameGeo(String oldLabel, String newLabel);

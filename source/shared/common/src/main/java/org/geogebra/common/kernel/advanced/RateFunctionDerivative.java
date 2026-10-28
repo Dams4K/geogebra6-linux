@@ -1,12 +1,28 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.advanced;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
 
 /**
  * @author michael
- * 
+ *
  *         returns derivative of the fundamental formula with respect to rate
- * 
+ *
  *         f(rate) = pmt * (1 + rate * pmtType) * ((1 + rate)^n - 1) / (rate) +
  *         pv * (1 + rate)^n + fv
  *
@@ -28,8 +44,7 @@ public class RateFunctionDerivative implements UnivariateFunction {
 	 * @param pmtType
 	 *            0 or 1
 	 */
-	public RateFunctionDerivative(double n, double pv, double pmt,
-			double pmtType) {
+	public RateFunctionDerivative(double n, double pv, double pmt, double pmtType) {
 		this.n = n;
 		this.pv = pv;
 		this.pmt = pmt;
@@ -53,19 +68,15 @@ public class RateFunctionDerivative implements UnivariateFunction {
 			// 1)^n + x + 1) + a n x^2 (x + 1)^n) / (x^2 (x + 1))),0]
 			// ((1 / 2 * b) * n^(2)) + ((b * c) * n) + (a * n) - ((1 / 2 * b) *
 			// n)
-			return (b / 2d * n * n) + (b * c * n) + (a * n)
-					- (b / 2d * n);
+			return (b / 2d * n * n) + (b * c * n) + (a * n) - (b / 2d * n);
 		}
 
 		double p = Math.pow(1 + x, n);
 		double x2 = x * x;
 		double xp = x * p;
 
-		double num = a * n * x2 * p
-				+ b * (c * n * x2 * p + n * xp - xp - p + x + 1);
+		double num = a * n * x2 * p + b * (c * n * x2 * p + n * xp - xp - p + x + 1);
 
 		return num / (x2 * (x + 1));
-
 	}
-
 }

@@ -1,16 +1,33 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.geos;
 
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.arithmetic.MyList;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.kernel.kernelND.GeoVectorND;
-
-import com.himamis.retex.editor.share.serializer.TeXEscaper;
-import com.himamis.retex.editor.share.util.MathFormulaConverter;
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.catalog.TemplateCatalog;
+import org.geogebra.editor.share.serializer.TeXEscaper;
+import org.geogebra.editor.share.serializer.TeXSerializer;
+import org.geogebra.editor.share.util.FormulaConverter;
+import org.geogebra.editor.share.util.Unicode;
 
 class InputBoxRenderer {
-	private final MathFormulaConverter formulaConverter;
+	private final FormulaConverter formulaConverter;
 	private final GeoInputBox inputBox;
 	private GeoElementND linkedGeo;
 	private StringTemplate stringTemplateForLaTeX;
@@ -18,19 +35,20 @@ class InputBoxRenderer {
 	InputBoxRenderer(GeoInputBox inputBox) {
 		this.inputBox = inputBox;
 		this.linkedGeo = inputBox.getLinkedGeo();
-		this.stringTemplateForLaTeX = inputBox.tpl.derivePrecisionPreservingLaTeXTemplate();
-		formulaConverter = new MathFormulaConverter();
+		updateLatexTemplate();
+		TeXSerializer serializer = new TeXSerializer();
+		serializer.useSimpleMatrixPlaceholders(true);
+		formulaConverter = new FormulaConverter(new TemplateCatalog(), serializer);
 	}
 
 	String getText() {
 		if (inputBox.isSymbolicModeWithSpecialEditor()) {
 			String tempUserEvalInput = inputBox.getTempUserEvalInput();
 			formulaConverter.setTemporaryInput(!"".equals(tempUserEvalInput));
-			return removeJlminput(formulaConverter.convert(inputBox.getTextForEditor()));
+			return formulaConverter.convert(inputBox.getTextForEditor());
 		}
 		if (linkedGeo.isGeoText()) {
-			String str = ((GeoText) linkedGeo).getTextStringSafe()
-					.replace("\n", GeoText.NEW_LINE);
+			String str = ((GeoText) linkedGeo).getTextStringSafe().replace("\n", GeoText.NEW_LINE);
 			if (inputBox.symbolicMode) {
 				return "\\text{" + TeXEscaper.escapeStringTextMode(str) + "}";
 			}
@@ -63,10 +81,9 @@ class InputBoxRenderer {
 	}
 
 	private String getTextForSymbolic() {
-		boolean flatEditableList = linkedGeo.isGeoList()
-				&& !linkedGeo.hasSpecialEditor();
-		boolean isComplexFunction = linkedGeo.isGeoSurfaceCartesian()
-				&& linkedGeo.getDefinition() != null;
+		boolean flatEditableList = linkedGeo.isGeoList() && !linkedGeo.hasSpecialEditor();
+		boolean isComplexFunction =
+				linkedGeo.isGeoSurfaceCartesian() && linkedGeo.getDefinition() != null;
 		if (linkedGeo.isGeoList() && !flatEditableList && !((GeoList) linkedGeo).isMatrix()) {
 			return getStringForFlatList(stringTemplateForLaTeX);
 		} else if (isRestrictedPoint()) {
@@ -84,9 +101,8 @@ class InputBoxRenderer {
 	 * @param tpl template
 	 * @return string for flat list (definition or value, no brackets)
 	 */
-	public String getStringForFlatList(StringTemplate tpl) {
-		if (linkedGeo.getDefinition() != null
-				&& linkedGeo.getDefinition().unwrap() instanceof MyList) {
+	String getStringForFlatList(StringTemplate tpl) {
+		if (linkedGeo.getDefinition() != null && linkedGeo.getDefinition().unwrap() instanceof MyList) {
 			return ((MyList) linkedGeo.getDefinition().unwrap()).toString(tpl, true, false);
 		}
 		return ((GeoList) linkedGeo).appendElements(new StringBuilder(), tpl).toString();
@@ -123,41 +139,17 @@ class InputBoxRenderer {
 	}
 
 	private String getLaTeXRedefineString() {
-		return linkedGeo.getRedefineString(true, true,
-				stringTemplateForLaTeX);
+		return linkedGeo.getRedefineString(true, true, stringTemplateForLaTeX);
 	}
 
 	void updateLatexTemplate() {
-		stringTemplateForLaTeX = inputBox.tpl.derivePrecisionPreservingLaTeXTemplate();
+		stringTemplateForLaTeX = inputBox
+				.tpl
+				.derivePrecisionPreservingLaTeXTemplate()
+				.deriveWithOmittedSpaceInCoefficientProducts();
 	}
 
 	void setLinkedGeo(GeoElementND linkedGeo) {
 		this.linkedGeo = linkedGeo;
-	}
-
-	private String removeJlminput(String input) {
-		StringBuilder output = new StringBuilder();
-		int i = 0;
-		while (i < input.length()) {
-			if (input.startsWith("\\jlminput{", i)) {
-				i += 10;
-				int braceCount = 1;
-				int start = i;
-
-				while (i < input.length() && braceCount > 0) {
-					if (input.charAt(i) == '{') {
-						braceCount++;
-					} else if (input.charAt(i) == '}') {
-						braceCount--;
-					}
-					i++;
-				}
-				output.append(input, start, i - 1);
-			} else {
-				output.append(input.charAt(i));
-				i++;
-			}
-		}
-		return output.toString();
 	}
 }

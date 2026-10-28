@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import java.util.ArrayList;
@@ -20,7 +36,7 @@ import org.geogebra.common.main.MyError;
 public class CmdPolyLine extends CommandProcessor {
 	/**
 	 * Creates new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -33,42 +49,41 @@ public class CmdPolyLine extends CommandProcessor {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
 		switch (n) {
-		case 0:
-			throw argNumErr(c);
-		case 1:
-			arg = resArgs(c, info);
-			if (arg[0].isGeoList()) {
-				return polyLine(c.getLabel(), (GeoList) arg[0]);
-			}
-			throw argErr(c, arg[0]);
-		case 2:
-			arg = resArgs(c, info);
-			if (arg[0].isGeoList()) {
-
-				if (!arg[1].isGeoBoolean()) {
-					throw argErr(c, arg[1]);
+			case 0:
+				throw argNumErr(c);
+			case 1:
+				arg = resArgs(c, info);
+				if (arg[0].isGeoList()) {
+					return polyLine(c.getLabel(), (GeoList) arg[0]);
 				}
+				throw argErr(c, arg[0]);
+			case 2:
+				arg = resArgs(c, info);
+				if (arg[0].isGeoList()) {
 
-				return polyLine(c.getLabel(), (GeoList) arg[0]);
-			}
-			if (arg[0].isGeoPoint()) {
+					if (!arg[1].isGeoBoolean()) {
+						throw argErr(c, arg[1]);
+					}
 
-				if (!arg[1].isGeoPoint() && !(arg[1].isGeoBoolean()
-						&& arg[1].evaluateDouble() > 0)) {
-					throw argErr(c, arg[1]);
+					return polyLine(c.getLabel(), (GeoList) arg[0]);
 				}
+				if (arg[0].isGeoPoint()) {
 
-				return genericPolyline(arg[1], arg, c, info);
-			}
-			throw argErr(c, arg[0]);
-		default:
-			GeoElement lastArg = resArgSilent(c, n - 1, info.withLabels(false));
-			return genericPolyline(lastArg, null, c, info);
+					if (!arg[1].isGeoPoint() && !(arg[1].isGeoBoolean() && arg[1].evaluateDouble() > 0)) {
+						throw argErr(c, arg[1]);
+					}
+
+					return genericPolyline(arg[1], arg, c, info);
+				}
+				throw argErr(c, arg[0]);
+			default:
+				GeoElement lastArg = resArgSilent(c, n - 1, info.withLabels(false));
+				return genericPolyline(lastArg, null, c, info);
 		}
 	}
 
-	private GeoElement[] genericPolyline(GeoElement lastArg, GeoElement[] arg0,
-			Command c, EvalInfo info) {
+	private GeoElement[] genericPolyline(
+			GeoElement lastArg, GeoElement[] arg0, Command c, EvalInfo info) {
 		boolean penStroke = false;
 		int size = c.getArgumentNumber();
 		if (lastArg.isGeoBoolean()) {
@@ -81,8 +96,7 @@ public class CmdPolyLine extends CommandProcessor {
 			ArrayList<MyPoint> myPoints = new ArrayList<>();
 			for (int i = 0; i < size; i++) {
 				MyVecNode vec = (MyVecNode) c.getArgument(i).unwrap();
-				myPoints.add(new MyPoint(vec.getX().evaluateDouble(),
-						vec.getY().evaluateDouble()));
+				myPoints.add(new MyPoint(vec.getX().evaluateDouble(), vec.getY().evaluateDouble()));
 			}
 			AlgoLocusStroke algo = new AlgoLocusStroke(cons, myPoints);
 			algo.getOutput(0).setLabel(c.getLabel());
@@ -137,8 +151,7 @@ public class CmdPolyLine extends CommandProcessor {
 	 *            whether it's a 3D object
 	 * @return polyline
 	 */
-	protected GeoElement[] polyLine(String label, GeoPointND[] points,
-			boolean is3D) {
+	protected GeoElement[] polyLine(String label, GeoPointND[] points, boolean is3D) {
 		return kernel.polyLine(label, points);
 	}
 }

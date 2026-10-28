@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.prover;
 
 import java.util.ArrayList;
@@ -8,21 +24,20 @@ import java.util.Set;
 /**
  * Implementation of iterable combinations of a set. Based on
  * http://stackoverflow.com/a/7631893. Usage:
- * 
+ *
  * Set&lt;Integer&gt; a = new HashSet&lt;Integer&gt;(); a.add(1); a.add(2); a.add(3);
  * a.add(4);
- * 
+ *
  * Combinations b = new Combinations(a,2);
- * 
+ *
  * while (b.hasNext()) { Set c = (Set) b.next(); Log.debug(c); }
- * 
+ *
  * @author Zoltan Kovacs
  *
- * 
+ *
  * @param <T>
  *            element type
  */
-
 public class Combinations<T> implements Iterator<Set<T>> {
 
 	private Set<T> set;
@@ -34,7 +49,7 @@ public class Combinations<T> implements Iterator<Set<T>> {
 
 	/**
 	 * Creates all combinations of a set of the given order
-	 * 
+	 *
 	 * @param inputSet
 	 *            the input set
 	 * @param order

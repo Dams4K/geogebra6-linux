@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.inputfield;
 
 import java.util.ArrayList;
@@ -15,10 +31,10 @@ import org.geogebra.regexp.shared.RegExp;
 
 /**
  * Class for coloring the labels in input bar
- * 
+ *
  * @author bencze
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ColorProvider {
 
 	private static final int TEXT_LENGTH_LIMIT = 1000;
@@ -26,12 +42,14 @@ public class ColorProvider {
 	/** Regular expression strings */
 	private static final String LABEL_REGEX_STRING = "((\\p{L}\\p{M}*)(\\p{L}\\p{M}*|\\p{Nd})*'?"
 			+ "(\\_\\{+(\\P{M}\\p{M}*)+\\}|\\_(\\P{M}\\p{M})?)?(\\p{L}\\p{M}|\\p{Nd})*)";
+
 	private static final String LABEL_PARAM = LABEL_REGEX_STRING + "(\\(|\\[)?";
 	private static final String COMMAND_ARG = "((\\P{M}\\p{M}*)*)";
 	private static final String WHITESPACE = "\\p{Z}*";
 
 	/** Colors */
 	private static final GColor COLOR_DEFINED = GeoGebraColorConstants.DEFINED_OBJECT_COLOR;
+
 	private static final GColor COLOR_UNDEFINED = GeoGebraColorConstants.UNDEFINED_OBJECT_COLOR;
 	private static final GColor COLOR_LOCAL = GeoGebraColorConstants.LOCAL_OBJECT_COLOR;
 	private static final GColor COLOR_DEFAULT = GColor.BLACK;
@@ -48,10 +66,10 @@ public class ColorProvider {
 	private boolean isCasInput;
 
 	/** Regular expression objects */
-	private RegExp commandReg = RegExp
-			.compile(LABEL_REGEX_STRING + "\\[(" + COMMAND_ARG + "|,)\\]", "g");
-	private RegExp commandParamReg = RegExp.compile("<(\\p{L}\\p{M}*| |\\-)*>",
-			"g");
+	private RegExp commandReg =
+			RegExp.compile(LABEL_REGEX_STRING + "\\[(" + COMMAND_ARG + "|,)\\]", "g");
+
+	private RegExp commandParamReg = RegExp.compile("<(\\p{L}\\p{M}*| |\\-)*>", "g");
 	private RegExp assignmentReg;
 
 	/**
@@ -88,7 +106,7 @@ public class ColorProvider {
 
 	/**
 	 * Every time the text changes, setText(String) must be called
-	 * 
+	 *
 	 * @param i
 	 *            the cursor in the text
 	 * @return Color
@@ -122,7 +140,7 @@ public class ColorProvider {
 
 	/**
 	 * Sets the flags for algebra or CAS input
-	 * 
+	 *
 	 * @param isCasInput1
 	 *            true if it is CAS input false if algebra input
 	 */
@@ -135,15 +153,15 @@ public class ColorProvider {
 
 	private static RegExp createAssignmentRegExp(boolean isCasInput) {
 		return RegExp.compile("^" + WHITESPACE + LABEL_REGEX_STRING // f -
-																		// function
-																		// label
+				// function
+				// label
 				+ "(\\(" + WHITESPACE + "((" + LABEL_REGEX_STRING + WHITESPACE
 				+ "," + WHITESPACE + ")*)" + LABEL_REGEX_STRING + WHITESPACE
 				+ "\\))" // ( x1 , x2 , x3 , ... ) - function parameters
 				+ WHITESPACE + (!isCasInput ? "(\\:\\=|\\=)" : "(\\:\\=)")); // :=/=
-																			// -
-																			// assignment
-																			// operator
+		// -
+		// assignment
+		// operator
 	}
 
 	private void getIntervals() {
@@ -152,7 +170,7 @@ public class ColorProvider {
 		} else {
 			labels = kernel.getConstruction().getAllGeoLabels();
 		}
-		locals = new HashSet();
+		locals = new HashSet<>();
 		definedObjectsIntervals.clear();
 		undefinedObjectsIntervals.clear();
 		ignoreIntervals.clear();
@@ -163,13 +181,11 @@ public class ColorProvider {
 		if (!isCasInput) {
 			while ((res = commandReg.exec(text)) != null) {
 				int i = res.getIndex();
-				ignoreIntervals
-						.add(new Integer[] { i, i + res.getGroup(1).length() });
+				ignoreIntervals.add(new Integer[] {i, i + res.getGroup(1).length()});
 			}
 			while ((res = commandParamReg.exec(text)) != null) {
 				int i = res.getIndex();
-				ignoreIntervals
-						.add(new Integer[] { i, i + res.getGroup(0).length() });
+				ignoreIntervals.add(new Integer[] {i, i + res.getGroup(0).length()});
 			}
 		}
 
@@ -183,18 +199,17 @@ public class ColorProvider {
 				addTo(definedObjectsIntervals, 0, label.length());
 			}
 			String[] split = getVariables(res.getGroup(8));
-			for (String var: split) {
+			for (String var : split) {
 				String trimmedVar = trimVar(var);
 				locals.add(trimmedVar);
 			}
 		}
 		getIntervalsRecursively(text, 0);
-
 	}
 
 	private void getIntervalsRecursively(String text1, int startIndex) {
 		LabelParamRegExp labelParam = new LabelParamRegExp(text1);
-		CommandOrFunctionMatchResult res = null;
+		CommandOrFunctionMatchResult res;
 		// While we get matches against text
 		while ((res = labelParam.exec()) != null) {
 			String label = res.getGroup(0);
@@ -202,13 +217,12 @@ public class ColorProvider {
 			String params = res.getGroup(1);
 			// We don't color commands
 			if (!res.isCommand()) {
-				addToInterval(label, startIndex + res.getIndex(),
-						label.length());
+				addToInterval(label, startIndex + res.getIndex(), label.length());
 			}
 			String[] split = getVariables(params);
 			int j = startIndex + res.getIndex() + label.length();
 			if (split != null) {
-				for (String sub: split) {
+				for (String sub : split) {
 					// For every parameter we call this function recursively
 					// this way we can color inner commands and function calls
 					// as sin(cos(f(x)))
@@ -235,7 +249,7 @@ public class ColorProvider {
 	}
 
 	private static void addTo(List list, int s, int e) {
-		list.add(new Integer[] { s, e });
+		list.add(new Integer[] {s, e});
 	}
 
 	private void addToInterval(String label, int s, int len) {
@@ -250,48 +264,46 @@ public class ColorProvider {
 
 	// MyMatchResult and LabelParamRegExp are
 	// inner classes used for matching labels/functions/commands
-	private static class CommandOrFunctionMatchResult {
+	private static final class CommandOrFunctionMatchResult {
 
 		int index;
 		List<String> groups;
 		private boolean isCommand;
 
-		public CommandOrFunctionMatchResult(int index, List<String> groups,
-				boolean isCommand) {
+		private CommandOrFunctionMatchResult(int index, List<String> groups, boolean isCommand) {
 			this.index = index;
 			this.groups = groups;
 			setCommand(isCommand);
 		}
 
-		public boolean isCommand() {
+		boolean isCommand() {
 			return isCommand;
 		}
 
-		public void setCommand(boolean isCommand) {
+		void setCommand(boolean isCommand) {
 			this.isCommand = isCommand;
 		}
 
-		public int getIndex() {
+		int getIndex() {
 			return index;
 		}
 
-		public String getGroup(int i) {
+		String getGroup(int i) {
 			return groups.get(i);
 		}
-
 	}
 
-	private static class LabelParamRegExp {
+	private static final class LabelParamRegExp {
 
 		RegExp regExp = RegExp.compile(LABEL_PARAM);
 		String text;
 		int index;
 
-		public LabelParamRegExp(String text) {
+		private LabelParamRegExp(String text) {
 			setText(text);
 		}
 
-		public CommandOrFunctionMatchResult exec() {
+		private CommandOrFunctionMatchResult exec() {
 			MatchResult res = regExp.exec(text);
 			if (res == null) {
 				return null;
@@ -299,10 +311,10 @@ public class ColorProvider {
 
 			String label = res.getGroup(1);
 			String openingBracket = res.getGroup(8);
-			List groups = new ArrayList(2);
+			List<String> groups = new ArrayList<>(2);
 			groups.add(label);
 			CommandOrFunctionMatchResult ret;
-			int step = 0;
+			int step;
 			String params = null;
 
 			if (openingBracket == null) {
@@ -327,15 +339,15 @@ public class ColorProvider {
 			}
 			// Set the second parameter and create return value
 			groups.add(params);
-			ret = new CommandOrFunctionMatchResult(index + res.getIndex(), groups,
-					"[".equals(openingBracket));
+			ret = new CommandOrFunctionMatchResult(
+					index + res.getIndex(), groups, "[".equals(openingBracket));
 
 			index += step;
 			text = text.substring(step);
 			return ret;
 		}
 
-		public void setText(String text) {
+		private void setText(String text) {
 			this.text = text;
 			index = 0;
 		}
@@ -347,6 +359,5 @@ public class ColorProvider {
 			// default
 			return ')';
 		}
-
 	}
 }

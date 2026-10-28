@@ -1,6 +1,20 @@
-package org.geogebra.common.properties.impl.objects;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
+package org.geogebra.common.properties.impl.objects;
 
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.LabelManager;
@@ -11,6 +25,7 @@ import org.geogebra.common.properties.impl.AbstractValuedProperty;
 import org.geogebra.common.properties.impl.objects.delegate.GeoElementDelegate;
 import org.geogebra.common.properties.impl.objects.delegate.NameCaptionPropertyDelegate;
 import org.geogebra.common.properties.impl.objects.delegate.NotApplicablePropertyException;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Name
@@ -49,12 +64,12 @@ public class NameCaptionProperty extends AbstractValuedProperty<String> implemen
 				String newLabel = element.getFreeLabel(value);
 				element.rename(newLabel);
 			}
-			element.setLabelMode(showsValue(element) ? GeoElementND.LABEL_NAME_VALUE
-					: GeoElementND.LABEL_NAME);
+			element.setLabelMode(
+					showsValue(element) ? GeoElementND.LABEL_NAME_VALUE : GeoElementND.LABEL_NAME);
 		} else {
 			element.setCaption(value);
-			element.setLabelMode(showsValue(element) ? GeoElementND.LABEL_CAPTION_VALUE
-					: GeoElementND.LABEL_CAPTION);
+			element.setLabelMode(
+					showsValue(element) ? GeoElementND.LABEL_CAPTION_VALUE : GeoElementND.LABEL_CAPTION);
 		}
 
 		element.setAlgebraLabelVisible(true);
@@ -63,7 +78,7 @@ public class NameCaptionProperty extends AbstractValuedProperty<String> implemen
 	}
 
 	@Override
-	public @CheckForNull String validateValue(String value) {
+	public @Nullable String validateValue(String value) {
 		return null;
 	}
 
@@ -76,7 +91,6 @@ public class NameCaptionProperty extends AbstractValuedProperty<String> implemen
 
 	private boolean hasCaptionStyle(GeoElementND element) {
 		int labelMode = element.getLabelMode();
-		return labelMode == GeoElementND.LABEL_CAPTION
-				|| labelMode == GeoElementND.LABEL_CAPTION_VALUE;
+		return labelMode == GeoElementND.LABEL_CAPTION || labelMode == GeoElementND.LABEL_CAPTION_VALUE;
 	}
 }

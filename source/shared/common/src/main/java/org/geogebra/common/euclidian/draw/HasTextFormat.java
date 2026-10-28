@@ -1,6 +1,21 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
-import org.geogebra.common.annotation.MissingDoc;
 import org.geogebra.common.kernel.geos.GeoInline;
 import org.geogebra.common.kernel.geos.properties.HorizontalAlignment;
 import org.geogebra.common.kernel.geos.properties.VerticalAlignment;
@@ -17,6 +32,17 @@ public interface HasTextFormat {
 	 *            value (String, int or bool, depending on key)
 	 */
 	void format(String key, Object val);
+
+	/**
+	 * @param val font family name
+	 */
+	void formatFont(String val);
+
+	/**
+	 * @return Whether the font cannot be determined. This is the case if a selection contains
+	 * more than one font.
+	 */
+	boolean hasIndeterminableFont();
 
 	/**
 	 * @param key formatting option name
@@ -59,7 +85,10 @@ public interface HasTextFormat {
 	 */
 	void switchListTo(String listType);
 
-	@MissingDoc
+	/**
+	 * Copy selected part to clipboard.
+	 * @return whether the string to copy was non-empty
+	 */
 	boolean copySelection();
 
 	/**

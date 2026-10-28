@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.animator;
 
 import org.geogebra.common.factories.UtilFactory;
@@ -24,7 +40,7 @@ public abstract class EuclidianView3DAnimation {
 	 */
 	protected EuclidianView3DAnimator animator;
 
-	private boolean storeUndo;
+	private final boolean storeUndo;
 
 	/**
 	 * constructor
@@ -40,7 +56,7 @@ public abstract class EuclidianView3DAnimation {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param view3D
 	 *            3D view
 	 * @param animator
@@ -48,8 +64,8 @@ public abstract class EuclidianView3DAnimation {
 	 * @param storeUndo
 	 *            if undo point will be stored at the end
 	 */
-	EuclidianView3DAnimation(EuclidianView3D view3D, EuclidianView3DAnimator animator,
-			boolean storeUndo) {
+	EuclidianView3DAnimation(
+			EuclidianView3D view3D, EuclidianView3DAnimator animator, boolean storeUndo) {
 		this.view3D = view3D;
 		this.animator = animator;
 		this.storeUndo = storeUndo;
@@ -58,18 +74,18 @@ public abstract class EuclidianView3DAnimation {
 	/**
 	 * setup values for start
 	 */
-	abstract public void setupForStart();
+	public abstract void setupForStart();
 
 	/**
-	 * 
+	 *
 	 * @return animation type
 	 */
-	abstract public AnimationType getType();
+	public abstract AnimationType getType();
 
 	/**
 	 * process animation
 	 */
-	abstract public void animate();
+	public abstract void animate();
 
 	/**
 	 * end animation
@@ -81,7 +97,7 @@ public abstract class EuclidianView3DAnimation {
 		animator.endAnimation();
 	}
 
-	protected final static double getMillisecondTime() {
+	protected static double getMillisecondTime() {
 		return UtilFactory.getPrototype().getMillisecondTime();
 	}
 

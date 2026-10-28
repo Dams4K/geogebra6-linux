@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoAnglePoints.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -40,8 +38,7 @@ public class AlgoAnglePolygon3D extends AlgoAnglePolygonND {
 	 * @param poly
 	 *            polygon
 	 */
-	public AlgoAnglePolygon3D(Construction cons, String[] labels,
-			GeoPolygon poly) {
+	public AlgoAnglePolygon3D(Construction cons, String[] labels, GeoPolygon poly) {
 		this(cons, labels, poly, false);
 	}
 
@@ -55,8 +52,8 @@ public class AlgoAnglePolygon3D extends AlgoAnglePolygonND {
 	 * @param internalAngle
 	 *            whether to return internal angles
 	 */
-	public AlgoAnglePolygon3D(Construction cons, String[] labels, GeoPolygon poly,
-			boolean internalAngle) {
+	public AlgoAnglePolygon3D(
+			Construction cons, String[] labels, GeoPolygon poly, boolean internalAngle) {
 		this(cons, labels, poly, null, internalAngle);
 	}
 
@@ -72,20 +69,22 @@ public class AlgoAnglePolygon3D extends AlgoAnglePolygonND {
 	 * @param internalAngle
 	 *            if angles are internal
 	 */
-	public AlgoAnglePolygon3D(Construction cons, String[] labels,
-			GeoPolygon poly, GeoDirectionND orientation, boolean internalAngle) {
+	public AlgoAnglePolygon3D(
+			Construction cons,
+			String[] labels,
+			GeoPolygon poly,
+			GeoDirectionND orientation,
+			boolean internalAngle) {
 		super(cons, labels, poly, orientation, internalAngle);
 	}
 
 	@Override
 	protected AlgoAnglePointsND newAlgoAnglePoints(Construction cons1) {
-		return new AlgoAnglePoints3DOrientation(cons1, getPolygon(),
-				getPolygon().hasReverseNormal());
+		return new AlgoAnglePoints3DOrientation(cons1, getPolygon(), getPolygon().hasReverseNormal());
 	}
 
 	@Override
-	final protected GeoAngle newGeoAngle(Construction cons1) {
+	protected final GeoAngle newGeoAngle(Construction cons1) {
 		return GeoAngle3D.newAngle3DWithDefaultInterval(cons1);
 	}
-
 }

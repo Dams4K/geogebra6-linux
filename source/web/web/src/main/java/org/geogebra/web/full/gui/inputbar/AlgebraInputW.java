@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.inputbar;
 
 import org.geogebra.common.gui.inputfield.InputHelper;
@@ -10,6 +26,8 @@ import org.geogebra.common.main.MyError;
 import org.geogebra.common.main.error.ErrorHandler;
 import org.geogebra.common.main.error.ErrorHelper;
 import org.geogebra.common.util.AsyncOperation;
+import org.geogebra.editor.share.util.GWTKeycodes;
+import org.geogebra.editor.share.util.Unicode;
 import org.geogebra.web.full.css.GuiResources;
 import org.geogebra.web.full.gui.GuiManagerW;
 import org.geogebra.web.full.gui.view.algebra.InputPanelW;
@@ -30,26 +48,28 @@ import org.gwtproject.event.dom.client.KeyUpHandler;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.RequiresResize;
 
-import com.himamis.retex.editor.share.util.GWTKeycodes;
-import com.himamis.retex.editor.share.util.Unicode;
-
 /**
  * InputBar for GeoGebraWeb
  */
-public class AlgebraInputW extends FlowPanel
-		implements KeyUpHandler, FocusHandler, BlurHandler,
-		RequiresResize, AlgebraInput, HasHelpButton {
+public final class AlgebraInputW extends FlowPanel
+		implements KeyUpHandler,
+				FocusHandler,
+				BlurHandler,
+				RequiresResize,
+				AlgebraInput,
+				HasHelpButton {
 	/** app */
-	protected AppW app;
+	private AppW app;
 	/** input panel */
-	protected InputPanelW inputPanel;
+	private InputPanelW inputPanel;
 	/** text component */
-	protected AutoCompleteTextFieldW inputField;
+	private AutoCompleteTextFieldW inputField;
 	// protected FlowPanel innerPanel;
 	/** button for help */
-	protected ToggleButton btnHelpToggle;
+	private ToggleButton btnHelpToggle;
 	/** help popup */
-	protected InputBarHelpPopup helpPopup;
+	private InputBarHelpPopup helpPopup;
+
 	private boolean focused = false;
 	private HistoryPopupW popup;
 
@@ -90,8 +110,7 @@ public class AlgebraInputW extends FlowPanel
 		btnHelpToggle.removeStyleName("ToggleButton");
 		btnHelpToggle.addStyleName("inputHelp-toggleButton");
 
-		btnHelpToggle.addFastClickHandler(event ->
-				setShowInputHelpPanel(btnHelpToggle.isSelected()));
+		btnHelpToggle.addFastClickHandler(event -> setShowInputHelpPanel(btnHelpToggle.isSelected()));
 		add(inputPanel);
 		if (app.showInputHelpToggle()) {
 			add(btnHelpToggle);
@@ -149,14 +168,16 @@ public class AlgebraInputW extends FlowPanel
 			app.getGuiManager().getInputHelpPanel().setLabels();
 		}
 
-		inputField.getTextField().getElement().setAttribute("placeholder",
-				loc.getMenu("InputLabel") + Unicode.ELLIPSIS);
+		inputField
+				.getTextField()
+				.getElement()
+				.setAttribute("placeholder", loc.getMenu("InputLabel") + Unicode.ELLIPSIS);
 	}
 
 	/**
 	 * Sets the content of the input textfield and gives focus to the input
 	 * textfield.
-	 * 
+	 *
 	 * @param str
 	 *            replacement string
 	 */
@@ -166,7 +187,7 @@ public class AlgebraInputW extends FlowPanel
 
 	/**
 	 * Insert string at caret position
-	 * 
+	 *
 	 * @param str
 	 *            string to be inserted
 	 */
@@ -177,8 +198,7 @@ public class AlgebraInputW extends FlowPanel
 
 		int pos = inputField.getCaretPosition();
 		String oldText = inputField.getText();
-		String newText = oldText.substring(0, pos) + str
-				+ oldText.substring(pos);
+		String newText = oldText.substring(0, pos) + str + oldText.substring(pos);
 
 		inputField.setText(newText);
 		inputField.setCaretPosition(pos + str.length());
@@ -204,17 +224,18 @@ public class AlgebraInputW extends FlowPanel
 		// then it don't come here if (e.isConsumed()) return;
 
 		int keyCode = event.getNativeKeyCode();
-		app.getKernel().getInputPreviewHelper().updatePreviewFromInputBar(
-				inputField.getText(), getWarningHandler(this, app));
-		if (keyCode == GWTKeycodes.KEY_ENTER
-				&& !inputField.isSuggestionJustHappened()) {
+		app.getKernel()
+				.getInputPreviewHelper()
+				.updatePreviewFromInputBar(inputField.getText(), getWarningHandler(this, app));
+		if (keyCode == GWTKeycodes.KEY_ENTER && !inputField.isSuggestionJustHappened()) {
 			onEnterPressed(true);
 
-		} else if (keyCode != GWTKeycodes.KEY_C && keyCode != GWTKeycodes.KEY_V
+		} else if (keyCode != GWTKeycodes.KEY_C
+				&& keyCode != GWTKeycodes.KEY_V
 				&& keyCode != GWTKeycodes.KEY_A
 				&& keyCode != GWTKeycodes.KEY_X) {
 			app.getGlobalKeyDispatcher().handleGeneralKeys(event); // handle eg
-																	// ctrl-tab
+			// ctrl-tab
 			if (keyCode == GWTKeycodes.KEY_ESCAPE) {
 				inputField.setText(null);
 			}
@@ -224,12 +245,13 @@ public class AlgebraInputW extends FlowPanel
 
 	private void onEnterPressed(final boolean explicit) {
 		app.getKernel().clearJustCreatedGeosInViews();
-		final String input = app.getKernel().getInputPreviewHelper()
-				.getInput(getTextField().getText());
+		final String input =
+				app.getKernel().getInputPreviewHelper().getInput(getTextField().getText());
 		boolean valid = app.getKernel().getInputPreviewHelper().isValid();
-		app.getKernel().getInputPreviewHelper().updatePreviewFromInputBar("",
-				app.getDefaultErrorHandler());
-		if (input == null || input.length() == 0) {
+		app.getKernel()
+				.getInputPreviewHelper()
+				.updatePreviewFromInputBar("", app.getDefaultErrorHandler());
+		if (input.isEmpty()) {
 			app.getActiveEuclidianView().requestFocusInWindow();
 			return;
 		}
@@ -239,7 +261,6 @@ public class AlgebraInputW extends FlowPanel
 		try {
 			final int oldStep = app.getKernel().getConstructionStep();
 			AsyncOperation<GeoElementND[]> callback = geos -> {
-
 				if (geos == null) {
 					inputField.getTextBox().setFocus(true);
 					return;
@@ -251,8 +272,7 @@ public class AlgebraInputW extends FlowPanel
 					geos[0].setLabel(geos[0].getDefaultLabel());
 				}
 
-				InputHelper.updateProperties(geos,
-						app.getActiveEuclidianView(), oldStep);
+				InputHelper.updateProperties(geos, app.getActiveEuclidianView(), oldStep);
 
 				app.setScrollToShow(false);
 
@@ -267,9 +287,10 @@ public class AlgebraInputW extends FlowPanel
 			EvalInfo info = new EvalInfo(true, true)
 					.withSliders(true)
 					.addDegree(app.getKernel().getAngleUnitUsesDegrees());
-			app.getKernel().getAlgebraProcessor()
-					.processAlgebraCommandNoExceptionHandling(input, true,
-							getErrorHandler(valid, explicit), info, callback);
+			app.getKernel()
+					.getAlgebraProcessor()
+					.processAlgebraCommandNoExceptionHandling(
+							input, true, getErrorHandler(valid, explicit), info, callback);
 
 		} catch (Exception ee) {
 			app.showGenericError(ee);
@@ -285,8 +306,7 @@ public class AlgebraInputW extends FlowPanel
 	 *            app
 	 * @return handler for preview errors
 	 */
-	public static ErrorHandler getWarningHandler(final HasHelpButton input,
-			final App app2) {
+	public static ErrorHandler getWarningHandler(final HasHelpButton input, final App app2) {
 		// TODO Auto-generated method stub
 		return new WarningErrorHandler(app2, input);
 	}
@@ -296,8 +316,7 @@ public class AlgebraInputW extends FlowPanel
 		return inputField.getCommand();
 	}
 
-	private ErrorHandler getErrorHandler(final boolean valid,
-			final boolean explicit) {
+	private ErrorHandler getErrorHandler(final boolean valid, final boolean explicit) {
 		return new ErrorHandler() {
 
 			@Override
@@ -305,7 +324,6 @@ public class AlgebraInputW extends FlowPanel
 				if (explicit) {
 					app.getDefaultErrorHandler().showError(msg);
 				}
-
 			}
 
 			@Override
@@ -314,21 +332,17 @@ public class AlgebraInputW extends FlowPanel
 			}
 
 			@Override
-			public boolean onUndefinedVariables(String string,
-					AsyncOperation<String[]> callback) {
+			public boolean onUndefinedVariables(String string, AsyncOperation<String[]> callback) {
 				if (explicit) {
 					if (valid) {
-						return app.getGuiManager()
-								.checkAutoCreateSliders(string, callback);
-					} else if (app.getLocalization()
-							.getReverseCommand(getCurrentCommand()) != null) {
-						ErrorHelper.handleCommandError(app.getLocalization(),
-								getCurrentCommand(),
-								app.getDefaultErrorHandler());
+						return app.getGuiManager().checkAutoCreateSliders(string, callback);
+					} else if (app.getLocalization().getReverseCommand(getCurrentCommand()) != null) {
+						ErrorHelper.handleCommandError(
+								app.getLocalization(), getCurrentCommand(), app.getDefaultErrorHandler());
 
 						return false;
 					}
-					callback.callback(new String[] { "7" });
+					callback.callback(new String[] {"7"});
 				}
 
 				return false;
@@ -337,10 +351,8 @@ public class AlgebraInputW extends FlowPanel
 			@Override
 			public void showCommandError(String command, String message) {
 				if (explicit) {
-					app.getDefaultErrorHandler().showCommandError(command,
-							message);
+					app.getDefaultErrorHandler().showCommandError(command, message);
 				}
-
 			}
 
 			@Override
@@ -357,15 +369,13 @@ public class AlgebraInputW extends FlowPanel
 
 	private void setHelpPopup() {
 		if (helpPopup == null && app != null) {
-			helpPopup = new InputBarHelpPopup(this.app, this.inputField,
-					"helpPopup");
+			helpPopup = new InputBarHelpPopup(this.app, this.inputField, "helpPopup");
 			helpPopup.addAutoHidePartner(this.getElement());
 			if (btnHelpToggle != null) {
 				helpPopup.setBtnHelpToggle(btnHelpToggle);
 			}
 		} else if (app != null && helpPopup.getWidget() == null) {
-			helpPopup.add((InputBarHelpPanelW) app.getGuiManager()
-					.getInputHelpPanel());
+			helpPopup.add((InputBarHelpPanelW) app.getGuiManager().getInputHelpPanel());
 		}
 	}
 
@@ -374,28 +384,20 @@ public class AlgebraInputW extends FlowPanel
 	 */
 	public void setShowInputHelpPanel(boolean show) {
 		if (show) {
-			InputBarHelpPanelW helpPanel = (InputBarHelpPanelW) app
-					.getGuiManager().getInputHelpPanel();
-			helpPanel.updateGUI(((GuiManagerW) app.getGuiManager())
-					.getRootComponent().getOffsetHeight());
+			InputBarHelpPanelW helpPanel = (InputBarHelpPanelW) app.getGuiManager().getInputHelpPanel();
+			helpPanel.updateGUI(((GuiManagerW) app.getGuiManager()).getRootComponent().getOffsetHeight());
 			setHelpPopup();
 
-			helpPopup.setPopupPositionAndShow(
-					(offsetWidth, offsetHeight) -> {
-						helpPopup.getElement().getStyle()
-								.setProperty("left", "auto");
-						helpPopup.getElement().getStyle().setProperty("top",
-								"auto");
-						helpPopup.getElement().getStyle().setRight(0,
-								Unit.PX);
-						helpPopup.getElement().getStyle()
-								.setBottom(
-										getOffsetHeight()
-												* app.getGeoGebraElement()
-														.getScaleX(),
-										Unit.PX);
-						helpPopup.show();
-					});
+			helpPopup.setPopupPositionAndShow((offsetWidth, offsetHeight) -> {
+				helpPopup.getElement().getStyle().setProperty("left", "auto");
+				helpPopup.getElement().getStyle().setProperty("top", "auto");
+				helpPopup.getElement().getStyle().setRight(0, Unit.PX);
+				helpPopup
+						.getElement()
+						.getStyle()
+						.setBottom(getOffsetHeight() * app.getGeoGebraElement().getScaleX(), Unit.PX);
+				helpPopup.show();
+			});
 			((InputBarHelpPanelW) app.getGuiManager().getInputHelpPanel())
 					.focusCommand(inputField.getCommand());
 
@@ -431,8 +433,10 @@ public class AlgebraInputW extends FlowPanel
 	@Override
 	public void setError(String msg) {
 		initButton();
-		getHelpToggle().asWidget().getElement().setTitle(msg == null
-				? app.getLocalization().getMenu("InputHelp") : msg);
+		getHelpToggle()
+				.asWidget()
+				.getElement()
+				.setTitle(msg == null ? app.getLocalization().getMenu("InputHelp") : msg);
 	}
 
 	@Override
@@ -445,5 +449,4 @@ public class AlgebraInputW extends FlowPanel
 		// TODO Auto-generated method stub
 
 	}
-
 }

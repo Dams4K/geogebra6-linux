@@ -32,26 +32,6 @@
 		background-color: white;
 		box-shadow: 0 0 2px 1px colors.$popup-shadow;
 
-		.inputHelp-CancelBtn,
-			.inputHelp-OnlineHelpBtn {
-			text-decoration: none;
-			text-align: center;
-			color: colors.$teal-default;
-			min-width: 64px;
-			height: 36px;
-			border-radius: 2px;
-			padding: 0px 8px;
-			border: none;
-			box-shadow: none;
-			font-size: 100%;
-			cursor: pointer;
-
-			&:hover,&:active {
-				background: colors.$black-10 !important;
-				color: colors.$teal-dark;
-			}
-		}
-
 		.inputHelp-leaf {
 			font-size: 90%;
 
@@ -77,6 +57,7 @@
 		font-size: 90%; // 14px
 		box-shadow: 0 0 2px 1px colors.$popup-shadow;
 		white-space: nowrap;
+		pointer-events: none;
 
 		.gwt-Label {
 			text-align: center;
@@ -198,7 +179,7 @@
 	}
 
 	.quickStyleBarPopup {
-		z-index: z-index.$z-dialog-under-keyboard;
+		z-index: z-index.$z-dialog-over-keyboard;
 		border-radius: 12px;
 		padding: 8px;
 		background-color: white;
@@ -246,7 +227,7 @@
 				}
 
 				img {
-					opacity: 0.54;
+					opacity: 1;
 					position: absolute;
 					right: 8px;
 					padding: 4px;
@@ -280,29 +261,25 @@
 				width: 252px;
 				height: 148px;
 			}
+
+			&.fontStyle {
+				.colorPalette {
+					width: 144px;
+					height: 36px;
+					margin-bottom: 16px;
+				}
+				.checkbox {
+					margin-left: 0;
+				}
+			}
 		}
 
-		.noColBtn {
-			display: inline-flex;
-			cursor: pointer;
+		.materialTextButton {
 			margin: 16px 0 0 0;
-			width: 100%;
 
-			&:hover {
-				background-color: neutral(200);
-			}
-
-			img {
-				opacity: 0.54;
-				margin: 8px 0;
-			}
-
-			.gwt-Label {
-				font-size: 16px;
-				margin: 8px 0px 8px 12px;
-				height: 24px;
-				line-height: 24px;
-				cursor: pointer;
+			.fa-solid, .fa-light {
+				padding: 4px;
+				margin: 8px 8px 0 0;
 			}
 		}
 
@@ -331,6 +308,11 @@
 
 				&.selected {
 					opacity: 0.54;
+				}
+
+				&.fa-solid, &.fa-light {
+					width: 24px;
+					padding: 3px 0px;
 				}
 			}
 
@@ -420,8 +402,48 @@
 		}
 	}
 
-	.gridPopup {
-		padding: 8px;
-		max-width: 366px;
+	.insertPopup {
+		width: 360px;
+		flex-wrap: wrap;
+
+		.panelContainer {
+			width: 100%;
+			height: 180px;
+		}
+
+		.tabPanel {
+			padding: 8px 16px;
+			height: 100%;
+			overflow: scroll;
+			position: absolute;
+		}
+		.group {
+			display: flex;
+			flex-wrap: wrap;
+
+			.gwt-Label {
+				padding: 4px;
+				cursor: pointer;
+			}
+			canvas {
+				margin: auto 2px;
+				cursor: pointer;
+			}
+			.gwt-Label:hover, canvas:hover {
+				background-color: neutral(200);
+			}
+		}
+		.objects .gwt-Label {
+			flex-basis: 50%;
+			box-sizing: border-box;
+		}
+		.divider {
+			height: 1px;
+			margin: 8px 0;
+		}
+	}
+
+	.toolsHolder .iconButton {
+		vertical-align: middle;
 	}
 }

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.prover;
@@ -35,12 +39,11 @@ import org.geogebra.common.util.Prover.NDGCondition;
 import org.geogebra.common.util.Prover.ProofResult;
 import org.geogebra.common.util.Prover.ProverEngine;
 import org.geogebra.common.util.debug.Log;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 /**
  * Algo for the ProveDetails command.
- * 
+ *
  * @author Zoltan Kovacs
  */
 public class AlgoProveDetails extends AlgoElement implements UsesCAS {
@@ -52,7 +55,7 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 
 	/**
 	 * Proves the given statement and gives some details in a list.
-	 * 
+	 *
 	 * @param cons
 	 *            The construction
 	 * @param root
@@ -61,8 +64,7 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 	 *            true if output should be given for Relation Tool (which is
 	 *            more readable)
 	 */
-	public AlgoProveDetails(Construction cons, GeoElement root,
-			boolean relationTool) {
+	public AlgoProveDetails(Construction cons, GeoElement root, boolean relationTool) {
 		super(cons);
 		this.root = root;
 		this.relTool = relationTool;
@@ -77,7 +79,7 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 
 	/**
 	 * Proves the given statement and gives some details in a list
-	 * 
+	 *
 	 * @param cons
 	 *            The construction
 	 * @param root
@@ -105,7 +107,7 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 
 	/**
 	 * Returns the output for the ProveDetails command
-	 * 
+	 *
 	 * @return A list: {true/false, {array of NDGConditions}}
 	 */
 	public GeoList getGeoList() {
@@ -115,6 +117,7 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 	/**
 	 * Heavy computation of the proof.
 	 */
+	@SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
 	public final void initialCompute() {
 
 		// Create and initialize the prover
@@ -144,8 +147,7 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 		// Adding benchmarking:
 		double startTime = UtilFactory.getPrototype().getMillisecondTime();
 		p.compute(); // the computation of the proof
-		int elapsedTime = (int) (UtilFactory.getPrototype().getMillisecondTime()
-				- startTime);
+		int elapsedTime = (int) (UtilFactory.getPrototype().getMillisecondTime() - startTime);
 		/*
 		 * Don't remove this. It is needed for automated testing. (String match
 		 * is assumed.)
@@ -168,7 +170,8 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 		if (!ExtendedBoolean.UNKNOWN.equals(result)) {
 			Boolean unreadable = false;
 
-			if (proofresult == ProofResult.TRUE_NDG_UNREADABLE || proofresult == ProofResult.TRUE_ON_COMPONENTS) {
+			if (proofresult == ProofResult.TRUE_NDG_UNREADABLE
+					|| proofresult == ProofResult.TRUE_ON_COMPONENTS) {
 				unreadable = true;
 			}
 
@@ -181,8 +184,7 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 				ndgConditionsList.clear();
 				ndgConditionsList.setDrawAsComboBox(true);
 				Iterator<NDGCondition> it = ndgresult.iterator();
-				TreeSet<GeoText> sortedSet = new TreeSet<>(
-						GeoText.getComparator());
+				TreeSet<GeoText> sortedSet = new TreeSet<>(GeoText.getComparator());
 
 				// Collecting the set of NDG conditions.
 				// The OGP data collector may left some unreadable conditions
@@ -201,29 +203,21 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 							if ("AreParallel".equals(cond)) {
 								// non-parallelism in 2D means intersecting
 								// FIXME: this is not true for 3D
-								s = sb(rn.intersectString(
-										ndgc.getGeos()[0], ndgc.getGeos()[1],
-										true, getLoc()));
+								s = sb(rn.intersectString(ndgc.getGeos()[0], ndgc.getGeos()[1], true, getLoc()));
 							} else if ("AreCollinear".equals(cond)) {
-								s = sb(rn
-										.triangleNonDegenerateString(
-												(GeoPoint) ndgc.getGeos()[0],
-												(GeoPoint) ndgc.getGeos()[1],
-												(GeoPoint) ndgc.getGeos()[2],
-												getLoc()));
+								s = sb(rn.triangleNonDegenerateString(
+										(GeoPoint) ndgc.getGeos()[0],
+										(GeoPoint) ndgc.getGeos()[1],
+										(GeoPoint) ndgc.getGeos()[2],
+										getLoc()));
 							} else if ("AreEqual".equals(cond)) {
-								s = sb(rn.equalityString(
-										ndgc.getGeos()[0], ndgc.getGeos()[1],
-										false, getLoc()));
+								s = sb(rn.equalityString(ndgc.getGeos()[0], ndgc.getGeos()[1], false, getLoc()));
 							} else if ("ArePerpendicular".equals(cond)) {
 								s = sb(rn.perpendicularString(
-										(GeoLine) ndgc.getGeos()[0],
-										(GeoLine) ndgc.getGeos()[1], false,
-										getLoc()));
+										(GeoLine) ndgc.getGeos()[0], (GeoLine) ndgc.getGeos()[1], false, getLoc()));
 							} else if ("AreCongruent".equals(cond)) {
 								s = sb(rn.congruentSegmentString(
-										ndgc.getGeos()[0], ndgc.getGeos()[1],
-										false, getLoc()));
+										ndgc.getGeos()[0], ndgc.getGeos()[1], false, getLoc()));
 							}
 						}
 						if (s == null || !relTool) {
@@ -231,11 +225,9 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 							if (geos == null) { // formula with quantities
 								s = sb(ndgc.getCondition());
 							} else {
-								s = sb(getLoc()
-										.getCommand(ndgc.getCondition()));
+								s = sb(getLoc().getCommand(ndgc.getCondition()));
 								s.append("[");
-								for (int i = 0; i < ndgc
-										.getGeos().length; ++i) {
+								for (int i = 0; i < ndgc.getGeos().length; ++i) {
 									if (i > 0) {
 										s.append(',');
 									}
@@ -250,8 +242,7 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 									 */
 									GeoElement geo = ndgc.getGeos()[i];
 									if (geo != null) {
-										s.append(ndgc.getGeos()[i]
-												.getLabelSimple());
+										s.append(ndgc.getGeos()[i].getLabelSimple());
 									} else {
 										s.append(Unicode.ELLIPSIS);
 									}
@@ -307,7 +298,6 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 		 * match is assumed.)
 		 */
 		Log.debug("OUTPUT for ProveDetails: " + list);
-
 	}
 
 	private static StringBuilder sb(String content) {
@@ -322,8 +312,7 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 		}
 		String inputFingerprintPrev = inputFingerprint;
 		setInputOutput();
-		if (inputFingerprintPrev == null
-				|| !inputFingerprintPrev.equals(inputFingerprint)) {
+		if (inputFingerprintPrev == null || !inputFingerprintPrev.equals(inputFingerprint)) {
 			Log.trace(inputFingerprintPrev + " -> " + inputFingerprint);
 			initialCompute();
 		}
@@ -340,5 +329,4 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 	private static String fingerprint(GeoElement statement) {
 		return Prover.getTextFormat(statement);
 	}
-
 }

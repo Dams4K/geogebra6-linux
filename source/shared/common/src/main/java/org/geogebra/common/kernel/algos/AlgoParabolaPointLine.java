@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoParabolaPointLine.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 15. November 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -41,8 +39,7 @@ public class AlgoParabolaPointLine extends AlgoParabolaPointLineND
 	private PPolynomial[] botanaPolynomials;
 	private PVariable[] botanaVars;
 
-	public AlgoParabolaPointLine(Construction cons, String label, GeoPointND F,
-			GeoLineND l) {
+	public AlgoParabolaPointLine(Construction cons, String label, GeoPointND F, GeoLineND l) {
 		super(cons, label, F, l);
 	}
 
@@ -67,8 +64,7 @@ public class AlgoParabolaPointLine extends AlgoParabolaPointLineND
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 
 		if (botanaPolynomials != null) {
 			return botanaPolynomials;
@@ -108,21 +104,19 @@ public class AlgoParabolaPointLine extends AlgoParabolaPointLineND
 			botanaPolynomials = new PPolynomial[3];
 
 			// |FP| = |PT|
-			botanaPolynomials[0] = PPolynomial.equidistant(vF[0], vF[1],
-					botanaVars[0], botanaVars[1], botanaVars[2], botanaVars[3]);
+			botanaPolynomials[0] = PPolynomial.equidistant(
+					vF[0], vF[1], botanaVars[0], botanaVars[1], botanaVars[2], botanaVars[3]);
 
 			// A,T,B collinear
-			botanaPolynomials[1] = PPolynomial.collinear(vl[0], vl[1], vl[2],
-					vl[3], botanaVars[2], botanaVars[3]);
+			botanaPolynomials[1] =
+					PPolynomial.collinear(vl[0], vl[1], vl[2], vl[3], botanaVars[2], botanaVars[3]);
 
 			// PT orthogonal AB
-			botanaPolynomials[2] = PPolynomial.perpendicular(botanaVars[0],
-					botanaVars[1], botanaVars[2], botanaVars[3], vl[0], vl[1],
-					vl[2], vl[3]);
+			botanaPolynomials[2] = PPolynomial.perpendicular(
+					botanaVars[0], botanaVars[1], botanaVars[2], botanaVars[3], vl[0], vl[1], vl[2], vl[3]);
 
 			return botanaPolynomials;
 		}
 		throw new NoSymbolicParametersException();
-
 	}
 }

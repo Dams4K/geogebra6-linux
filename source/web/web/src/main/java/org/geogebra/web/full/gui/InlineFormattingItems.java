@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui;
 
 import static org.geogebra.common.kernel.statistics.AlgoTableToChart.ChartType.BarChart;
@@ -23,19 +39,20 @@ import org.geogebra.common.main.App;
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.debug.Log;
-import org.geogebra.web.full.css.MaterialDesignResources;
-import org.geogebra.web.full.gui.contextmenu.FontSubMenu;
 import org.geogebra.web.full.gui.dialog.HyperlinkDialog;
 import org.geogebra.web.full.javax.swing.GPopupMenuW;
 import org.geogebra.web.full.main.EmbedManagerW;
 import org.geogebra.web.html5.gui.menu.AriaMenuBar;
 import org.geogebra.web.html5.gui.menu.AriaMenuItem;
+import org.geogebra.web.html5.gui.view.IconSpec;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.main.GgbAPIW;
-import org.geogebra.web.resources.SVGResource;
+import org.geogebra.web.html5.main.general.GeneralIcon;
+import org.geogebra.web.html5.main.general.GeneralIconResource;
 import org.geogebra.web.shared.components.dialog.DialogData;
 import org.gwtproject.core.client.Scheduler;
 import org.gwtproject.dom.style.shared.Unit;
+import org.gwtproject.resources.client.ResourcePrototype;
 import org.gwtproject.user.client.Command;
 
 /**
@@ -44,7 +61,7 @@ import org.gwtproject.user.client.Command;
  *
  * @author laszlo
  */
-public class InlineFormattingItems {
+public final class InlineFormattingItems {
 
 	private final App app;
 	private final Localization loc;
@@ -53,20 +70,22 @@ public class InlineFormattingItems {
 
 	private final ArrayList<GeoElement> geos;
 	private final List<HasTextFormat> inlines;
+	private final GeneralIconResource generalIconResource;
 
 	/**
 	 * @param app the application
 	 * @param geos the elements what items are for
 	 *@param menu to add the items to.
 	 */
-	public InlineFormattingItems(App app, ArrayList<GeoElement> geos, GPopupMenuW menu,
-						   ContextMenuItemFactory factory) {
+	public InlineFormattingItems(
+			App app, ArrayList<GeoElement> geos, GPopupMenuW menu, ContextMenuItemFactory factory) {
 		this.app = app;
 		this.loc = app.getLocalization();
 		this.geos = geos;
 		this.factory = factory;
 		this.menu = menu;
 		this.inlines = new ArrayList<>();
+		this.generalIconResource = ((AppW) app).getGeneralIconResource();
 
 		if (allGeosHaveFormats()) {
 			fillInlines();
@@ -103,7 +122,6 @@ public class InlineFormattingItems {
 		}
 
 		addToolbar();
-		addFontSubmenu();
 		addHyperlinkItems();
 		addTextWrappingItem();
 		addTextRotationItem();
@@ -121,8 +139,8 @@ public class InlineFormattingItems {
 		String firstWrapping = ((InlineTableController) inlines.get(0)).getWrapping();
 
 		String wrapping;
-		if (inlines.stream().allMatch(f ->
-				Objects.equals(firstWrapping, ((InlineTableController) f).getWrapping()))) {
+		if (inlines.stream()
+				.allMatch(f -> Objects.equals(firstWrapping, ((InlineTableController) f).getWrapping()))) {
 			wrapping = firstWrapping;
 		} else {
 			wrapping = null;
@@ -135,8 +153,8 @@ public class InlineFormattingItems {
 				}
 			};
 
-			AriaMenuItem item = factory.newAriaMenuItem(null,
-					loc.getMenu("ContextMenu." + setting), command);
+			AriaMenuItem item = factory.newAriaMenuItem(
+					(ResourcePrototype) null, loc.getMenu("ContextMenu." + setting), command);
 
 			if (setting.equals(wrapping)) {
 				item.addStyleName("highlighted");
@@ -145,8 +163,8 @@ public class InlineFormattingItems {
 			wrappingSubmenu.addItem(item);
 		}
 
-		AriaMenuItem item = factory.newAriaMenuItem(loc.getMenu("ContextMenu.textWrapping"),
-				null, wrappingSubmenu);
+		AriaMenuItem item =
+				factory.newAriaMenuItem(loc.getMenu("ContextMenu.textWrapping"), null, wrappingSubmenu);
 		item.addStyleName("no-image");
 		menu.addItem(item);
 	}
@@ -161,8 +179,8 @@ public class InlineFormattingItems {
 		String firstRotation = ((InlineTableController) inlines.get(0)).getRotation();
 
 		String rotation;
-		if (inlines.stream().allMatch(f ->
-				Objects.equals(firstRotation, ((InlineTableController) f).getRotation()))) {
+		if (inlines.stream()
+				.allMatch(f -> Objects.equals(firstRotation, ((InlineTableController) f).getRotation()))) {
 			rotation = firstRotation;
 		} else {
 			rotation = null;
@@ -175,8 +193,8 @@ public class InlineFormattingItems {
 				}
 			};
 
-			AriaMenuItem item = factory.newAriaMenuItem(null, loc.getMenu("ContextMenu.rotate"
-							+ setting), command);
+			AriaMenuItem item = factory.newAriaMenuItem(
+					(ResourcePrototype) null, loc.getMenu("ContextMenu.rotate" + setting), command);
 
 			if (setting.toLowerCase(Locale.US).equals(rotation)) {
 				item.addStyleName("highlighted");
@@ -185,16 +203,15 @@ public class InlineFormattingItems {
 			rotationSubmenu.addItem(item);
 		}
 
-		AriaMenuItem item = factory.newAriaMenuItem(loc.getMenu("ContextMenu.textRotation"),
-				null, rotationSubmenu);
+		AriaMenuItem item =
+				factory.newAriaMenuItem(loc.getMenu("ContextMenu.textRotation"), null, rotationSubmenu);
 		item.addStyleName("no-image");
 		menu.addItem(item);
 	}
 
-	private void addSubMenuItem(AriaMenuBar submenu, SVGResource icon,
-			String transKey, Scheduler.ScheduledCommand cmd) {
-		AriaMenuItem submenuItem = factory.newAriaMenuItem(
-				icon, loc.getMenu(transKey), cmd);
+	private void addSubMenuItem(
+			AriaMenuBar submenu, IconSpec icon, String transKey, Scheduler.ScheduledCommand cmd) {
+		AriaMenuItem submenuItem = factory.newAriaMenuItem(icon, loc.getMenu(transKey), cmd);
 		submenu.addItem(submenuItem);
 	}
 
@@ -212,29 +229,42 @@ public class InlineFormattingItems {
 					+ ", \"" + chartType.toString()
 					+ "\", " + column + ", " + app.getEmbedManager().nextID() + ")";
 
-			((GgbAPIW) app.getGgbApi()).asyncEvalCommandGetLabels(command, (label) -> {
-				GeoEmbed embed = (GeoEmbed) app.getKernel().lookupLabel(label.asT());
+			((GgbAPIW) app.getGgbApi())
+					.asyncEvalCommandGetLabels(
+							command,
+							(label) -> {
+								GeoEmbed embed = (GeoEmbed) app.getKernel().lookupLabel(label.asT());
 
-				((EmbedManagerW) app.getEmbedManager()).doIfCalcEmbed(embed, calcEmbedElement -> {
-					calcEmbedElement.initChart(app.isByCS(), chartType);
-				});
+								((EmbedManagerW) app.getEmbedManager()).doIfCalcEmbed(embed, calcEmbedElement -> {
+									calcEmbedElement.initChart(app.isByCS(), chartType);
+								});
 
-				app.getUndoManager().storeUndoInfo();
-			}, Log::error);
+								app.getUndoManager().storeUndoInfo();
+							},
+							Log::error);
 		};
 
 		AriaMenuBar chartSubmenu = new AriaMenuBar();
-		addSubMenuItem(chartSubmenu, MaterialDesignResources.INSTANCE.table_line_chart(),
-				"ContextMenu.LineChart", () -> chartCreator.accept(LineGraph));
+		addSubMenuItem(
+				chartSubmenu,
+				generalIconResource.getImageResource(GeneralIcon.LINE_CHART),
+				"ContextMenu.LineChart",
+				() -> chartCreator.accept(LineGraph));
 
-		addSubMenuItem(chartSubmenu, MaterialDesignResources.INSTANCE.table_bar_chart(),
-				"ContextMenu.BarChart", () -> chartCreator.accept(BarChart));
+		addSubMenuItem(
+				chartSubmenu,
+				generalIconResource.getImageResource(GeneralIcon.BAR_CHART),
+				"ContextMenu.BarChart",
+				() -> chartCreator.accept(BarChart));
 
-		addSubMenuItem(chartSubmenu, MaterialDesignResources.INSTANCE.table_pie_chart(),
-				"ContextMenu.PieChart", () -> chartCreator.accept(PieChart));
+		addSubMenuItem(
+				chartSubmenu,
+				generalIconResource.getImageResource(GeneralIcon.PIE_CHART),
+				"ContextMenu.PieChart",
+				() -> chartCreator.accept(PieChart));
 
-		AriaMenuItem chartItem = factory.newAriaMenuItem(loc.getMenu("ContextMenu.CreateChart"),
-				null, chartSubmenu);
+		AriaMenuItem chartItem =
+				factory.newAriaMenuItem(loc.getMenu("ContextMenu.CreateChart"), null, chartSubmenu);
 		chartItem.addStyleName("no-image");
 
 		menu.addItem(chartItem);
@@ -252,22 +282,28 @@ public class InlineFormattingItems {
 
 		AriaMenuBar headingSubmenu = new AriaMenuBar();
 
-		addSubMenuItem(headingSubmenu, MaterialDesignResources.INSTANCE.table_heading_row(),
-				"ContextMenu.Row", () -> {
+		addSubMenuItem(
+				headingSubmenu,
+				generalIconResource.getImageResource(GeneralIcon.TABLE_HEADING_ROW),
+				"ContextMenu.Row",
+				() -> {
 					for (HasTextFormat formatter : inlines) {
 						((InlineTableController) formatter).setHeading(color, true);
 					}
 				});
 
-		addSubMenuItem(headingSubmenu, MaterialDesignResources.INSTANCE.table_heading_column(),
-				"ContextMenu.Column", () -> {
+		addSubMenuItem(
+				headingSubmenu,
+				generalIconResource.getImageResource(GeneralIcon.TABLE_HEADING_COLUMN),
+				"ContextMenu.Column",
+				() -> {
 					for (HasTextFormat formatter : inlines) {
 						((InlineTableController) formatter).setHeading(color, false);
 					}
 				});
 
-		AriaMenuItem item = factory.newAriaMenuItem(loc.getMenu("ContextMenu.Heading"),
-				null, headingSubmenu);
+		AriaMenuItem item =
+				factory.newAriaMenuItem(loc.getMenu("ContextMenu.Heading"), null, headingSubmenu);
 		item.addStyleName("no-image");
 		menu.addItem(item);
 	}
@@ -300,23 +336,14 @@ public class InlineFormattingItems {
 		}
 	}
 
-	private void addFontSubmenu() {
-		AriaMenuItem item = factory.newAriaMenuItem(loc.getMenu("ContextMenu.Font"),
-				null,
-				new FontSubMenu((AppW) app, inlines));
-		item.addStyleName("no-image");
-		menu.addItem(item);
-	}
-
 	private void addItem(String text, Command command) {
-		AriaMenuItem menuItem = factory.newAriaMenuItem(null, loc.getMenu(text),
-				command);
-		menuItem.getElement().getStyle()
-				.setPaddingLeft(16, Unit.PX);
+		AriaMenuItem menuItem =
+				factory.newAriaMenuItem((ResourcePrototype) null, loc.getMenu(text), command);
+		menuItem.getElement().getStyle().setPaddingLeft(16, Unit.PX);
 		menu.addItem(menuItem);
 	}
 
-	protected void addHyperlinkItems() {
+	private void addHyperlinkItems() {
 		if (inlines.size() == 1 && textOrEditModeTable(inlines.get(0))) {
 			if (StringUtil.emptyOrZero(inlines.get(0).getHyperLinkURL())) {
 				addHyperlinkItem("Link");
@@ -328,10 +355,12 @@ public class InlineFormattingItems {
 	}
 
 	private boolean textOrEditModeTable(HasTextFormat hasTextFormat) {
-		return hasTextFormat instanceof InlineTextController
-				|| isEditModeTable(hasTextFormat);
+		return hasTextFormat instanceof InlineTextController || isEditModeTable(hasTextFormat);
 	}
 
+	/**
+	 * @return whether the current selection is a table in edit mode
+	 */
 	public boolean isEditModeTable() {
 		return !inlines.isEmpty() && isEditModeTable(inlines.get(0));
 	}

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -26,7 +42,7 @@ public class CmdTangent extends CommandProcessor {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -35,102 +51,88 @@ public class CmdTangent extends CommandProcessor {
 	}
 
 	@Override
-	final public GeoElement[] process(Command c, EvalInfo info) throws MyError {
+	public final GeoElement[] process(Command c, EvalInfo info) throws MyError {
 		int n = c.getArgumentNumber();
 		boolean[] ok = new boolean[n];
 		GeoElement[] arg;
 
 		switch (n) {
-		case 2:
-			arg = resArgs(c, info);
+			case 2:
+				arg = resArgs(c, info);
 
-			// tangents through point
-			if ((ok[0] = arg[0].isGeoPoint())
-					&& (ok[1] = arg[1].isGeoConic())) {
-				return tangent(c.getLabels(), (GeoPointND) arg[0],
-						(GeoConicND) arg[1]);
-			} else if ((ok[0] = arg[0].isGeoConic())
-					&& (ok[1] = arg[1].isGeoPoint())) {
-				return tangent(c.getLabels(), (GeoPointND) arg[1],
-						(GeoConicND) arg[0]);
-			} else if ((ok[0] = arg[0].isGeoLine())
-					&& (ok[1] = arg[1].isGeoConic())) {
-				return tangent(c.getLabels(), (GeoLineND) arg[0],
-						(GeoConicND) arg[1]);
-			} else if ((ok[0] = arg[0] instanceof GeoNumberValue)
-					&& (ok[1] = arg[1].isRealValuedFunction())) {
+				// tangents through point
+				if ((ok[0] = arg[0].isGeoPoint()) && (ok[1] = arg[1].isGeoConic())) {
+					return tangent(c.getLabels(), (GeoPointND) arg[0], (GeoConicND) arg[1]);
+				} else if ((ok[0] = arg[0].isGeoConic()) && (ok[1] = arg[1].isGeoPoint())) {
+					return tangent(c.getLabels(), (GeoPointND) arg[1], (GeoConicND) arg[0]);
+				} else if ((ok[0] = arg[0].isGeoLine()) && (ok[1] = arg[1].isGeoConic())) {
+					return tangent(c.getLabels(), (GeoLineND) arg[0], (GeoConicND) arg[1]);
+				} else if ((ok[0] = arg[0] instanceof GeoNumberValue)
+						&& (ok[1] = arg[1].isRealValuedFunction())) {
 
-				AlgoTangentFunctionNumber algo = new AlgoTangentFunctionNumber(
-						cons, c.getLabel(), (GeoNumberValue) arg[0],
-						(GeoFunctionable) arg[1]);
-				GeoLine t = algo.getTangent();
-				t.setToExplicitForm();
-				t.update();
+					AlgoTangentFunctionNumber algo = new AlgoTangentFunctionNumber(
+							cons, c.getLabel(), (GeoNumberValue) arg[0], (GeoFunctionable) arg[1]);
+					GeoLine t = algo.getTangent();
+					t.setToExplicitForm();
+					t.update();
 
-				GeoElement[] ret = { t };
-				return ret;
-			}
-
-			// tangents of function at x = x(Point P)
-			else if ((ok[0] = arg[0].isGeoPoint())
-					&& (ok[1] = arg[1].isRealValuedFunction())) {
-				GeoElement[] ret = { getAlgoDispatcher().tangent(c.getLabel(),
-						(GeoPointND) arg[0],
-						(GeoFunctionable) arg[1]) };
-				return ret;
-			} else if ((ok[0] = arg[0].isRealValuedFunction())
-					&& (ok[1] = arg[1].isGeoPoint())) {
-				GeoElement[] ret = { getAlgoDispatcher().tangent(c.getLabel(),
-						(GeoPointND) arg[1],
-						(GeoFunctionable) arg[0]) };
-				return ret;
-			}
-			// Victor Franco 11-02-2007: for curve's
-			else if ((ok[0] = arg[0].isGeoPoint())
-					&& (ok[1] = arg[1].isGeoCurveCartesian())) {
-
-				GeoElement[] ret = { tangentToCurve(c.getLabel(),
-						(GeoPointND) arg[0], (GeoCurveCartesianND) arg[1]) };
-
-				return ret;
-			}
-			// Victor Franco 11-02-2007: end for curve's
-
-			// For Spline
-
-			else if ((ok[0] = arg[0].isGeoPoint())
-					&& (ok[1] = arg[1].isGeoImplicitCurve())) {
-				GeoElement[] ret = getAlgoDispatcher().tangent(c.getLabels(),
-						(GeoPointND) arg[0], (GeoImplicit) arg[1]);
-				return ret;
-			} else if ((ok[1] = arg[1].isGeoPoint())
-					&& (ok[0] = arg[0].isGeoImplicitCurve())) {
-				GeoElement[] ret = getAlgoDispatcher().tangent(c.getLabels(),
-						(GeoPointND) arg[1], (GeoImplicit) arg[0]);
-				return ret;
-
-			} else if ((ok[0] = arg[0].isGeoLine())
-					&& (ok[1] = arg[1].isGeoImplicitCurve())) {
-				GeoElement[] ret = getAlgoDispatcher().tangent(c.getLabels(),
-						(GeoLineND) arg[0], (GeoImplicit) arg[1]);
-				return ret;
-
-			} else if ((ok[0] = arg[0].isGeoConic())
-					&& (ok[1] = arg[1].isGeoConic())) {
-				return tangent(c.getLabels(), (GeoConicND) arg[0],
-						(GeoConicND) arg[1]);
-			}
-
-			// syntax error
-			else {
-				if (!ok[0]) {
-					throw argErr(c, arg[0]);
+					GeoElement[] ret = {t};
+					return ret;
 				}
-				throw argErr(c, arg[1]);
-			}
 
-		default:
-			throw argNumErr(c);
+				// tangents of function at x = x(Point P)
+				else if ((ok[0] = arg[0].isGeoPoint()) && (ok[1] = arg[1].isRealValuedFunction())) {
+					GeoElement[] ret = {
+						getAlgoDispatcher().tangent(c.getLabel(), (GeoPointND) arg[0], (GeoFunctionable) arg[1])
+					};
+					return ret;
+				} else if ((ok[0] = arg[0].isRealValuedFunction()) && (ok[1] = arg[1].isGeoPoint())) {
+					GeoElement[] ret = {
+						getAlgoDispatcher().tangent(c.getLabel(), (GeoPointND) arg[1], (GeoFunctionable) arg[0])
+					};
+					return ret;
+				}
+				// Victor Franco 11-02-2007: for curve's
+				else if ((ok[0] = arg[0].isGeoPoint()) && (ok[1] = arg[1].isGeoCurveCartesian())) {
+
+					GeoElement[] ret = {
+						tangentToCurve(c.getLabel(), (GeoPointND) arg[0], (GeoCurveCartesianND) arg[1])
+					};
+
+					return ret;
+				}
+				// Victor Franco 11-02-2007: end for curve's
+
+				// For Spline
+
+				else if ((ok[0] = arg[0].isGeoPoint()) && (ok[1] = arg[1].isGeoImplicitCurve())) {
+					GeoElement[] ret =
+							getAlgoDispatcher().tangent(c.getLabels(), (GeoPointND) arg[0], (GeoImplicit) arg[1]);
+					return ret;
+				} else if ((ok[1] = arg[1].isGeoPoint()) && (ok[0] = arg[0].isGeoImplicitCurve())) {
+					GeoElement[] ret =
+							getAlgoDispatcher().tangent(c.getLabels(), (GeoPointND) arg[1], (GeoImplicit) arg[0]);
+					return ret;
+
+				} else if ((ok[0] = arg[0].isGeoLine()) && (ok[1] = arg[1].isGeoImplicitCurve())) {
+					GeoElement[] ret =
+							getAlgoDispatcher().tangent(c.getLabels(), (GeoLineND) arg[0], (GeoImplicit) arg[1]);
+					return ret;
+
+				} else if ((ok[0] = arg[0].isGeoConic()) && (ok[1] = arg[1].isGeoConic())) {
+					return tangent(c.getLabels(), (GeoConicND) arg[0], (GeoConicND) arg[1]);
+				}
+
+				// syntax error
+				else {
+					if (!ok[0]) {
+						throw argErr(c, arg[0]);
+					}
+					throw argErr(c, arg[1]);
+				}
+
+			default:
+				throw argNumErr(c);
 		}
 	}
 
@@ -143,13 +145,12 @@ public class CmdTangent extends CommandProcessor {
 	 *            curve
 	 * @return tangent
 	 */
-	protected GeoElement tangentToCurve(String label, GeoPointND point,
-			GeoCurveCartesianND curve) {
+	protected GeoElement tangentToCurve(String label, GeoPointND point, GeoCurveCartesianND curve) {
 		return kernel.tangent(label, point, (GeoCurveCartesian) curve);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param labels
 	 *            labels
 	 * @param a
@@ -158,8 +159,7 @@ public class CmdTangent extends CommandProcessor {
 	 *            conic
 	 * @return tangent point/conic
 	 */
-	protected GeoElement[] tangent(String[] labels, GeoPointND a,
-			GeoConicND c) {
+	protected GeoElement[] tangent(String[] labels, GeoPointND a, GeoConicND c) {
 		return getAlgoDispatcher().tangent(labels, a, c);
 	}
 
@@ -185,9 +185,7 @@ public class CmdTangent extends CommandProcessor {
 	 *            conic
 	 * @return tangent conic/conic
 	 */
-	protected GeoElement[] tangent(String[] labels, GeoConicND c1,
-			GeoConicND c2) {
+	protected GeoElement[] tangent(String[] labels, GeoConicND c1, GeoConicND c2) {
 		return getAlgoDispatcher().commonTangents(labels, c1, c2);
 	}
-
 }

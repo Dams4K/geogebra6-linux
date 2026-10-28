@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.util;
 
 import org.geogebra.common.GeoGebraConstants;
@@ -25,14 +41,14 @@ public class LoadFilePresenter {
 
 	/**
 	 * Run applet for current view
-	 * 
+	 *
 	 * @param view
 	 *            applet parameters
 	 * @param app
 	 *            app
 	 */
 	public void onPageLoad(final AppletParameters view, final AppW app) {
-		ArchiveLoader loader = app.getArchiveLoader();
+		final ArchiveLoader loader = app.getArchiveLoader();
 		String base64String;
 		String filename;
 		String jsonString;
@@ -43,19 +59,16 @@ public class LoadFilePresenter {
 
 		if (!"".equals(jsonString = view.getDataParamJSON())) {
 			processJSON(jsonString, loader);
-		} else if (!""
-				.equals(base64String = view.getDataParamBase64String())) {
+		} else if (!"".equals(base64String = view.getDataParamBase64String())) {
 			loader.processBase64String(base64String);
 		} else if (!"".equals(filename = view.getDataParamFileName())) {
 			loader.processFileName(filename);
 		} else if (!"".equals(view.getDataParamTubeID())) {
-			app.openMaterial(view.getDataParamTubeID(),
-					err -> {
-						double status = MyError.Errors.NotAuthorized
-								.getKey().equals(err) ? 401 : 404;
-						openEmptyApp(app, view);
-						loader.handleError(JsPropertyMap.of("status", status), err);
-					});
+			app.openMaterial(view.getDataParamTubeID(), err -> {
+				double status = MyError.Errors.NotAuthorized.getKey().equals(err) ? 401 : 404;
+				openEmptyApp(app, view);
+				loader.handleError(JsPropertyMap.of("status", status), err);
+			});
 		} else {
 			fileOpened = false;
 		}
@@ -69,8 +82,7 @@ public class LoadFilePresenter {
 		app.setShowMenuBar(showMenuBar);
 		app.setShowAlgebraInput(showAlgebraInput, false);
 		app.setShowToolBar(showToolBar, view.getDataParamShowToolBarHelp(true));
-		app.getKernel().setShowAnimationButton(
-				view.getDataParamShowAnimationButton());
+		app.getKernel().setShowAnimationButton(view.getDataParamShowAnimationButton());
 		app.setCapturingThreshold(view.getDataParamCapturingThreshold());
 		if (!isApp) {
 			app.getAppletFrame().addStyleName("appletStyle");
@@ -79,8 +91,7 @@ public class LoadFilePresenter {
 		if (view.getDataParamEnableUndoRedo()) {
 			if (showToolBar || showMenuBar) {
 				undoRedoMode = UndoRedoMode.GUI;
-			} else if (!app.getScriptManager()
-					.getStoreUndoListeners().isEmpty()) {
+			} else if (!app.getScriptManager().getStoreUndoListeners().isEmpty()) {
 				undoRedoMode = UndoRedoMode.EXTERNAL;
 			}
 		}
@@ -99,8 +110,7 @@ public class LoadFilePresenter {
 		app.setLabelDragsEnabled(view.getDataParamEnableLabelDrags());
 		app.setUndoRedoMode(undoRedoMode);
 		app.setRightClickEnabled(view.getDataParamEnableRightClick());
-		app.setShiftDragZoomEnabled(view.getDataParamShiftDragZoomEnabled()
-				|| view.getDataParamApp());
+		app.setShiftDragZoomEnabled(view.getDataParamShiftDragZoomEnabled() || view.getDataParamApp());
 		app.setShowResetIcon(view.getDataParamShowResetIcon());
 		app.setAllowStyleBar(view.getDataParamAllowStyleBar());
 
@@ -125,7 +135,6 @@ public class LoadFilePresenter {
 		}
 		app.getLocalization().setUseLocalizedDigits(view.getParamUseLocalizedDigits(), app);
 		app.getLocalization().setUseLocalizedLabels(view.getParamUseLocalizedPointNames());
-
 	}
 
 	private void setAppLanguage(AppW app, AppletParameters view, String language) {
@@ -141,7 +150,7 @@ public class LoadFilePresenter {
 
 	/**
 	 * Open app without file / base64
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param ae
@@ -149,7 +158,7 @@ public class LoadFilePresenter {
 	 * @return whether special perspective (search / customize) was used
 	 */
 	boolean openEmptyApp(final AppW app, AppletParameters ae) {
-		// we dont have content, it is an app
+		// we don't have content, it is an app
 		Log.debug("no base64content, App loaded");
 
 		// code moved here from AppWapplication.afterCoreObjectsInited - start
@@ -185,19 +194,18 @@ public class LoadFilePresenter {
 
 		finishEmptyLoading(app, null);
 		return false;
-
 	}
 
 	/**
 	 * Init app after open screen was closed
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 */
 	protected void deferredOpenEmpty(AppW app) {
 		String perspective = defaultPerspective(app, "");
-		finishEmptyLoading(app, !StringUtil.empty(perspective)
-				? getPerspective(app, perspective) : null);
+		finishEmptyLoading(
+				app, !StringUtil.empty(perspective) ? getPerspective(app, perspective) : null);
 	}
 
 	private static String defaultPerspective(AppW app, String userPerspective) {
@@ -208,12 +216,12 @@ public class LoadFilePresenter {
 	}
 
 	private static Perspective getPerspective(AppW app, String perspective) {
-		Perspective pd = PerspectiveDecoder.decode(perspective,
+		Perspective pd = PerspectiveDecoder.decode(
+				perspective,
 				app.getKernel().getParser(),
-				ToolBar.getAllToolsNoMacros(true, !GlobalScope.examController.isIdle(), app),
+				ToolBar.getAllToolsNoMacros(true, GlobalScope.isExamActive(app), app),
 				app.getLayout());
-		if ("1".equals(perspective) || "2".equals(perspective)
-				|| "5".equals(perspective)) {
+		if ("1".equals(perspective) || "2".equals(perspective) || "5".equals(perspective)) {
 
 			if (app.isPortrait()) {
 				int height = app.getAppletParameters().getDataParamHeight();
@@ -221,8 +229,8 @@ public class LoadFilePresenter {
 					height = NavigatorUtil.getWindowHeight();
 				}
 				if (height > 0) {
-					double ratio = PerspectiveDecoder.portraitRatio(height,
-							app.isUnbundledGraphing() || app.isUnbundled3D());
+					double ratio = PerspectiveDecoder.portraitRatio(
+							height, app.isUnbundledGraphing() || app.isUnbundled3D());
 					pd.getSplitPaneData()[0].setDivider(ratio);
 				}
 
@@ -232,19 +240,17 @@ public class LoadFilePresenter {
 					width = NavigatorUtil.getWindowHeight();
 				}
 				if (width > 0) {
-					double ratio = PerspectiveDecoder.landscapeRatio(app,
-							width);
+					double ratio = PerspectiveDecoder.landscapeRatio(app, width);
 					pd.getSplitPaneData()[0].setDivider(ratio);
 				}
 			}
-
 		}
 		return pd;
 	}
 
 	/**
 	 * Finish loading when no base64 / filename entered
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param p
@@ -252,8 +258,7 @@ public class LoadFilePresenter {
 	 */
 	void finishEmptyLoading(AppW app, Perspective p) {
 		app.setActivePerspective(p);
-		app.setPreferredSize(
-				new Dimension(app.getAppletWidth(), app.getAppletHeight()));
+		app.setPreferredSize(new Dimension(app.getAppletWidth(), app.getAppletHeight()));
 		app.ensureStandardView();
 		app.loadPreferences(p);
 		app.setFileVersion(GeoGebraConstants.VERSION_STRING, "auto");
@@ -266,17 +271,21 @@ public class LoadFilePresenter {
 		app.updateToolBar();
 		app.set1rstMode();
 
-		app.setUndoActive(true);
 		app.setActivePerspective(p);
 
 		// no Feature.ADJUST_VIEWS: returns false.
 		if (!app.isUnbundled() && app.isPortrait()) {
 			app.adjustViews(false, false);
 		}
+		if (app.isWhiteboardActive()) {
+			app.getSettings().getEuclidian(1).setLineThicknessScaled(true);
+		}
 
 		app.showPerspectivesPopupIfNeeded();
 
 		app.updateRounding();
+		// run after e.g. line scaling flag is set so that extra undo points are avoided
+		app.setUndoActive(true);
 		preloadParser(app);
 		FragmentPrefetcher.fetchAllIfStandalone();
 	}
@@ -284,7 +293,7 @@ public class LoadFilePresenter {
 	/**
 	 * Make sure the parser is initiated: it will be needed for the first object
 	 * creation and may cause a major delay (
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 */
@@ -301,5 +310,4 @@ public class LoadFilePresenter {
 	public void processJSON(final String json, final ArchiveLoader view) {
 		view.processJSON(json);
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.statistics;
 
 import org.geogebra.common.kernel.Kernel;
@@ -18,12 +34,12 @@ public class CmdInverseRealDistribution1Param extends CommandProcessor {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
-	public CmdInverseRealDistribution1Param(Kernel kernel,
-			ProbabilityCalculatorSettings.Dist command) {
+	public CmdInverseRealDistribution1Param(
+			Kernel kernel, ProbabilityCalculatorSettings.Dist command) {
 		super(kernel);
 		this.command = command;
 	}
@@ -35,23 +51,21 @@ public class CmdInverseRealDistribution1Param extends CommandProcessor {
 		GeoElement[] arg;
 
 		switch (n) {
-		case 2:
-			arg = resArgs(c, info);
-			if ((ok[0] = arg[0] instanceof GeoNumberValue)
-					&& (ok[1] = arg[1] instanceof GeoNumberValue)) {
+			case 2:
+				arg = resArgs(c, info);
+				if ((ok[0] = arg[0] instanceof GeoNumberValue)
+						&& (ok[1] = arg[1] instanceof GeoNumberValue)) {
 
-				AlgoInverseRealDistribution1Param algo = new AlgoInverseRealDistribution1Param(cons,
-						(GeoNumberValue) arg[0],
-						(GeoNumberValue) arg[1], command);
-				algo.getResult().setLabel(c.getLabel());
-				GeoElement[] ret = { algo.getResult() };
-				return ret;
+					AlgoInverseRealDistribution1Param algo = new AlgoInverseRealDistribution1Param(
+							cons, (GeoNumberValue) arg[0], (GeoNumberValue) arg[1], command);
+					algo.getResult().setLabel(c.getLabel());
+					GeoElement[] ret = {algo.getResult()};
+					return ret;
+				}
+				throw argErr(c, getBadArg(ok, arg));
 
-			}
-			throw argErr(c, getBadArg(ok, arg));
-
-		default:
-			throw argNumErr(c);
+			default:
+				throw argNumErr(c);
 		}
 	}
 }

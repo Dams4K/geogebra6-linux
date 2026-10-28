@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.images;
 
 import org.gwtproject.resources.client.ClientBundle;
@@ -7,7 +23,7 @@ import org.gwtproject.resources.client.Resource;
 /** Generic resource bundle. */
 @Resource
 public interface AppResources extends ClientBundle {
-	
+
 	AppResources INSTANCE = new AppResourcesImpl();
 
 	@Source("org/geogebra/common/icons/png/web/general/aux_folder.gif")
@@ -49,7 +65,8 @@ public interface AppResources extends ClientBundle {
 	@Source("org/geogebra/common/icons/png/web/general/xy_segments.png")
 	ImageResource xy_segments();
 
-	@Source("org/geogebra/common/icons/png/web/stylingbar/stylingbar_data_analysis_show_statistics.png")
+	@Source(
+			"org/geogebra/common/icons/png/web/stylingbar/stylingbar_data_analysis_show_statistics.png")
 	ImageResource dataview_showstatistics();
 
 	@Source("org/geogebra/common/icons/png/web/stylingbar/stylingbar_data_analysis_show_data.png")

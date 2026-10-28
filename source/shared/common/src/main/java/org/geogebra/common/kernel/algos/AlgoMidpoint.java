@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoMidPoint.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 24. September 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -88,8 +86,7 @@ public class AlgoMidpoint extends AlgoMidpointND
 		GeoPoint P = getP();
 		GeoPoint Q = getQ();
 
-		getPoint().setCoords((P.inhomX + Q.inhomX) / 2.0d,
-				(P.inhomY + Q.inhomY) / 2.0d, 1.0);
+		getPoint().setCoords((P.inhomX + Q.inhomX) / 2.0d, (P.inhomY + Q.inhomY) / 2.0d, 1.0);
 	}
 
 	@Override
@@ -98,8 +95,7 @@ public class AlgoMidpoint extends AlgoMidpointND
 	}
 
 	@Override
-	public void getFreeVariables(HashSet<PVariable> variables)
-			throws NoSymbolicParametersException {
+	public void getFreeVariables(HashSet<PVariable> variables) throws NoSymbolicParametersException {
 		GeoPoint P = getP();
 		GeoPoint Q = getQ();
 		if (P != null && Q != null) {
@@ -111,8 +107,7 @@ public class AlgoMidpoint extends AlgoMidpointND
 	}
 
 	@Override
-	public int[] getDegrees(AbstractProverReciosMethod a)
-			throws NoSymbolicParametersException {
+	public int[] getDegrees(AbstractProverReciosMethod a) throws NoSymbolicParametersException {
 		GeoPoint P = getP();
 		GeoPoint Q = getQ();
 		if (P != null && Q != null) {
@@ -120,10 +115,8 @@ public class AlgoMidpoint extends AlgoMidpointND
 			int[] degreeQ = Q.getDegrees(a);
 
 			int[] result = new int[3];
-			result[0] = Math.max(degreeP[0] + degreeQ[2],
-					degreeQ[0] + degreeP[2]);
-			result[1] = Math.max(degreeP[1] + degreeQ[2],
-					degreeQ[1] + degreeP[2]);
+			result[0] = Math.max(degreeP[0] + degreeQ[2], degreeQ[0] + degreeP[2]);
+			result[1] = Math.max(degreeP[1] + degreeQ[2], degreeQ[1] + degreeP[2]);
 			result[2] = degreeP[2] + degreeQ[2];
 			return result;
 		}
@@ -131,8 +124,7 @@ public class AlgoMidpoint extends AlgoMidpointND
 	}
 
 	@Override
-	public BigInteger[] getExactCoordinates(
-			HashMap<PVariable, BigInteger> values)
+	public BigInteger[] getExactCoordinates(HashMap<PVariable, BigInteger> values)
 			throws NoSymbolicParametersException {
 		GeoPoint P = getP();
 		GeoPoint Q = getQ();
@@ -173,8 +165,7 @@ public class AlgoMidpoint extends AlgoMidpointND
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 		if (botanaPolynomials != null) {
 			return botanaPolynomials;
 		}
@@ -192,10 +183,7 @@ public class AlgoMidpoint extends AlgoMidpointND
 			botanaVars[1] = new PVariable(kernel);
 		}
 
-		botanaPolynomials = SymbolicParameters.botanaPolynomialsMidpoint(P, Q,
-				botanaVars);
+		botanaPolynomials = SymbolicParameters.botanaPolynomialsMidpoint(P, Q, botanaVars);
 		return botanaPolynomials;
-
 	}
-
 }

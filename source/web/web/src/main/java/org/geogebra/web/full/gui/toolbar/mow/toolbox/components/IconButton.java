@@ -1,64 +1,42 @@
-package org.geogebra.web.full.gui.toolbar.mow.toolbox.components;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import static org.geogebra.common.euclidian.EuclidianConstants.MODE_ERASER;
-import static org.geogebra.common.euclidian.EuclidianConstants.MODE_HIGHLIGHTER;
-import static org.geogebra.common.euclidian.EuclidianConstants.MODE_PEN;
+package org.geogebra.web.full.gui.toolbar.mow.toolbox.components;
 
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.gui.SetLabels;
 import org.geogebra.common.main.Localization;
-import org.geogebra.web.full.gui.app.GGWToolBar;
 import org.geogebra.web.html5.gui.util.AriaHelper;
 import org.geogebra.web.html5.gui.util.Dom;
 import org.geogebra.web.html5.gui.view.IconSpec;
 import org.geogebra.web.html5.gui.view.ImageIconSpec;
 import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.main.AppW;
-import org.geogebra.web.html5.main.toolbox.ToolboxIcon;
-import org.geogebra.web.html5.main.toolbox.ToolboxIconResource;
 import org.geogebra.web.html5.util.TestHarness;
 import org.geogebra.web.resources.SVGResource;
-import org.geogebra.web.resources.SVGResourcePrototype;
 import org.gwtproject.resources.client.ResourcePrototype;
 
 public class IconButton extends StandardButton implements SetLabels {
 	private static final int DEFAULT_BUTTON_WIDTH = 24;
-	private IconSpec image;
+	protected IconSpec image;
 	private final String ariaLabelTransKey;
 	private String dataTitleTransKey;
-	private int mode = -1;
 	private final Localization localization;
-	private AppW appW;
-	private String selectionColor;
 
-	/**
-	 * Press icon button with given tool mode.
-	 * @param mode tool mode
-	 * @param appW {@link AppW}
-	 */
-	public IconButton(int mode, AppW appW) {
-		this(appW, new ImageIconSpec(SVGResourcePrototype.EMPTY),
-				appW.getToolAriaLabel(mode));
-		this.mode = mode;
-		this.appW = appW;
-		AriaHelper.setDataTitle(this, appW.getToolName(mode));
-		image = getIconFromMode(mode, appW.getToolboxIconResource());
-		setActive(getElement().hasClassName("active"));
-		addStyleName("iconButton");
-	}
-
-	/** Press icon button with given tool mode.
-	 * @param mode tool mode
-	 * @param appW {@link AppW}
-	 * @param icon {@link IconSpec} image
-	 * @param onHandler switch on handler
-	 */
-	public IconButton(int mode, AppW appW, IconSpec icon, Runnable onHandler) {
-		this(appW, icon, appW.getToolAriaLabel(mode), appW.getToolAriaLabel(mode),
-				appW.getToolAriaLabel(mode), onHandler);
-		this.appW = appW;
-		this.mode = mode;
-	}
+	protected String selectionColor;
 
 	/**
 	 * Press icon button with given aria-label.
@@ -77,7 +55,7 @@ public class IconButton extends StandardButton implements SetLabels {
 		});
 	}
 
-	private IconButton(AppW appW, IconSpec icon, String ariaLabel) {
+	protected IconButton(AppW appW, IconSpec icon, String ariaLabel) {
 		super(icon, DEFAULT_BUTTON_WIDTH);
 		addStyleName("iconButton");
 		image = icon;
@@ -96,8 +74,13 @@ public class IconButton extends StandardButton implements SetLabels {
 	 * @param onHandler switch on handler
 	 * @param offHandler switch off handler
 	 */
-	public IconButton(AppW appW, IconSpec icon, String ariaLabel, String dataTitle,
-			Runnable onHandler, Runnable offHandler) {
+	public IconButton(
+			AppW appW,
+			IconSpec icon,
+			String ariaLabel,
+			String dataTitle,
+			Runnable onHandler,
+			Runnable offHandler) {
 		this(appW, icon, ariaLabel);
 		dataTitleTransKey = dataTitle;
 		AriaHelper.setTitle(this, appW.getLocalization().getMenu(dataTitle));
@@ -123,8 +106,14 @@ public class IconButton extends StandardButton implements SetLabels {
 	 * @param onHandler switch on handler
 	 * @param offHandler switch off handler
 	 */
-	public IconButton(AppW appW, IconSpec icon, String ariaLabel, String dataTitle,
-			String dataTest, Runnable onHandler, Runnable offHandler) {
+	public IconButton(
+			AppW appW,
+			IconSpec icon,
+			String ariaLabel,
+			String dataTitle,
+			String dataTest,
+			Runnable onHandler,
+			Runnable offHandler) {
 		this(appW, icon, ariaLabel, dataTitle, onHandler, offHandler);
 		TestHarness.setAttr(this, dataTest);
 	}
@@ -138,8 +127,13 @@ public class IconButton extends StandardButton implements SetLabels {
 	 * @param dataTest data-test
 	 * @param onHandler on press handler
 	 */
-	public IconButton(AppW appW, IconSpec icon, String ariaLabel, String dataTitle,
-			String dataTest, Runnable onHandler) {
+	public IconButton(
+			AppW appW,
+			IconSpec icon,
+			String ariaLabel,
+			String dataTitle,
+			String dataTest,
+			Runnable onHandler) {
 		this(appW, icon, ariaLabel, onHandler);
 		dataTitleTransKey = dataTitle;
 		AriaHelper.setTitle(this, appW.getLocalization().getMenu(dataTitle));
@@ -153,8 +147,7 @@ public class IconButton extends StandardButton implements SetLabels {
 	 * @param ariaLabel aria-label (also used as data-title)
 	 * @param clickHandler click handler
 	 */
-	public IconButton(AppW appW, Runnable clickHandler, IconSpec icon,
-			String ariaLabel) {
+	public IconButton(AppW appW, Runnable clickHandler, IconSpec icon, String ariaLabel) {
 		this(appW, icon, ariaLabel);
 		if (ariaLabel != null && !ariaLabel.isBlank()) {
 			dataTitleTransKey = ariaLabel;
@@ -170,7 +163,7 @@ public class IconButton extends StandardButton implements SetLabels {
 	}
 
 	/**
-	 * Small press icon buttons, only with aria label (without data-title).
+	 * Small press icon buttons, only with aria-label (without data-title).
 	 * @param appW {@link AppW}
 	 * @param ariaLabel aria-label
 	 * @param icon {@link IconSpec} image
@@ -207,6 +200,9 @@ public class IconButton extends StandardButton implements SetLabels {
 		setIcon(image.withFill(GColor.BLACK.toString()));
 	}
 
+	/**
+	 * @return whether this button is currently active
+	 */
 	public boolean isActive() {
 		return getElement().hasClassName("active");
 	}
@@ -234,21 +230,10 @@ public class IconButton extends StandardButton implements SetLabels {
 	 */
 	@Override
 	public void setLabels() {
-		String ariaLabel;
-		String dataTitle;
-		if (mode > -1) {
-			ariaLabel = appW.getToolAriaLabel(mode);
-			dataTitle = appW.getToolName(mode);
-		} else {
-			ariaLabel = localization.getMenu(ariaLabelTransKey);
-			dataTitle = localization.getMenu(dataTitleTransKey);
-		}
+		String ariaLabel = localization.getMenu(ariaLabelTransKey);
+		String dataTitle = localization.getMenu(dataTitleTransKey);
 		AriaHelper.setLabel(this, ariaLabel);
 		AriaHelper.setDataTitle(this, dataTitle);
-	}
-
-	public int getMode() {
-		return mode;
 	}
 
 	/**
@@ -257,7 +242,7 @@ public class IconButton extends StandardButton implements SetLabels {
 	 * @return whether the mode can be activated with this button
 	 */
 	public boolean containsMode(int mode) {
-		return getMode() == mode;
+		return false;
 	}
 
 	private String getSelectionColor(AppW appW) {
@@ -266,31 +251,9 @@ public class IconButton extends StandardButton implements SetLabels {
 
 	@Override
 	public void setIcon(ResourcePrototype icon) {
-		SVGResource svgResource = isActive()
-				? ((SVGResource) icon).withFill(selectionColor) : (SVGResource) icon;
+		SVGResource svgResource =
+				isActive() ? ((SVGResource) icon).withFill(selectionColor) : (SVGResource) icon;
 		super.setIcon(svgResource);
 		image = new ImageIconSpec(svgResource);
-	}
-
-	/**
-	 * @param mode tool mode
-	 * @param toolboxIconResource icon resource
-	 * @return icon
-	 */
-	public IconSpec getIconFromMode(Integer mode, ToolboxIconResource toolboxIconResource) {
-		switch (mode) {
-		case MODE_PEN:
-			return toolboxIconResource.getImageResource(ToolboxIcon.PEN);
-		case MODE_HIGHLIGHTER:
-			return toolboxIconResource.getImageResource(ToolboxIcon.HIGHLIGHTER);
-		case MODE_ERASER:
-			return toolboxIconResource.getImageResource(ToolboxIcon.ERASER);
-		default:
-			GGWToolBar.getImageResource(mode, appW, toolImg -> {
-				image = new ImageIconSpec((SVGResource) toolImg);
-				setIcon(image.withFill(isActive() ? selectionColor : GColor.BLACK.toString()));
-			});
-			return image;
-		}
 	}
 }

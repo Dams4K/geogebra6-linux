@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbar.mow.toolbox;
 
 import static org.geogebra.common.euclidian.EuclidianConstants.MODE_RULER;
@@ -8,9 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import javax.annotation.CheckForNull;
-
+import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.euclidian.ModeChangeListener;
 import org.geogebra.common.exam.ExamListener;
 import org.geogebra.common.exam.ExamState;
@@ -19,24 +37,28 @@ import org.geogebra.common.util.debug.Log;
 import org.geogebra.web.full.gui.toolbar.mow.toolbox.components.IconButton;
 import org.geogebra.web.full.gui.toolbar.mow.toolbox.components.IconButtonWithMenu;
 import org.geogebra.web.full.gui.toolbar.mow.toolbox.components.IconButtonWithPopup;
+import org.geogebra.web.full.gui.toolbar.mow.toolbox.components.ToolIconButton;
 import org.geogebra.web.full.gui.toolbar.mow.toolbox.pen.PenIconButton;
 import org.geogebra.web.full.gui.toolbar.mow.toolbox.ruler.RulerIconButton;
 import org.geogebra.web.full.gui.toolbar.mow.toolbox.text.TextIconButton;
 import org.geogebra.web.full.main.AppWFull;
+import org.geogebra.web.full.mow.header.NotesTopBar;
 import org.geogebra.web.html5.Browser;
 import org.geogebra.web.html5.gui.view.IconSpec;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.main.toolbox.ToolboxIcon;
 import org.geogebra.web.html5.main.toolbox.ToolboxIconResource;
-import org.geogebra.web.shared.mow.header.NotesTopBar;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.SimplePanel;
+import org.jspecify.annotations.Nullable;
 
-public class NotesToolbox extends FlowPanel implements SetLabels, ModeChangeListener, ExamListener {
+public final class NotesToolbox extends FlowPanel
+		implements SetLabels, ModeChangeListener, ExamListener {
 	private final AppW appW;
 	private final ToolboxDecorator decorator;
 	private final ToolboxController controller;
-	private @CheckForNull IconButton spotlightButton;
+	private final List<String> allTools;
+	private @Nullable IconButton spotlightButton;
 	private final List<IconButton> buttons = new ArrayList<>();
 	private final ToolboxIconResource toolboxIconResource;
 	private IconButton lastSelectedButtonWithMenu;
@@ -53,6 +75,7 @@ public class NotesToolbox extends FlowPanel implements SetLabels, ModeChangeList
 		decorator = new ToolboxDecorator(this, isTopBarAttached);
 		controller = new ToolboxController(appW, this);
 		toolboxIconResource = appW.getToolboxIconResource();
+		allTools = appW.getAppletParameters().getDataParamCustomToolbox();
 		appW.getExamEventBus().add(this);
 		buildGui();
 	}
@@ -82,30 +105,48 @@ public class NotesToolbox extends FlowPanel implements SetLabels, ModeChangeList
 				|| appW.isToolboxCategoryEnabled(ToolboxCategory.RULER.getName());
 	}
 
-	private IconButton addToggleButton(IconSpec image, String ariaLabel, String dataTitle,
-			String dataTest, Runnable onHandler, Runnable offHandler) {
-		IconButton iconButton = new IconButton(appW, image, ariaLabel, dataTitle,
-				dataTest, onHandler, offHandler);
+	private IconButton addToggleButton(IconSpec image, Runnable onHandler, Runnable offHandler) {
+		IconButton iconButton = new IconButton(
+				appW, image, "Spotlight.Tool", "Spotlight.Tool", "spotlightTool", onHandler, offHandler);
 		add(iconButton);
 		buttons.add(iconButton);
 		return iconButton;
 	}
 
-	private void addToggleButtonWithMenuPopup(ToolboxCategory category, IconSpec image,
-											  String ariaLabel, List<Integer> tools) {
-		IconButtonWithMenu iconButton = new IconButtonWithMenu(appW, image, ariaLabel, tools,
-				this::deselectButtons, this);
+	private void addToggleButtonWithMenuPopup(
+			ToolboxCategory category, IconSpec image, String ariaLabel, List<Integer> tools) {
+		IconButtonWithMenu iconButton =
+				new IconButtonWithMenu(appW, image, ariaLabel, tools, this::deselectButtons, this);
 		add(iconButton);
 		buttons.add(iconButton);
 		buttonsWithMenu.put(category, iconButton);
 	}
 
-	private void addToggleButtonWithPopup(IconSpec image, String ariaLabel,
-			List<Integer> tools) {
-		IconButtonWithPopup iconButton = new IconButtonWithPopup(appW, image, ariaLabel, tools,
-				this::deselectButtons);
+	private void addShapeToggleButton(IconSpec image, List<Integer> tools) {
+		IconButtonWithPopup iconButton =
+				new IconButtonWithPopup(appW, image, "Shape", tools, this::deselectButtons);
 		add(iconButton);
 		buttons.add(iconButton);
+	}
+
+	private List<Integer> filterTools(ToolboxCategory toolboxCategory) {
+		Predicate<Integer> baseFilter = tool -> tool != EuclidianConstants.MODE_GRASPABLE_MATH
+				|| Browser.isGeogebraOrInternalHost() && renderedExamState == ExamState.IDLE;
+		Stream<Integer> available = toolboxCategory.getTools().stream().filter(baseFilter);
+		if (allTools.isEmpty() || allTools.contains(toolboxCategory.getName())) {
+			return available.collect(Collectors.toList());
+		}
+		List<String> inCategory = allTools.stream()
+				.filter(tool -> tool.contains("."))
+				.map(tool -> tool.split("\\.")[1].toLowerCase(Locale.ROOT))
+				.collect(Collectors.toList());
+		return available
+				.filter(tool -> inCategory.contains(normalizeIconName(tool).toLowerCase(Locale.ROOT)))
+				.collect(Collectors.toList());
+	}
+
+	private String normalizeIconName(Integer tool) {
+		return EuclidianConstants.getModeIconName(tool).replaceAll("^(Shape|Type\\.)", "");
 	}
 
 	private void addDivider() {
@@ -129,9 +170,8 @@ public class NotesToolbox extends FlowPanel implements SetLabels, ModeChangeList
 			return;
 		}
 
-		spotlightButton = addToggleButton(toolboxIconResource.getImageResource(
-				ToolboxIcon.SPOTLIGHT), "Spotlight.Tool", "Spotlight.Tool", "spotlightTool",
-				() -> {}, () -> {});
+		spotlightButton = addToggleButton(
+				toolboxIconResource.getImageResource(ToolboxIcon.SPOTLIGHT), () -> {}, () -> {});
 		spotlightButton.addFastClickHandler((source) -> {
 			if (spotlightButton.isActive()) {
 				controller.switchSpotlightOn();
@@ -146,46 +186,45 @@ public class NotesToolbox extends FlowPanel implements SetLabels, ModeChangeList
 			return;
 		}
 
-		RulerIconButton rulerButton = new RulerIconButton(appW,
+		RulerIconButton rulerButton = new RulerIconButton(
+				appW,
 				toolboxIconResource.getImageResource(ToolboxIcon.RULER),
 				appW.getToolAriaLabel(MODE_RULER),
-				"Ruler", "selectModeButton" + MODE_RULER);
+				"Ruler",
+				"selectModeButton" + MODE_RULER);
 		add(rulerButton);
 		buttons.add(rulerButton);
 	}
 
 	private void addTextButton() {
-		if (!appW.isToolboxCategoryEnabled(ToolboxCategory.TEXT.getName())) {
-			return;
+		List<Integer> tools = filterTools(ToolboxCategory.TEXT);
+		if (!tools.isEmpty()) {
+			TextIconButton textButton = new TextIconButton(appW, this::deselectButtons, tools);
+			add(textButton);
+			buttons.add(textButton);
 		}
-
-		TextIconButton textButton = new TextIconButton(appW, this::deselectButtons,
-				toolboxIconResource);
-		add(textButton);
-		buttons.add(textButton);
 	}
 
 	private void addUploadButton() {
-		if (!appW.isToolboxCategoryEnabled(ToolboxCategory.UPLOAD.getName())
-				|| renderedExamState != ExamState.IDLE) {
-			return;
+		List<Integer> tools = filterTools(ToolboxCategory.UPLOAD);
+		if (!tools.isEmpty() && renderedExamState == ExamState.IDLE) {
+			addToggleButtonWithMenuPopup(
+					ToolboxCategory.UPLOAD,
+					toolboxIconResource.getImageResource(ToolboxIcon.UPLOAD),
+					"Upload",
+					tools);
 		}
-
-		addToggleButtonWithMenuPopup(ToolboxCategory.UPLOAD,
-				toolboxIconResource.getImageResource(ToolboxIcon.UPLOAD),
-				"Upload", ToolboxConstants.uploadCategory);
 	}
 
 	private void addLinkButton() {
-		if (!appW.isToolboxCategoryEnabled(ToolboxCategory.LINK.getName())
-			|| renderedExamState != ExamState.IDLE) {
-			return;
+		List<Integer> tools = filterTools(ToolboxCategory.LINK);
+		if (!tools.isEmpty() && renderedExamState == ExamState.IDLE) {
+			addToggleButtonWithMenuPopup(
+					ToolboxCategory.LINK,
+					toolboxIconResource.getImageResource(ToolboxIcon.LINK),
+					"Link",
+					tools);
 		}
-
-		List<Integer> linkTools = ToolboxConstants.linkCategory;
-		addToggleButtonWithMenuPopup(ToolboxCategory.LINK,
-				toolboxIconResource.getImageResource(ToolboxIcon.LINK),
-				"Link", linkTools);
 	}
 
 	private void addSelectModeButton() {
@@ -193,46 +232,44 @@ public class NotesToolbox extends FlowPanel implements SetLabels, ModeChangeList
 			return;
 		}
 
-		IconButton selectButton = new IconButton(MODE_SELECT_MOW, appW,
+		IconButton selectButton = new ToolIconButton(
+				MODE_SELECT_MOW,
+				appW,
 				toolboxIconResource.getImageResource(ToolboxIcon.MOUSE_CURSOR),
 				() -> {
 					appW.setMode(MODE_SELECT_MOW);
 					appW.closePopups();
 				});
+		selectButton.setActive(true);
 		add(selectButton);
 		buttons.add(selectButton);
 	}
 
 	private void addPenModeButton() {
-		if (!appW.isToolboxCategoryEnabled(ToolboxCategory.PEN.getName())) {
-			return;
+		List<Integer> tools = filterTools(ToolboxCategory.PEN);
+		if (!tools.isEmpty()) {
+			IconButton iconButton = new PenIconButton(appW, tools, this::deselectButtons);
+			add(iconButton);
+			buttons.add(iconButton);
 		}
-
-		IconButton iconButton = new PenIconButton(appW, this::deselectButtons);
-		iconButton.setActive(true);
-		add(iconButton);
-		buttons.add(iconButton);
 	}
 
 	private void addShapeButton() {
-		if (!appW.isToolboxCategoryEnabled(ToolboxCategory.SHAPES.getName())) {
-			return;
+		List<Integer> tools = filterTools(ToolboxCategory.SHAPES);
+		if (!tools.isEmpty()) {
+			addShapeToggleButton(toolboxIconResource.getImageResource(ToolboxIcon.SHAPES), tools);
 		}
-
-		addToggleButtonWithPopup(toolboxIconResource.getImageResource(ToolboxIcon.SHAPES),
-				"Shape", ToolboxConstants.shapeCategory);
 	}
 
 	private void addAppsButton() {
-		if (!appW.isToolboxCategoryEnabled(ToolboxCategory.MORE.getName())) {
-			return;
+		List<Integer> tools = filterTools(ToolboxCategory.MORE);
+		if (!tools.isEmpty()) {
+			addToggleButtonWithMenuPopup(
+					ToolboxCategory.MORE,
+					toolboxIconResource.getImageResource(ToolboxIcon.APPS),
+					"Tools.More",
+					tools);
 		}
-
-		List<Integer> appsTools = ToolboxConstants.getAppsCategory(
-				Browser.isGeogebraOrInternalHost() && renderedExamState == ExamState.IDLE);
-		addToggleButtonWithMenuPopup(ToolboxCategory.MORE,
-				toolboxIconResource.getImageResource(ToolboxIcon.APPS),
-				"Tools.More", appsTools);
 	}
 
 	@Override
@@ -265,7 +302,7 @@ public class NotesToolbox extends FlowPanel implements SetLabels, ModeChangeList
 			if (button instanceof RulerIconButton) {
 				continue;
 			}
-			if (button.containsMode(mode)  && lastSelectedButtonWithMenu == null) {
+			if (button.containsMode(mode) && lastSelectedButtonWithMenu == null) {
 				button.setActive(true);
 			} else {
 				button.deactivate();
@@ -297,9 +334,9 @@ public class NotesToolbox extends FlowPanel implements SetLabels, ModeChangeList
 	 */
 	public void addCustomTool(String url, String name, String category, Object callback) {
 		IconButtonWithMenu button = buttonsWithMenu.get(ToolboxCategory.byName(category));
-        if (button != null) {
+		if (button != null) {
 			button.addCustomTool(url, name, callback);
-        } else {
+		} else {
 			Log.debug("Category " + category.toLowerCase(Locale.ROOT)
 					+ " is not allowed to have a custom tool");
 		}

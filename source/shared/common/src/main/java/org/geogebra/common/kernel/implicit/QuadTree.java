@@ -1,8 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.implicit;
 
 import java.util.ArrayList;
 
-import org.geogebra.common.annotation.MissingDoc;
 import org.geogebra.common.kernel.MyPoint;
 import org.geogebra.common.kernel.geos.GeoLocus;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
@@ -11,6 +26,7 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
  * Base class for quadtree algorithms
  */
 abstract class QuadTree {
+	private final SimpleContourLinker linker;
 	protected double x;
 	protected double y;
 	protected double w;
@@ -18,11 +34,13 @@ abstract class QuadTree {
 	protected double scaleX;
 	protected double scaleY;
 	protected ArrayList<MyPoint> locusPoints;
-	private LinkSegments segments;
+	private ContourAssembler contour;
+	static final int LIST_THRESHOLD = 400;
 
-	public QuadTree() {
-		segments = new LinkSegments();
-
+	QuadTree() {
+		linker = new SimpleContourLinker(LIST_THRESHOLD);
+		contour = new ContourAssembler(linker);
+		linker.setContour(contour);
 	}
 
 	/**
@@ -35,8 +53,14 @@ abstract class QuadTree {
 	 * @param slX scaleX
 	 * @param slY scaleY
 	 */
-	public void updatePath(double startX, double startY, double width,
-			double height, double slX, double slY, GeoLocus locus) {
+	void updatePath(
+			double startX,
+			double startY,
+			double width,
+			double height,
+			double slX,
+			double slY,
+			GeoLocus locus) {
 		this.x = startX;
 		this.y = startY;
 		this.w = width;
@@ -44,19 +68,19 @@ abstract class QuadTree {
 		this.scaleX = slX;
 		this.scaleY = slY;
 		this.locusPoints = locus.getPoints();
-		segments.updatePoints(locusPoints);
+		contour.updatePoints(locusPoints);
 		this.updatePath();
-		segments.flush();
+		contour.flush();
 	}
 
 	/**
 	 * @param pt point to be polished
 	 */
-	public void polishPointOnPath(GeoPointND pt) {
+	void polishPointOnPath(GeoPointND pt) {
 		// pt.setUndefined();
 	}
 
-	public int edgeConfig(ImplicitCurveMarchingRect r) {
+	int edgeConfig(ImplicitCurveMarchingRect r) {
 		int config = (intersect(r.evals[0], r.evals[1]) << 3)
 				| (intersect(r.evals[1], r.evals[2]) << 2)
 				| (intersect(r.evals[2], r.evals[3]) << 1)
@@ -80,14 +104,13 @@ abstract class QuadTree {
 		return 0;
 	}
 
-	@MissingDoc
-	public abstract void updatePath();
+	abstract void updatePath();
 
-	public LinkSegments segments() {
-		return segments;
+	ContourAssembler contour() {
+		return contour;
 	}
 
 	void setListThreshold(int threshold) {
-		segments.setListThreshold(threshold);
+		linker.setThreshold(threshold);
 	}
 }

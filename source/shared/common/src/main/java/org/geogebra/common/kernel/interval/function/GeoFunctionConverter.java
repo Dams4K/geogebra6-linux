@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.interval.function;
 
 import java.util.Objects;
@@ -45,17 +61,17 @@ public class GeoFunctionConverter {
 	public IntervalNodeFunction convert(GeoFunction geoFunction) {
 		IntervalFunctionVariable functionVariable = new IntervalFunctionVariable();
 		IntervalNode expression = convert(
-				Objects.requireNonNull(geoFunction.getFunctionExpression()),
-				functionVariable).simplify();
+						Objects.requireNonNull(geoFunction.getFunctionExpression()), functionVariable)
+				.simplify();
 		if (expression.asExpressionNode() == null) {
-			expression = new IntervalExpressionNode(evaluator, expression,
-					IntervalOperation.NO_OPERATION);
+			expression =
+					new IntervalExpressionNode(evaluator, expression, IntervalOperation.NO_OPERATION);
 		}
 		return new IntervalNodeFunction(expression.asExpressionNode(), functionVariable);
 	}
 
-	private IntervalNode convert(ExpressionNode expressionNode,
-			IntervalFunctionVariable functionVariable) {
+	private IntervalNode convert(
+			ExpressionNode expressionNode, IntervalFunctionVariable functionVariable) {
 		IntervalExpressionNode node = new IntervalExpressionNode(evaluator);
 		node.setLeft(nodeValue(functionVariable, expressionNode.getLeft()));
 		node.setOperation(operationSupport.convert(expressionNode.getOperation()));
@@ -63,8 +79,7 @@ public class GeoFunctionConverter {
 		return node;
 	}
 
-	private IntervalNode nodeValue(IntervalFunctionVariable functionVariable,
-			ExpressionValue value) {
+	private IntervalNode nodeValue(IntervalFunctionVariable functionVariable, ExpressionValue value) {
 		if (value == null) {
 			return null;
 		}
@@ -74,16 +89,16 @@ public class GeoFunctionConverter {
 				: convert(unwrapped.wrap(), functionVariable);
 	}
 
-	private IntervalNode newLeafValue(ExpressionValue value,
-			IntervalFunctionVariable functionVariable) {
+	private IntervalNode newLeafValue(
+			ExpressionValue value, IntervalFunctionVariable functionVariable) {
 		return value instanceof FunctionVariable
-				? functionVariable : newSingletonValue(value.evaluateDouble());
+				? functionVariable
+				: newSingletonValue(value.evaluateDouble());
 	}
 
 	private IntervalNode newSingletonValue(double value) {
-		return new IntervalFunctionValue(Double.isNaN(value)
-				? IntervalConstants.undefined()
-				: new Interval(value));
+		return new IntervalFunctionValue(
+				Double.isNaN(value) ? IntervalConstants.undefined() : new Interval(value));
 	}
 
 	/**

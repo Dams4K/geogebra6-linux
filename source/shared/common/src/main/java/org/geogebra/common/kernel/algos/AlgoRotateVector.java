@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoRotateVector.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 24. September 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -38,7 +36,7 @@ public class AlgoRotateVector extends AlgoElement {
 
 	/**
 	 * Creates new algo for vector rotation
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -48,8 +46,7 @@ public class AlgoRotateVector extends AlgoElement {
 	 * @param angle
 	 *            angle
 	 */
-	AlgoRotateVector(Construction cons, String label, GeoVector A,
-			GeoNumeric angle) {
+	AlgoRotateVector(Construction cons, String label, GeoVector A, GeoNumeric angle) {
 		super(cons);
 		this.A = A;
 		this.angle = angle;
@@ -85,7 +82,7 @@ public class AlgoRotateVector extends AlgoElement {
 
 	/**
 	 * Returns the input vector
-	 * 
+	 *
 	 * @return input vector
 	 */
 	GeoVector getVector() {
@@ -94,7 +91,7 @@ public class AlgoRotateVector extends AlgoElement {
 
 	/**
 	 * Returns the rotation angle
-	 * 
+	 *
 	 * @return rotation angle
 	 */
 	GeoNumeric getAngle() {
@@ -103,7 +100,7 @@ public class AlgoRotateVector extends AlgoElement {
 
 	/**
 	 * Returns the resulting vector
-	 * 
+	 *
 	 * @return resulting vector
 	 */
 	GeoVector getRotatedVector() {
@@ -118,11 +115,11 @@ public class AlgoRotateVector extends AlgoElement {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("ARotatedByAngleB",
-				"%0 rotated by angle %1", A.getLabel(tpl), angle.getLabel(tpl));
+		return getLoc()
+				.getPlainDefault(
+						"ARotatedByAngleB", "%0 rotated by angle %1", A.getLabel(tpl), angle.getLabel(tpl));
 	}
-
 }

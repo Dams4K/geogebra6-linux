@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.cas;
@@ -35,8 +39,7 @@ import org.geogebra.common.kernel.statistics.AlgoFitPoly;
 /**
  * Algorithm for tangent of function
  */
-public class AlgoTangentFunctionPoint extends AlgoElement
-		implements TangentAlgo {
+public class AlgoTangentFunctionPoint extends AlgoElement implements TangentAlgo {
 
 	private GeoPointND P; // input
 	private GeoLine tangent; // output
@@ -61,8 +64,8 @@ public class AlgoTangentFunctionPoint extends AlgoElement
 	 * @param f
 	 *            function
 	 */
-	public AlgoTangentFunctionPoint(Construction cons, String label,
-			GeoPointND P, GeoFunctionable f) {
+	public AlgoTangentFunctionPoint(
+			Construction cons, String label, GeoPointND P, GeoFunctionable f) {
 		this(cons, P, f);
 		tangent.setLabel(label);
 	}
@@ -75,8 +78,7 @@ public class AlgoTangentFunctionPoint extends AlgoElement
 	 * @param f
 	 *            function
 	 */
-	public AlgoTangentFunctionPoint(Construction cons, GeoPointND P,
-			GeoFunctionable f) {
+	public AlgoTangentFunctionPoint(Construction cons, GeoPointND P, GeoFunctionable f) {
 		super(cons);
 		this.P = P;
 		this.f = f;
@@ -86,8 +88,7 @@ public class AlgoTangentFunctionPoint extends AlgoElement
 		// check if P is defined as a point of the function's graph
 		pointOnFunction = false;
 		if (P.getParentAlgorithm() instanceof AlgoPointOnPath) {
-			AlgoPointOnPath algoPoint = (AlgoPointOnPath) P
-					.getParentAlgorithm();
+			AlgoPointOnPath algoPoint = (AlgoPointOnPath) P.getParentAlgorithm();
 			pointOnFunction = algoPoint.getPath() == f;
 		}
 
@@ -114,10 +115,8 @@ public class AlgoTangentFunctionPoint extends AlgoElement
 
 			// order 5, 10 steps, 100 slices seems to work nicely
 			// mockup https://www.geogebra.org/m/zTJ7KeE6
-			algoFitPoly = new AlgoFitPoly(cons, geoList,
-					new GeoNumeric(cons, 5));
+			algoFitPoly = new AlgoFitPoly(cons, geoList, new GeoNumeric(cons, 5));
 			cons.removeFromConstructionList(algoFitPoly);
-
 		}
 
 		setInputOutput(); // for AlgoElement
@@ -226,8 +225,7 @@ public class AlgoTangentFunctionPoint extends AlgoElement
 
 			if (fun.getFunction() != null) {
 				FunctionVariable fv = fun.getFunction().getFunctionVariable();
-				ExpressionValue derivFit = fun.getFunction().derivative(fv,
-						kernel);
+				ExpressionValue derivFit = fun.getFunction().derivative(fv, kernel);
 
 				fv.set(a);
 
@@ -256,10 +254,11 @@ public class AlgoTangentFunctionPoint extends AlgoElement
 	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("TangentToAatB", "Tangent to %0 at %1",
-				f.getLabel(tpl),
-				"x = x(" + P.getLabel(tpl) + ")");
-
+		return getLoc()
+				.getPlainDefault(
+						"TangentToAatB",
+						"Tangent to %0 at %1",
+						f.getLabel(tpl),
+						"x = x(" + P.getLabel(tpl) + ")");
 	}
-
 }

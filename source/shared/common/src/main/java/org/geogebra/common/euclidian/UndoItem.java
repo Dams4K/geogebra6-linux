@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
 import org.geogebra.common.kernel.Locateable;
@@ -13,10 +29,12 @@ class UndoItem {
 	private final boolean isXml;
 	private final String previousLabel;
 
-	public UndoItem(GeoElement geo, MoveMode moveMode) {
+	UndoItem(GeoElement geo, MoveMode moveMode) {
 		this.geo = geo;
-		isXml = (geo instanceof Locateable && moveMode != MoveMode.NUMERIC)
-				|| geo instanceof GeoWidget || geo instanceof GeoInline;
+		isXml =
+				(geo instanceof Locateable && moveMode != MoveMode.NUMERIC && moveMode != MoveMode.BOX_PLOT)
+						|| geo instanceof GeoWidget
+						|| geo instanceof GeoInline;
 		previousContent = content();
 		previousLabel = geo.getLabelSimple();
 	}
@@ -26,7 +44,7 @@ class UndoItem {
 				+ geo.getRedefineString(false, true, StringTemplate.xmlTemplate);
 	}
 
-	public String content() {
+	String content() {
 		if (geo.isPointOnPath() || geo.isPointInRegion()) {
 			return ConstructionActionExecutor.SET + geo.getLabelSimple() + "="
 					+ geo.toValueString(StringTemplate.xmlTemplate);
@@ -34,19 +52,19 @@ class UndoItem {
 		return isXml ? geo.getStyleXML() : getDefinition();
 	}
 
-	public String previousContent() {
+	String previousContent() {
 		return previousContent;
 	}
 
-	public String getLabel() {
+	String getLabel() {
 		return geo.getLabelSimple();
 	}
 
-	public boolean hasGeo(GeoElement geo) {
+	boolean hasGeo(GeoElement geo) {
 		return this.geo == geo;
 	}
 
-	public String getPreviousLabel() {
+	String getPreviousLabel() {
 		return previousLabel;
 	}
 }

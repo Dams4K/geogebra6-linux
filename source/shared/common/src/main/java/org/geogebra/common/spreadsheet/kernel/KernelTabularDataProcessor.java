@@ -1,10 +1,25 @@
-package org.geogebra.common.spreadsheet.kernel;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.Nonnull;
+package org.geogebra.common.spreadsheet.kernel;
 
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoElementSpreadsheet;
 import org.geogebra.common.ownership.NonOwning;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class to handle insert/delete operations of TabularData that has geos.
@@ -25,7 +40,7 @@ final class KernelTabularDataProcessor {
 	@NonOwning
 	private final KernelTabularDataAdapter adapter;
 
-	KernelTabularDataProcessor(@Nonnull KernelTabularDataAdapter adapter) {
+	KernelTabularDataProcessor(@NonNull KernelTabularDataAdapter adapter) {
 		this.adapter = adapter;
 	}
 

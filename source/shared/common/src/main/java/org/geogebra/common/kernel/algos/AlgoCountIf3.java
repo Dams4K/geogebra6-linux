@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -23,10 +27,9 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * Take objects from the middle of a list adapted from AlgoKeepIf
- * 
+ *
  * @author Michael Borcherds
  */
-
 public class AlgoCountIf3 extends AlgoElement {
 
 	private GeoList inputList; // input
@@ -47,8 +50,8 @@ public class AlgoCountIf3 extends AlgoElement {
 	 * @param inputList
 	 *            list
 	 */
-	public AlgoCountIf3(Construction cons, String label, GeoBoolean bool,
-			GeoElement var, GeoList inputList) {
+	public AlgoCountIf3(
+			Construction cons, String label, GeoBoolean bool, GeoElement var, GeoList inputList) {
 		super(cons);
 		this.inputList = inputList;
 		this.var = var;
@@ -104,8 +107,7 @@ public class AlgoCountIf3 extends AlgoElement {
 					GeoElement geo = inputList.get(i);
 					var.set(geo);
 					this.setStopUpdateCascade(true);
-					var.getAlgoUpdateSet()
-							.updateAllUntil(bool.getParentAlgorithm());
+					var.getAlgoUpdateSet().updateAllUntil(bool.getParentAlgorithm());
 					if (bool.getBoolean()) {
 						count++;
 					}
@@ -120,7 +122,5 @@ public class AlgoCountIf3 extends AlgoElement {
 		}
 
 		result.setValue(count);
-
 	}
-
 }

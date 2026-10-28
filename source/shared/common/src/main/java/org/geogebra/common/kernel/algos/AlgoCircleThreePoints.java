@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoCircleThreePoints.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 15. November 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -37,14 +35,13 @@ import org.geogebra.common.kernel.prover.polynomial.PVariable;
 import org.geogebra.common.util.DoubleUtil;
 import org.geogebra.common.util.MyMath;
 
-//import geogebra.kernel.kernelND.GeoConicND;
+// import geogebra.kernel.kernelND.GeoConicND;
 
 /**
- * 
+ *
  * @author Markus
  */
-public class AlgoCircleThreePoints extends AlgoElement
-		implements SymbolicParametersBotanaAlgo {
+public class AlgoCircleThreePoints extends AlgoElement implements SymbolicParametersBotanaAlgo {
 
 	private GeoPointND A; // input
 	private GeoPointND B; // input
@@ -83,8 +80,7 @@ public class AlgoCircleThreePoints extends AlgoElement
 	 * @param C
 	 *            third point
 	 */
-	public AlgoCircleThreePoints(Construction cons, GeoPointND A, GeoPointND B,
-			GeoPointND C) {
+	public AlgoCircleThreePoints(Construction cons, GeoPointND A, GeoPointND B, GeoPointND C) {
 
 		super(cons);
 
@@ -119,12 +115,11 @@ public class AlgoCircleThreePoints extends AlgoElement
 		if (C instanceof GeoPoint) {
 			C.addIncidence(circle, false);
 		}
-
 	}
 
 	/**
 	 * set the three points of the circle to A, B, C
-	 * 
+	 *
 	 * @param A
 	 *            first point
 	 * @param B
@@ -224,14 +219,14 @@ public class AlgoCircleThreePoints extends AlgoElement
 			return;
 			// }
 		} else if (DoubleUtil.isEqual(ax, cx) && DoubleUtil.isEqual(ay, cy)) { // A = C
-																		// <> B
+			// <> B
 			ABx = bx - ax;
 			ABy = by - ay;
 			center.setCoords(-ABy, ABx, 0.0d);
 			circle.setCircle(center, getA());
 			return;
 		} else if (DoubleUtil.isEqual(bx, cx) && DoubleUtil.isEqual(by, cy)) { // B = C
-																		// <> A
+			// <> A
 			ACx = cx - ax;
 			ACy = cy - ay;
 			center.setCoords(-ACy, ACx, 0.0d);
@@ -283,36 +278,36 @@ public class AlgoCircleThreePoints extends AlgoElement
 		else {
 			// intersect two line bisectors according to casenr
 			switch (casenr) {
-			default:
-			case 0: // bisectors of AB, AC
-				s0.x = ABx;
-				s0.y = ABy;
-				s0.z = -((ax + bx) * s0.x + (ay + by) * s0.y) / 2.0;
+				default:
+				case 0: // bisectors of AB, AC
+					s0.x = ABx;
+					s0.y = ABy;
+					s0.z = -((ax + bx) * s0.x + (ay + by) * s0.y) / 2.0;
 
-				s1.x = ACx;
-				s1.y = ACy;
-				s1.z = -((ax + cx) * s1.x + (ay + cy) * s1.y) / 2.0;
-				break;
+					s1.x = ACx;
+					s1.y = ACy;
+					s1.z = -((ax + cx) * s1.x + (ay + cy) * s1.y) / 2.0;
+					break;
 
-			case 1: // bisectors of AC, BC
-				s1.x = ACx;
-				s1.y = ACy;
-				s1.z = -((ax + cx) * s1.x + (ay + cy) * s1.y) / 2.0;
+				case 1: // bisectors of AC, BC
+					s1.x = ACx;
+					s1.y = ACy;
+					s1.z = -((ax + cx) * s1.x + (ay + cy) * s1.y) / 2.0;
 
-				s0.x = BCx;
-				s0.y = BCy;
-				s0.z = -((bx + cx) * s0.x + (by + cy) * s0.y) / 2.0;
-				break;
+					s0.x = BCx;
+					s0.y = BCy;
+					s0.z = -((bx + cx) * s0.x + (by + cy) * s0.y) / 2.0;
+					break;
 
-			case 2: // bisectors of AB, BC
-				s0.x = ABx;
-				s0.y = ABy;
-				s0.z = -((ax + bx) * s0.x + (ay + by) * s0.y) / 2.0;
+				case 2: // bisectors of AB, BC
+					s0.x = ABx;
+					s0.y = ABy;
+					s0.z = -((ax + bx) * s0.x + (ay + by) * s0.y) / 2.0;
 
-				s1.x = BCx;
-				s1.y = BCy;
-				s1.z = -((bx + cx) * s1.x + (by + cy) * s1.y) / 2.0;
-				break;
+					s1.x = BCx;
+					s1.y = BCy;
+					s1.z = -((bx + cx) * s1.x + (by + cy) * s1.y) / 2.0;
+					break;
 			}
 
 			// intersect line bisectors to get midpoint
@@ -325,9 +320,13 @@ public class AlgoCircleThreePoints extends AlgoElement
 	public String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("CircleThroughABC",
-				"Circle through %0, %1, %2", A.getLabel(tpl),
-				B.getLabel(tpl), C.getLabel(tpl));
+		return getLoc()
+				.getPlainDefault(
+						"CircleThroughABC",
+						"Circle through %0, %1, %2",
+						A.getLabel(tpl),
+						B.getLabel(tpl),
+						C.getLabel(tpl));
 	}
 
 	@Override
@@ -339,13 +338,11 @@ public class AlgoCircleThreePoints extends AlgoElement
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 
 		if (botanaParams == null) {
 			botanaParams = new BotanaCircleThreePoints();
 		}
 		return botanaParams.getPolynomials(getInput());
 	}
-
 }

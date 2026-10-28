@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoPoint3D;
@@ -15,7 +31,7 @@ import org.geogebra.common.util.DoubleUtil;
 
 /**
  * Regular polygon with 3D points
- * 
+ *
  * @author mathieu
  *
  */
@@ -29,7 +45,7 @@ public class AlgoPolygonRegular3D extends AlgoPolygonRegularND {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param labels
@@ -43,8 +59,13 @@ public class AlgoPolygonRegular3D extends AlgoPolygonRegularND {
 	 * @param direction
 	 *            direction of the plane
 	 */
-	public AlgoPolygonRegular3D(Construction c, String[] labels, GeoPointND A1,
-			GeoPointND B1, GeoNumberValue num, GeoDirectionND direction) {
+	public AlgoPolygonRegular3D(
+			Construction c,
+			String[] labels,
+			GeoPointND A1,
+			GeoPointND B1,
+			GeoNumberValue num,
+			GeoDirectionND direction) {
 		super(c, labels, A1, B1, num, direction);
 	}
 
@@ -78,7 +99,6 @@ public class AlgoPolygonRegular3D extends AlgoPolygonRegularND {
 
 		// parent of output
 		getPoly().setParentAlgorithm(this);
-
 	}
 
 	@Override
@@ -98,7 +118,6 @@ public class AlgoPolygonRegular3D extends AlgoPolygonRegularND {
 		// center point of regular polygon
 		double tanBetaHalf = Math.tan(beta) / 2;
 		((GeoPoint3D) centerPoint).setCoords(m.add(vn.mul(tanBetaHalf)));
-
 	}
 
 	@Override
@@ -124,7 +143,7 @@ public class AlgoPolygonRegular3D extends AlgoPolygonRegularND {
 				outputPoints.getElement(i).setUndefined();
 			}
 			if (getPoly().getPointsND() == null) {
-				getPoly().setPoints(new GeoPointND[] { A, B }, null, false);
+				getPoly().setPoints(new GeoPointND[] {A, B}, null, false);
 			}
 
 			numOld = 2;
@@ -139,5 +158,4 @@ public class AlgoPolygonRegular3D extends AlgoPolygonRegularND {
 		// TODO Auto-generated method stub
 
 	}
-
 }

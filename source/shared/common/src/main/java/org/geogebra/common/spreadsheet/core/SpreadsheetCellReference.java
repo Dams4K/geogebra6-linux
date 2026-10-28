@@ -1,32 +1,50 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.spreadsheet.core;
 
 import java.util.Objects;
 
-import javax.annotation.CheckForNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A reference for a single spreadsheet cell (e.g., A1, $A$1, AAA$10)
  */
-final class SpreadsheetCellReference {
+public final class SpreadsheetCellReference {
 
-	final int rowIndex;
-	final boolean rowIsAbsolute;
-	final int columnIndex;
-	final boolean columnIsAbsolute;
+	public final int rowIndex;
+	public final boolean rowIsAbsolute;
+	public final int columnIndex;
+	public final boolean columnIsAbsolute;
 
 	SpreadsheetCellReference(int rowIndex, int columnIndex) {
 		this(rowIndex, false, columnIndex, false);
 	}
 
-	SpreadsheetCellReference(int rowIndex, boolean rowIsAbsolute, int columnIndex,
-			boolean columnIsAbsolute) {
+	SpreadsheetCellReference(
+			int rowIndex, boolean rowIsAbsolute, int columnIndex, boolean columnIsAbsolute) {
+		assert columnIndex >= 0;
+		assert rowIndex >= 0;
 		this.rowIndex = rowIndex;
 		this.rowIsAbsolute = rowIsAbsolute;
 		this.columnIndex = columnIndex;
 		this.columnIsAbsolute = columnIsAbsolute;
 	}
 
-	public boolean equalsIgnoringAbsolute(@CheckForNull SpreadsheetCellReference other) {
+	boolean equalsIgnoringAbsolute(@Nullable SpreadsheetCellReference other) {
 		if (other == null) {
 			return false;
 		}

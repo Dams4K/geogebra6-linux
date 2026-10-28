@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.geos;
 
 import org.geogebra.common.kernel.CommandLookupStrategy;
@@ -19,6 +35,7 @@ public class PolygonFactory {
 
 	@Weak
 	private Construction cons;
+
 	@Weak
 	private Kernel kernel;
 
@@ -38,7 +55,7 @@ public class PolygonFactory {
 	 *            vertices
 	 * @return vector polygon
 	 */
-	final public GeoElement[] vectorPolygon(String[] labels, GeoPointND[] points) {
+	public final GeoElement[] vectorPolygon(String[] labels, GeoPointND[] points) {
 
 		/*
 		 * cons.setSuppressLabelCreation(true); getAlgoDispatcher().Circle(null,
@@ -75,8 +92,8 @@ public class PolygonFactory {
 			sb.append(points[0].getLabel(tpl));
 			sb.append("))");
 
-			GeoPoint pp = (GeoPoint) kernel.getAlgebraProcessor().evaluateToPoint(sb.toString(),
-					ErrorHelper.silent(), true);
+			GeoPoint pp = (GeoPoint)
+					kernel.getAlgebraProcessor().evaluateToPoint(sb.toString(), ErrorHelper.silent(), true);
 
 			try {
 				cons.replace((GeoElement) points[i], pp);
@@ -91,13 +108,12 @@ public class PolygonFactory {
 		points[0].update();
 
 		return kernel.getAlgoDispatcher().polygon(labels, points);
-
 	}
 
 	/**
 	 * makes a copy of a polygon that can be dragged and rotated but stays
 	 * congruent to original
-	 * 
+	 *
 	 * @param poly
 	 *            polygon
 	 * @param offsetX
@@ -108,8 +124,8 @@ public class PolygonFactory {
 	 *            output labels
 	 * @return draggable copy of a polygon
 	 */
-	final public GeoElement[] rigidPolygon(GeoPolygon poly, double offsetX,
-			double offsetY, String[] labels) {
+	public final GeoElement[] rigidPolygon(
+			GeoPolygon poly, double offsetX, double offsetY, String[] labels) {
 
 		GeoPointND[] p = new GeoPointND[poly.getPointsLength()];
 
@@ -124,14 +140,15 @@ public class PolygonFactory {
 		// create p1 = point on circle (so it can be dragged to rotate the whole
 		// shape)
 
-		GeoSegment radius = kernel.getAlgoDispatcher().segment(null, (GeoPoint) pts[0],
-				(GeoPoint) pts[1]);
+		GeoSegment radius =
+				kernel.getAlgoDispatcher().segment(null, (GeoPoint) pts[0], (GeoPoint) pts[1]);
 
 		GeoConicND circle = kernel.getAlgoDispatcher().circle(null, p[0], radius);
 		cons.setSuppressLabelCreation(oldMacroMode);
 
-		p[1] = kernel.getAlgoDispatcher().point(null, circle, poly.getPoint(1).inhomX,
-				poly.getPoint(1).inhomY, true, false, true);
+		p[1] = kernel
+				.getAlgoDispatcher()
+				.point(null, circle, poly.getPoint(1).inhomX, poly.getPoint(1).inhomY, true, false, true);
 
 		p[1].setLabel(null);
 
@@ -141,14 +158,13 @@ public class PolygonFactory {
 		String sb;
 
 		int n = poly.getPointsLength();
-		String angle = "arg(" + label(p[1]) + "-" + label(p[0]) + ")-arg("
-				+ label(pts[1]) + "-" + label(pts[0]) + ")";
+		String angle = "arg(" + label(p[1]) + "-" + label(p[0]) + ")-arg(" + label(pts[1]) + "-"
+				+ label(pts[0]) + ")";
 		for (int i = 2; i < n; i++) {
 			// build string like
 			// A1 + Rotate[D - A, arg(B1 - A1) - arg(B - A)]
 			sb = label(p[0]) + "+Rotate[" + label(pts[i]) + "-" + label(pts[0]) + "," + angle + "]";
-			p[i] = kernel.getAlgebraProcessor().evaluateToPoint(sb, ErrorHelper.silent(),
-					true);
+			p[i] = kernel.getAlgebraProcessor().evaluateToPoint(sb, ErrorHelper.silent(), true);
 			p[i].setEuclidianVisible(false);
 			p[i].getParentAlgorithm().addToConstructionList();
 			p[i].setLabel(null);
@@ -157,7 +173,7 @@ public class PolygonFactory {
 		kernel.setCommandLookupStrategy(oldVal);
 
 		AlgoPolygon algo = new AlgoPolygon(cons, labels, p);
-		GeoElement[] ret = { algo.getOutput(0) };
+		GeoElement[] ret = {algo.getOutput(0)};
 
 		GeoPointND firstPoint = ((GeoPolygon) ret[0]).getPoints()[0];
 
@@ -166,7 +182,7 @@ public class PolygonFactory {
 		firstPoint.setCoords(firstPoint.getX2D() + offsetX, firstPoint.getY2D() + offsetY, 1.0);
 		firstPoint.updateRepaint();
 
-		//Copy the (most important) attributes to the newly created polygon
+		// Copy the (most important) attributes to the newly created polygon
 		ret[0].setBasicVisualStyle(poly);
 
 		return ret;
@@ -183,15 +199,15 @@ public class PolygonFactory {
 	 *            points
 	 * @return rigid polygon
 	 */
-	final public GeoElement[] rigidPolygon(String[] labels, GeoPointND[] points) {
+	public final GeoElement[] rigidPolygon(String[] labels, GeoPointND[] points) {
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
-		GeoConicND circle = kernel.getAlgoDispatcher().circle(null, points[0],
-				new GeoNumeric(cons, points[0].distance(points[1])));
-		cons.setSuppressLabelCreation(oldMacroMode);
-
+		GeoConicND circle = kernel
+				.getAlgoDispatcher()
+				.circle(null, points[0], new GeoNumeric(cons, points[0].distance(points[1])));
+		// keep p without label, will be updated during replace
 		GeoPointND p = kernel.rigidPolygonPointOnCircle(circle, points[1]);
-
+		cons.setSuppressLabelCreation(oldMacroMode);
 		try {
 			cons.replace((GeoElement) points[1], (GeoElement) p);
 			points[1] = p;
@@ -208,9 +224,9 @@ public class PolygonFactory {
 		double yB = points[1].getInhomY();
 
 		GeoVec2D a = new GeoVec2D(cons.getKernel(), xB - xA, yB - yA); // vector
-																		// AB
+		// AB
 		GeoVec2D b = new GeoVec2D(cons.getKernel(), yA - yB, xB - xA); // perpendicular
-																		// to
+		// to
 		// AB
 		// changed to use this instead of Unit(Orthogonal)Vector
 		// https://www.geogebra.org/forum/viewtopic.php?f=13&p=82764#p82764
@@ -221,7 +237,7 @@ public class PolygonFactory {
 
 		a.makeUnitVector();
 		b.makeUnitVector();
-		StringTemplate tpl = StringTemplate.maxPrecision;
+		StringTemplate tpl = StringTemplate.maxDecimals;
 		boolean is3D = points[0].isGeoElement3D() || points[1].isGeoElement3D();
 		for (int i = 2; i < points.length; i++) {
 
@@ -229,7 +245,7 @@ public class PolygonFactory {
 			double yC = points[i].getInhomY();
 
 			GeoVec2D d = new GeoVec2D(cons.getKernel(), xC - xA, yC - yA); // vector
-																			// AC
+			// AC
 
 			// make string like this
 			// A+3.76UnitVector[Segment[A,B]]+-1.74UnitPerpendicularVector[Segment[A,B]]
@@ -252,14 +268,12 @@ public class PolygonFactory {
 			sb.append(points[1].getLabel(tpl));
 			rigidPolygonAddEndOfCommand(sb, is3D);
 
-			GeoPointND pp = kernel.getAlgebraProcessor().evaluateToPoint(sb.toString(),
-					ErrorHelper.silent(), true);
+			GeoPointND pp =
+					kernel.getAlgebraProcessor().evaluateToPoint(sb.toString(), ErrorHelper.silent(), true);
 
 			try {
 				cons.replace((GeoElement) points[i], (GeoElement) pp);
 				points[i] = pp;
-				points[i].setEuclidianVisible(false);
-				points[i].update();
 			} catch (Exception e) {
 				Log.debug(e);
 				return null;
@@ -267,11 +281,18 @@ public class PolygonFactory {
 		}
 
 		kernel.setCommandLookupStrategy(oldVal);
-
-		points[0].update();
+		for (int i = 0; i < points.length; i++) {
+			String label = points[i].getLabelSimple();
+			if (label != null) {
+				points[i] = cons.lookupLabel(label) instanceof GeoPointND pt ? pt : points[i];
+			}
+			if (i > 1) {
+				points[i].setEuclidianVisible(false);
+			}
+			points[i].update();
+		}
 
 		return kernel.getAlgoDispatcher().polygon(labels, points);
-
 	}
 
 	private static void rigidPolygonAddEndOfCommand(StringBuilder sb, boolean is3D) {

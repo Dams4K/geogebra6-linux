@@ -1,21 +1,23 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.main;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import javax.annotation.CheckForNull;
 
 import org.geogebra.common.annotation.MissingDoc;
 import org.geogebra.common.awt.GPoint;
@@ -26,8 +28,8 @@ import org.geogebra.common.gui.Editing;
 import org.geogebra.common.gui.Layout;
 import org.geogebra.common.gui.view.consprotocol.ConstructionProtocolNavigation;
 import org.geogebra.common.gui.view.consprotocol.ConstructionProtocolView;
-import org.geogebra.common.gui.view.spreadsheet.SpreadsheetViewInterface;
 import org.geogebra.common.gui.view.table.TableValuesPoints;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.ModeSetter;
 import org.geogebra.common.kernel.View;
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -35,20 +37,21 @@ import org.geogebra.common.kernel.geos.GeoImage;
 import org.geogebra.common.kernel.geos.GeoPoint;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.main.settings.ConstructionProtocolSettings;
+import org.geogebra.common.main.settings.LabelSettings;
 import org.geogebra.common.main.settings.SettingListener;
 import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.common.util.ManualPage;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This interface is almost the same as GuiManager, just it is an interface and
  * doesn't implement anything, and contains only public methods. (So things from
  * GuiManager were moved to here.)
- * 
+ *
  * @author arpad
  *
  */
-
-public interface GuiManagerInterface extends SettingListener {
+public interface GuiManagerInterface extends SettingListener<LabelSettings> {
 
 	@MissingDoc
 	void updateMenubar();
@@ -62,9 +65,8 @@ public interface GuiManagerInterface extends SettingListener {
 	 * @param view graphic view
 	 * @param mouseLoc mouse location
 	 */
-	void showPopupMenu(ArrayList<GeoElement> selectedGeos,
-					   EuclidianViewInterfaceCommon view,
-					   GPoint mouseLoc);
+	void showPopupMenu(
+			ArrayList<GeoElement> selectedGeos, EuclidianViewInterfaceCommon view, GPoint mouseLoc);
 
 	/**
 	 * Show popup menu for choosing one of possible elements.
@@ -72,9 +74,11 @@ public interface GuiManagerInterface extends SettingListener {
 	 * @param geos elements to choose from
 	 * @param view graphic view
 	 */
-	void showPopupChooseGeo(ArrayList<GeoElement> selectedGeos,
-							ArrayList<GeoElement> geos, EuclidianViewInterfaceCommon view,
-							GPoint p);
+	void showPopupChooseGeo(
+			ArrayList<GeoElement> selectedGeos,
+			ArrayList<GeoElement> geos,
+			EuclidianViewInterfaceCommon view,
+			GPoint p);
 
 	/**
 	 * Update UI for new app mode.
@@ -112,8 +116,7 @@ public interface GuiManagerInterface extends SettingListener {
 	 * @param fromClipboard whether it's from clipboard
 	 * @param view view to insert image in
 	 */
-	void loadImage(GeoPoint loc, Object object, boolean fromClipboard,
-				   EuclidianView view);
+	void loadImage(GeoPoint loc, Object object, boolean fromClipboard, EuclidianView view);
 
 	/**
 	 * loads the camera dialog
@@ -144,23 +147,21 @@ public interface GuiManagerInterface extends SettingListener {
 	 * Append construction protocol XML to a builder.
 	 * @param sb XML string builder
 	 */
-	void getConsProtocolXML(StringBuilder sb);
+	void getConsProtocolXML(XMLStringBuilder sb);
 
 	/**
 	 * Show graphics view options context menu.
 	 * @param view graphics view
 	 * @param mouseLoc pointer location
 	 */
-	void showDrawingPadPopup(EuclidianViewInterfaceCommon view,
-							 GPoint mouseLoc);
+	void showDrawingPadPopup(EuclidianViewInterfaceCommon view, GPoint mouseLoc);
 
 	/**
 	 * Show 3D graphics view options context menu.
 	 * @param view graphics view
 	 * @param mouseLoc pointer location
 	 */
-	void showDrawingPadPopup3D(EuclidianViewInterfaceCommon view,
-							   GPoint mouseLoc);
+	void showDrawingPadPopup3D(EuclidianViewInterfaceCommon view, GPoint mouseLoc);
 
 	@MissingDoc
 	boolean hasSpreadsheetView();
@@ -199,9 +200,6 @@ public interface GuiManagerInterface extends SettingListener {
 	boolean hasCasView();
 
 	@MissingDoc
-	SpreadsheetViewInterface getSpreadsheetView();
-
-	@MissingDoc
 	View getProbabilityCalculator();
 
 	@MissingDoc
@@ -212,7 +210,7 @@ public interface GuiManagerInterface extends SettingListener {
 	 * @param id view ID
 	 * @return plot panel view
 	 */
-	View getPlotPanelView(int id);
+	EuclidianViewInterfaceCommon getPlotPanelView(int id);
 
 	@MissingDoc
 	View getPropertiesView();
@@ -231,7 +229,7 @@ public interface GuiManagerInterface extends SettingListener {
 	 * @param sb XML builder
 	 * @param asPreference if it's for the preference
 	 */
-	void getAlgebraViewXML(StringBuilder sb, boolean asPreference);
+	void getAlgebraViewXML(XMLStringBuilder sb, boolean asPreference);
 
 	/**
 	 * Update undo/redo and menu for selection.
@@ -389,9 +387,6 @@ public interface GuiManagerInterface extends SettingListener {
 	@MissingDoc
 	void initialize();
 
-	@MissingDoc
-	void resetSpreadsheet();
-
 	/**
 	 * Enable / disable autoscroll in spreadsheet.
 	 *
@@ -462,8 +457,8 @@ public interface GuiManagerInterface extends SettingListener {
 	 * @param playDelay value of delay between steps (in seconds)
 	 * @param showProtButton whether to include CP button
 	 */
-	void setShowConstructionProtocolNavigation(boolean show, int id,
-			boolean playButton, double playDelay, boolean showProtButton);
+	void setShowConstructionProtocolNavigation(
+			boolean show, int id, boolean playButton, double playDelay, boolean showProtButton);
 
 	/**
 	 * Update checkboxes for construction protocol navigation setting.
@@ -490,8 +485,7 @@ public interface GuiManagerInterface extends SettingListener {
 	 *            eg "a, b"
 	 * @return true/false
 	 */
-	boolean checkAutoCreateSliders(String string,
-								   AsyncOperation<String[]> callback);
+	boolean checkAutoCreateSliders(String string, AsyncOperation<String[]> callback);
 
 	/**
 	 * Apply construction protocol settings.
@@ -595,7 +589,7 @@ public interface GuiManagerInterface extends SettingListener {
 	 * Get XML for construction protocol and data analysis.
 	 * @param sb XML builder
 	 */
-	void getExtraViewsXML(StringBuilder sb);
+	void getExtraViewsXML(XMLStringBuilder sb);
 
 	/**
 	 * @param type help page type
@@ -621,7 +615,7 @@ public interface GuiManagerInterface extends SettingListener {
 	 * @param sb XML builder
 	 * @param asPreference whether this is for preference XML (as opposed to .ggb file)
 	 */
-	void getViewsXML(StringBuilder sb, boolean asPreference);
+	void getViewsXML(XMLStringBuilder sb, boolean asPreference);
 
 	/**
 	 * Make the right panel (toolbar) go from full screen to default width.
@@ -631,5 +625,19 @@ public interface GuiManagerInterface extends SettingListener {
 	/**
 	 * @return input keyboard button for Web input boxes
 	 */
-	@CheckForNull InputKeyboardButton getInputKeyboardButton();
+	@Nullable InputKeyboardButton getInputKeyboardButton();
+
+	/**
+	 * @return whether spreadsheet has (keyboard) focus
+	 */
+	boolean isSpreadsheetFocused();
+
+	/**
+	 * Scroll spreadsheet to make a cell visible, has no effect if spreadsheet is not visible
+	 * or position is not defined. Attempts to use position based on geo's current label,
+	 * on failure use new label.
+	 * @param geo construction element
+	 * @param labelNew new label
+	 */
+	void scrollSpreadsheetToCell(GeoElement geo, String labelNew);
 }

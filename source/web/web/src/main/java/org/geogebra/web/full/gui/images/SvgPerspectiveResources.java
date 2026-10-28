@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.images;
 
 import org.geogebra.web.resources.SVGResource;
@@ -105,7 +121,8 @@ public interface SvgPerspectiveResources extends ClientBundle {
 	@Source("org/geogebra/common/icons/svg/web/menuIconsTransparent/menu_view_3d.svg")
 	SVGResource menu_icon_graphics3D_transparent();
 
-	@Source("org/geogebra/common/icons/svg/web/menuIconsTransparent/menu_view_construction_protocol.svg")
+	@Source(
+			"org/geogebra/common/icons/svg/web/menuIconsTransparent/menu_view_construction_protocol.svg")
 	SVGResource menu_icon_construction_protocol_transparent();
 
 	@Source("org/geogebra/common/icons/svg/web/menuIconsTransparent/menu_view_probability.svg")
@@ -127,5 +144,4 @@ public interface SvgPerspectiveResources extends ClientBundle {
 
 	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/toolBar/ic_arrow_back_black_24px.svg")
 	SVGResource menu_header_back();
-
 }

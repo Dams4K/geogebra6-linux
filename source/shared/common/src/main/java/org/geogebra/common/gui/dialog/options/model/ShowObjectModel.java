@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import org.geogebra.common.annotation.MissingDoc;
@@ -9,7 +25,6 @@ public class ShowObjectModel extends BooleanOptionModel {
 	public interface IShowObjectListener extends IBooleanOptionListener {
 		@MissingDoc
 		void updateCheckbox(boolean value, boolean isEnabled);
-
 	}
 
 	public ShowObjectModel(IShowObjectListener listener, App app) {
@@ -36,10 +51,8 @@ public class ShowObjectModel extends BooleanOptionModel {
 			}
 		}
 
-		((IShowObjectListener) getListener()).updateCheckbox(equalObjectVal
-				&& geo0.isSetEuclidianVisible(),
-				!showObjectCondition);
-
+		((IShowObjectListener) getListener())
+				.updateCheckbox(equalObjectVal && geo0.isSetEuclidianVisible(), !showObjectCondition);
 	}
 
 	@Override
@@ -56,7 +69,6 @@ public class ShowObjectModel extends BooleanOptionModel {
 				// slider)
 				|| (geo.isGeoNumeric() && geo.isLocked())) {
 			isValid = false;
-
 		}
 
 		return isValid;
@@ -75,5 +87,4 @@ public class ShowObjectModel extends BooleanOptionModel {
 		geo.updateVisualStyleRepaint(GProperty.VISIBLE);
 		storeUndoInfo();
 	}
-
 }

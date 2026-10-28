@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import org.geogebra.common.annotation.MissingDoc;
@@ -12,7 +28,6 @@ import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.error.ErrorHandler;
 import org.geogebra.common.scientific.LabelController;
-import org.geogebra.common.util.AsyncOperation;
 
 public class ObjectNameModel extends OptionsModel {
 	private IObjectNameListener listener;
@@ -54,7 +69,6 @@ public class ObjectNameModel extends OptionsModel {
 		setNameInputHandler(new RenameInputHandler(app, null, false));
 		// DEFINITION PANEL
 		setDefInputHandler(new RedefineInputHandler(app, null, null));
-
 	}
 
 	@Override
@@ -73,7 +87,7 @@ public class ObjectNameModel extends OptionsModel {
 		// DEFINITION
 		// boolean showDefinition = !(currentGeo.isGeoText() ||
 		// currentGeo.isGeoImage());
-		boolean showDefinition = true;
+		boolean showDefinition;
 		if (getCurrentGeo().isGeoText()) {
 			showDefinition = ((GeoText) getCurrentGeo()).isTextCommand();
 		} else {
@@ -103,15 +117,9 @@ public class ObjectNameModel extends OptionsModel {
 		}
 
 		nameInputHandler.setGeoElement(currentGeo);
-		nameInputHandler.processInput(name, handler,
-				new AsyncOperation<Boolean>() {
-
-					@Override
-					public void callback(Boolean obj) {
-						// TODO Auto-generated method stub
-
-					}
-				});
+		nameInputHandler.processInput(name, handler, obj -> {
+			// failure handled in resetLabel
+		});
 
 		// reset label if not successful
 		resetLabel(name);
@@ -152,18 +160,17 @@ public class ObjectNameModel extends OptionsModel {
 
 	public void applyDefinitionChange(final String definition, ErrorHandler handler) {
 		if (!definition.equals(getDefText(currentGeo))) {
-			defInputHandler.processInput(definition, handler,
-					ok -> {
-						if (ok) {
-							// if succeeded, switch current geo
-							currentGeo = defInputHandler.getGeoElement();
-							app.getSelectionManager().clearSelectedGeos(false, false);
-							app.getSelectionManager().addSelectedGeo(currentGeo);
-						} else {
-							setRedefinitionFailed(true);
-						}
-						storeUndoInfo();
-					});
+			defInputHandler.processInput(definition, handler, ok -> {
+				if (ok) {
+					// if succeeded, switch current geo
+					currentGeo = defInputHandler.getGeoElement();
+					app.getSelectionManager().clearSelectedGeos(false, false);
+					app.getSelectionManager().addSelectedGeo(currentGeo);
+				} else {
+					setRedefinitionFailed(true);
+				}
+				storeUndoInfo();
+			});
 		}
 	}
 
@@ -182,8 +189,8 @@ public class ObjectNameModel extends OptionsModel {
 		storeUndoInfo();
 	}
 
-	public void redefineCurrentGeo(GeoElementND geo, final String text,
-			final String redefinitionText, ErrorHandler handler) {
+	public void redefineCurrentGeo(
+			GeoElementND geo, final String text, final String redefinitionText, ErrorHandler handler) {
 		setBusy(true);
 
 		if (isRedefinitionFailed()) {
@@ -196,27 +203,21 @@ public class ObjectNameModel extends OptionsModel {
 
 				listener.setDefinitionText(text);
 				defInputHandler.setGeoElement(geo);
-				defInputHandler.processInput(text, handler,
-						ok -> {
-							if (ok) {
-								setCurrentGeo(defInputHandler.getGeoElement());
-								storeUndoInfo();
-							}
-						});
+				defInputHandler.processInput(text, handler, ok -> {
+					if (ok) {
+						setCurrentGeo(defInputHandler.getGeoElement());
+						storeUndoInfo();
+					}
+				});
 			}
 		} else {
 			String strDefinition = redefinitionText;
 			if (!strDefinition.equals(getDefText(geo))) {
 				defInputHandler.setGeoElement(geo);
-				defInputHandler.processInput(strDefinition, handler,
-						new AsyncOperation<Boolean>() {
+				defInputHandler.processInput(strDefinition, handler, obj -> {
+					// TODO handle failure?
 
-							@Override
-							public void callback(Boolean obj) {
-								// TODO Auto-generated method stub
-
-							}
-						});
+				});
 				defInputHandler.setGeoElement(currentGeo);
 			}
 		}

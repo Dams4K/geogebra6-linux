@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.advanced;
 
 import org.geogebra.common.kernel.Kernel;
@@ -17,7 +33,7 @@ import org.geogebra.common.main.MyError;
 public class CmdEnvelope extends CommandProcessor {
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -34,41 +50,41 @@ public class CmdEnvelope extends CommandProcessor {
 		GeoElement linear;
 
 		switch (n) {
-		case 2:
-			if ((ok[0] = arg[0].isPath())
-					&& (ok[1] = arg[1].isGeoPoint())) {
-				linear = arg[0];
-				movingPoint = (GeoPoint) arg[1];
-			} else {
-				throw argErr(c, getBadArg(ok, arg));
-			}
-			break;
+			case 2:
+				if ((ok[0] = arg[0].isPath()) && (ok[1] = arg[1].isGeoPoint())) {
+					linear = arg[0];
+					movingPoint = (GeoPoint) arg[1];
+				} else {
+					throw argErr(c, getBadArg(ok, arg));
+				}
+				break;
 
-		default:
-			throw argNumErr(c);
+			default:
+				throw argNumErr(c);
 		}
 
 		return new GeoElement[] {
-				envelope(c.getLabel(), (Path) linear, movingPoint)
-						.toGeoElement() };
+			envelope(c.getLabel(), (Path) linear, movingPoint, c).toGeoElement()
+		};
 	}
 
 	/**
 	 * locus equation for Q dependent on P.
-	 * 
+	 *
 	 * @param label
 	 *            output label
 	 * @param linear
 	 *            dependent path
 	 * @param movingPoint
 	 *            moving point
+	 * @param command envelope command
 	 * @return implicit curve
 	 */
-	final public GeoImplicit envelope(String label, Path linear,
-			GeoPoint movingPoint) {
+	public final GeoImplicit envelope(
+			String label, Path linear, GeoPoint movingPoint, Command command) {
 		// TODO: add check here if linear is a correct input
 		if (movingPoint.getPath() == null || !movingPoint.isParentOf(linear)) {
-			return null;
+			throw argErr(movingPoint, command);
 		}
 		AlgoEnvelope algo = new AlgoEnvelope(cons, linear, movingPoint);
 		GeoImplicit poly = algo.getPoly();
@@ -76,5 +92,4 @@ public class CmdEnvelope extends CommandProcessor {
 		poly.setLabel(label);
 		return poly;
 	}
-
 }

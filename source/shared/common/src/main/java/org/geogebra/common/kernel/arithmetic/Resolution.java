@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.arithmetic;
 
 import java.util.Set;
@@ -6,7 +22,11 @@ import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.commands.EvalInfo;
 import org.geogebra.common.kernel.geos.GeoElement;
+import org.geogebra.common.main.Localization;
+import org.geogebra.common.ownership.NonOwning;
 import org.geogebra.common.plugin.Operation;
+
+import com.google.j2objc.annotations.Weak;
 
 /**
  * Fake expression value for storing the result type in expression node
@@ -16,6 +36,14 @@ public class Resolution implements ExpressionValue {
 
 	private ExpressionValueType type = ValueType.UNKNOWN;
 	private int listDepth = 0;
+
+	@Weak
+	@NonOwning
+	private final Localization loc;
+
+	public Resolution(Localization loc) {
+		this.loc = loc;
+	}
 
 	/**
 	 * @param listDepth
@@ -213,7 +241,7 @@ public class Resolution implements ExpressionValue {
 
 	@Override
 	public ExpressionValue getUndefinedCopy(Kernel kernel) {
-		Resolution res = new Resolution();
+		Resolution res = new Resolution(kernel.getLocalization());
 		res.listDepth = this.listDepth;
 		res.type = this.type;
 		return res;
@@ -238,5 +266,10 @@ public class Resolution implements ExpressionValue {
 	@Override
 	public boolean isRecurringDecimal() {
 		return false;
+	}
+
+	@Override
+	public Localization getLocalization() {
+		return loc;
 	}
 }

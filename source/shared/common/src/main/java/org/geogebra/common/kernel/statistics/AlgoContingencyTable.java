@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -23,14 +27,13 @@ import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoList;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.kernel.geos.GeoText;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 /**
  * ContingencyTable[] algorithm
- * 
+ *
  * @author G. Sturr
- * 
+ *
  */
 public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 	// input
@@ -70,7 +73,7 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 
 	/**************************************************
 	 * Constructs a contingency table from raw data
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -81,10 +84,10 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 	 *            list of second property of the datapoints
 	 * @param args
 	 *            table style arguments
-	 * 
+	 *
 	 */
-	public AlgoContingencyTable(Construction cons, String label, GeoList list1,
-			GeoList list2, GeoText args) {
+	public AlgoContingencyTable(
+			Construction cons, String label, GeoList list1, GeoList list2, GeoText args) {
 
 		super(cons);
 
@@ -101,7 +104,7 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 
 		setInputOutput();
 		// must set isLaTex before computing, #3846
-		table.isTextCommand = true;
+		table.setIsTextCommand(true);
 		table.setLaTeX(true, false);
 
 		compute();
@@ -110,7 +113,7 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 
 	/***************************************************
 	 * Constructs a contingency table from a given frequency table
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -124,8 +127,12 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 	 * @param args
 	 *            table style arguments
 	 */
-	public AlgoContingencyTable(Construction cons, String label,
-			GeoList rowList, GeoList colList, GeoList freqMatrix,
+	public AlgoContingencyTable(
+			Construction cons,
+			String label,
+			GeoList rowList,
+			GeoList colList,
+			GeoList freqMatrix,
 			GeoText args) {
 
 		super(cons);
@@ -146,7 +153,6 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 		compute();
 
 		table.setLabel(label);
-
 	}
 
 	@Override
@@ -250,8 +256,7 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 		for (int rowIndex = 0; rowIndex < rowValues.length; rowIndex++) {
 			GeoList rowGeo = (GeoList) fr.get(rowIndex);
 			for (int colIndex = 0; colIndex < colValues.length; colIndex++) {
-				freqValues[rowIndex][colIndex] = (int) ((GeoNumeric) rowGeo
-						.get(colIndex)).getDouble();
+				freqValues[rowIndex][colIndex] = (int) ((GeoNumeric) rowGeo.get(colIndex)).getDouble();
 				rowSum[rowIndex] += freqValues[rowIndex][colIndex];
 				colSum[colIndex] += freqValues[rowIndex][colIndex];
 				totalSum += freqValues[rowIndex][colIndex];
@@ -265,9 +270,13 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 	 * Loads prepared frequencies and values from GeoLists into arrays
 	 */
 	private boolean loadPreparedDataValues() {
-		if (rowList == null || colList == null || freqMatrix == null
-				|| !rowList.isDefined() || !colList.isDefined()
-				|| !freqMatrix.isDefined() || !freqMatrix.isMatrix()) {
+		if (rowList == null
+				|| colList == null
+				|| freqMatrix == null
+				|| !rowList.isDefined()
+				|| !colList.isDefined()
+				|| !freqMatrix.isDefined()
+				|| !freqMatrix.isMatrix()) {
 			table.setUndefined();
 			return false;
 		}
@@ -316,13 +325,11 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 					return false;
 				}
 
-				freqValues[rowIndex][colIndex] = (int) ((GeoNumeric) rowGeo
-						.get(colIndex)).getDouble();
+				freqValues[rowIndex][colIndex] = (int) ((GeoNumeric) rowGeo.get(colIndex)).getDouble();
 				rowSum[rowIndex] += freqValues[rowIndex][colIndex];
 				colSum[colIndex] += freqValues[rowIndex][colIndex];
 				totalSum += freqValues[rowIndex][colIndex];
 			}
-
 		}
 		return true;
 	}
@@ -337,10 +344,8 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 
 		for (int rowIndex = 0; rowIndex < rowValues.length; rowIndex++) {
 			for (int colIndex = 0; colIndex < colValues.length; colIndex++) {
-				expected[rowIndex][colIndex] = 1.0 * rowSum[rowIndex]
-						* colSum[colIndex] / totalSum;
-				chiCont[rowIndex][colIndex] = freqValues[rowIndex][colIndex]
-						- expected[rowIndex][colIndex];
+				expected[rowIndex][colIndex] = 1.0 * rowSum[rowIndex] * colSum[colIndex] / totalSum;
+				chiCont[rowIndex][colIndex] = freqValues[rowIndex][colIndex] - expected[rowIndex][colIndex];
 				chiCont[rowIndex][colIndex] = chiCont[rowIndex][colIndex]
 						* chiCont[rowIndex][colIndex]
 						/ expected[rowIndex][colIndex];
@@ -372,49 +377,56 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 		beginTable();
 
 		// table header
-		addTableRow(tableSb, -1,
-				handleText(getLoc().getMenu("Frequency")), "colValue",
-				lastRow == 0);
+		addTableRow(tableSb, -1, handleText(getLoc().getMenu("Frequency")), "colValue", lastRow == 0);
 
 		if (showRowPercent) {
-			addTableRow(tableSb, 0,
-					handleText(
-							getLoc().getMenuDefault("RowPercent", "Row %")),
+			addTableRow(
+					tableSb,
+					0,
+					handleText(getLoc().getMenuDefault("RowPercent", "Row %")),
 					"blank",
 					lastRow == 1);
 		}
 		if (showColPercent) {
-			addTableRow(tableSb, 0,
-					handleText(getLoc().getMenuDefault("ColumnPercent",
-							"Column %")),
-					"blank", lastRow == 2);
+			addTableRow(
+					tableSb,
+					0,
+					handleText(getLoc().getMenuDefault("ColumnPercent", "Column %")),
+					"blank",
+					lastRow == 2);
 		}
 		if (showTotalPercent) {
-			addTableRow(tableSb, 0,
-					handleText(
-							getLoc().getMenuDefault("TotalPercent", "Total %")),
-					"blank", lastRow == 3);
+			addTableRow(
+					tableSb,
+					0,
+					handleText(getLoc().getMenuDefault("TotalPercent", "Total %")),
+					"blank",
+					lastRow == 3);
 		}
 		if (showExpected) {
-			addTableRow(tableSb, 0,
-					handleText(getLoc().getMenuDefault("ExpectedCount",
-							"Expected Count")),
-					"blank", lastRow == 4);
+			addTableRow(
+					tableSb,
+					0,
+					handleText(getLoc().getMenuDefault("ExpectedCount", "Expected Count")),
+					"blank",
+					lastRow == 4);
 		}
 		if (showChi) {
-			addTableRow(tableSb, 0,
-					handleText(
-							getLoc().getMenuDefault("ChiSquaredContribution",
-									Unicode.Chi + "" + Unicode.SUPERSCRIPT_2
-											+ " Contribution")),
-					"blank", lastRow == 5);
+			addTableRow(
+					tableSb,
+					0,
+					handleText(getLoc()
+							.getMenuDefault(
+									"ChiSquaredContribution",
+									Unicode.Chi + "" + Unicode.SUPERSCRIPT_2 + " Contribution")),
+					"blank",
+					lastRow == 5);
 		}
 
 		// remaining rows
 		for (int rowIndex = 0; rowIndex < rowValues.length; rowIndex++) {
 
-			addTableRow(tableSb, rowIndex, rowValues[rowIndex], "count",
-					lastRow == 0);
+			addTableRow(tableSb, rowIndex, rowValues[rowIndex], "count", lastRow == 0);
 			if (showRowPercent) {
 				addTableRow(tableSb, rowIndex, null, "_", lastRow == 1);
 			}
@@ -430,12 +442,10 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 			if (showChi) {
 				addTableRow(tableSb, rowIndex, null, "k", lastRow == 5);
 			}
-
 		}
 
 		// table footer
-		addTableRow(tableSb, -1, getLoc().getMenu("Total"), "tableFooter",
-				!showRowPercent);
+		addTableRow(tableSb, -1, getLoc().getMenu("Total"), "tableFooter", !showRowPercent);
 		if (showRowPercent) {
 			addTableRow(tableSb, 0, null, "rowPercentFooter", true);
 		}
@@ -443,7 +453,6 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 
 		if (showTest) {
 			addChiTest(tableSb);
-
 		}
 
 		table.setTextString(tableSb.toString());
@@ -452,21 +461,17 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 	private static void endTable(StringBuilder sb2) {
 
 		sb2.append("\\end{array}");
-
 	}
 
 	private void addChiTest(StringBuilder sb) {
 		GeoList matrix = isRawData ? freq.getResult() : freqMatrix;
 		AlgoChiSquaredTest test = new AlgoChiSquaredTest(cons, matrix, null, null);
 		cons.removeFromConstructionList(test);
-		final GeoList result = test.getResult();
-
 		String split = "&";
 
 		sb.append("\\\\ ");
 
-		appendText(sb,
-				getLoc().getMenuDefault("ChiSquaredTest", "ChiSquared Test"));
+		appendText(sb, getLoc().getMenuDefault("ChiSquaredTest", "ChiSquared Test"));
 		sb.append("\\\\");
 
 		sb.append("\\begin{array}{|r|r|r|r|}");
@@ -480,10 +485,11 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 		sb.append("\\\\");
 		sb.append("\\hline ");
 
-		sb.append(kernel.format((rowValues.length - 1) * (colValues.length - 1),
-				StringTemplate.numericDefault));
+		sb.append(kernel.format(
+				(rowValues.length - 1) * (colValues.length - 1), StringTemplate.numericDefault));
 
 		sb.append(split);
+		GeoList result = test.getResult();
 		sb.append(result.get(1).toValueString(StringTemplate.numericDefault));
 		sb.append(split);
 		sb.append(result.get(0).toValueString(StringTemplate.numericDefault));
@@ -491,7 +497,6 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 		sb.append("\\\\");
 		sb.append("\\hline ");
 		sb.append("\\end{array}");
-
 	}
 
 	private void beginTable() {
@@ -500,11 +505,10 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 			tableSb.append("|r");
 		}
 		tableSb.append("|r||r|}"); // extra column for margin
-
 	}
 
-	private void addTableRow(StringBuilder sb, int rowIndex, String header,
-			String type, boolean lineBelow) {
+	private void addTableRow(
+			StringBuilder sb, int rowIndex, String header, String type, boolean lineBelow) {
 
 		double x;
 		startRow(sb, rowIndex == -1);
@@ -597,16 +601,13 @@ public class AlgoContingencyTable extends AlgoElement implements TableAlgo {
 		if (lineBelow) {
 			sb.append("\\hline ");
 		}
-
 	}
 
 	private static void endCell(StringBuilder sb) {
 		sb.append("&");
-
 	}
 
 	private static String handleText(String s) {
 		return "\\text{" + s + "}";
 	}
-
 }

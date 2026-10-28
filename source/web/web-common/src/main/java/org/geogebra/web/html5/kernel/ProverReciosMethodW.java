@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.kernel;
 
 import java.math.BigInteger;
@@ -19,15 +35,18 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * A non-threaded version of Recio's method.
- * 
+ *
  * @author Zoltan Kovacs
  */
 public class ProverReciosMethodW extends AbstractProverReciosMethod {
 
 	@Override
-	protected final ProofResult computeNd(HashSet<PVariable> freeVariables,
-			HashMap<PVariable, BigInteger> values, int deg,
-			SymbolicParameters s, AlgebraicStatement as) {
+	protected final ProofResult computeNd(
+			HashSet<PVariable> freeVariables,
+			HashMap<PVariable, BigInteger> values,
+			int deg,
+			SymbolicParameters s,
+			AlgebraicStatement as) {
 		int n = freeVariables.size();
 
 		PVariable[] variables = new PVariable[n];
@@ -77,12 +96,13 @@ public class ProverReciosMethodW extends AbstractProverReciosMethod {
 					// FIXME: Change Long in Variable to BigInteger
 					substitutions.put(v, entry.getValue());
 				}
-				ExtendedBoolean solvable = PPolynomial.solvable(as.getPolynomials()
-						.toArray(new PPolynomial[as.getPolynomials().size()]),
-						substitutions, as.geoStatement.getKernel(),
-						ProverSettings.get().transcext, as.getFreeVariables());
-				Log.debug("Recio meets Botana #" + nrOfTests + ": "
-						+ substitutions);
+				ExtendedBoolean solvable = PPolynomial.solvable(
+						as.getPolynomials().toArray(new PPolynomial[as.getPolynomials().size()]),
+						substitutions,
+						as.geoStatement.getKernel(),
+						ProverSettings.get().transcext,
+						as.getFreeVariables());
+				Log.debug("Recio meets Botana #" + nrOfTests + ": " + substitutions);
 				if (solvable.boolVal()) {
 					return ProofResult.FALSE;
 				}
@@ -121,5 +141,4 @@ public class ProverReciosMethodW extends AbstractProverReciosMethod {
 
 		return ProofResult.TRUE;
 	}
-
 }

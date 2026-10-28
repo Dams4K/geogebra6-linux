@@ -1,29 +1,56 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.main.ScreenReader;
+import org.geogebra.common.util.CommandSyntaxLookupImpl;
 import org.geogebra.common.util.StringUtil;
+import org.geogebra.editor.share.controller.MatrixResizeController;
+import org.geogebra.editor.share.editor.MathFieldInternal;
+import org.geogebra.editor.share.serializer.TeXSerializer;
+import org.geogebra.editor.web.MathFieldW;
 import org.geogebra.web.editor.MathFieldProcessing;
 import org.geogebra.web.full.gui.util.SyntaxAdapterImplWithPaste;
+import org.geogebra.web.html5.gui.util.Dom;
 import org.geogebra.web.html5.util.DataTest;
 import org.gwtproject.canvas.client.Canvas;
 import org.gwtproject.user.client.ui.FlowPanel;
 
-import com.himamis.retex.editor.share.serializer.TeXSerializer;
-import com.himamis.retex.editor.web.MathFieldW;
 import com.himamis.retex.renderer.web.FactoryProviderGWT;
 
 public class LaTeXTreeItem extends RadioTreeItem {
 
 	private MathFieldW mf;
+	private MatrixResizePopup resizePopup;
 
 	public LaTeXTreeItem(Kernel kernel, AlgebraViewW av) {
 		super(kernel, av);
 	}
 
-	public LaTeXTreeItem(GeoElement geo) {
+	protected LaTeXTreeItem(GeoElement geo) {
 		super(geo);
+	}
+
+	protected static LaTeXTreeItem of(GeoElement geo) {
+		LaTeXTreeItem ret = new LaTeXTreeItem(geo);
+		ret.buildGui();
+		return ret;
 	}
 
 	@Override
@@ -69,26 +96,46 @@ public class LaTeXTreeItem extends RadioTreeItem {
 		}
 
 		FactoryProviderGWT.ensureLoaded();
-		mf = new MathFieldW(new SyntaxAdapterImplWithPaste(app.getKernel()), latexItem, canvas,
-				getLatexController(), app.getEditorFeatures());
+		mf = new MathFieldW(
+				new SyntaxAdapterImplWithPaste(app.getKernel()),
+				latexItem,
+				canvas,
+				getLatexController(),
+				app.getEditorFeatures());
+		mf.getInternal().getInputController().setCommandSyntaxLookup(new CommandSyntaxLookupImpl(app));
 		DataTest.ALGEBRA_INPUT.apply(mf.getInputTextArea());
 		mf.setExpressionReader(ScreenReader.getExpressionReader(app));
 		updateEditorAriaLabel("");
+		MatrixResizeController matrixResizeController = mf.getInternal().getMatrixResizeController();
+		mf.getInternal().registerMathFieldInternalListener(this::styleContentIfMatrix);
+		styleContentIfMatrix(mf.getInternal());
+		resizePopup = new MatrixResizePopup(matrixResizeController, mf, app, this::onKeyTyped);
+		matrixResizeController.addListener(resizePopup);
 		mf.setFontSize(getFontSize());
 		mf.getInternal().registerMathFieldInternalListener(syntaxController);
 		mf.setPixelRatio(app.getPixelRatio());
 		mf.setOnBlur((blurEvent) -> {
 			toastController.hide();
+			resizePopup.hide();
 			controller.onBlur(blurEvent);
 		});
-		mf.setOnFocus(focusEvent -> setFocusedStyle(true));
+		mf.setOnFocus(focusEvent -> {
+			setFocusedStyle(true, false);
+			mf.getInternal().getMatrixResizeController().addListener(resizePopup);
+			updateAriaLabel();
+		});
+	}
+
+	private void styleContentIfMatrix(MathFieldInternal mathFieldInternal) {
+		boolean containsMatrix =
+				mathFieldInternal.getMatrixResizeController().getState().containsMatrix();
+		Dom.toggleClass(content, "hasMatrix", containsMatrix);
 	}
 
 	private void updateEditorAriaLabel(String text) {
 		if (mf != null) {
 			if (!StringUtil.emptyTrim(text)) {
-				String label = ScreenReader.getAriaExpression(app, mf.getFormula(),
-						ariaPreview);
+				String label = ScreenReader.getAriaExpression(app, mf.getFormula(), ariaPreview);
 				if (StringUtil.empty(label)) {
 					label = mf.getDescription();
 				}
@@ -119,14 +166,13 @@ public class LaTeXTreeItem extends RadioTreeItem {
 
 	@Override
 	public void insertString(String text) {
-		new MathFieldProcessing(mf).autocomplete(
-				app.getParserFunctions().toEditorAutocomplete(text, loc));
+		new MathFieldProcessing(mf)
+				.autocomplete(app.getParserFunctions().toEditorAutocomplete(text, loc));
 	}
 
 	@Override
 	protected String getEditorLatex() {
-		return mf == null ? null
-				: TeXSerializer.serialize(mf.getFormula().getRootComponent());
+		return mf == null ? null : TeXSerializer.serialize(mf.getFormula().getRootNode());
 	}
 
 	@Override
@@ -145,6 +191,9 @@ public class LaTeXTreeItem extends RadioTreeItem {
 	protected void setEnabled(boolean enabled) {
 		if (mf != null) {
 			mf.setEnabled(false);
+		}
+		if (resizePopup != null) {
+			resizePopup.hide();
 		}
 	}
 
@@ -178,8 +227,14 @@ public class LaTeXTreeItem extends RadioTreeItem {
 	}
 
 	@Override
+	protected void resetCanvas() {
+		canvas = null;
+		mf = null;
+	}
+
+	@Override
 	public RadioTreeItem copy() {
-		return new LaTeXTreeItem(geo);
+		return LaTeXTreeItem.of(geo);
 	}
 
 	@Override

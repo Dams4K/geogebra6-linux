@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -14,7 +30,7 @@ public class CmdAppend extends CommandProcessor {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -29,28 +45,25 @@ public class CmdAppend extends CommandProcessor {
 		arg = resArgs(c, info);
 
 		switch (n) {
-		case 2:
+			case 2:
+				if (arg[0].isGeoList()) {
 
-			if (arg[0].isGeoList()) {
+					AlgoAppend algo = new AlgoAppend(cons, c.getLabel(), (GeoList) arg[0], arg[1]);
 
-				AlgoAppend algo = new AlgoAppend(cons, c.getLabel(),
-						(GeoList) arg[0], arg[1]);
+					GeoElement[] ret = {algo.getResult()};
+					return ret;
+				} else if (arg[1].isGeoList()) {
 
-				GeoElement[] ret = { algo.getResult() };
-				return ret;
-			} else if (arg[1].isGeoList()) {
+					AlgoAppend algo = new AlgoAppend(cons, c.getLabel(), arg[0], (GeoList) arg[1]);
 
-				AlgoAppend algo = new AlgoAppend(cons, c.getLabel(), arg[0],
-						(GeoList) arg[1]);
+					GeoElement[] ret = {algo.getResult()};
+					return ret;
+				} else {
+					throw argErr(c, arg[0]);
+				}
 
-				GeoElement[] ret = { algo.getResult() };
-				return ret;
-			} else {
-				throw argErr(c, arg[0]);
-			}
-
-		default:
-			throw argNumErr(c);
+			default:
+				throw argNumErr(c);
 		}
 	}
 }

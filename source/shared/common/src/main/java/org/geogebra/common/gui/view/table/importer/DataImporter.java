@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.table.importer;
 
 import static org.geogebra.common.gui.view.table.importer.DataImporterError.INCONSISTENT_COLUMNS;
@@ -26,6 +42,7 @@ public final class DataImporter {
 
 	@Weak
 	private DataImporterDelegate delegate;
+
 	private final TableValuesView tableValuesView;
 	private int maxRowCount = 1000;
 	private int maxColumnCount = 100;
@@ -145,13 +162,13 @@ public final class DataImporter {
 	}
 
 	private List<Row> validateAndCollectRowsFromCSV(Reader reader, char decimalSeparator) {
+		final LineReader lineReader = new LineReader(reader);
+		final List<Row> rows = new ArrayList<>();
 		char csvSeparator = 0;
 		boolean dataHasHeader = false;
 		int columnCount = -1;
 		int currentRow = 0;
-		LineReader lineReader = new LineReader(reader);
 		CSVParser parser = new CSVParser();
-		List<Row> rows = new ArrayList<>();
 		String line;
 		try {
 			while ((line = lineReader.readLine()) != null) {
@@ -273,8 +290,10 @@ public final class DataImporter {
 	 */
 	private boolean isValidNumber(String value, char decimalSeparator) {
 		String canonicalized = canonicalizeNumber(value, decimalSeparator);
-		// See <a href="https://github.com/gwtproject/gwt/blob/main/user/super/com/google/gwt/emul/java/lang/Number.java#__isValidDouble">Number.java</a>
-		String floatRegex = "^\\s*[+-]?(NaN|Infinity|((\\d+\\.?\\d*)|(\\.\\d+))([eE][+-]?\\d+)?[dDfF]?)\\s*$";
+		// See <a
+		// href="https://github.com/gwtproject/gwt/blob/main/user/super/com/google/gwt/emul/java/lang/Number.java#__isValidDouble">Number.java</a>
+		String floatRegex =
+				"^\\s*[+-]?(NaN|Infinity|((\\d+\\.?\\d*)|(\\.\\d+))([eE][+-]?\\d+)?[dDfF]?)\\s*$";
 		return canonicalized.matches(floatRegex);
 	}
 
@@ -364,7 +383,11 @@ public final class DataImporter {
 		String[] rawValues;
 		boolean hasValidationIssues;
 
-		Row(int rowNr, boolean isHeader, Double[] values, String[] rawValues,
+		Row(
+				int rowNr,
+				boolean isHeader,
+				Double[] values,
+				String[] rawValues,
 				boolean hasValidationIssues) {
 			this.rowNr = rowNr;
 			this.columnCount = rawValues.length;

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.barycentric;
 
 import org.geogebra.common.kernel.Construction;
@@ -20,11 +36,10 @@ import org.geogebra.common.util.debug.Log;
 /**
  * @author Darko Drakulic
  * @version 23-10-2011
- * 
+ *
  *          This class makes a curve in barycentric coordinates
- * 
+ *
  */
-
 public class AlgoCubic extends AlgoElement {
 
 	private GeoPoint A, B, C; // input
@@ -33,7 +48,7 @@ public class AlgoCubic extends AlgoElement {
 
 	/**
 	 * Creates new triangle cubic algo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -47,8 +62,8 @@ public class AlgoCubic extends AlgoElement {
 	 * @param e
 	 *            index in CTC
 	 */
-	public AlgoCubic(Construction cons, String label, GeoPoint A, GeoPoint B,
-			GeoPoint C, GeoNumberValue e) {
+	public AlgoCubic(
+			Construction cons, String label, GeoPoint A, GeoPoint B, GeoPoint C, GeoNumberValue e) {
 		super(cons);
 		this.A = A;
 		this.B = B;
@@ -80,7 +95,7 @@ public class AlgoCubic extends AlgoElement {
 
 	/**
 	 * Returns the resulting curve
-	 * 
+	 *
 	 * @return the resulting curve
 	 */
 	public GeoImplicit getResult() {
@@ -105,12 +120,12 @@ public class AlgoCubic extends AlgoElement {
 			poly.setUndefined();
 			return;
 		}
-		String Astr = "(" + (x3 - x2) / det + "*y  + " + (y2 - y3) / det
-				+ "*x - " + ((x3 - x2) * y3 + (y2 - y3) * x3) / det + ")";
-		String Bstr = "(" + (x1 - x3) / det + "*y  + " + (y3 - y1) / det
-				+ "*x - " + ((x1 - x3) * y1 + (y3 - y1) * x1) / det + ")";
-		String Cstr = "(" + (x2 - x1) / det + "*y  + " + (y1 - y2) / det
-				+ "*x - " + ((x2 - x1) * y2 + (y1 - y2) * x2) / det + ")";
+		String Astr = "(" + (x3 - x2) / det + "*y  + " + (y2 - y3) / det + "*x - "
+				+ ((x3 - x2) * y3 + (y2 - y3) * x3) / det + ")";
+		String Bstr = "(" + (x1 - x3) / det + "*y  + " + (y3 - y1) / det + "*x - "
+				+ ((x1 - x3) * y1 + (y3 - y1) * x1) / det + ")";
+		String Cstr = "(" + (x2 - x1) / det + "*y  + " + (y1 - y2) / det + "*x - "
+				+ ((x2 - x1) * y2 + (y1 - y2) * x2) / det + ")";
 
 		String equation = new AlgoCubicSwitch().getEquation((int) n.getDouble(), a, b, c);
 
@@ -131,20 +146,18 @@ public class AlgoCubic extends AlgoElement {
 
 		try {
 			ValidExpression ve = parser.parseGeoGebraExpression(equation);
-			GeoImplicit result = (GeoImplicit) algebraProcessor
-					.processEquation((Equation) ve, ve.wrap(), true,
-							new EvalInfo(false))[0];
+			GeoImplicit result = (GeoImplicit)
+					algebraProcessor.processEquation((Equation) ve, ve.wrap(), true, new EvalInfo(false))[0];
 			result.remove();
 			poly.setCoeff(result.getCoeff());
 			poly.setDerivatives(
-						((GeoImplicitCurve) result).getDerivativeX(),
-						((GeoImplicitCurve) result).getDerivativeY(),
-						((GeoImplicitCurve) result).getDerivativeXY());
+					((GeoImplicitCurve) result).getDerivativeX(),
+					((GeoImplicitCurve) result).getDerivativeY(),
+					((GeoImplicitCurve) result).getDerivativeXY());
 			poly.setDefined();
 		} catch (ParseException e) {
 			poly.setUndefined();
 			Log.error(equation);
 		}
 	}
-
 }

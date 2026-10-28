@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -56,8 +60,7 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
 	 * @param start
 	 *            start value
 	 */
-	public AlgoRootNewton(Construction cons, String label, GeoFunctionable f,
-			GeoNumberValue start) {
+	public AlgoRootNewton(Construction cons, String label, GeoFunctionable f, GeoNumberValue start) {
 		super(cons);
 		this.f = f;
 		this.start = start;
@@ -73,7 +76,7 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
 
 	/**
 	 * Constructor for extending algos
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 */
@@ -125,7 +128,6 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
 	 * @return root
 	 */
 	public final double calcRoot(Function fun, double startX) {
-		double root = Double.NaN;
 		if (rootFinderBrent == null) {
 			rootFinderBrent = new BrentSolver(Kernel.STANDARD_PRECISION);
 		}
@@ -136,26 +138,24 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
 			// arbitrary (used to depend on screen width)
 			double step = 1;
 
-			root = rootFinderBrent.solve(MAX_ITERATIONS, fun, startX - step,
-					startX + step,
-					startX);
+			double root =
+					rootFinderBrent.solve(MAX_ITERATIONS, fun, startX - step, startX + step, startX);
 			if (checkRoot(fun, root)) {
 				return root;
 			}
-		} catch (RuntimeException e) {
-			root = Double.NaN;
+		} catch (RuntimeException expected) {
+			// fall back to Brent on smaller domain
 		}
 
 		// try Brent method on valid interval around start
 		double[] borders = getDomain(fun, startX);
 		try {
-			root = rootFinderBrent.solve(MAX_ITERATIONS, fun, borders[0],
-					borders[1], startX);
+			double root = rootFinderBrent.solve(MAX_ITERATIONS, fun, borders[0], borders[1], startX);
 			if (checkRoot(fun, root)) {
 				return root;
 			}
-		} catch (RuntimeException e) {
-			root = Double.NaN;
+		} catch (RuntimeException expected) {
+			// fall back to Newton
 		}
 
 		// try Newton's method
@@ -174,20 +174,20 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
 		}
 
 		try {
-			root = rootFinderNewton.solve(MAX_ITERATIONS, derivFun, borders[0],
-					borders[1], start1);
+			double root =
+					rootFinderNewton.solve(MAX_ITERATIONS, derivFun, borders[0], borders[1], start1);
 			if (checkRoot(fun, root)) {
 				return root;
 			}
-		} catch (RuntimeException e) {
+		} catch (RuntimeException expected) {
 			//
 		}
 		FunctionVariable x = new FunctionVariable(kernel);
-		ExpressionNode inv = AlgoFunctionInvert.invert(fun.getExpression(),
-				fun.getFunctionVariable(), x, kernel);
+		ExpressionNode inv =
+				AlgoFunctionInvert.invert(fun.getExpression(), fun.getFunctionVariable(), x, kernel);
 		x.set(0);
 		if (inv != null) {
-			root = inv.evaluateDouble();
+			double root = inv.evaluateDouble();
 			if (checkRoot(fun, root)) {
 				return root;
 			}
@@ -198,8 +198,7 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
 
 	private static boolean checkRoot(Function fun, double root) {
 		// check what we got
-		return !Double.isNaN(root)
-				&& (Math.abs(fun.value(root)) < Kernel.MIN_PRECISION);
+		return !Double.isNaN(root) && (Math.abs(fun.value(root)) < Kernel.MIN_PRECISION);
 	}
 
 	/**
@@ -215,9 +214,11 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
 	public String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("RootOfAWithInitialValueB",
-				"Root of %0 with initial value %1", f.getLabel(tpl),
-				startGeo.getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault(
+						"RootOfAWithInitialValueB",
+						"Root of %0 with initial value %1",
+						f.getLabel(tpl),
+						startGeo.getLabel(tpl));
 	}
 }

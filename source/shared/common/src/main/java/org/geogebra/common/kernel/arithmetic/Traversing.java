@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.arithmetic;
 
 import java.util.ArrayList;
@@ -26,8 +42,7 @@ import org.geogebra.common.main.App;
 import org.geogebra.common.plugin.GeoClass;
 import org.geogebra.common.plugin.Operation;
 import org.geogebra.common.util.DoubleUtil;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 /**
  * Traversing objects are allowed to traverse through an Equation, MyList,
@@ -35,7 +50,7 @@ import com.himamis.retex.editor.share.util.Unicode;
  * replace one type of objects by another or just count some occurrences of
  * certain types of objects.
  *
- * Each public class in this file which implements Traversing solves a usual
+ * Each public final class in this file which implements Traversing solves a usual
  * task. To support transparency and good coding style, such tasks should be
  * called by the same convention.
  *
@@ -63,7 +78,7 @@ public interface Traversing {
 	/**
 	 * Replaces one object by another
 	 */
-	public class Replacer implements Traversing {
+	final class Replacer implements Traversing {
 		private ExpressionValue oldObj;
 		private ExpressionValue newObj;
 		private static Replacer replacerInstance = new Replacer();
@@ -89,8 +104,7 @@ public interface Traversing {
 		 *            replacement
 		 * @return replacer
 		 */
-		public static Replacer getReplacer(ExpressionValue original,
-				ExpressionValue replacement) {
+		public static Replacer getReplacer(ExpressionValue original, ExpressionValue replacement) {
 			replacerInstance.oldObj = original;
 			replacerInstance.newObj = replacement;
 			return replacerInstance;
@@ -101,7 +115,7 @@ public interface Traversing {
 	 * Like replacer, but creates deep copies
 	 *
 	 */
-	public class CopyReplacer implements Traversing {
+	final class CopyReplacer implements Traversing {
 		private ExpressionValue oldObj;
 		private ExpressionValue newObj;
 		private Kernel kernel;
@@ -131,8 +145,8 @@ public interface Traversing {
 		 *            kernel for copies
 		 * @return replacer
 		 */
-		public static CopyReplacer getReplacer(ExpressionValue original,
-				ExpressionValue replacement, Kernel kernel) {
+		public static CopyReplacer getReplacer(
+				ExpressionValue original, ExpressionValue replacement, Kernel kernel) {
 			replacer.oldObj = original;
 			replacer.newObj = replacement;
 			replacer.kernel = kernel;
@@ -144,7 +158,7 @@ public interface Traversing {
 	 * Replaces dummy variable with given name
 	 *
 	 */
-	public class CommandReplacer implements Traversing {
+	final class CommandReplacer implements Traversing {
 		private Kernel kernel;
 		private boolean cas;
 		private static CommandReplacer replacer = new CommandReplacer();
@@ -157,10 +171,8 @@ public interface Traversing {
 		public ExpressionValue process(ExpressionValue ev) {
 			if (ev instanceof Command) {
 				Command c = (Command) ev;
-				String cmdName = kernel.getApplication()
-						.getReverseCommand(c.getName());
-				if (CommandProcessor.isCmdName(cmdName)
-						|| kernel.getMacro(c.getName()) != null) {
+				String cmdName = kernel.getApplication().getReverseCommand(c.getName());
+				if (CommandProcessor.isCmdName(cmdName) || kernel.getMacro(c.getName()) != null) {
 					return ev;
 				}
 				MyList argList = new MyList(kernel);
@@ -168,16 +180,13 @@ public interface Traversing {
 					argList.addListElement(c.getItem(i).traverse(this));
 				}
 				ExpressionValue var = cas
-						? new GeoDummyVariable(kernel.getConstruction(),
-								c.getName())
+						? new GeoDummyVariable(kernel.getConstruction(), c.getName())
 						: new Variable(kernel, c.getName());
 				GeoElement fun = cas ? null : kernel.lookupLabel(c.getName());
 				if (fun instanceof GeoCurveCartesian && c.getArgumentNumber() == 1) {
-					return new ExpressionNode(kernel, var, Operation.VEC_FUNCTION,
-							argList.getItem(0));
+					return new ExpressionNode(kernel, var, Operation.VEC_FUNCTION, argList.getItem(0));
 				}
-				return new ExpressionNode(kernel, var, Operation.FUNCTION_NVAR,
-						argList);
+				return new ExpressionNode(kernel, var, Operation.FUNCTION_NVAR, argList);
 			}
 			return ev;
 		}
@@ -201,7 +210,7 @@ public interface Traversing {
 	 * Replaces sin(15) with sin(15deg) GGB-2183
 	 *
 	 */
-	public class DegreeReplacer implements Traversing {
+	final class DegreeReplacer implements Traversing {
 		private Kernel kernel;
 		private static DegreeReplacer replacer = new DegreeReplacer();
 
@@ -223,20 +232,16 @@ public interface Traversing {
 							// fix for
 							// Sequence(k deg, k, 0, 360, 30)
 							// Sequence(cos( Element( l1, k )), k, 1, 5 )
-							&& !(arg instanceof Command) && arg.isConstant()
+							&& !(arg instanceof Command)
+							&& arg.isConstant()
+							&& !DoubleUtil.isInteger(180 * arg.evaluateDouble() / Math.PI)) {
 
-							&& !DoubleUtil.isInteger(
-									180 * arg.evaluateDouble() / Math.PI)) {
-
-						ExpressionNode argDegrees = new ExpressionNode(kernel,
-								arg, Operation.MULTIPLY,
-								new AutomaticDegree(kernel));
+						ExpressionNode argDegrees =
+								new ExpressionNode(kernel, arg, Operation.MULTIPLY, new AutomaticDegree(kernel));
 
 						return new ExpressionNode(kernel, argDegrees, op, null);
 					}
-
 				}
-
 			}
 			return ev;
 		}
@@ -257,14 +262,13 @@ public interface Traversing {
 	 * Replaces dummy variable with given name
 	 *
 	 */
-	public class CommandFunctionReplacer implements Traversing {
+	final class CommandFunctionReplacer implements Traversing {
 		private String fn;
 		private GeoElement function;
 
 		@Override
 		public ExpressionValue process(ExpressionValue ev) {
-			if (ev.isGeoElement() && fn
-					.equalsIgnoreCase(((GeoElement) ev).getLabelSimple())) {
+			if (ev.isGeoElement() && fn.equalsIgnoreCase(((GeoElement) ev).getLabelSimple())) {
 				return function;
 			}
 			if (ev instanceof Command && fn.equals(((Command) ev).getName())) {
@@ -275,8 +279,7 @@ public interface Traversing {
 				for (int i = 0; i < c.getArgumentNumber(); i++) {
 					argList.addListElement(c.getItem(i).traverse(this));
 				}
-				return new ExpressionNode(c.getKernel(), function,
-						Operation.FUNCTION_NVAR, argList);
+				return new ExpressionNode(c.getKernel(), function, Operation.FUNCTION_NVAR, argList);
 			}
 			return ev;
 		}
@@ -290,8 +293,7 @@ public interface Traversing {
 		 *            function
 		 * @return replacer
 		 */
-		public static CommandFunctionReplacer getReplacer(App app, String fn,
-				GeoElement function) {
+		public static CommandFunctionReplacer getReplacer(App app, String fn, GeoElement function) {
 			CommandFunctionReplacer replacer = new CommandFunctionReplacer();
 			replacer.fn = fn;
 			replacer.function = function;
@@ -304,7 +306,7 @@ public interface Traversing {
 	 * vector flag for future serialization
 	 *
 	 */
-	public class GgbVectRemover implements Traversing {
+	final class GgbVectRemover implements Traversing {
 
 		private static final GgbVectRemover remover = new GgbVectRemover();
 
@@ -329,7 +331,6 @@ public interface Traversing {
 						return vec3DNode;
 					}
 				}
-
 			}
 			return ev;
 		}
@@ -346,7 +347,7 @@ public interface Traversing {
 	 * Replaces variables and polynomials
 	 *
 	 */
-	public class VariablePolyReplacer implements Traversing {
+	final class VariablePolyReplacer implements Traversing {
 		private FunctionVariable fv;
 		private int replacements;
 		private static VariablePolyReplacer replacer = new VariablePolyReplacer();
@@ -357,10 +358,11 @@ public interface Traversing {
 
 		@Override
 		public ExpressionValue process(ExpressionValue ev) {
-			if ((ev instanceof Variable || ev instanceof FunctionVariable
-					|| ev instanceof GeoDummyVariable)
-					&& fv.toString(StringTemplate.defaultTemplate).equals(
-							ev.toString(StringTemplate.defaultTemplate))) {
+			if ((ev instanceof Variable
+							|| ev instanceof FunctionVariable
+							|| ev instanceof GeoDummyVariable)
+					&& fv.toString(StringTemplate.defaultTemplate)
+							.equals(ev.toString(StringTemplate.defaultTemplate))) {
 				replacements++;
 				return fv;
 			}
@@ -390,7 +392,7 @@ public interface Traversing {
 	 * Replaces dummy variable with given name
 	 *
 	 */
-	public class GeoDummyReplacer implements Traversing {
+	final class GeoDummyReplacer implements Traversing {
 		private String var;
 		private ExpressionValue newObj;
 		private boolean didReplacement;
@@ -403,10 +405,9 @@ public interface Traversing {
 
 		@Override
 		public ExpressionValue process(ExpressionValue ev) {
-			boolean hitClass = ev instanceof GeoDummyVariable
-					|| (replaceFVs && ev instanceof FunctionVariable);
-			if (!hitClass || !var
-					.equals(ev.toString(StringTemplate.defaultTemplate))) {
+			boolean hitClass =
+					ev instanceof GeoDummyVariable || (replaceFVs && ev instanceof FunctionVariable);
+			if (!hitClass || !var.equals(ev.toString(StringTemplate.defaultTemplate))) {
 				return ev;
 			}
 			didReplacement = true;
@@ -422,8 +423,8 @@ public interface Traversing {
 		 *            whether function variables should be replaced also
 		 * @return replacer
 		 */
-		public static GeoDummyReplacer getReplacer(String varStr,
-				ExpressionValue replacement, boolean replaceFVs) {
+		public static GeoDummyReplacer getReplacer(
+				String varStr, ExpressionValue replacement, boolean replaceFVs) {
 			replacer.var = varStr;
 			replacer.newObj = replacement;
 			replacer.didReplacement = false;
@@ -445,7 +446,7 @@ public interface Traversing {
 	 * @author Zbynek Konecny
 	 *
 	 */
-	public class VariableReplacer implements Traversing {
+	final class VariableReplacer implements Traversing {
 		private List<String> vars = new ArrayList<>();
 		private List<ExpressionValue> newObjs = new ArrayList<>();
 		private int replacements;
@@ -461,12 +462,12 @@ public interface Traversing {
 			if ((val = contains(ev)) != null) {
 				return new ExpressionNode(kernel, val);
 			}
-			if (!(ev instanceof Variable || ev instanceof FunctionVariable
+			if (!(ev instanceof Variable
+					|| ev instanceof FunctionVariable
 					|| ev instanceof GeoDummyVariable)) {
 				return ev;
 			}
-			if ((val = getVar(
-					ev.toString(StringTemplate.defaultTemplate))) == null) {
+			if ((val = getVar(ev.toString(StringTemplate.defaultTemplate))) == null) {
 				return ev;
 			}
 			replacements++;
@@ -527,19 +528,18 @@ public interface Traversing {
 		 *            kernel
 		 * @return replacer
 		 */
-		public static VariableReplacer getReplacer(String varStr,
-				ExpressionValue replacement, Kernel kernel) {
+		public static VariableReplacer getReplacer(
+				String varStr, ExpressionValue replacement, Kernel kernel) {
 			VariableReplacer replacer = kernel.getVariableReplacer();
 			replacer.addVars(varStr, replacement);
 			return replacer;
 		}
-
 	}
 
 	/**
 	 * Replaces GeoNumerics with given expression
 	 */
-	public class GeoNumericReplacer implements Traversing {
+	final class GeoNumericReplacer implements Traversing {
 		private List<GeoNumeric> geoNums = new ArrayList<>();
 		private List<ExpressionValue> newExps = new ArrayList<>();
 		private int replacements;
@@ -597,8 +597,7 @@ public interface Traversing {
 		 * @param replacement
 		 *            replacement object
 		 */
-		public static void addVars(GeoNumeric geoNum,
-				ExpressionValue replacement) {
+		public static void addVars(GeoNumeric geoNum, ExpressionValue replacement) {
 			replacer.geoNums.add(geoNum);
 			replacer.newExps.add(replacement);
 		}
@@ -612,8 +611,8 @@ public interface Traversing {
 		 *            kernel
 		 * @return replacer
 		 */
-		public static GeoNumericReplacer getReplacer(GeoNumeric geoNum,
-				ExpressionValue replacement, Kernel kernel) {
+		public static GeoNumericReplacer getReplacer(
+				GeoNumeric geoNum, ExpressionValue replacement, Kernel kernel) {
 			replacer.geoNums.clear();
 			replacer.newExps.clear();
 
@@ -650,7 +649,7 @@ public interface Traversing {
 	 * @author michael
 	 *
 	 */
-	public class SpreadsheetVariableRenamer implements Traversing {
+	final class SpreadsheetVariableRenamer implements Traversing {
 		private int dx;
 		private int dy;
 		private ArrayList<Variable> variables = new ArrayList<>();
@@ -683,8 +682,7 @@ public interface Traversing {
 				// Log.debug("found VARIABLE: "+name);
 				if (GeoElementSpreadsheet.spreadsheetPattern.test(name)) {
 
-					String newName = RelativeCopy.updateCellNameWithOffset(name,
-							dx, dy);
+					String newName = RelativeCopy.updateCellNameWithOffset(name, dx, dy);
 
 					// Log.debug("FOUND SPREADSHEET VARIABLE: "+name + " -> " +
 					// newName);
@@ -697,7 +695,6 @@ public interface Traversing {
 
 					v.setName(newName);
 					variables.add(v);
-
 				}
 			} else if (ev instanceof GeoElement) {
 
@@ -707,21 +704,17 @@ public interface Traversing {
 
 				if (GeoElementSpreadsheet.spreadsheetPattern.test(name)) {
 
-					String newName = RelativeCopy.updateCellNameWithOffset(name,
-							dx, dy);
+					String newName = RelativeCopy.updateCellNameWithOffset(name, dx, dy);
 
 					// make sure new cell is autocreated if it doesn't exist
 					// already
 					// and return it
-					return geo.getKernel().lookupLabel(newName, true,
-							SymbolicMode.NONE);
-
+					return geo.getKernel().lookupLabel(newName, true, SymbolicMode.NONE);
 				}
 			}
 
 			return ev;
 		}
-
 	}
 
 	/**
@@ -730,7 +723,7 @@ public interface Traversing {
 	 * @author michael
 	 *
 	 */
-	public class ReplaceUndefinedVariables implements Traversing {
+	final class ReplaceUndefinedVariables implements Traversing {
 		private final Kernel kernel;
 		private String[] except;
 		private Set<GeoNumeric> undefined;
@@ -747,8 +740,7 @@ public interface Traversing {
 		 *            list of labels to skip
 		 *
 		 */
-		public ReplaceUndefinedVariables(Kernel kernel,
-				Set<GeoNumeric> undefined, String[] skip) {
+		public ReplaceUndefinedVariables(Kernel kernel, Set<GeoNumeric> undefined, String[] skip) {
 			this.kernel = kernel;
 			this.undefined = undefined;
 			this.except = skip;
@@ -768,15 +760,11 @@ public interface Traversing {
 			if (ev instanceof Variable) {
 				Variable v = (Variable) ev;
 				replaceVar(v, GeoClass.NUMERIC);
-			}
-			else if (ev instanceof Command) {
+			} else if (ev instanceof Command) {
 				int idx = getAngleIndex((Command) ev);
 
-				if (idx >= 0 && ((Command) ev).getArgument(idx)
-						.unwrap() instanceof Variable) {
-					replaceVar(
-							(Variable) ((Command) ev).getArgument(idx).unwrap(),
-							GeoClass.ANGLE);
+				if (idx >= 0 && ((Command) ev).getArgument(idx).unwrap() instanceof Variable) {
+					replaceVar((Variable) ((Command) ev).getArgument(idx).unwrap(), GeoClass.ANGLE);
 				}
 			}
 			return ev;
@@ -794,8 +782,7 @@ public interface Traversing {
 
 		private void replaceVar(Variable v, GeoClass geoClass) {
 			String name = v.getName(StringTemplate.defaultTemplate);
-			ExpressionValue replace = kernel.lookupLabel(name, true,
-					SymbolicMode.NONE);
+			ExpressionValue replace = kernel.lookupLabel(name, true, SymbolicMode.NONE);
 			if (replace == null) {
 				replace = variableReplacerAlgorithm.replace(name);
 				if (replace instanceof ExpressionNode) {
@@ -806,24 +793,20 @@ public interface Traversing {
 			if (replace instanceof Variable
 					&& !kernel.getConstruction().isRegisteredFunctionVariable(name)
 					&& !isException(name)) {
-				name = ((Variable) replace)
-						.getName(StringTemplate.defaultTemplate);
-				boolean old = kernel.getConstruction().isSuppressLabelsActive();
+				name = ((Variable) replace).getName(StringTemplate.defaultTemplate);
+				final boolean old = kernel.getConstruction().isSuppressLabelsActive();
 				kernel.getConstruction().setSuppressLabelCreation(false);
 				GeoNumeric slider = geoClass == GeoClass.ANGLE
 						? new GeoAngle(kernel.getConstruction(), Math.PI / 4)
 						: new GeoNumeric(kernel.getConstruction(), 1);
 				slider.setAVSliderOrCheckboxVisible(true);
 				undefined.add(slider);
-				boolean visible = !kernel.getApplication()
-						.showView(App.VIEW_ALGEBRA)
+				boolean visible = !kernel.getApplication().showView(App.VIEW_ALGEBRA)
 						|| kernel.getApplication().showAutoCreatedSlidersInEV();
-				GeoNumeric.setSliderFromDefault(slider,
-						geoClass == GeoClass.ANGLE, visible);
+				GeoNumeric.setSliderFromDefault(slider, geoClass == GeoClass.ANGLE, visible);
 				slider.setLabel(name);
 				kernel.getConstruction().setSuppressLabelCreation(old);
 			}
-
 		}
 
 		private boolean isException(String name) {
@@ -837,7 +820,6 @@ public interface Traversing {
 			}
 			return false;
 		}
-
 	}
 
 	/**
@@ -846,7 +828,7 @@ public interface Traversing {
 	 * @author michael
 	 *
 	 */
-	public class CollectUndefinedVariables implements Inspecting {
+	final class CollectUndefinedVariables implements Inspecting {
 
 		private TreeSet<String> tree = new TreeSet<>();
 		private TreeSet<String> localTree = new TreeSet<>();
@@ -875,12 +857,10 @@ public interface Traversing {
 			if (ev instanceof Variable) {
 				Variable variable = (Variable) ev;
 				String variableName = variable.getName(StringTemplate.defaultTemplate);
-				if (variable.getKernel().getApplication().getParserFunctions()
-						.isReserved(variableName)) {
+				if (variable.getKernel().getApplication().getParserFunctions().isReserved(variableName)) {
 					return false;
 				}
-				ExpressionValue expressionFromVariableName =
-						variable.getKernel().lookupLabel(variableName);
+				ExpressionValue expressionFromVariableName = variable.getKernel().lookupLabel(variableName);
 				if (expressionFromVariableName == null) {
 					VariableReplacerAlgorithm variableReplacerAlgo =
 							new VariableReplacerAlgorithm(variable.getKernel());
@@ -892,13 +872,9 @@ public interface Traversing {
 					tree.add(Unicode.IMAGINARY_STRING);
 				}
 				if (expressionFromVariableName instanceof Variable
-						&& !variable
-                            .getKernel()
-                            .getConstruction()
-                            .isRegisteredFunctionVariable(variableName)
+						&& !variable.getKernel().getConstruction().isRegisteredFunctionVariable(variableName)
 						&& LabelManager.checkName(null, variableName)) {
-					tree.add(((Variable) expressionFromVariableName)
-							.getName(StringTemplate.defaultTemplate));
+					tree.add(((Variable) expressionFromVariableName).getName(StringTemplate.defaultTemplate));
 				}
 				// a1.5 -> a*1.5: inspect subexpressions
 				if (expressionFromVariableName.isExpressionNode()) {
@@ -924,8 +900,7 @@ public interface Traversing {
 					if (len > 3) {
 						addLocalVar(com, len - 3);
 					}
-				} else if (("IterationList".equals(com.getName())
-						|| "Iteration".equals(com.getName()))
+				} else if (("IterationList".equals(com.getName()) || "Iteration".equals(com.getName()))
 						&& com.getArgumentNumber() > 3) {
 
 					for (int i = 1; i < com.getArgumentNumber() - 2; i++) {
@@ -945,8 +920,7 @@ public interface Traversing {
 		}
 
 		private void addLocalVar(Command com, int i) {
-			localTree.add(com.getArgument(i)
-					.toString(StringTemplate.defaultTemplate));
+			localTree.add(com.getArgument(i).toString(StringTemplate.defaultTemplate));
 		}
 	}
 
@@ -956,7 +930,7 @@ public interface Traversing {
 	 * @author michael
 	 *
 	 */
-	public class CollectFunctionVariables implements Traversing {
+	final class CollectFunctionVariables implements Traversing {
 
 		private ArrayList<FunctionVariable> al = new ArrayList<>();
 
@@ -977,19 +951,19 @@ public interface Traversing {
 
 			return ev;
 		}
-
 	}
 
 	/**
 	 * Replaces powers by roots or vice versa
 	 */
-	public class PowerRootReplacer implements Traversing {
+	final class PowerRootReplacer implements Traversing {
 		private boolean toRoot;
 		/** functions with 100th root are numerically unstable */
 		private static int MAX_ROOT = 99;
+
 		private static PowerRootReplacer replacer = new PowerRootReplacer();
 
-		private PowerRootReplacer()  {
+		private PowerRootReplacer() {
 			// singleton constructor
 		}
 
@@ -1019,13 +993,14 @@ public interface Traversing {
 	 * @author Zbynek Konecny
 	 *
 	 */
-	public class DiffReplacer implements Traversing {
+	final class DiffReplacer implements Traversing {
 		/**
 		 * Singleton instance
 		 */
 		public static final DiffReplacer INSTANCE = new DiffReplacer();
 
 		@Override
+		@SuppressWarnings("PMD.EmptyControlStatement")
 		public ExpressionValue process(ExpressionValue ev) {
 			if (!ev.isExpressionNode()) {
 				return ev;
@@ -1050,25 +1025,22 @@ public interface Traversing {
 			String expStr = expr.toString(StringTemplate.defaultTemplate);
 			int nameEnd = expStr.indexOf('(');
 			if (expStr.indexOf('[') > 0) {
-				nameEnd = nameEnd > 0 ? Math.min(nameEnd, expStr.indexOf('['))
-						: expStr.indexOf('[');
+				nameEnd = nameEnd > 0 ? Math.min(nameEnd, expStr.indexOf('[')) : expStr.indexOf('[');
 			}
-			String funLabel = nameEnd > 0 ? expStr.substring(0, nameEnd)
-					: expStr;
+			String funLabel = nameEnd > 0 ? expStr.substring(0, nameEnd) : expStr;
 
 			ExpressionValue diffArg = new MyDouble(kernel, Double.NaN);
 			ExpressionValue mult = new MyDouble(kernel, 1);
 			if (expr.unwrap() instanceof Command) {
 				diffArg = ((Command) expr.unwrap()).getArgument(0);
-				if (diffArg.unwrap() instanceof FunctionVariable && diffArg
-						.toString(StringTemplate.defaultTemplate)
-						.equals(var.toString(StringTemplate.defaultTemplate))) {
+				if (diffArg.unwrap() instanceof FunctionVariable
+						&& diffArg
+								.toString(StringTemplate.defaultTemplate)
+								.equals(var.toString(StringTemplate.defaultTemplate))) {
 					// keep mult
 				} else if (DoubleUtil.isEqual(deg.evaluateDouble(), 1)) {
-					CASGenericInterface cas = kernel.getGeoGebraCAS()
-							.getCurrentCAS();
-					Command derivCommand = new Command(kernel, "Derivative",
-							false);
+					CASGenericInterface cas = kernel.getGeoGebraCAS().getCurrentCAS();
+					Command derivCommand = new Command(kernel, "Derivative", false);
 					derivCommand.addArgument(diffArg.wrap());
 					derivCommand.addArgument(var.wrap());
 					derivCommand.addArgument(deg.wrap());
@@ -1079,21 +1051,22 @@ public interface Traversing {
 			}
 
 			// derivative of f gives f'
-			ExpressionNode derivative = new ExpressionNode(kernel,
+			ExpressionNode derivative = new ExpressionNode(
+					kernel,
 					new Variable(kernel, funLabel), // function label "f"
-					Operation.DERIVATIVE, deg);
+					Operation.DERIVATIVE,
+					deg);
 			// function of given variable gives f'(t)
-			return new ExpressionNode(kernel, derivative, Operation.FUNCTION,
-					diffArg).multiplyR(mult); // Variable
+			return new ExpressionNode(kernel, derivative, Operation.FUNCTION, diffArg)
+					.multiplyR(mult); // Variable
 		}
-
 	}
 
 	/**
 	 * Goes through the ExpressionValue and collects all derivatives from
 	 * expression nodes into arrays
 	 */
-	public class PrefixRemover implements Traversing {
+	final class PrefixRemover implements Traversing {
 		private static PrefixRemover collector = new PrefixRemover();
 
 		private PrefixRemover() {
@@ -1103,9 +1076,9 @@ public interface Traversing {
 		@Override
 		public ExpressionValue process(ExpressionValue ev) {
 			if (ev instanceof Variable) {
-				return new Variable(((Variable) ev).getKernel(),
-						ev.toString(StringTemplate.defaultTemplate)
-								.replace(Kernel.TMP_VARIABLE_PREFIX, ""));
+				return new Variable(
+						((Variable) ev).getKernel(),
+						ev.toString(StringTemplate.defaultTemplate).replace(Kernel.TMP_VARIABLE_PREFIX, ""));
 			}
 			return ev;
 		}
@@ -1118,14 +1091,13 @@ public interface Traversing {
 		public static PrefixRemover getCollector() {
 			return collector;
 		}
-
 	}
 
 	/**
 	 * Goes through the ExpressionValue and collects all derivatives from
 	 * expression nodes into arrays
 	 */
-	public class CommandCollector implements Traversing {
+	final class CommandCollector implements Traversing {
 		private Set<Command> commands;
 		private static CommandCollector collector = new CommandCollector();
 
@@ -1159,7 +1131,7 @@ public interface Traversing {
 	 *
 	 * @author Zoltan Kovacs
 	 */
-	public class GeoCollector implements Traversing {
+	final class GeoCollector implements Traversing {
 		private HashMap<GeoElement, Integer> commands;
 		private static GeoCollector collector = new GeoCollector();
 
@@ -1189,8 +1161,7 @@ public interface Traversing {
 		 *            set into which we want to collect the commands
 		 * @return derivative collector
 		 */
-		public static GeoCollector getCollector(
-				HashMap<GeoElement, Integer> commands) {
+		public static GeoCollector getCollector(HashMap<GeoElement, Integer> commands) {
 			collector.commands = commands;
 			return collector;
 		}
@@ -1201,7 +1172,7 @@ public interface Traversing {
 	 *
 	 * @author Zbynek Konecny
 	 */
-	public class NonFunctionCollector implements Traversing {
+	final class NonFunctionCollector implements Traversing {
 		private Set<String> commands;
 		private static NonFunctionCollector collector = new NonFunctionCollector();
 
@@ -1230,12 +1201,10 @@ public interface Traversing {
 
 		private void add(GeoDummyVariable dummy) {
 			String str = dummy.toString(StringTemplate.defaultTemplate);
-			if (dummy.getKernel().getApplication().getParserFunctions()
-					.isReserved(str)) {
+			if (dummy.getKernel().getApplication().getParserFunctions().isReserved(str)) {
 				return;
 			}
 			commands.add(str);
-
 		}
 
 		/**
@@ -1257,7 +1226,7 @@ public interface Traversing {
 	 *
 	 * @author Balazs Bencze
 	 */
-	public class DummyVariableCollector implements Traversing {
+	final class DummyVariableCollector implements Traversing {
 		private Set<String> commands;
 		private static DummyVariableCollector collector = new DummyVariableCollector();
 
@@ -1299,7 +1268,6 @@ public interface Traversing {
 		private void add(ExpressionValue dummy) {
 			String str = dummy.toString(StringTemplate.defaultTemplate);
 			commands.add(str);
-
 		}
 
 		/**
@@ -1309,8 +1277,7 @@ public interface Traversing {
 		 *            set into which we want to collect the commands
 		 * @return derivative collector
 		 */
-		public static DummyVariableCollector getCollector(
-				Set<String> commands) {
+		public static DummyVariableCollector getCollector(Set<String> commands) {
 			collector.commands = commands;
 			return collector;
 		}
@@ -1319,7 +1286,7 @@ public interface Traversing {
 	/**
 	 * Collects all GeoNumeric labels
 	 */
-	public class GeoNumericLabelCollector implements Traversing {
+	final class GeoNumericLabelCollector implements Traversing {
 		private Set<String> labels;
 		private static GeoNumericLabelCollector collector = new GeoNumericLabelCollector();
 
@@ -1346,7 +1313,6 @@ public interface Traversing {
 			if (str != null) {
 				labels.add(str);
 			}
-
 		}
 
 		/**
@@ -1356,8 +1322,7 @@ public interface Traversing {
 		 *            set into which we want to collect the geoNumeric labels
 		 * @return derivative collector
 		 */
-		public static GeoNumericLabelCollector getCollector(
-				Set<String> labels) {
+		public static GeoNumericLabelCollector getCollector(Set<String> labels) {
 			collector.labels = labels;
 			return collector;
 		}
@@ -1369,7 +1334,7 @@ public interface Traversing {
 	 *
 	 * @author Zbynek Konecny
 	 */
-	public class NonFunctionReplacer implements Traversing {
+	final class NonFunctionReplacer implements Traversing {
 		private Set<String> commands;
 		private static NonFunctionReplacer collector = new NonFunctionReplacer();
 
@@ -1381,47 +1346,38 @@ public interface Traversing {
 		public ExpressionValue process(ExpressionValue ev) {
 			if (ev instanceof ExpressionNode) {
 				ExpressionNode en = (ExpressionNode) ev;
-				if (en.getOperation() == Operation.POWER
-						&& en.getLeft() instanceof Command) {
+				if (en.getOperation() == Operation.POWER && en.getLeft() instanceof Command) {
 					Command c = (Command) en.getLeft();
 					if (commands.contains(c.getName())) {
-						return new GeoDummyVariable(
-								c.getKernel().getConstruction(), c.getName())
-										.wrap()
-										.multiply(c.getArgument(0)
-												.traverse(this).wrap()
-												.power(en.getRight()));
+						return new GeoDummyVariable(c.getKernel().getConstruction(), c.getName())
+								.wrap()
+								.multiply(c.getArgument(0).traverse(this).wrap().power(en.getRight()));
 					}
 				}
-				if (en.getOperation() == Operation.FACTORIAL
-						&& en.getLeft() instanceof Command) {
+				if (en.getOperation() == Operation.FACTORIAL && en.getLeft() instanceof Command) {
 					Command c = (Command) en.getLeft();
 					if (commands.contains(c.getName())) {
-						return new GeoDummyVariable(
-								c.getKernel().getConstruction(), c.getName())
-										.wrap().multiply(
-												c.getArgument(0).traverse(this)
-														.wrap().factorial());
+						return new GeoDummyVariable(c.getKernel().getConstruction(), c.getName())
+								.wrap()
+								.multiply(c.getArgument(0).traverse(this).wrap().factorial());
 					}
 				}
-				if (en.getOperation() == Operation.SQRT_SHORT
-						&& en.getLeft() instanceof Command) {
+				if (en.getOperation() == Operation.SQRT_SHORT && en.getLeft() instanceof Command) {
 					Command c = (Command) en.getLeft();
 					if (commands.contains(c.getName())) {
-						return new GeoDummyVariable(
-								c.getKernel().getConstruction(), c.getName())
-										.wrap().sqrt().multiply(c.getArgument(0)
-												.traverse(this));
+						return new GeoDummyVariable(c.getKernel().getConstruction(), c.getName())
+								.wrap()
+								.sqrt()
+								.multiply(c.getArgument(0).traverse(this));
 					}
 				}
 			}
 			if (ev instanceof Command) {
 				Command c = (Command) ev;
-				if (commands.contains(c.getName())
-						&& c.getArgumentNumber() == 1) {
-					return new GeoDummyVariable(c.getKernel().getConstruction(),
-							c.getName()).wrap()
-									.multiply(c.getArgument(0).traverse(this));
+				if (commands.contains(c.getName()) && c.getArgumentNumber() == 1) {
+					return new GeoDummyVariable(c.getKernel().getConstruction(), c.getName())
+							.wrap()
+							.multiply(c.getArgument(0).traverse(this));
 				}
 			}
 			return ev;
@@ -1445,7 +1401,7 @@ public interface Traversing {
 	 *
 	 * @author Balazs Bencze
 	 */
-	public class FunctionCreator implements Traversing {
+	final class FunctionCreator implements Traversing {
 		private static FunctionCreator creator = new FunctionCreator();
 
 		private FunctionCreator() {
@@ -1456,12 +1412,9 @@ public interface Traversing {
 		public ExpressionValue process(ExpressionValue ev) {
 			if (ev instanceof Equation) {
 				Equation eq = (Equation) ev;
-				if (eq.getLHS() != null
-						&& eq.getLHS().getLeft() instanceof GeoDummyVariable) {
-					GeoDummyVariable gdv = (GeoDummyVariable) eq.getLHS()
-							.getLeft();
-					if (gdv.toString(StringTemplate.defaultTemplate)
-							.equals("y")) {
+				if (eq.getLHS() != null && eq.getLHS().getLeft() instanceof GeoDummyVariable) {
+					GeoDummyVariable gdv = (GeoDummyVariable) eq.getLHS().getLeft();
+					if (gdv.toString(StringTemplate.defaultTemplate).equals("y")) {
 						return eq.getRHS().unwrap();
 					}
 				}
@@ -1481,7 +1434,7 @@ public interface Traversing {
 	 * Removes commands from a given expression and returns the first argument
 	 * of the command
 	 */
-	public class CommandRemover implements Traversing {
+	final class CommandRemover implements Traversing {
 		private static CommandRemover remover = new CommandRemover();
 		private static String[] commands;
 
@@ -1521,30 +1474,25 @@ public interface Traversing {
 	 *
 	 * @author Balazs Bencze
 	 */
-	public class CASCommandReplacer implements Traversing {
+	final class CASCommandReplacer implements Traversing {
 		/**
 		 * Replacer object
 		 */
-		public final static CASCommandReplacer replacer = new CASCommandReplacer();
+		public static final CASCommandReplacer replacer = new CASCommandReplacer();
 
 		@Override
 		public ExpressionValue process(ExpressionValue ev) {
 			if (ev instanceof Command) {
 				Command ec = (Command) ev;
 				if ("x".equals(ec.getName())) {
-					return new ExpressionNode(ec.getKernel(), ec.getArgument(0),
-							Operation.XCOORD, null);
+					return new ExpressionNode(ec.getKernel(), ec.getArgument(0), Operation.XCOORD, null);
 				} else if ("y".equals(ec.getName())) {
-					return new ExpressionNode(ec.getKernel(), ec.getArgument(0),
-							Operation.YCOORD, null);
+					return new ExpressionNode(ec.getKernel(), ec.getArgument(0), Operation.YCOORD, null);
 				} else if ("z".equals(ec.getName())) {
-					return new ExpressionNode(ec.getKernel(), ec.getArgument(0),
-							Operation.ZCOORD, null);
+					return new ExpressionNode(ec.getKernel(), ec.getArgument(0), Operation.ZCOORD, null);
 				}
-
 			}
 			return ev;
 		}
 	}
-
 }

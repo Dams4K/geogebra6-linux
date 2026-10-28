@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -8,14 +24,14 @@ import org.geogebra.common.main.MyError;
 
 /**
  * PointIn[ &lt;Region&gt; ]
- * 
+ *
  * @version 2010-05-17
  */
 public class CmdPointIn extends CommandProcessor {
 
 	/**
 	 * Initiates command processor for PointIn command
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel used for computations
 	 */
@@ -42,11 +58,10 @@ public class CmdPointIn extends CommandProcessor {
 		}
 
 		throw argNumErr(c);
-
 	}
 
 	/**
-	 * 
+	 *
 	 * @param label
 	 *            label
 	 * @param region
@@ -54,9 +69,7 @@ public class CmdPointIn extends CommandProcessor {
 	 * @return output
 	 */
 	protected GeoElement[] pointIn(String label, Region region) {
-		GeoElement[] ret = { getAlgoDispatcher().pointIn(label, region, 0, 0,
-				true, false, true) };
+		GeoElement[] ret = {getAlgoDispatcher().pointIn(label, region, 0, 0, true, false, true)};
 		return ret;
-
 	}
 }

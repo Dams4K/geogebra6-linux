@@ -1,3 +1,4 @@
+// vendored
 /*
  * Copyright 2013 Nicolas Morel
  *
@@ -57,5 +58,4 @@ public final class UUIDW {
 
 		return new String(uuid);
 	}
-
 }

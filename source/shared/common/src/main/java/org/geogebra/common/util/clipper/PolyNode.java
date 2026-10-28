@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util.clipper;
 
 import java.util.ArrayList;
@@ -9,8 +25,11 @@ import org.geogebra.common.util.clipper.Clipper.JoinType;
 import org.geogebra.common.util.clipper.Point.DoublePoint;
 
 class PolyNode {
+	/** Node type. */
 	enum NodeType {
-		ANY, OPEN, CLOSED
+		ANY,
+		OPEN,
+		CLOSED
 	}
 
 	private PolyNode parent;
@@ -21,37 +40,37 @@ class PolyNode {
 	protected final List<PolyNode> children = new ArrayList<>();
 	private boolean isOpen;
 
-	public void addChild(PolyNode child) {
+	void addChild(PolyNode child) {
 		final int cnt = children.size();
 		children.add(child);
 		child.parent = this;
 		child.index = cnt;
 	}
 
-	public int getChildCount() {
+	int getChildCount() {
 		return children.size();
 	}
 
-	public List<PolyNode> getChildren() {
+	List<PolyNode> getChildren() {
 		return Collections.unmodifiableList(children);
 	}
 
 	/**
 	 * modified to be compatible with double
 	 */
-	public List<DoublePoint> getContour() {
+	List<DoublePoint> getContour() {
 		return polygon;
 	}
 
-	public EndType getEndType() {
+	EndType getEndType() {
 		return endType;
 	}
 
-	public JoinType getJoinType() {
+	JoinType getJoinType() {
 		return joinType;
 	}
 
-	public PolyNode getNext() {
+	PolyNode getNext() {
 		if (!children.isEmpty()) {
 			return children.get(0);
 		}
@@ -68,15 +87,15 @@ class PolyNode {
 		}
 	}
 
-	public PolyNode getParent() {
+	PolyNode getParent() {
 		return parent;
 	}
 
-	public Path getPolygon() {
+	Path getPolygon() {
 		return polygon;
 	}
 
-	public boolean isHole() {
+	boolean isHole() {
 		return isHoleNode();
 	}
 
@@ -90,25 +109,23 @@ class PolyNode {
 		return result;
 	}
 
-	public boolean isOpen() {
+	boolean isOpen() {
 		return isOpen;
 	}
 
-	public void setEndType(EndType value) {
+	void setEndType(EndType value) {
 		endType = value;
 	}
 
-	public void setJoinType(JoinType value) {
+	void setJoinType(JoinType value) {
 		joinType = value;
 	}
 
-	public void setOpen(boolean isOpen) {
+	void setOpen(boolean isOpen) {
 		this.isOpen = isOpen;
 	}
 
-	public void setParent(PolyNode n) {
+	void setParent(PolyNode n) {
 		parent = n;
-
 	}
-
 }

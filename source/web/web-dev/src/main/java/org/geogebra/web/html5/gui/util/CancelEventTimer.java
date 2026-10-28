@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.util;
 
 import org.gwtproject.event.dom.client.DomEvent;
@@ -12,7 +28,9 @@ import org.gwtproject.user.client.ui.Widget;
  */
 public class CancelEventTimer {
 	private enum DragState {
-		CANSTART, DRAG, NONE
+		CANSTART,
+		DRAG,
+		NONE
 	}
 
 	private static DragState dragState = DragState.NONE;
@@ -55,7 +73,7 @@ public class CancelEventTimer {
 
 	/**
 	 * amount of time (ms) in which AV width restoring is canceled.
-	 * 
+	 *
 	 */
 	private static final long TIME_BEFORE_RESTORING_AV_WIDTH = 500;
 
@@ -72,7 +90,6 @@ public class CancelEventTimer {
 	public static void dragCanStart() {
 		lastDragEvent = System.currentTimeMillis();
 		dragState = DragState.CANSTART;
-
 	}
 
 	/**
@@ -85,7 +102,7 @@ public class CancelEventTimer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return if drag is happening now.
 	 */
 	public static boolean isDragging() {
@@ -123,7 +140,7 @@ public class CancelEventTimer {
 
 	/**
 	 * called at the beginning of a mouse event
-	 * 
+	 *
 	 * @return whether the actual mouse event should be canceled
 	 */
 	public static boolean cancelMouseEvent() {
@@ -132,12 +149,11 @@ public class CancelEventTimer {
 
 	/**
 	 * called at the beginning of a blur event
-	 * 
+	 *
 	 * @return whether the actual blur event should be canceled
 	 */
 	public static boolean cancelBlurEvent() {
-		return !blurEnabled || System.currentTimeMillis()
-				- lastBlurEvent < TIME_BETWEEN_BLUR_AND_CLICK;
+		return !blurEnabled || System.currentTimeMillis() - lastBlurEvent < TIME_BETWEEN_BLUR_AND_CLICK;
 	}
 
 	/**
@@ -149,7 +165,7 @@ public class CancelEventTimer {
 
 	/**
 	 * called at the beginning of a background click
-	 * 
+	 *
 	 * @return true if the actual event should not hide the keyboard; false
 	 *         otherwise
 	 */
@@ -160,7 +176,7 @@ public class CancelEventTimer {
 	/**
 	 * Called to check if the drag should be canceled to enable long tap scroll to
 	 * happen.
-	 * 
+	 *
 	 * @return true if drag should be canceled.
 	 */
 	public static boolean cancelDragEvent() {
@@ -179,13 +195,12 @@ public class CancelEventTimer {
 	 * @return whether AV restore happened recently
 	 */
 	public static boolean cancelAVRestoreWidth() {
-		return System.currentTimeMillis()
-				- avRestoreWidthEvent < TIME_BEFORE_RESTORING_AV_WIDTH;
+		return System.currentTimeMillis() - avRestoreWidthEvent < TIME_BEFORE_RESTORING_AV_WIDTH;
 	}
 
 	/**
 	 * Prevent default for touch up and down in given widget
-	 * 
+	 *
 	 * @param panel
 	 *            widget
 	 */
@@ -193,5 +208,4 @@ public class CancelEventTimer {
 		panel.addBitlessDomHandler(DomEvent::preventDefault, TouchStartEvent.getType());
 		panel.addBitlessDomHandler(DomEvent::preventDefault, TouchMoveEvent.getType());
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
@@ -47,15 +63,16 @@ public class DrawInlineTable extends Drawable implements DrawInline {
 			double contentWidth = table.getContentWidth();
 			double contentHeight = table.getContentHeight();
 			tableController.update();
-			tableController.setTransform(table.getAngle(),
-					table.getWidth() / contentWidth, table.getHeight() / contentHeight);
+			tableController.setTransform(
+					table.getAngle(), table.getWidth() / contentWidth, table.getHeight() / contentHeight);
 		}
 	}
 
 	@Override
 	public void draw(GGraphics2D g2) {
-		if (geo.isEuclidianVisible() && tableController != null
-			&& rectangle.getDirectTransform() != null) {
+		if (geo.isEuclidianVisible()
+				&& tableController != null
+				&& rectangle.getDirectTransform() != null) {
 			GAffineTransform tr =
 					rectangle.scaleForZoom(table.getContentWidth(), table.getContentHeight());
 			tableController.draw(g2, tr);
@@ -112,6 +129,9 @@ public class DrawInlineTable extends Drawable implements DrawInline {
 		tableController.removeFromDom();
 	}
 
+	/**
+	 * @return whether the table is currently being edited
+	 */
 	public boolean isInEditMode() {
 		return tableController != null && tableController.isInEditMode();
 	}
@@ -121,6 +141,11 @@ public class DrawInlineTable extends Drawable implements DrawInline {
 		if (tableController != null) {
 			tableController.updateContent();
 		}
+	}
+
+	@Override
+	public boolean hasContent() {
+		return true;
 	}
 
 	@Override
@@ -136,9 +161,9 @@ public class DrawInlineTable extends Drawable implements DrawInline {
 	}
 
 	@Override
-	public void toBackground() {
+	public void toBackground(DrawInline.SuspensionTrigger trigger) {
 		if (tableController != null) {
-			tableController.toBackground();
+			tableController.toBackground(trigger);
 		}
 	}
 
@@ -172,5 +197,10 @@ public class DrawInlineTable extends Drawable implements DrawInline {
 			GPoint2D p = rectangle.getInversePoint(mouseLoc.x, mouseLoc.y);
 			tableController.setHitCell(p.x, p.y);
 		}
+	}
+
+	@Override
+	public double getScale() {
+		return rectangle.realWidth() / table.getContentWidth();
 	}
 }

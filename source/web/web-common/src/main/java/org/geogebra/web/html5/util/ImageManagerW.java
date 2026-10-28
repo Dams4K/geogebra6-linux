@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.util;
 
 import java.util.HashMap;
@@ -5,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
+import org.geogebra.common.awt.MyImage;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.Macro;
@@ -21,15 +37,17 @@ import org.geogebra.common.util.MD5Checksum;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.Util;
 import org.geogebra.common.util.debug.Log;
+import org.geogebra.web.awt.MyImageW;
 import org.geogebra.web.html5.Browser;
 import org.geogebra.web.html5.css.GuiResourcesSimple;
 import org.geogebra.web.html5.css.GuiResourcesSimpleImpl;
 import org.geogebra.web.html5.gui.util.Dom;
 import org.geogebra.web.html5.gui.util.NoDragImage;
 import org.geogebra.web.html5.main.GgbFile;
-import org.geogebra.web.html5.main.MyImageW;
 import org.geogebra.web.resources.SVGResource;
 import org.gwtproject.resources.client.ResourcePrototype;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.DomGlobal;
@@ -69,6 +87,16 @@ public class ImageManagerW extends ImageManager {
 		}
 	}
 
+	@Override
+	public @Nullable MyImage getExternalImage(@NonNull String path) {
+		if (externalImageTable.containsKey(path)) {
+			MyImageW myImageW = new MyImageW(
+					externalImageTable.get(path), FileExtensions.SVG == StringUtil.getFileExtension(path));
+			return myImageW;
+		}
+		return null;
+	}
+
 	/**
 	 * @param fileName filename
 	 * @param image file content (binary or data URL)
@@ -93,8 +121,7 @@ public class ImageManagerW extends ImageManager {
 		GuiResourcesSimpleImpl res = (GuiResourcesSimpleImpl) GuiResourcesSimple.INSTANCE;
 		SVGResource image = (SVGResource) res.getResource(geo.getTextString());
 		if (image != null) {
-			String fileName = applyImage(image.getName() + ".svg",
-					image.getSafeUri().asString(), kernel);
+			String fileName = applyImage(image.getName() + ".svg", image.getSafeUri().asString(), kernel);
 			fillable.setFillType(FillType.IMAGE);
 			fillable.setImageFileName(fileName);
 			fillable.setAlphaValue(1.0f);
@@ -119,6 +146,26 @@ public class ImageManagerW extends ImageManager {
 		return fileName;
 	}
 
+	@Override
+	public @NonNull String applyButtonIcon(@NonNull String fileName, @NonNull Kernel kernel) {
+		SVGResource image = getButtonIconResource(fileName);
+		return image == null ? fileName : applyImage(fileName, image.getSafeUri().asString(), kernel);
+	}
+
+	@Override
+	public @NonNull String getButtonIconPath(@NonNull String fileName) {
+		SVGResource image = getButtonIconResource(fileName);
+		return image == null
+				? fileName
+				: getMD5FileName(fileName, image.getSafeUri().asString());
+	}
+
+	private @Nullable SVGResource getButtonIconResource(String fileName) {
+		GuiResourcesSimpleImpl resources = (GuiResourcesSimpleImpl) GuiResourcesSimple.INSTANCE;
+		ResourcePrototype resource = resources.getResource(StringUtil.removeFileExtension(fileName));
+		return resource instanceof SVGResource ? (SVGResource) resource : null;
+	}
+
 	private ArchiveEntry getExternalImageData(String fileName) {
 		return externalImageSrcs.get(StringUtil.removeLeadingSlash(fileName));
 	}
@@ -133,7 +180,7 @@ public class ImageManagerW extends ImageManager {
 
 	/**
 	 * Image inserted by user as img element.
-	 * 
+	 *
 	 * @param fileName
 	 *            filename
 	 * @param md5fallback
@@ -144,18 +191,15 @@ public class ImageManagerW extends ImageManager {
 	public HTMLImageElement getExternalImage(String fileName, boolean md5fallback) {
 		HTMLImageElement match = getMatch(fileName);
 		if (match == null) {
-			match = getMatch(StringUtil.changeFileExtension(fileName,
-					FileExtensions.PNG));
+			match = getMatch(StringUtil.changeFileExtension(fileName, FileExtensions.PNG));
 		}
 		// FIXME this is a bit hacky: if we did not get precise match, assume
 		// encoding problem and rely on MD5
 		// Only do this for lookup, not on file load: the file may have two
 		// different images with same prefix
-		if (match == null && md5fallback
-				&& fileName.length() > GeoImage.MD5_FOLDER_LENGTH) {
+		if (match == null && md5fallback && fileName.length() > GeoImage.MD5_FOLDER_LENGTH) {
 			String md5 = fileName.substring(0, GeoImage.MD5_FOLDER_LENGTH);
-			for (Entry<String, HTMLImageElement> entry : externalImageTable
-					.entrySet()) {
+			for (Entry<String, HTMLImageElement> entry : externalImageTable.entrySet()) {
 				String s = entry.getKey();
 				if (md5.equals(s.substring(0, GeoImage.MD5_FOLDER_LENGTH))) {
 					return entry.getValue();
@@ -207,8 +251,7 @@ public class ImageManagerW extends ImageManager {
 	 */
 	public void triggerSingleImageLoading(String imageFileName, Kernel kernel) {
 		HTMLImageElement img = getExternalImage(imageFileName, true);
-		img.addEventListener("load", (event) ->
-				updateCascadeImages(kernel.getConstruction()));
+		img.addEventListener("load", (event) -> updateCascadeImages(kernel.getConstruction()));
 		img.src = externalImageSrcs.get(imageFileName).createUrl();
 	}
 
@@ -219,13 +262,13 @@ public class ImageManagerW extends ImageManager {
 		}
 		List<GeoElement> list = table.values().stream()
 				.filter(t -> t.isGeoImage() || t.getFillType() == FillType.IMAGE)
-				.collect(Collectors.toList());
+				.toList();
 		GeoElement.updateCascade(list);
 	}
 
 	/**
 	 * Load all images and tun callback after all are loaded.
-	 * 
+	 *
 	 * @param run
 	 *            image load callback
 	 * @param toLoad
@@ -308,7 +351,7 @@ public class ImageManagerW extends ImageManager {
 
 	/**
 	 * Convert all images to saveable format (png or svg).
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 */
@@ -335,7 +378,7 @@ public class ImageManagerW extends ImageManager {
 
 	/**
 	 * Prefix filename with a hash.
-	 * 
+	 *
 	 * @param imgFileName
 	 *            original filename
 	 * @param fileStr
@@ -367,8 +410,7 @@ public class ImageManagerW extends ImageManager {
 	 * @param archive
 	 *            file
 	 */
-	public void writeConstructionImages(Construction cons, String filePath,
-			GgbFile archive) {
+	public void writeConstructionImages(Construction cons, String filePath, GgbFile archive) {
 		TreeSet<GeoElement> geos = cons.getGeoSetLabelOrder();
 		if (geos == null) {
 			return;
@@ -386,8 +428,12 @@ public class ImageManagerW extends ImageManager {
 		}
 	}
 
-	private static void addImageToArchive(String filePath, String fileName,
-			ArchiveEntry data, FileExtensions ext, MyImageW img,
+	private static void addImageToArchive(
+			String filePath,
+			String fileName,
+			ArchiveEntry data,
+			FileExtensions ext,
+			MyImageW img,
 			GgbFile archive) {
 		if (data == null) {
 			return;
@@ -401,11 +447,12 @@ public class ImageManagerW extends ImageManager {
 			fullPath = filePath + fileName;
 		} else {
 			// not supported, so saved as PNG
-			fullPath = filePath + StringUtil
-					.changeFileExtension(fileName, FileExtensions.PNG);
+			fullPath = filePath + StringUtil.changeFileExtension(fileName, FileExtensions.PNG);
 		}
 		if ((url == null || url.startsWith("http"))
-				&& data.data == null && img != null && img.getImage() != null) {
+				&& data.data == null
+				&& img != null
+				&& img.getImage() != null) {
 			dataURL = new ArchiveEntry(fullPath, convertImgToPng(img));
 		} else if (url != null && ext == FileExtensions.SVG) {
 			dataURL = new ArchiveEntry(fullPath, convertSvgDataUrl(url));
@@ -465,7 +512,7 @@ public class ImageManagerW extends ImageManager {
 					if (url.string != null) {
 						HTMLImageElement elem = Dom.createImage();
 						elem.src = url.string;
-						img = new MyImageW(elem, FileExtensions.SVG.equals(ext));
+						img = new MyImageW(elem, FileExtensions.SVG == ext);
 					}
 					addImageToArchive("", fileName, url, ext, img, archive);
 				}

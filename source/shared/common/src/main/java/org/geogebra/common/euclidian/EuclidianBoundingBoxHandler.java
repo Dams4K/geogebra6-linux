@@ -1,8 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
 /**
  * handlers type for bounding box
- * 
+ *
  * @author csilla
  *
  */
@@ -73,16 +89,16 @@ public enum EuclidianBoundingBoxHandler implements ShapeManipulationHandler {
 		this.dy = dy;
 	}
 
+	/**
+	 * @return whether this handler is at a corner (affects both x and y)
+	 */
 	public boolean isDiagonal() {
 		return dx != 0 && dy != 0;
 	}
 
 	@Override
 	public boolean isAddHandler() {
-		return this == ADD_TOP
-				|| this == ADD_RIGHT
-				|| this == ADD_BOTTOM
-				|| this == ADD_LEFT;
+		return this == ADD_TOP || this == ADD_RIGHT || this == ADD_BOTTOM || this == ADD_LEFT;
 	}
 
 	public int getDx() {
@@ -92,5 +108,4 @@ public enum EuclidianBoundingBoxHandler implements ShapeManipulationHandler {
 	public int getDy() {
 		return dy;
 	}
-
 }

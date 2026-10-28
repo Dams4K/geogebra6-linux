@@ -1,10 +1,29 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui;
 
+import org.geogebra.common.main.GeoGebraColorConstants;
+import org.geogebra.web.html5.gui.view.IconSpec;
+import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.util.sliderPanel.SliderW;
+import org.geogebra.web.resources.SVGResource;
 import org.gwtproject.user.client.ui.Button;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Label;
-import org.gwtproject.user.client.ui.ListBox;
 import org.gwtproject.user.client.ui.SimplePanel;
 
 public class BaseWidgetFactory {
@@ -42,13 +61,6 @@ public class BaseWidgetFactory {
 	 */
 	public Label newLabel() {
 		return new Label();
-	}
-
-	/**
-	 * @return list box, to be mocked
-	 */
-	public ListBox newListBox() {
-		return new ListBox();
 	}
 
 	/**
@@ -144,5 +156,69 @@ public class BaseWidgetFactory {
 		}
 		widget.addStyleName(Shades.NEUTRAL_300.getName());
 		return widget;
+	}
+
+	/**
+	 * Creates a material design text button.
+	 * @param label of button
+	 * @return button
+	 */
+	public StandardButton newTextButton(String label) {
+		StandardButton button = new StandardButton(label);
+		button.setStyleName("materialTextButton");
+		button.addStyleName("keyboardFocus");
+		return button;
+	}
+
+	/**
+	 * Creates a material design text button with icon and text.
+	 * @param icon {@link IconSpec}
+	 * @param label of button
+	 * @return button
+	 */
+	public StandardButton newTextButton(IconSpec icon, String label) {
+		StandardButton button = new StandardButton(
+				icon.withFill(GeoGebraColorConstants.PURPLE_700.toString()), label, 24, 24);
+		button.setStyleName("materialTextButton");
+		button.addStyleName("keyboardFocus");
+		return button;
+	}
+
+	/**
+	 * Creates a material design filled button.
+	 * @param label of button
+	 * @return button
+	 */
+	public StandardButton newFilledButton(String label) {
+		StandardButton button = new StandardButton(label);
+		button.setStyleName("materialFilledButton");
+		button.addStyleName("keyboardFocus");
+		return button;
+	}
+
+	/**
+	 * Creates a material design outlined button.
+	 * @param label of button
+	 * @return button
+	 */
+	public StandardButton newOutlinedButton(String label) {
+		StandardButton button = new StandardButton(label);
+		button.setStyleName("materialOutlinedButton");
+		button.addStyleName("keyboardFocus");
+		return button;
+	}
+
+	/**
+	 * Creates a material design tonal button with icon and text.
+	 * @param svgResource icon
+	 * @param label of button
+	 * @return button
+	 */
+	public StandardButton newTonalButton(SVGResource svgResource, String label) {
+		StandardButton button = new StandardButton(
+				svgResource.withFill(GeoGebraColorConstants.PURPLE_700.toString()), label, 24);
+		button.setStyleName("materialTonalButton");
+		button.addStyleName("keyboardFocus");
+		return button;
 	}
 }

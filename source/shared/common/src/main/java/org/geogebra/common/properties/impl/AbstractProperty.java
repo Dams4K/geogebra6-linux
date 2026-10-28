@@ -1,9 +1,25 @@
-package org.geogebra.common.properties.impl;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.Nonnull;
+package org.geogebra.common.properties.impl;
 
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.properties.Property;
+import org.geogebra.common.properties.PropertyKey;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Helper class for implementing the localized name of a property.
@@ -23,15 +39,20 @@ public abstract class AbstractProperty implements Property {
 		this.localization = localization;
 		this.name = name;
 	}
-	
+
 	@Override
 	public String getName() {
 		return localization.getMenu(name);
 	}
 
 	@Override
-	public @Nonnull String getRawName() {
+	public @NonNull String getRawName() {
 		return name;
+	}
+
+	@Override
+	public @NonNull PropertyKey getKey() {
+		return PropertyKey.of(this);
 	}
 
 	@Override

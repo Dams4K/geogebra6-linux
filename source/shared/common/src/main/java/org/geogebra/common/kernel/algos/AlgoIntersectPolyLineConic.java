@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoIntersectPolyLineConic.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 29. May 2015, 14:49
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -37,7 +35,7 @@ import org.geogebra.common.kernel.matrix.Coords;
  * AlgoIntersect class for finding intersection points of both polyLine-conic
  * and polygon(br)-conic combinations. In the constructor boolean isPolyClosed
  * is used to define whether the GeoPoly is a polygon or a polyLine.
- * 
+ *
  * @author thilina
  *
  */
@@ -53,6 +51,7 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 
 	/** internal dummy points */
 	protected GeoPoint dummyPoint1;
+
 	protected GeoPoint dummyPoint2;
 	protected GeoPoint[] dummyOutputPoints;
 
@@ -63,10 +62,11 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 
 	/** computed list of intersecting coordinates */
 	protected ArrayList<Coords> intersectingCoords;
+
 	protected boolean hasLabels;
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param labels
@@ -78,8 +78,8 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 	 * @param isPolyClosed
 	 *            whether other input is polygon
 	 */
-	public AlgoIntersectPolyLineConic(Construction cons, String[] labels,
-			GeoConic conic, GeoPoly poly, boolean isPolyClosed) {
+	public AlgoIntersectPolyLineConic(
+			Construction cons, String[] labels, GeoConic conic, GeoPoly poly, boolean isPolyClosed) {
 
 		this(cons, conic, poly, isPolyClosed);
 
@@ -93,7 +93,7 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param poly
@@ -103,8 +103,8 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 	 * @param isPolyClosed
 	 *            whether the geopoly is a polygon or not(i.e a polyLine)
 	 */
-	public AlgoIntersectPolyLineConic(Construction cons, GeoConic conic,
-			GeoPoly poly, boolean isPolyClosed) {
+	public AlgoIntersectPolyLineConic(
+			Construction cons, GeoConic conic, GeoPoly poly, boolean isPolyClosed) {
 		super(cons);
 		this.conic = conic;
 		this.poly = poly;
@@ -145,10 +145,8 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 
 	private void addIncidence() {
 		for (int i = 0; i < intersectingPoints.size(); i++) {
-			((GeoPoint) intersectingPoints.getElement(i))
-					.addIncidence((GeoElement) this.poly, false);
-			((GeoPoint) intersectingPoints.getElement(i))
-					.addIncidence(this.conic, false);
+			((GeoPoint) intersectingPoints.getElement(i)).addIncidence((GeoElement) this.poly, false);
+			((GeoPoint) intersectingPoints.getElement(i)).addIncidence(this.conic, false);
 		}
 	}
 
@@ -165,7 +163,6 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 		intersectingPoints = createOutputPoints();
 
 		intersectingCoords = new ArrayList<>();
-
 	}
 
 	@Override
@@ -193,16 +190,14 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 		this.intersectingCoords(this.conic, this.poly, this.intersectingCoords);
 
 		// update and/or create points
-		this.intersectingPoints
-				.adjustOutputSize(this.intersectingCoords.size() > 0
-						? this.intersectingCoords.size() : 1);
+		this.intersectingPoints.adjustOutputSize(
+				this.intersectingCoords.size() > 0 ? this.intersectingCoords.size() : 1);
 
 		// affect new computed points
 		int index = 0;
 		for (; index < this.intersectingCoords.size(); index++) {
 			Coords coords = this.intersectingCoords.get(index);
-			GeoPointND point = (GeoPointND) this.intersectingPoints
-					.getElement(index);
+			GeoPointND point = (GeoPointND) this.intersectingPoints.getElement(index);
 			point.setCoords(coords, false);
 			point.updateCoords();
 		}
@@ -215,12 +210,11 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 		if (hasLabels) {
 			intersectingPoints.updateLabels();
 		}
-
 	}
 
 	/**
 	 * Does the actual calculation of the intersecting points.
-	 * 
+	 *
 	 * @param c
 	 *            GeoConic - considered as a full conic in the calculation
 	 * @param p
@@ -230,11 +224,9 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 	 *            ArrayList of Coords to store the calculated intersecting
 	 *            coords
 	 */
-	protected void intersectingCoords(GeoConic c, GeoPoly p,
-			ArrayList<Coords> coords) {
+	protected void intersectingCoords(GeoConic c, GeoPoly p, ArrayList<Coords> coords) {
 		GeoPointND[] polyPoints = p.getPoints();
-		int noOfSegments = isPolyClosed ? polyPoints.length
-				: polyPoints.length - 1;
+		int noOfSegments = isPolyClosed ? polyPoints.length : polyPoints.length - 1;
 
 		coords.clear();
 
@@ -246,8 +238,7 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 			this.dummySegment.setStartPoint(dummyPoint1);
 			this.dummySegment.setEndPoint(dummyPoint2);
 
-			GeoVec3D.lineThroughPoints(this.dummyPoint1, this.dummyPoint2,
-					this.dummySegment);
+			GeoVec3D.lineThroughPoints(this.dummyPoint1, this.dummyPoint2, this.dummySegment);
 
 			/*
 			 * Here both conic and conic parts are considered as full conics in
@@ -256,31 +247,26 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 			 * whether the intersecting points are actually lying on both conic
 			 * and polyline.
 			 */
-			AlgoIntersectLineConic.intersectLineConic(dummySegment, c,
-					dummyOutputPoints, Kernel.MIN_PRECISION);
+			AlgoIntersectLineConic.intersectLineConic(
+					dummySegment, c, dummyOutputPoints, Kernel.MIN_PRECISION);
 
 			/*
 			 * checks the validity and the incidence on both conic and polyline
 			 * of intersection point
 			 */
 			if (dummyOutputPoints[0].isDefined()) {
-				if (dummySegment.isOnPath(dummyOutputPoints[0],
-						Kernel.MIN_PRECISION)
-						&& c.isOnPath(dummyOutputPoints[0],
-								Kernel.MIN_PRECISION)) {
+				if (dummySegment.isOnPath(dummyOutputPoints[0], Kernel.MIN_PRECISION)
+						&& c.isOnPath(dummyOutputPoints[0], Kernel.MIN_PRECISION)) {
 					coords.add(dummyOutputPoints[0].getCoords());
 				}
 			}
 
 			if (dummyOutputPoints[1].isDefined()) {
-				if (dummySegment.isOnPath(dummyOutputPoints[1],
-						Kernel.MIN_PRECISION)
-						&& c.isOnPath(dummyOutputPoints[1],
-								Kernel.MIN_PRECISION)) {
+				if (dummySegment.isOnPath(dummyOutputPoints[1], Kernel.MIN_PRECISION)
+						&& c.isOnPath(dummyOutputPoints[1], Kernel.MIN_PRECISION)) {
 					coords.add(dummyOutputPoints[1].getCoords());
 				}
 			}
-
 		}
 	}
 
@@ -295,19 +281,16 @@ public class AlgoIntersectPolyLineConic extends AlgoIntersect {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return handler for output points
 	 */
 	protected OutputHandler<GeoElement> createOutputPoints() {
 
-		return new OutputHandler<>(new ElementFactory<GeoElement>() {
-			@Override
-			public GeoPoint newElement() {
-				GeoPoint p = new GeoPoint(getConstruction());
-				p.setCoords(0, 0, 1);
-				p.setParentAlgorithm(AlgoIntersectPolyLineConic.this);
-				return p;
-			}
+		return new OutputHandler<>(() -> {
+			GeoPoint p = new GeoPoint(getConstruction());
+			p.setCoords(0, 0, 1);
+			p.setParentAlgorithm(this);
+			return p;
 		});
 	}
 }

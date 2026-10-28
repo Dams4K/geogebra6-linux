@@ -1,15 +1,27 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 
 import org.geogebra.common.GeoGebraConstants;
 import org.geogebra.common.SuiteSubApp;
-import org.geogebra.common.annotation.MissingDoc;
-import org.geogebra.common.exam.restrictions.ExamRestrictable;
 import org.geogebra.common.gui.toolcategorization.AppType;
 import org.geogebra.common.io.layout.DockPanelData;
 import org.geogebra.common.kernel.EquationBehaviour;
@@ -25,11 +37,15 @@ import org.geogebra.common.main.settings.LabelVisibility;
 import org.geogebra.common.main.settings.updater.SettingsUpdater;
 import org.geogebra.common.main.syntax.suggestionfilter.SyntaxFilter;
 import org.geogebra.common.properties.factory.PropertiesFactory;
+import org.geogebra.common.properties.remembered.RememberedPropertyHandler;
+import org.geogebra.common.restrictions.Restrictable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Application configuration.
  */
-public interface AppConfig extends ExamRestrictable, Serializable {
+public interface AppConfig extends Restrictable, Serializable {
 
 	/**
 	 * Adjust panel positions.
@@ -37,7 +53,9 @@ public interface AppConfig extends ExamRestrictable, Serializable {
 	 */
 	void adjust(DockPanelData dp);
 
-	@MissingDoc
+	/**
+	 * @return translation key for the algebra view title
+	 */
 	String getAVTitle();
 
 	/**
@@ -60,19 +78,24 @@ public interface AppConfig extends ExamRestrictable, Serializable {
 	 */
 	String getAppNameWithoutCalc();
 
-	@MissingDoc
+	/**
+	 * @return translation key for the tutorial page of this app
+	 */
 	String getTutorialKey();
 
-	@MissingDoc
+	/**
+	 * @return whether the keyboard help button is shown
+	 */
 	boolean showKeyboardHelpButton();
 
-	@MissingDoc
-	boolean isSimpleMaterialPicker();
-
-	@MissingDoc
+	/**
+	 * @return whether special point (root, extremum) previews are shown while creating objects
+	 */
 	boolean hasPreviewPoints();
 
-	@MissingDoc
+	/**
+	 * @return whether command and input suggestions are enabled
+	 */
 	boolean allowsSuggestions();
 
 	/**
@@ -80,10 +103,14 @@ public interface AppConfig extends ExamRestrictable, Serializable {
 	 */
 	boolean shouldKeepRatioEuclidian();
 
-	@MissingDoc
+	/**
+	 * @return default number of decimals used for numeric output
+	 */
 	int getDefaultPrintDecimals();
 
-	@MissingDoc
+	/**
+	 * @return whether the app uses a single Euclidian view and it is 3D
+	 */
 	boolean hasSingleEuclidianViewWhichIs3D();
 
 	/**
@@ -123,22 +150,22 @@ public interface AppConfig extends ExamRestrictable, Serializable {
 	boolean isEnableStructures();
 
 	/**
-	 * 
+	 *
 	 * @return the toolbar type of the current app.
 	 */
 	AppType getToolbarType();
 
-    /**
-     *
-     * @return true if grid is shown at start on the active (main) euclidian view
-     */
+	/**
+	 *
+	 * @return true if grid is shown at start on the active (main) euclidian view
+	 */
 	boolean showGridOnFileNew();
 
-    /**
-     *
-     * @return true if axes are shown at start on the active (main) euclidian view
-     */
-    boolean showAxesOnFileNew();
+	/**
+	 *
+	 * @return true if axes are shown at start on the active (main) euclidian view
+	 */
+	boolean showAxesOnFileNew();
 
 	/**
 	 * @return whether table view is available
@@ -168,7 +195,7 @@ public interface AppConfig extends ExamRestrictable, Serializable {
 	/**
 	 * @return algebra style
 	 */
-	@Nonnull AlgebraStyle getDefaultAlgebraStyle();
+	@NonNull AlgebraStyle getDefaultAlgebraStyle();
 
 	/**
 	 * @return search tag for Open Material screen
@@ -183,22 +210,22 @@ public interface AppConfig extends ExamRestrictable, Serializable {
 	/**
 	 * @return the Command filter for the app.
 	 */
-	@CheckForNull CommandFilter getCommandFilter();
+	@Nullable CommandFilter getCommandFilter();
 
 	/**
 	 * @return new command filter for the app.
 	 */
-	@CheckForNull CommandFilter createCommandFilter();
+	@Nullable CommandFilter createCommandFilter();
 
 	/**
 	 * @return the Command Argument filter for the app.
 	 */
-	@CheckForNull CommandArgumentFilter getCommandArgumentFilter();
+	@Nullable CommandArgumentFilter getCommandArgumentFilter();
 
 	/**
 	 * @return command syntax filter
 	 */
-	@CheckForNull SyntaxFilter newCommandSyntaxFilter();
+	@Nullable SyntaxFilter newCommandSyntaxFilter();
 
 	/**
 	 * @return whether the app should show the tools panel or not
@@ -215,13 +242,13 @@ public interface AppConfig extends ExamRestrictable, Serializable {
 	 * @return The sub-app code if exists.
 	 * E.g. in the Suite app the Graphing sub-app has "suite" app code and "graphing" sub-app code.
 	 */
-	@CheckForNull String getSubAppCode();
+	@Nullable String getSubAppCode();
 
 	/**
 	 * @return The sub-app code if exists.
 	 * E.g. in the Suite app the Graphing sub-app has "suite" app code and "graphing" sub-app code.
 	 */
-	@CheckForNull SuiteSubApp getSubApp();
+	@Nullable SuiteSubApp getSubApp();
 
 	/**
 	 * @return creates a settings updater
@@ -250,7 +277,7 @@ public interface AppConfig extends ExamRestrictable, Serializable {
 	 *
 	 * @return operation argument filter
 	 */
-	@CheckForNull ExpressionFilter createExpressionFilter();
+	@Nullable ExpressionFilter createExpressionFilter();
 
 	/**
 	 * Unlike {@link #createExpressionFilter()} this always returns the same instance.
@@ -280,7 +307,7 @@ public interface AppConfig extends ExamRestrictable, Serializable {
 	 * {@code getEnforcedLineEquationForm()}, {@code getEnforcedConicEquationForm()}.
 	 * @return This app config's equation behaviour
 	 */
-	@Nonnull EquationBehaviour getEquationBehaviour();
+	@NonNull EquationBehaviour getEquationBehaviour();
 
 	/**
 	 * Initializes this app config's equation behaviour to its default value
@@ -371,7 +398,9 @@ public interface AppConfig extends ExamRestrictable, Serializable {
 	 */
 	int getMainGraphicsViewId();
 
-	@MissingDoc
+	/**
+	 * @return whether one-variable statistics are available
+	 */
 	boolean hasOneVarStatistics();
 
 	/**
@@ -379,6 +408,16 @@ public interface AppConfig extends ExamRestrictable, Serializable {
 	 */
 	boolean hasSpreadsheetView();
 
-	@MissingDoc
+	/**
+	 * @return whether data import is available in this app
+	 */
 	boolean hasDataImport();
+
+	/**
+	 * Returns the property handlers that store values during the application session.
+	 *
+	 * @return handlers to store property values, or an empty list if property values should not be
+	 *         remembered
+	 */
+	@NonNull List<RememberedPropertyHandler<?>> getRememberedPropertyHandlers();
 }

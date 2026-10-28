@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -13,16 +29,16 @@ import org.geogebra.common.main.MyError;
 
 /**
  * Extends rotation for 3D objects.
- * 
+ *
  * Rotate[ &lt;GeoPoint&gt;, &lt;NumberValue&gt; ]
- * 
+ *
  * @author mathieu
  */
 public class CmdRotate3D extends CmdRotate {
 
 	/**
 	 * default constructor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -37,48 +53,48 @@ public class CmdRotate3D extends CmdRotate {
 		GeoElement[] arg;
 
 		switch (n) {
-		case 2:
-			// ROTATE AS IN 2D
-			arg = resArgs(c, info);
-			return super.process2(c, arg, ok);
+			case 2:
+				// ROTATE AS IN 2D
+				arg = resArgs(c, info);
+				return super.process2(c, arg, ok);
 
-		case 3:
+			case 3:
+				arg = resArgs(c, info);
 
-			arg = resArgs(c, info);
+				// ROTATION AROUND LINE
+				if ((ok[1] = arg[1] instanceof GeoNumberValue) && (ok[2] = arg[2] instanceof GeoLineND)) {
 
-			// ROTATION AROUND LINE
-			if ((ok[1] = arg[1] instanceof GeoNumberValue)
-					&& (ok[2] = arg[2] instanceof GeoLineND)) {
+					return kernel
+							.getManager3D()
+							.rotate3D(c.getLabel(), arg[0], (GeoNumberValue) arg[1], (GeoLineND) arg[2]);
+				}
 
-				return kernel.getManager3D().rotate3D(c.getLabel(), arg[0],
-						(GeoNumberValue) arg[1], (GeoLineND) arg[2]);
+				// ROTATION AROUND POINT (AND XOY PLANE)
 
-			}
+				return super.process3(c, arg, ok);
 
-			// ROTATION AROUND POINT (AND XOY PLANE)
+			case 4:
+				// ROTATION AROUND POINT AND DIRECTION
+				arg = resArgs(c, info);
 
-			return super.process3(c, arg, ok);
+				// rotate point
+				if ((ok[1] = arg[1] instanceof GeoNumberValue)
+						&& (ok[2] = arg[2].isGeoPoint())
+						&& (ok[3] = arg[3] instanceof GeoDirectionND)) {
 
-		case 4:
-			// ROTATION AROUND POINT AND DIRECTION
-			arg = resArgs(c, info);
+					return kernel
+							.getManager3D()
+							.rotate3D(
+									c.getLabel(),
+									arg[0],
+									(GeoNumberValue) arg[1],
+									(GeoPointND) arg[2],
+									(GeoDirectionND) arg[3]);
+				}
 
-			// rotate point
-			if ((ok[1] = arg[1] instanceof GeoNumberValue)
-					&& (ok[2] = arg[2].isGeoPoint())
-					&& (ok[3] = arg[3] instanceof GeoDirectionND)) {
-
-				return kernel.getManager3D().rotate3D(c.getLabel(), arg[0],
-						(GeoNumberValue) arg[1], (GeoPointND) arg[2],
-						(GeoDirectionND) arg[3]);
-			}
-
-			throw argErr(c, getBadArg(ok, arg));
-
+				throw argErr(c, getBadArg(ok, arg));
 		}
 
 		return super.process(c, info);
-
 	}
-
 }

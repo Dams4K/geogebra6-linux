@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui;
 
 import org.geogebra.common.main.App;
@@ -12,7 +28,7 @@ import jsinterop.base.JsPropertyMap;
  * It gives a default file name and sets the extension filter depending on the app.
  *
  */
-public class LocalSaveOptions {
+public final class LocalSaveOptions {
 
 	private final App app;
 	private final MimeType mimeType;
@@ -40,10 +56,8 @@ public class LocalSaveOptions {
 
 	private String getSuggestedName() {
 		String consTitle = app.getKernel().getConstruction().getTitle();
-		return (StringUtil.empty(consTitle)
-				? app.getLocalization().getMenu("Untitled")
-				: consTitle
-		) + mimeType.dotExtension();
+		return (StringUtil.empty(consTitle) ? app.getLocalization().getMenu("Untitled") : consTitle)
+				+ mimeType.dotExtension();
 	}
 
 	private JsArray<Object> getAcceptedMimeTypes() {
@@ -54,5 +68,4 @@ public class LocalSaveOptions {
 		types.set("accept", mimeTypes);
 		return JsArray.of(types);
 	}
-
 }

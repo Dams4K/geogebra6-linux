@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -28,8 +32,7 @@ import org.geogebra.common.kernel.prover.polynomial.PVariable;
  * Computes area of polygon P[0], ..., P[n]
  *
  */
-public class AlgoAreaPoints extends AlgoElement
-		implements SymbolicParametersBotanaAlgo {
+public class AlgoAreaPoints extends AlgoElement implements SymbolicParametersBotanaAlgo {
 
 	protected GeoPointND[] P; // input
 	protected GeoNumeric area; // output
@@ -105,14 +108,12 @@ public class AlgoAreaPoints extends AlgoElement
 	}
 
 	@Override
-	public PVariable[] getBotanaVars(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PVariable[] getBotanaVars(GeoElementND geo) throws NoSymbolicParametersException {
 		GeoPointND[] points = getPoints();
 		if (botanaVars == null) {
 			botanaVars = new PVariable[points.length * 2];
 			for (int i = 0; i < points.length; i++) {
-				PVariable[] currentPointBotanavars = ((GeoPoint) points[i])
-						.getBotanaVars(points[i]);
+				PVariable[] currentPointBotanavars = ((GeoPoint) points[i]).getBotanaVars(points[i]);
 				botanaVars[2 * i] = currentPointBotanavars[0];
 				botanaVars[2 * i + 1] = currentPointBotanavars[1];
 			}
@@ -121,10 +122,8 @@ public class AlgoAreaPoints extends AlgoElement
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

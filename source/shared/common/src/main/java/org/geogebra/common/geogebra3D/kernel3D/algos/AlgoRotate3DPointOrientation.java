@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoRotatePoint.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 24. September 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -39,8 +37,12 @@ public class AlgoRotate3DPointOrientation extends AlgoRotate3D {
 	private GeoPointND center;
 	private GeoDirectionND orientation;
 
-	AlgoRotate3DPointOrientation(Construction cons, String label, GeoElement in,
-			GeoNumberValue angle, GeoPointND center,
+	AlgoRotate3DPointOrientation(
+			Construction cons,
+			String label,
+			GeoElement in,
+			GeoNumberValue angle,
+			GeoPointND center,
 			GeoDirectionND orientation) {
 		this(cons, in, angle, center, orientation);
 		out.setLabel(label);
@@ -48,7 +50,7 @@ public class AlgoRotate3DPointOrientation extends AlgoRotate3D {
 
 	/**
 	 * Creates new unlabeled point rotation algo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param in
@@ -60,8 +62,11 @@ public class AlgoRotate3DPointOrientation extends AlgoRotate3D {
 	 * @param orientation
 	 *            (axis) orientation
 	 */
-	public AlgoRotate3DPointOrientation(Construction cons, GeoElement in,
-			GeoNumberValue angle, GeoPointND center,
+	public AlgoRotate3DPointOrientation(
+			Construction cons,
+			GeoElement in,
+			GeoNumberValue angle,
+			GeoPointND center,
 			GeoDirectionND orientation) {
 
 		super(cons, in, angle);
@@ -106,8 +111,8 @@ public class AlgoRotate3DPointOrientation extends AlgoRotate3D {
 		}
 
 		if (inGeo instanceof GeoFunction) {
-			AlgoTransformation3D.toGeoCurveCartesian(kernel,
-					(GeoFunction) inGeo, (GeoCurveCartesian3D) outGeo);
+			AlgoTransformation3D.toGeoCurveCartesian(
+					kernel, (GeoFunction) inGeo, (GeoCurveCartesian3D) outGeo);
 		} else {
 			setOutGeo();
 		}
@@ -123,23 +128,25 @@ public class AlgoRotate3DPointOrientation extends AlgoRotate3D {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		String s;
 		if (orientation instanceof GeoCoordSys2D) { // axis perpendicular to
-													// plane
+			// plane
 			s = "ARotatedByAngleBAboutPlaneCThroughD";
 		} else { // axis = orientation
 			s = "ARotatedByAngleBAboutCThroughD";
 		}
-		return getLoc().getPlain(s, inGeo.getLabel(tpl),
-				angle.getLabel(tpl),
-				orientation.getLabel(tpl), center.getLabel(tpl));
-
+		return getLoc()
+				.getPlain(
+						s,
+						inGeo.getLabel(tpl),
+						angle.getLabel(tpl),
+						orientation.getLabel(tpl),
+						center.getLabel(tpl));
 	}
 
 	@Override
 	public double getAreaScaleFactor() {
 		return 1;
 	}
-
 }

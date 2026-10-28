@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoPolarLine.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -45,7 +43,7 @@ public class AlgoPolarLine3D extends AlgoPolarLineND {
 
 	/**
 	 * Creates new AlgoPolarLine
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -55,8 +53,7 @@ public class AlgoPolarLine3D extends AlgoPolarLineND {
 	 * @param P
 	 *            polar point
 	 */
-	public AlgoPolarLine3D(Construction cons, String label, GeoConicND c,
-			GeoPointND P) {
+	public AlgoPolarLine3D(Construction cons, String label, GeoConicND c, GeoPointND P) {
 		super(cons, label, c, P);
 	}
 
@@ -76,8 +73,7 @@ public class AlgoPolarLine3D extends AlgoPolarLineND {
 	public final void compute() {
 
 		// check if point lies on conic coord sys
-		coords2D = c.getCoordSys()
-				.getNormalProjection(P.getInhomCoordsInD3())[1];
+		coords2D = c.getCoordSys().getNormalProjection(P.getInhomCoordsInD3())[1];
 		if (!DoubleUtil.isZero(coords2D.getZ())) {
 			polar.setUndefined();
 			return;
@@ -91,18 +87,13 @@ public class AlgoPolarLine3D extends AlgoPolarLineND {
 
 		// update 3D polar
 		polar2D.getCoords(polarCoords);
-		polarDirection = c.getCoordSys().getVector(-polarCoords[1],
-				polarCoords[0]);
+		polarDirection = c.getCoordSys().getVector(-polarCoords[1], polarCoords[0]);
 		if (DoubleUtil.isZero(polarCoords[0])) {
-			polarOrigin = c.getCoordSys().getPoint(0,
-					-polarCoords[2] / polarCoords[1]);
+			polarOrigin = c.getCoordSys().getPoint(0, -polarCoords[2] / polarCoords[1]);
 		} else {
-			polarOrigin = c.getCoordSys()
-					.getPoint(-polarCoords[2] / polarCoords[0], 0);
+			polarOrigin = c.getCoordSys().getPoint(-polarCoords[2] / polarCoords[0], 0);
 		}
 
 		((GeoLine3D) polar).setCoord(polarOrigin, polarDirection);
-
 	}
-
 }

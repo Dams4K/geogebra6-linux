@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.table.column;
 
 import java.util.ArrayList;
@@ -11,7 +27,7 @@ import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.kernelND.GeoEvaluatable;
 import org.geogebra.common.util.StringUtil;
 
-abstract public class AbstractTableValuesColumn implements TableValuesColumn {
+public abstract class AbstractTableValuesColumn implements TableValuesColumn {
 
 	private final GeoEvaluatable element;
 	private final Kernel kernel;
@@ -99,14 +115,12 @@ abstract public class AbstractTableValuesColumn implements TableValuesColumn {
 	}
 
 	@Override
-	public void notifyColumnRemoved(TableValuesModel model, GeoEvaluatable evaluatable,
-			int column) {
+	public void notifyColumnRemoved(TableValuesModel model, GeoEvaluatable evaluatable, int column) {
 		// Ignore
 	}
 
 	@Override
-	public void notifyColumnChanged(TableValuesModel model, GeoEvaluatable evaluatable,
-			int column) {
+	public void notifyColumnChanged(TableValuesModel model, GeoEvaluatable evaluatable, int column) {
 		if (evaluatable == element) {
 			invalidateValues(model.getRowCount());
 		}
@@ -118,16 +132,16 @@ abstract public class AbstractTableValuesColumn implements TableValuesColumn {
 	}
 
 	@Override
-	public void notifyColumnHeaderChanged(TableValuesModel model, GeoEvaluatable evaluatable,
-			int column) {
+	public void notifyColumnHeaderChanged(
+			TableValuesModel model, GeoEvaluatable evaluatable, int column) {
 		if (evaluatable == element) {
 			invalidateHeader();
 		}
 	}
 
 	@Override
-	public void notifyCellChanged(TableValuesModel model, GeoEvaluatable evaluatable, int column,
-			int row) {
+	public void notifyCellChanged(
+			TableValuesModel model, GeoEvaluatable evaluatable, int column, int row) {
 		if (evaluatable == element) {
 			invalidateValue(row);
 		}

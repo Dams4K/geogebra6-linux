@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.interval.node;
 
 import org.geogebra.common.kernel.interval.Interval;
@@ -36,8 +52,8 @@ public class IntervalExpressionNode implements IntervalNode {
 	 * @param left subtree.
 	 * @param operation on left.
 	 */
-	public IntervalExpressionNode(IntervalNodeEvaluator evaluator, IntervalNode left,
-			IntervalOperation operation) {
+	public IntervalExpressionNode(
+			IntervalNodeEvaluator evaluator, IntervalNode left, IntervalOperation operation) {
 		this(evaluator, left, operation, null);
 	}
 
@@ -47,7 +63,9 @@ public class IntervalExpressionNode implements IntervalNode {
 	 * @param left subtree.
 	 * @param operation on left.
 	 */
-	public IntervalExpressionNode(IntervalNodeEvaluator evaluator, IntervalNode left,
+	public IntervalExpressionNode(
+			IntervalNodeEvaluator evaluator,
+			IntervalNode left,
 			IntervalOperation operation,
 			IntervalNode right) {
 		this.evaluator = evaluator;
@@ -86,8 +104,7 @@ public class IntervalExpressionNode implements IntervalNode {
 
 	@Override
 	public boolean hasFunctionVariable() {
-		return hasLeft() && left.hasFunctionVariable()
-				|| hasRight() && right.hasFunctionVariable();
+		return hasLeft() && left.hasFunctionVariable() || hasRight() && right.hasFunctionVariable();
 	}
 
 	@Override
@@ -97,6 +114,16 @@ public class IntervalExpressionNode implements IntervalNode {
 		}
 		if (right != null) {
 			right = right.simplify();
+		}
+		if (isOperation(IntervalOperation.LOG) && left instanceof IntervalExpressionNode) {
+			IntervalExpressionNode node = left.asExpressionNode();
+			if (node.isOperation(IntervalOperation.EXP)) {
+				return node.getLeft();
+			}
+			if (node.isOperation(IntervalOperation.POWER)
+					&& IntervalConstants.E.almostEqual(node.getLeft().value(), 0)) {
+				return node.getRight();
+			}
 		}
 		// fractions can't be simplified because x^(1/3) is not x^(0.33)
 		if (left instanceof IntervalFunctionValue

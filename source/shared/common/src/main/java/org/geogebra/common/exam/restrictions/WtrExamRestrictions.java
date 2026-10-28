@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.exam.restrictions;
 
 import static org.geogebra.common.SuiteSubApp.CAS;
@@ -6,9 +22,6 @@ import static org.geogebra.common.SuiteSubApp.GEOMETRY;
 import static org.geogebra.common.SuiteSubApp.GRAPHING;
 import static org.geogebra.common.SuiteSubApp.PROBABILITY;
 import static org.geogebra.common.SuiteSubApp.SCIENTIFIC;
-import static org.geogebra.common.exam.restrictions.ExamFeatureRestriction.DISABLE_MIXED_NUMBERS;
-import static org.geogebra.common.exam.restrictions.ExamFeatureRestriction.RATIONALIZATION;
-import static org.geogebra.common.exam.restrictions.ExamFeatureRestriction.SURD;
 import static org.geogebra.common.kernel.commands.Commands.BinomialCoefficient;
 import static org.geogebra.common.kernel.commands.Commands.BinomialDist;
 import static org.geogebra.common.kernel.commands.Commands.Normal;
@@ -57,6 +70,9 @@ import static org.geogebra.common.plugin.Operation.SINH;
 import static org.geogebra.common.plugin.Operation.SQRT;
 import static org.geogebra.common.plugin.Operation.TAN;
 import static org.geogebra.common.plugin.Operation.TANH;
+import static org.geogebra.common.restrictions.FeatureRestriction.DISABLE_MIXED_NUMBERS;
+import static org.geogebra.common.restrictions.FeatureRestriction.RATIONALIZATION;
+import static org.geogebra.common.restrictions.FeatureRestriction.SURD;
 import static org.geogebra.common.util.StreamUtils.filter;
 import static org.geogebra.common.util.StreamUtils.streamOf;
 
@@ -65,10 +81,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
-import org.geogebra.common.exam.ExamType;
 import org.geogebra.common.exam.restrictions.expression.ExpressionRestriction;
+import org.geogebra.common.exam.restrictions.wtr.WtrAlgebraOutputFilter;
 import org.geogebra.common.kernel.ConstructionDefaults;
 import org.geogebra.common.kernel.arithmetic.BooleanValue;
 import org.geogebra.common.kernel.arithmetic.Command;
@@ -82,6 +96,7 @@ import org.geogebra.common.kernel.arithmetic.filter.RadianGradianFilter;
 import org.geogebra.common.kernel.commands.CommandProcessor;
 import org.geogebra.common.kernel.commands.Commands;
 import org.geogebra.common.kernel.commands.filter.CommandArgumentFilter;
+import org.geogebra.common.kernel.commands.filter.ExamCommandArgumentFilter;
 import org.geogebra.common.kernel.commands.selector.CommandFilter;
 import org.geogebra.common.kernel.commands.selector.CommandNameFilter;
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -91,10 +106,14 @@ import org.geogebra.common.main.syntax.Syntax;
 import org.geogebra.common.main.syntax.suggestionfilter.LineSelectorSyntaxFilter;
 import org.geogebra.common.main.syntax.suggestionfilter.SyntaxFilter;
 import org.geogebra.common.plugin.Operation;
+import org.geogebra.common.restrictions.Restrictions;
+import org.jspecify.annotations.NonNull;
 
-public class WtrExamRestrictions extends ExamRestrictions {
-	WtrExamRestrictions() {
-		super(ExamType.WTR,
+public class WtrExamRestrictions extends Restrictions {
+
+	/** Constructs the restrictions for WTR exam. */
+	public WtrExamRestrictions() {
+		super(
 				Set.of(GRAPHING, GEOMETRY, G3D, CAS, PROBABILITY),
 				SCIENTIFIC,
 				Set.of(SURD, RATIONALIZATION, DISABLE_MIXED_NUMBERS),
@@ -111,15 +130,17 @@ public class WtrExamRestrictions extends ExamRestrictions {
 				null,
 				null,
 				null,
-				null);
+				null,
+				new WtrAlgebraOutputFilter());
 	}
 
 	private static Set<ExpressionFilter> createInputExpressionFilters() {
-		return Set.of(ExpressionRestriction.toFilter(
-				new RestrictComplexExpressions(),
-				new RestrictBooleanExpressions(),
-				new AllowBooleanAndListCommandArguments(),
-				new RestrictLists()),
+		return Set.of(
+				ExpressionRestriction.toFilter(
+						new RestrictComplexExpressions(),
+						new RestrictBooleanExpressions(),
+						new AllowBooleanAndListCommandArguments(),
+						new RestrictLists()),
 				new RadianGradianFilter());
 	}
 
@@ -137,19 +158,19 @@ public class WtrExamRestrictions extends ExamRestrictions {
 
 	private static OperationFilter createOperationFilter() {
 		Set<Operation> allowedOperations = Set.of(
-				PLUS, MINUS, MULTIPLY, DIVIDE, POWER, FACTORIAL, ABS, SGN, FLOOR, CEIL, ROUND,
-				ROUND2, SQRT, CBRT, NROOT, EXP, LOG, LOG2, LOG10, LOGB, COS, SIN, TAN, SEC, CSC,
-				COT, ARCCOS, ARCCOSD, ARCSIN, ARCSIND, ARCTAN, ARCTAND, COSH, SINH, TANH, SECH,
-				CSCH, COTH, ACOSH, ASINH, ATANH, NCR, SEQUENCE);
+				PLUS, MINUS, MULTIPLY, DIVIDE, POWER, FACTORIAL, ABS, SGN, FLOOR, CEIL, ROUND, ROUND2, SQRT,
+				CBRT, NROOT, EXP, LOG, LOG2, LOG10, LOGB, COS, SIN, TAN, SEC, CSC, COT, ARCCOS, ARCCOSD,
+				ARCSIN, ARCSIND, ARCTAN, ARCTAND, COSH, SINH, TANH, SECH, CSCH, COTH, ACOSH, ASINH, ATANH,
+				NCR, SEQUENCE);
 		return allowedOperations::contains;
 	}
 
 	private static SyntaxFilter createSyntaxFilter() {
 		return new WtrSyntaxFilter();
-    }
+	}
 
 	private static Set<CommandArgumentFilter> createCommandArgumentFilters() {
-		return Set.of(new WtrCommandArgumentFilter());
+		return Set.of(new ExamCommandArgumentFilter(), new WtrCommandArgumentFilter());
 	}
 
 	private static final class WtrSyntaxFilter extends LineSelectorSyntaxFilter {
@@ -166,18 +187,18 @@ public class WtrExamRestrictions extends ExamRestrictions {
 
 	private static final class WtrCommandArgumentFilter implements CommandArgumentFilter {
 		private final Map<Commands, Set<Syntax>> allowedSyntaxesForRestrictedCommands = Map.of(
-				BinomialDist, Set.of(
-						Syntax.of(BinomialDist,
-								isNumber(), isNumber(), isNumber(), GeoElement::isGeoBoolean),
-						Syntax.of(BinomialDist,
-								isNumber(), isNumber(), GeoElement::isGeoList)),
-				Normal, Set.of(
-						Syntax.of(Normal, isNumber(), isNumber(), isNumber()),
-						Syntax.of(Normal, isNumber(), isNumber(), isNumber(), isNumber())));
+				BinomialDist,
+						Set.of(
+								Syntax.of(
+										BinomialDist, isNumber(), isNumber(), isNumber(), GeoElement::isGeoBoolean),
+								Syntax.of(BinomialDist, isNumber(), isNumber(), GeoElement::isGeoList)),
+				Normal,
+						Set.of(
+								Syntax.of(Normal, isNumber(), isNumber(), isNumber()),
+								Syntax.of(Normal, isNumber(), isNumber(), isNumber(), isNumber())));
 
 		@Override
-		public void checkAllowed(Command command, CommandProcessor commandProcessor)
-				throws MyError {
+		public void checkAllowed(Command command, CommandProcessor commandProcessor) throws MyError {
 			Syntax.checkRestrictedSyntaxes(
 					allowedSyntaxesForRestrictedCommands, command, commandProcessor);
 		}
@@ -185,25 +206,24 @@ public class WtrExamRestrictions extends ExamRestrictions {
 
 	private static final class RestrictComplexExpressions implements ExpressionRestriction {
 		@Override
-		public @Nonnull Set<ExpressionValue> getRestrictedSubExpressions(
-				@Nonnull ExpressionValue expression) {
-			return filter(expression, subExpression ->
-					subExpression.getValueType() == ValueType.COMPLEX);
+		public @NonNull Set<ExpressionValue> getRestrictedSubExpressions(
+				@NonNull ExpressionValue expression) {
+			return filter(expression, subExpression -> subExpression.getValueType() == ValueType.COMPLEX);
 		}
 	}
 
 	private static final class RestrictBooleanExpressions implements ExpressionRestriction {
 		@Override
-		public @Nonnull Set<ExpressionValue> getRestrictedSubExpressions(
-				@Nonnull ExpressionValue expression) {
+		public @NonNull Set<ExpressionValue> getRestrictedSubExpressions(
+				@NonNull ExpressionValue expression) {
 			return filter(expression, subExpression -> subExpression instanceof BooleanValue);
 		}
 	}
 
-	private static final class AllowBooleanAndListCommandArguments
-			implements ExpressionRestriction {
+	private static final class AllowBooleanAndListCommandArguments implements ExpressionRestriction {
 		@Override
-		public @Nonnull Set<ExpressionValue> getAllowedSubExpressions(@Nonnull ExpressionValue expression) {
+		public @NonNull Set<ExpressionValue> getAllowedSubExpressions(
+				@NonNull ExpressionValue expression) {
 			return streamOf(expression)
 					// For commands,
 					.filter(subExpression -> subExpression instanceof Command)
@@ -215,30 +235,28 @@ public class WtrExamRestrictions extends ExamRestrictions {
 							.map(ExpressionNode::unwrap)
 							// and allow booleans
 							.filter(argument -> argument instanceof BooleanValue
-										|| argument instanceof MyList
-										|| argument.isOperation(SEQUENCE)))
+									|| argument instanceof MyList
+									|| argument.isOperation(SEQUENCE)))
 					.collect(Collectors.toSet());
 		}
 	}
 
 	private static final class RestrictLists implements ExpressionRestriction {
 		@Override
-		public @Nonnull Set<ExpressionValue> getRestrictedSubExpressions(
-				@Nonnull ExpressionValue expression) {
+		public @NonNull Set<ExpressionValue> getRestrictedSubExpressions(
+				@NonNull ExpressionValue expression) {
 			return filter(expression, subExpression -> subExpression instanceof MyList);
 		}
 	}
 
 	@Override
-	public void applySettingsRestrictions(@Nonnull Settings settings,
-			@Nonnull ConstructionDefaults defaults) {
+	public void applySettingsRestrictions(Settings settings, ConstructionDefaults defaults) {
 		super.applySettingsRestrictions(settings, defaults);
 		settings.getAlgebra().setAngleConversionRestricted(true);
 	}
 
 	@Override
-	public void removeSettingsRestrictions(@Nonnull Settings settings,
-			@Nonnull ConstructionDefaults defaults) {
+	public void removeSettingsRestrictions(Settings settings, ConstructionDefaults defaults) {
 		super.removeSettingsRestrictions(settings, defaults);
 		settings.getAlgebra().setAngleConversionRestricted(false);
 	}

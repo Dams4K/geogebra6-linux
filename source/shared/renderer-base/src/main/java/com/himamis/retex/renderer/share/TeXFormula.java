@@ -50,9 +50,10 @@ package com.himamis.retex.renderer.share;
 
 import java.util.Map;
 
+import org.geogebra.common.awt.GColor;
+
 import com.himamis.retex.renderer.share.exception.ParseException;
 import com.himamis.retex.renderer.share.platform.Graphics;
-import com.himamis.retex.renderer.share.platform.graphics.Color;
 import com.himamis.retex.renderer.share.platform.graphics.Graphics2DInterface;
 import com.himamis.retex.renderer.share.platform.graphics.Image;
 import com.himamis.retex.renderer.share.platform.graphics.Insets;
@@ -109,7 +110,7 @@ public class TeXFormula {
 
 	/**
 	 * Set the DPI of target
-	 * 
+	 *
 	 * @param dpi
 	 *            the target DPI
 	 */
@@ -158,8 +159,7 @@ public class TeXFormula {
 		run();
 	}
 
-	public TeXFormula(final String s, final Map<String, String> xmlMap)
-			throws ParseException {
+	public TeXFormula(final String s, final Map<String, String> xmlMap) throws ParseException {
 		parser = new TeXParser(false, s);
 		parser.setXMLMap(xmlMap);
 		run();
@@ -178,8 +178,7 @@ public class TeXFormula {
 		this(s, false);
 	}
 
-	public TeXFormula(final String s, final String textStyle)
-			throws ParseException {
+	public TeXFormula(final String s, final String textStyle) throws ParseException {
 		this.textStyle = TextStyle.getStyle(textStyle);
 		parser = new TeXParser(false, s);
 		run();
@@ -190,8 +189,8 @@ public class TeXFormula {
 		root = parser.get();
 	}
 
-	public static TeXFormula getAsText(final String text,
-			final TeXConstants.Align alignment) throws ParseException {
+	public static TeXFormula getAsText(final String text, final TeXConstants.Align alignment)
+			throws ParseException {
 		final TeXFormula formula = new TeXFormula();
 		if (text == null || text.isEmpty()) {
 			formula.root = EmptyAtom.get();
@@ -313,7 +312,7 @@ public class TeXFormula {
 	/**
 	 * Apply the Builder pattern instead of using the createTeXIcon(...)
 	 * factories
-	 * 
+	 *
 	 * @author Felix Natter
 	 *
 	 */
@@ -321,13 +320,13 @@ public class TeXFormula {
 		private Integer style;
 		private Double size;
 		private Integer type;
-		private Color fgcolor;
+		private GColor fgcolor;
 		private boolean trueValues = false;
 		private TeXConstants.Align align;
 
 		/**
 		 * Specify the style for rendering the given TeXFormula
-		 * 
+		 *
 		 * @param style
 		 *            the style
 		 * @return the builder, used for chaining
@@ -339,7 +338,7 @@ public class TeXFormula {
 
 		/**
 		 * Specify the font size for rendering the given TeXFormula
-		 * 
+		 *
 		 * @param size
 		 *            the size
 		 * @return the builder, used for chaining
@@ -351,7 +350,7 @@ public class TeXFormula {
 
 		/**
 		 * Specify the font type for rendering the given TeXFormula
-		 * 
+		 *
 		 * @param type
 		 *            the font type
 		 * @return the builder, used for chaining
@@ -363,12 +362,12 @@ public class TeXFormula {
 
 		/**
 		 * Specify the background color for rendering the given TeXFormula
-		 * 
+		 *
 		 * @param fgcolor
 		 *            the foreground color
 		 * @return the builder, used for chaining
 		 */
-		public TeXIconBuilder setFGColor(final Color fgcolor) {
+		public TeXIconBuilder setFGColor(final GColor fgcolor) {
 			this.fgcolor = fgcolor;
 			return this;
 		}
@@ -376,7 +375,7 @@ public class TeXFormula {
 		/**
 		 * Specify the "true values" parameter for rendering the given
 		 * TeXFormula
-		 * 
+		 *
 		 * @param trueValues
 		 *            the "true values" value
 		 * @return the builder, used for chaining
@@ -402,28 +401,24 @@ public class TeXFormula {
 		/**
 		 * Create a TeXIcon from the information gathered by the (chained)
 		 * setXXX() methods. (see Builder pattern)
-		 * 
+		 *
 		 * @return the TeXIcon
 		 */
 		public TeXIcon build() {
 			if (style == null) {
-				throw new IllegalStateException(
-						"A style is required. Use setStyle()");
+				throw new IllegalStateException("A style is required. Use setStyle()");
 			}
 			if (size == null) {
-				throw new IllegalStateException(
-						"A size is required. Use setStyle()");
+				throw new IllegalStateException("A size is required. Use setStyle()");
 			}
-			TeXFont font = (type == null) ? new TeXFont(size)
-					: createFont(size, type);
+			TeXFont font = (type == null) ? new TeXFont(size) : createFont(size, type);
 			TeXEnvironment te = new TeXEnvironment(style, font, textStyle);
 
 			Box box = createBox(te);
 			TeXIcon ti;
 			final double textwidth = te.lengthSettings().getLength("textwidth", te);
 			if (!Double.isInfinite(textwidth) && !Double.isNaN(textwidth)) {
-				final double baselineskip = te.lengthSettings().getLength("baselineskip",
-						te);
+				final double baselineskip = te.lengthSettings().getLength("baselineskip", te);
 				box = BreakFormula.split(box, textwidth, baselineskip, align);
 			}
 			ti = new TeXIcon(box, size, trueValues);
@@ -453,30 +448,37 @@ public class TeXFormula {
 	}
 
 	public TeXIcon createTeXIcon(int style, double size, int type) {
-		return new TeXIconBuilder().setStyle(style).setSize(size).setType(type)
+		return new TeXIconBuilder().setStyle(style).setSize(size).setType(type).build();
+	}
+
+	public TeXIcon createTeXIcon(int style, double size, int type, GColor fgcolor) {
+		return new TeXIconBuilder()
+				.setStyle(style)
+				.setSize(size)
+				.setType(type)
+				.setFGColor(fgcolor)
 				.build();
 	}
 
-	public TeXIcon createTeXIcon(int style, double size, int type,
-			Color fgcolor) {
-		return new TeXIconBuilder().setStyle(style).setSize(size).setType(type)
-				.setFGColor(fgcolor).build();
-	}
-
 	public TeXIcon createTeXIcon(int style, double size, boolean trueValues) {
-		return new TeXIconBuilder().setStyle(style).setSize(size)
-				.setTrueValues(trueValues).build();
+		return new TeXIconBuilder()
+				.setStyle(style)
+				.setSize(size)
+				.setTrueValues(trueValues)
+				.build();
 	}
 
-	public TeXIcon createTeXIcon(int style, double size,
-			TeXConstants.Align align) {
+	public TeXIcon createTeXIcon(int style, double size, TeXConstants.Align align) {
 		return createTeXIcon(style, size, 0, align);
 	}
 
-	public TeXIcon createTeXIcon(int style, double size, int type,
-			TeXConstants.Align align) {
-		return new TeXIconBuilder().setStyle(style).setSize(size).setType(type)
-				.setAlign(align).build();
+	public TeXIcon createTeXIcon(int style, double size, int type, TeXConstants.Align align) {
+		return new TeXIconBuilder()
+				.setStyle(style)
+				.setSize(size)
+				.setType(type)
+				.setAlign(align)
+				.build();
 	}
 
 	// public void createImage(String format, int style, double size, String
@@ -537,8 +539,8 @@ public class TeXFormula {
 	 *            foreground color
 	 * @return the generated image
 	 */
-	public static Image createBufferedImage(String formula, int style,
-			double size, Color fg, Color bg) throws ParseException {
+	public static Image createBufferedImage(
+			String formula, int style, double size, GColor fg, GColor bg) throws ParseException {
 		TeXFormula f = new TeXFormula(formula);
 		TeXIcon icon = f.createTeXIcon(style, size);
 		return asImage(icon, fg, bg, 1);
@@ -550,20 +552,20 @@ public class TeXFormula {
 	 * @param bg background color
 	 * @return image
 	 */
-	public static Image asImage(TeXIcon icon, Color fg, Color bg, double pixelRatio) {
+	public static Image asImage(TeXIcon icon, GColor fg, GColor bg, double pixelRatio) {
 		icon.setInsets(new Insets(2, 2, 2, 2));
 		int w = (int) Math.round(pixelRatio * icon.getIconWidth());
 		int h = (int) Math.round(pixelRatio * icon.getIconHeight());
 
-		Image image = new Graphics().createImage(w, h,
-				bg == null ? Image.TYPE_INT_ARGB : Image.TYPE_INT_RGB);
+		Image image =
+				new Graphics().createImage(w, h, bg == null ? Image.TYPE_INT_ARGB : Image.TYPE_INT_RGB);
 		Graphics2DInterface g2 = image.createGraphics2D();
 		if (bg != null) {
 			g2.setColor(bg);
 			g2.fillRect(0, 0, w, h);
 		}
 
-		icon.setForeground(fg == null ? Colors.BLACK : fg);
+		icon.setForeground(fg == null ? GColor.BLACK : fg);
 		g2.scale(pixelRatio, pixelRatio);
 		icon.paintIcon(null, g2, 0, 0);
 		g2.dispose();
@@ -582,10 +584,9 @@ public class TeXFormula {
 	 *            background color
 	 * @return the generated image
 	 */
-	public Image createBufferedImage(int style, double size, Color fg, Color bg)
+	public Image createBufferedImage(int style, double size, GColor fg, GColor bg)
 			throws ParseException {
 		TeXIcon icon = createTeXIcon(style, size);
 		return asImage(icon, fg, bg, 1);
 	}
-
 }

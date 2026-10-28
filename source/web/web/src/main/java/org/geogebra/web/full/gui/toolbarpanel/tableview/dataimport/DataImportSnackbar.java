@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbarpanel.tableview.dataimport;
 
 import static org.geogebra.common.main.GeoGebraColorConstants.NEUTRAL_300;
@@ -14,9 +30,8 @@ import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Image;
 import org.gwtproject.user.client.ui.Label;
 
-public class DataImportSnackbar extends FlowPanel {
-	protected AppW appW;
-	private Label titleLbl;
+public final class DataImportSnackbar extends FlowPanel {
+	private final AppW appW;
 	private Timer fadeIn = new Timer() {
 		@Override
 		public void run() {
@@ -30,7 +45,7 @@ public class DataImportSnackbar extends FlowPanel {
 			remove.schedule(2000);
 		}
 	};
-	private Timer remove = new Timer() {
+	private final Timer remove = new Timer() {
 		@Override
 		public void run() {
 			removeFromParent();
@@ -79,16 +94,18 @@ public class DataImportSnackbar extends FlowPanel {
 		FlowPanel titleHolder = new FlowPanel();
 		titleHolder.addStyleName("titleHolder");
 
-		Image dataImg = new Image(MaterialDesignResources.INSTANCE.upload_file().withFill(
-				svgFiller.toString()).getSafeUri());
-		titleLbl = new Label(title);
+		Image dataImg = new Image(MaterialDesignResources.INSTANCE
+				.upload_file()
+				.withFill(svgFiller.toString())
+				.getSafeUri());
+		Label titleLbl = new Label(title);
 
 		titleHolder.add(dataImg);
 		titleHolder.add(titleLbl);
 
 		if (addCloseBtn) {
-			StandardButton xButton = new StandardButton(MaterialDesignResources.INSTANCE.clear()
-					.withFill(NEUTRAL_300.toString()), 24);
+			StandardButton xButton = new StandardButton(
+					MaterialDesignResources.INSTANCE.clear().withFill(NEUTRAL_300.toString()), 24);
 			xButton.addFastClickHandler(source -> {
 				hide();
 			});
@@ -105,8 +122,8 @@ public class DataImportSnackbar extends FlowPanel {
 		errorHolder.addStyleName("errorHolder");
 		Label errorLbl = new Label(appW.getLocalization().getMenu("General.ImportFailed"));
 		errorLbl.addStyleName("errorMsg");
-		StandardButton tryAgain = new StandardButton(appW.getLocalization()
-				.getMenu("phone_try_again_loading"));
+		StandardButton tryAgain =
+				new StandardButton(appW.getLocalization().getMenu("phone_try_again_loading"));
 		tryAgain.addFastClickHandler(source -> {
 			hide();
 			tryAgainRunnable.execute();

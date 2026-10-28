@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util.clipper;
 
 import java.util.Comparator;
@@ -5,7 +21,7 @@ import java.util.Comparator;
 import org.geogebra.common.util.DoubleUtil;
 
 public class Point<T extends Number & Comparable<T>> {
-	private final static NumberComparator NUMBER_COMPARATOR = new NumberComparator();
+	private static final NumberComparator NUMBER_COMPARATOR = new NumberComparator();
 
 	protected T x;
 
@@ -14,6 +30,11 @@ public class Point<T extends Number & Comparable<T>> {
 	protected T z;
 
 	public static class DoublePoint extends Point<Double> {
+		/**
+		 * @param pt1 first point
+		 * @param pt2 second point
+		 * @return inverted segment slope (dx/dy)
+		 */
 		public static double getDeltaX(DoublePoint pt1, DoublePoint pt2) {
 			if (pt1.getY() == pt2.getY()) {
 				return Edge.HORIZONTAL;
@@ -50,7 +71,7 @@ public class Point<T extends Number & Comparable<T>> {
 		}
 	}
 
-	private static class NumberComparator<T extends Number & Comparable<T>>
+	private static final class NumberComparator<T extends Number & Comparable<T>>
 			implements Comparator<T> {
 
 		@Override
@@ -59,15 +80,15 @@ public class Point<T extends Number & Comparable<T>> {
 		}
 	}
 
-	static boolean arePointsClose(Point<? extends Number> pt1,
-			Point<? extends Number> pt2, double distSqrd) {
+	static boolean arePointsClose(
+			Point<? extends Number> pt1, Point<? extends Number> pt2, double distSqrd) {
 		final double dx = pt1.x.doubleValue() - pt2.x.doubleValue();
 		final double dy = pt1.y.doubleValue() - pt2.y.doubleValue();
 		return dx * dx + dy * dy <= distSqrd;
 	}
 
-	static double distanceFromLineSqrd(Point<? extends Number> pt,
-			Point<? extends Number> ln1, Point<? extends Number> ln2) {
+	static double distanceFromLineSqrd(
+			Point<? extends Number> pt, Point<? extends Number> ln1, Point<? extends Number> ln2) {
 		// The equation of a line in general form (a x + b y + c = 0)
 		// given 2 points (x1,y1) & (x2,y2) is ...
 		// (y1 - y2)x + (x2 - x1)y + (y2 - y1)x1 - (x2 - x1)y1 = 0
@@ -102,11 +123,11 @@ public class Point<T extends Number & Comparable<T>> {
 	/**
 	 * modified to be compatible with double
 	 */
-	protected static boolean isPt2BetweenPt1AndPt3(DoublePoint pt1,
-			DoublePoint pt2, DoublePoint pt3) {
+	protected static boolean isPt2BetweenPt1AndPt3(
+			DoublePoint pt1, DoublePoint pt2, DoublePoint pt3) {
 		if (pt1.equals(pt3) || pt1.equals(pt2) || pt3.equals(pt2)) {
 			return false;
-		} else if (pt1.x.doubleValue() != pt3.x.doubleValue()) {
+		} else if (pt1.getX() != pt3.getX()) {
 			return pt2.x > pt1.x == pt2.x < pt3.x;
 		} else {
 			return pt2.y > pt1.y == pt2.y < pt3.y;
@@ -116,26 +137,23 @@ public class Point<T extends Number & Comparable<T>> {
 	/**
 	 * modified to be compatible with double
 	 */
-	protected static boolean slopesEqual(DoublePoint pt1, DoublePoint pt2,
-			DoublePoint pt3) {
-		return (pt1.y - pt2.y) * (pt2.x - pt3.x)
-				- (pt1.x - pt2.x) * (pt2.y - pt3.y) == 0;
+	protected static boolean slopesEqual(DoublePoint pt1, DoublePoint pt2, DoublePoint pt3) {
+		return (pt1.y - pt2.y) * (pt2.x - pt3.x) - (pt1.x - pt2.x) * (pt2.y - pt3.y) == 0;
 	}
 
 	/**
 	 * modified to be compatible with double
 	 */
-	protected static boolean slopesEqual(DoublePoint pt1, DoublePoint pt2,
-			DoublePoint pt3, DoublePoint pt4) {
-		return (pt1.y - pt2.y) * (pt3.x - pt4.x)
-				- (pt1.x - pt2.x) * (pt3.y - pt4.y) == 0;
+	protected static boolean slopesEqual(
+			DoublePoint pt1, DoublePoint pt2, DoublePoint pt3, DoublePoint pt4) {
+		return (pt1.y - pt2.y) * (pt3.x - pt4.x) - (pt1.x - pt2.x) * (pt3.y - pt4.y) == 0;
 	}
 
 	/**
 	 * modified to be compatible with double
 	 */
-	static boolean slopesNearCollinear(DoublePoint pt1, DoublePoint pt2,
-			DoublePoint pt3, double distSqrd) {
+	static boolean slopesNearCollinear(
+			DoublePoint pt1, DoublePoint pt2, DoublePoint pt3, double distSqrd) {
 		// this function is more accurate when the point that's GEOMETRICALLY
 		// between the other 2 points is the one that's tested for distance.
 		// nb: with 'spikes', either pt1 or pt3 is geometrically between the
@@ -175,13 +193,11 @@ public class Point<T extends Number & Comparable<T>> {
 		}
 		if (obj instanceof DoublePoint) {
 			final DoublePoint a = (DoublePoint) obj;
-			return DoubleUtil.isEqual((Double)x, a.getX())
-					&& DoubleUtil.isEqual((Double)y, a.getY());
+			return DoubleUtil.isEqual((Double) x, a.getX()) && DoubleUtil.isEqual((Double) y, a.getY());
 		}
 		if (obj instanceof Point<?>) {
 			final Point<?> a = (Point<?>) obj;
-			return NUMBER_COMPARATOR.compare(x, a.x) == 0
-					&& NUMBER_COMPARATOR.compare(y, a.y) == 0;
+			return NUMBER_COMPARATOR.compare(x, a.x) == 0 && NUMBER_COMPARATOR.compare(y, a.y) == 0;
 		}
 		return false;
 	}
@@ -191,6 +207,10 @@ public class Point<T extends Number & Comparable<T>> {
 		return x.hashCode() + y.hashCode() * 37 + z.hashCode() * 41;
 	}
 
+	/**
+	 * Copy coordinates from other point.
+	 * @param other other point
+	 */
 	public void set(Point<T> other) {
 		x = other.x;
 		y = other.y;
@@ -213,5 +233,4 @@ public class Point<T extends Number & Comparable<T>> {
 	public String toString() {
 		return "Point [x=" + x + ", y=" + y + ", z=" + z + "]";
 	}
-
-}// end struct IntPoint
+} // end struct IntPoint

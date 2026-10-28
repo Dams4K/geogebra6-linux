@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -30,7 +34,7 @@ import org.geogebra.common.kernel.geos.GeoNumeric;
 
 /**
  * Find Numerator
- * 
+ *
  * @author Michael Borcherds
  */
 public class AlgoNumeratorDenominatorFun extends AlgoElement {
@@ -47,8 +51,7 @@ public class AlgoNumeratorDenominatorFun extends AlgoElement {
 	 * @param type
 	 *            denominator / numerator
 	 */
-	public AlgoNumeratorDenominatorFun(Construction cons, Evaluate2Var f,
-			Commands type) {
+	public AlgoNumeratorDenominatorFun(Construction cons, Evaluate2Var f, Commands type) {
 		super(cons);
 		this.f = f;
 		this.type = type;
@@ -91,8 +94,7 @@ public class AlgoNumeratorDenominatorFun extends AlgoElement {
 			return;
 		}
 		ExpressionValue[] numDen = new ExpressionValue[2];
-		f.getFunctionExpression().deepCopy(kernel).wrap().getFraction(numDen,
-				false);
+		f.getFunctionExpression().deepCopy(kernel).wrap().getFraction(numDen, false);
 		ExpressionValue ev;
 		if (type == Commands.Numerator) {
 			ev = numDen[0];
@@ -105,20 +107,18 @@ public class AlgoNumeratorDenominatorFun extends AlgoElement {
 		if (ev.isExpressionNode()) {
 
 			if (g instanceof GeoFunction) {
-				Function fun = new Function((ExpressionNode) ev,
-						f.getFunction().getFunctionVariables()[0]);
+				Function fun = new Function((ExpressionNode) ev, f.getFunction().getFunctionVariables()[0]);
 				((GeoFunction) g).setFunction(fun);
 			} else {
-				FunctionNVar fun = new FunctionNVar((ExpressionNode) ev,
-						f.getFunction().getFunctionVariables());
+				FunctionNVar fun =
+						new FunctionNVar((ExpressionNode) ev, f.getFunction().getFunctionVariables());
 				((GeoFunctionNVar) g).setFunction(fun);
 			}
 		} else if (ev instanceof FunctionVariable) {
 			if (f instanceof GeoFunction) {
 
 				// construct function f(x) = x
-				FunctionVariable fv = ((GeoFunction) f)
-						.getFunctionVariables()[0].deepCopy(kernel);
+				FunctionVariable fv = ((GeoFunction) f).getFunctionVariables()[0].deepCopy(kernel);
 				ExpressionNode en = new ExpressionNode(kernel, fv);
 				Function tempFun = new Function(en, fv);
 				tempFun.initFunction();
@@ -136,8 +136,7 @@ public class AlgoNumeratorDenominatorFun extends AlgoElement {
 			if (f instanceof GeoFunction) {
 				// construct function f(x) = 1
 				FunctionVariable fv = new FunctionVariable(kernel);
-				ExpressionNode en = new ExpressionNode(kernel,
-						new MyDouble(kernel, ev.evaluateDouble()));
+				ExpressionNode en = new ExpressionNode(kernel, new MyDouble(kernel, ev.evaluateDouble()));
 				Function tempFun = new Function(en, fv);
 				tempFun.initFunction();
 				((GeoFunction) g).setFunction(tempFun);
@@ -165,5 +164,4 @@ public class AlgoNumeratorDenominatorFun extends AlgoElement {
 	protected ExpressionValue getPart(ExpressionValue[] node) {
 		return node[0];
 	}
-
 }

@@ -23,23 +23,23 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  *
- * Linking this library statically or dynamically with other modules 
- * is making a combined work based on this library. Thus, the terms 
- * and conditions of the GNU General Public License cover the whole 
+ * Linking this library statically or dynamically with other modules
+ * is making a combined work based on this library. Thus, the terms
+ * and conditions of the GNU General Public License cover the whole
  * combination.
- * 
- * As a special exception, the copyright holders of this library give you 
- * permission to link this library with independent modules to produce 
- * an executable, regardless of the license terms of these independent 
- * modules, and to copy and distribute the resulting executable under terms 
- * of your choice, provided that you also meet, for each linked independent 
- * module, the terms and conditions of the license of that module. 
- * An independent module is a module which is not derived from or based 
- * on this library. If you modify this library, you may extend this exception 
- * to your version of the library, but you are not obliged to do so. 
- * If you do not wish to do so, delete this exception statement from your 
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce
+ * an executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under terms
+ * of your choice, provided that you also meet, for each linked independent
+ * module, the terms and conditions of the license of that module.
+ * An independent module is a module which is not derived from or based
+ * on this library. If you modify this library, you may extend this exception
+ * to your version of the library, but you are not obliged to do so.
+ * If you do not wish to do so, delete this exception statement from your
  * version.
- * 
+ *
  */
 
 package com.himamis.retex.renderer.web.font.opentype;
@@ -47,15 +47,9 @@ package com.himamis.retex.renderer.web.font.opentype;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.himamis.retex.renderer.share.CharFont;
 import com.himamis.retex.renderer.share.platform.FactoryProvider;
 import com.himamis.retex.renderer.share.platform.font.Font;
-import com.himamis.retex.renderer.share.platform.font.FontRenderContext;
-import com.himamis.retex.renderer.share.platform.geom.Rectangle2D;
-import com.himamis.retex.renderer.share.platform.geom.Shape;
 import com.himamis.retex.renderer.web.font.FontW;
-import com.himamis.retex.renderer.web.geom.ShapeW;
-import com.himamis.retex.renderer.web.graphics.FontGlyph;
 
 public class OpentypeFont extends FontW implements OpentypeFontStatusListener {
 
@@ -131,36 +125,4 @@ public class OpentypeFont extends FontW implements OpentypeFontStatusListener {
 	public int getScale() {
 		return 1;
 	}
-
-	@Override
-	public Shape getGlyphOutline(FontRenderContext frc, CharFont cf) {
-		OpentypeFontWrapper wrap = this.getFontWrapper();
-
-		if (wrap == null) {
-			// fail gracefully when font not loaded
-			// will be tried again when font loaded on callback
-			return null;
-		}
-
-		FontGlyph outline = wrap.getGlyphOutline(cf + "",
-				this.getSize());
-
-		double height = cf.fontInfo.getHeight(cf.c);
-		double width = cf.fontInfo.getWidth(cf.c);
-
-		Rectangle2D rect = FactoryProvider.getInstance().getGeomFactory()
-				.createRectangle2D(0, 0, width, height);
-		return new ShapeW(outline, rect);
-	}
-
-	@Override
-	public boolean canDisplay(char ch) {
-		return true;
-	}
-
-	@Override
-	public boolean canDisplay(int c) {
-		return true;
-	}
-
 }

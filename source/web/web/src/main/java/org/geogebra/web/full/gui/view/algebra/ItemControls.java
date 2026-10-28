@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import org.geogebra.common.gui.SetLabels;
@@ -10,21 +26,19 @@ import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.web.full.css.MaterialDesignResources;
 import org.geogebra.web.full.gui.view.algebra.AnimPanel.AnimPanelListener;
 import org.geogebra.web.full.main.AppWFull;
-import org.geogebra.web.html5.gui.util.AriaHelper;
 import org.geogebra.web.html5.gui.util.Dom;
 import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.util.DataTest;
 import org.geogebra.web.html5.util.HasDataTest;
 import org.geogebra.web.html5.util.TestHarness;
 import org.gwtproject.core.client.Scheduler;
-import org.gwtproject.dom.style.shared.Unit;
 import org.gwtproject.user.client.ui.FlowPanel;
 
 /**
  * Item action bar
  *
  */
-public class ItemControls extends FlowPanel
+public final class ItemControls extends FlowPanel
 		implements AnimPanelListener, SetLabels, HasDataTest {
 
 	private final RadioTreeItem radioTreeItem;
@@ -62,10 +76,10 @@ public class ItemControls extends FlowPanel
 			btnMore = new StandardButton(MaterialDesignResources.INSTANCE.more_vert_black(), 24);
 			btnMore.addStyleName("more");
 			btnMore.addFastClickHandler((event) -> {
-					getController().preventBlur();
-					openMoreMenu();
+				getController().preventBlur();
+				openMoreMenu();
 			});
-			AriaHelper.setHidden(btnMore, true);
+			btnMore.addKeyActivateHandler(this::openMoreMenu);
 		}
 
 		return btnMore;
@@ -82,6 +96,7 @@ public class ItemControls extends FlowPanel
 		cancelEditItem();
 		closeBurgerMenu();
 		createMoreContextMenu();
+		radioTreeItem.getApplication().hideKeyboard();
 		if (radioTreeItem.isInputTreeItem()) {
 			showMoreMenuForInput();
 		} else {
@@ -90,8 +105,7 @@ public class ItemControls extends FlowPanel
 	}
 
 	void focusFirstMoreMenuElement() {
-		Scheduler.get().scheduleDeferred(
-				() -> cmMore.wrappedPopup.getPopupMenu().moveSelectionDown());
+		Scheduler.get().scheduleDeferred(() -> cmMore.wrappedPopup.getPopupMenu().moveSelectionDown());
 	}
 
 	private void showMoreMenuForInput() {
@@ -109,7 +123,7 @@ public class ItemControls extends FlowPanel
 	AsyncOperation<GeoElementND[]> createOpenMenuCallback() {
 		return obj -> {
 			GeoElement geo = null;
-			if (obj != null && obj.length == 1)  {
+			if (obj != null && obj.length == 1) {
 				geo = (GeoElement) obj[0];
 			}
 
@@ -140,7 +154,7 @@ public class ItemControls extends FlowPanel
 	}
 
 	private void showMoreMenu() {
-		cmMore.show(btnMore, 0, - 8);
+		cmMore.show(btnMore, 0, -8);
 	}
 
 	private void cancelEditItem() {
@@ -184,7 +198,8 @@ public class ItemControls extends FlowPanel
 	}
 
 	private void buildAnimPanel() {
-		if (radioTreeItem.geo != null && radioTreeItem.geo.isAnimatable()
+		if (radioTreeItem.geo != null
+				&& radioTreeItem.geo.isAnimatable()
 				&& animPanelFits(radioTreeItem.geo)) {
 			if (animPanel == null) {
 				createAnimPanel();
@@ -205,7 +220,7 @@ public class ItemControls extends FlowPanel
 	/**
 	 *
 	 */
-	protected void createAnimPanel() {
+	private void createAnimPanel() {
 		GeoElement geo = radioTreeItem.geo;
 		if (geo.isAnimatable() && animPanelFits(geo)) {
 			animPanel = new AnimPanel(radioTreeItem, this);
@@ -224,8 +239,7 @@ public class ItemControls extends FlowPanel
 		if (geo instanceof GeoNumeric) {
 			return radioTreeItem.getItemFactory().matchSlider(geo);
 		}
-		return geo.getApp().getSettings().getAlgebra()
-				.getStyle() == AlgebraStyle.DEFINITION_AND_VALUE
+		return geo.getApp().getSettings().getAlgebra().getStyle() == AlgebraStyle.DEFINITION_AND_VALUE
 				&& !(geo instanceof GeoTurtle);
 	}
 
@@ -259,8 +273,7 @@ public class ItemControls extends FlowPanel
 				|| getController().selectionCtrl.isEmpty()) {
 			radioTreeItem.setFirst(radioTreeItem.first);
 			clear();
-			if (radioTreeItem.geo.isAnimatable()
-					&& animPanelFits(radioTreeItem.geo)) {
+			if (radioTreeItem.geo.isAnimatable() && animPanelFits(radioTreeItem.geo)) {
 				if (animPanel == null) {
 					createAnimPanel();
 				}
@@ -282,15 +295,6 @@ public class ItemControls extends FlowPanel
 
 		updateAnimPanel();
 		return ret;
-	}
-
-	/**
-	 * Remove animation panel
-	 */
-	public void removeAnimPanel() {
-		if (hasAnimPanel()) {
-			remove(animPanel);
-		}
 	}
 
 	/**
@@ -336,20 +340,7 @@ public class ItemControls extends FlowPanel
 	 * Update position
 	 */
 	public void reposition() {
-
-		Scheduler.get().scheduleDeferred(() -> {
-			int right = getItemRightOffset();
-			getElement().getStyle().setRight(right, Unit.PX);
-		});
-	}
-
-	/**
-	 * @return distance of item's right border from AV right border
-	 */
-	protected int getItemRightOffset() {
-		int itemWidth = radioTreeItem.getItemWidth();
-		int avWidth = radioTreeItem.getAV().getOffsetWidth();
-		return Math.max(0, itemWidth - avWidth);
+		// not needed
 	}
 
 	/**
@@ -373,7 +364,7 @@ public class ItemControls extends FlowPanel
 			cmMore.setLabels();
 		}
 		if (btnMore != null) {
-			btnMore.setAltText(this.radioTreeItem.loc.getMenu("Options"));
+			btnMore.setAltText(this.radioTreeItem.loc.getMenu("More"));
 		}
 		if (animPanel != null) {
 			animPanel.setLabels(this.radioTreeItem.loc);

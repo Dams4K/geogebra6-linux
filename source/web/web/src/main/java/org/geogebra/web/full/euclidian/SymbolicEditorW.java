@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.euclidian;
 
 import org.geogebra.common.awt.GColor;
@@ -8,6 +24,7 @@ import org.geogebra.common.euclidian.SymbolicEditor;
 import org.geogebra.common.euclidian.TextRendererSettings;
 import org.geogebra.common.kernel.geos.GeoInputBox;
 import org.geogebra.common.main.App;
+import org.geogebra.editor.share.editor.MathFieldInternal;
 import org.geogebra.web.full.gui.components.MathFieldEditor;
 import org.geogebra.web.full.main.AppWFull;
 import org.geogebra.web.html5.euclidian.EuclidianViewW;
@@ -23,7 +40,6 @@ import org.gwtproject.event.dom.client.BlurHandler;
 import org.gwtproject.event.dom.client.ChangeEvent;
 import org.gwtproject.event.dom.client.ChangeHandler;
 
-import com.himamis.retex.editor.share.editor.MathFieldInternal;
 import com.himamis.retex.renderer.share.TeXFont;
 
 /**
@@ -31,8 +47,8 @@ import com.himamis.retex.renderer.share.TeXFont;
  *
  * @author Laszlo
  */
-public class SymbolicEditorW extends SymbolicEditor implements HasMathKeyboardListener,
-		BlurHandler, ChangeHandler {
+public final class SymbolicEditorW extends SymbolicEditor
+		implements HasMathKeyboardListener, BlurHandler, ChangeHandler {
 
 	private static final int EDITOR_PADDING = 2;
 	private GRectangle bounds;
@@ -65,8 +81,7 @@ public class SymbolicEditorW extends SymbolicEditor implements HasMathKeyboardLi
 		// add to DOM, but hidden => getHeight works, but widget is not shown in wrong position
 		editor.setVisible(false);
 		editor.getMathField().setPixelRatio(((AppW) app).getPixelRatio());
-		editor.setFontType(geoInputBox.isSerifContent() ? TeXFont.SERIF
-				:  TeXFont.SANSSERIF);
+		editor.setFontType(geoInputBox.isSerifContent() ? TeXFont.SERIF : TeXFont.SANSSERIF);
 		editor.setTextRendererSettings(settings);
 		editor.attach(((EuclidianViewW) view).getAbsolutePanel());
 		((AppWFull) app).setInputBoxType(geoInputBox.getInputBoxType());
@@ -171,16 +186,9 @@ public class SymbolicEditorW extends SymbolicEditor implements HasMathKeyboardLi
 	}
 
 	@Override
-	public boolean onEscape() {
-		applyAndHide();
-		return true;
-	}
-
-	@Override
 	public boolean onTab(boolean shiftDown) {
 		applyAndHide();
-		boolean handled = ((GlobalKeyDispatcherW) app.getGlobalKeyDispatcher())
-				.handleTab(shiftDown);
+		boolean handled = ((GlobalKeyDispatcherW) app.getGlobalKeyDispatcher()).handleTab(shiftDown);
 		editor.setKeyboardVisibility(editor.isVisible());
 		return handled;
 	}

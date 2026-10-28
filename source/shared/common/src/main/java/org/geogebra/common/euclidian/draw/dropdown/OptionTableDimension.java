@@ -1,9 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw.dropdown;
 
 import static org.geogebra.common.euclidian.draw.dropdown.DrawOptions.MARGIN;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GDimension;
-import org.geogebra.common.factories.AwtFactory;
 
 class OptionTableDimension {
 	private final DropDownModel settings;
@@ -12,9 +28,8 @@ class OptionTableDimension {
 	private final boolean scroll;
 	static final int VERTICAL_PADDING = 8;
 
-	OptionTableDimension(DropDownModel settings, GDimension itemDimension,
-			int downArrowHeight,
-			boolean scroll) {
+	OptionTableDimension(
+			DropDownModel settings, GDimension itemDimension, int downArrowHeight, boolean scroll) {
 		this.settings = settings;
 		this.itemDimension = itemDimension;
 		this.downArrowHeight = downArrowHeight;
@@ -30,8 +45,7 @@ class OptionTableDimension {
 	}
 
 	private int computeHeight() {
-		int tableHeight = heightOfAllRows()
-				+ (scroll && noOverflow() ? itemDimension.getHeight() : 0);
+		int tableHeight = heightOfAllRows() + (scroll && noOverflow() ? itemDimension.getHeight() : 0);
 
 		if (hasOverflow()) {
 			tableHeight = adjustTop(tableHeight);

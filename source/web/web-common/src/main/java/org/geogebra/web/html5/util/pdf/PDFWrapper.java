@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.util.pdf;
 
 import elemental2.dom.CanvasRenderingContext2D;
@@ -10,7 +26,7 @@ import jsinterop.base.JsPropertyMap;
 
 /**
  * Wrapper class for pdf.js
- * 
+ *
  * @author laszlo
  *
  */
@@ -27,7 +43,7 @@ public class PDFWrapper {
 	public interface PDFListener {
 		/**
 		 * Call this to build image from pdf.
-		 * 
+		 *
 		 * @param imgSrc
 		 *            the image data as source.
 		 */
@@ -35,7 +51,7 @@ public class PDFWrapper {
 
 		/**
 		 * After the pdf loaded, the progress bar should be finished quickly.
-		 * 
+		 *
 		 * @param result
 		 *            true if the loading of the pdf was successful
 		 */
@@ -43,17 +59,16 @@ public class PDFWrapper {
 
 		/**
 		 * Sets the value of the progress bar for the given percent.
-		 * 
+		 *
 		 * @param percent
 		 *            the new value of the progress bar
 		 */
 		void setProgressBarPercent(double percent);
-
 	}
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param file
 	 *            PDF to handle.
 	 * @param listener
@@ -97,23 +112,25 @@ public class PDFWrapper {
 	}
 
 	private void getPage() {
-		HTMLCanvasElement canvas = (HTMLCanvasElement)
-				DomGlobal.document.createElement("canvas");
-		document.getPage(pageNumber).then(page -> {
-			PageViewPort viewport = page.getViewport(getViewportOptions());
-			RenderTask renderTask = page.render(getRendererContext(viewport,
-					Js.uncheckedCast(canvas.getContext("2d"))));
-			canvas.width = viewport.width;
-			canvas.height = viewport.height;
-			return renderTask.promise;
-		}).then(dummy -> {
-			onPageDisplay(canvas.toDataURL());
-			return null;
-		});
+		HTMLCanvasElement canvas = (HTMLCanvasElement) DomGlobal.document.createElement("canvas");
+		document
+				.getPage(pageNumber)
+				.then(page -> {
+					PageViewPort viewport = page.getViewport(getViewportOptions());
+					RenderTask renderTask =
+							page.render(getRendererContext(viewport, Js.uncheckedCast(canvas.getContext("2d"))));
+					canvas.width = viewport.width;
+					canvas.height = viewport.height;
+					return renderTask.promise;
+				})
+				.then(dummy -> {
+					onPageDisplay(canvas.toDataURL());
+					return null;
+				});
 	}
 
-	private JsPropertyMap<Object> getRendererContext(PageViewPort viewport,
-			CanvasRenderingContext2D context2d) {
+	private JsPropertyMap<Object> getRendererContext(
+			PageViewPort viewport, CanvasRenderingContext2D context2d) {
 		JsPropertyMap<Object> rendererContext = JsPropertyMap.of();
 		rendererContext.set("canvasContext", context2d);
 		rendererContext.set("viewport", viewport);
@@ -134,7 +151,7 @@ public class PDFWrapper {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the number of pages in the PDF.
 	 */
 	public int getNumberOfPages() {
@@ -147,7 +164,6 @@ public class PDFWrapper {
 	public void previousPage() {
 		if (pageNumber > 1) {
 			setPageNumber(pageNumber - 1);
-			getPage();
 		}
 	}
 
@@ -157,12 +173,11 @@ public class PDFWrapper {
 	public void nextPage() {
 		if (pageNumber < getNumberOfPages()) {
 			setPageNumber(pageNumber + 1);
-			getPage();
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the current page index.
 	 */
 	public int getPageNumber() {
@@ -170,7 +185,7 @@ public class PDFWrapper {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param num
 	 *            page number to set.
 	 * @return if page change was successful.
@@ -178,6 +193,7 @@ public class PDFWrapper {
 	public boolean setPageNumber(int num) {
 		if (num > 0 && num <= getNumberOfPages()) {
 			pageNumber = num;
+			getPage();
 			return true;
 		}
 		return false;

@@ -1,4 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.table.regression;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.arithmetic.Command;
@@ -7,17 +26,20 @@ import org.geogebra.common.kernel.arithmetic.FunctionVariable;
 import org.geogebra.common.kernel.arithmetic.MyList;
 import org.geogebra.common.kernel.arithmetic.MyVecNode;
 import org.geogebra.common.kernel.commands.Commands;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 public class CustomRegressionSpecification implements RegressionSpecification {
 
 	private final String label;
 	private final double[] exponents;
 	private final Type type;
+	private final String coeffOrdering;
 
+	/** Regression model type. */
 	public enum Type {
-		LINEAR, EXPONENTIAL, EXP_PLUS_CONSTANT
+		LINEAR,
+		EXPONENTIAL,
+		EXP_PLUS_CONSTANT
 	}
 
 	/**
@@ -29,6 +51,8 @@ public class CustomRegressionSpecification implements RegressionSpecification {
 		this.label = asUnicode(label);
 		this.exponents = exponents;
 		type = Type.LINEAR;
+		coeffOrdering =
+				Stream.of("c", "b", "a").filter(label::contains).collect(Collectors.joining(""));
 	}
 
 	/**
@@ -36,14 +60,16 @@ public class CustomRegressionSpecification implements RegressionSpecification {
 	 * @param label label for selection dropdown
 	 * @param type regression type
 	 */
-	public CustomRegressionSpecification(String label, Type type) {
+	public CustomRegressionSpecification(String label, String coeffOrdering, Type type) {
 		this.label = asUnicode(label);
 		this.exponents = new double[0];
 		this.type = type;
+		this.coeffOrdering = coeffOrdering;
 	}
 
 	private String asUnicode(String label) {
-		return label.replace("^2", String.valueOf(Unicode.SUPERSCRIPT_2))
+		return label
+				.replace("^2", String.valueOf(Unicode.SUPERSCRIPT_2))
 				.replace("*", String.valueOf(Unicode.CENTER_DOT));
 	}
 
@@ -54,8 +80,7 @@ public class CustomRegressionSpecification implements RegressionSpecification {
 
 	@Override
 	public Command buildCommand(Kernel kernel, MyVecNode points) {
-		Command cleanData = new Command(kernel, Commands.RemoveUndefined.getCommand(),
-				false);
+		Command cleanData = new Command(kernel, Commands.RemoveUndefined.getCommand(), false);
 		cleanData.addArgument(points.wrap());
 		Commands cmdName = type == Type.EXPONENTIAL ? Commands.FitExp : Commands.Fit;
 		Command cmd = new Command(kernel, cmdName.name(), false);
@@ -85,12 +110,7 @@ public class CustomRegressionSpecification implements RegressionSpecification {
 
 	@Override
 	public String getCoeffOrdering() {
-		if (label.contains("c")) {
-			return "abc";
-		} else if (label.contains("b")) {
-			return "ab";
-		}
-		return "a";
+		return coeffOrdering;
 	}
 
 	@Override
@@ -106,5 +126,13 @@ public class CustomRegressionSpecification implements RegressionSpecification {
 	@Override
 	public boolean hasCoefficientOfDetermination() {
 		return false;
+	}
+
+	@Override
+	public char getCoeffName(int i) {
+		if (i == 1 && "ca".equals(getCoeffOrdering())) {
+			return 'c';
+		}
+		return (char) ('a' + i);
 	}
 }

@@ -1,12 +1,27 @@
-package org.geogebra.common.properties.impl.graphics;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
+package org.geogebra.common.properties.impl.graphics;
 
 import org.geogebra.common.euclidian3D.EuclidianView3DInterface;
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.main.settings.AbstractSettings;
 import org.geogebra.common.properties.aliases.StringProperty;
 import org.geogebra.common.properties.impl.AbstractValuedProperty;
+import org.jspecify.annotations.Nullable;
 
 public class ObliqueFactorProperty extends AbstractValuedProperty<String>
 		implements StringProperty, SettingsDependentProperty {
@@ -18,8 +33,7 @@ public class ObliqueFactorProperty extends AbstractValuedProperty<String>
 	 * @param localization localization
 	 * @param euclidianView euclidian view
 	 */
-	public ObliqueFactorProperty(Localization localization,
-			EuclidianView3DInterface euclidianView) {
+	public ObliqueFactorProperty(Localization localization, EuclidianView3DInterface euclidianView) {
 		super(localization, "Dilate.Factor");
 		this.euclidianView = euclidianView;
 	}
@@ -39,7 +53,7 @@ public class ObliqueFactorProperty extends AbstractValuedProperty<String>
 	}
 
 	@Override
-	public @CheckForNull String validateValue(String value) {
+	public @Nullable String validateValue(String value) {
 		try {
 			Double.parseDouble(value);
 			return null;

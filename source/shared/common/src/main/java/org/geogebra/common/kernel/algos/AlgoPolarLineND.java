@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoPolarLine.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -38,8 +36,7 @@ public abstract class AlgoPolarLineND extends AlgoElement {
 	protected GeoLineND polar; // output
 
 	/** Creates new AlgoPolarLine */
-	public AlgoPolarLineND(Construction cons, String label, GeoConicND c,
-			GeoPointND P) {
+	public AlgoPolarLineND(Construction cons, String label, GeoConicND c, GeoPointND P) {
 		super(cons);
 		this.P = P;
 		this.c = c;
@@ -52,12 +49,12 @@ public abstract class AlgoPolarLineND extends AlgoElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cons1
 	 *            construction
 	 * @return new geo line
 	 */
-	abstract protected GeoLineND newGeoLine(Construction cons1);
+	protected abstract GeoLineND newGeoLine(Construction cons1);
 
 	@Override
 	public Commands getClassName() {
@@ -95,13 +92,14 @@ public abstract class AlgoPolarLineND extends AlgoElement {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("PolarLineOfARelativeToB",
-				"Polar line of %0 relative to %1", P.getLabel(tpl),
-				c.getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault(
+						"PolarLineOfARelativeToB",
+						"Polar line of %0 relative to %1",
+						P.getLabel(tpl),
+						c.getLabel(tpl));
 	}
-
 }

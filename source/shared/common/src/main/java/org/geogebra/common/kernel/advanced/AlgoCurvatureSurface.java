@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.advanced;
 
 import org.geogebra.common.kernel.Construction;
@@ -13,16 +29,15 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
 
 /**
  * @author michael
- * 
+ *
  *         http://en.wikipedia.org/wiki/Gaussian_curvature
  *         http://emp.byui.edu/BrownD
  *         /Mathematics/Calculus-Rn-Rm/Gaussian-curvature.pdf
- * 
+ *
  *         test-cases z=x^2+y^2, k=4/(1+4x^2+4y^2)^2 z=x^2-y^2,
  *         k=-4/(1+4x^2+4y^2)^2 z=x^3+y^3, k=-36x y / (1 + 9x^4 + 9y^4)^2
  *         z=sqrt(1-x^2-y^2), k=1 (sphere) z=a x + b y, k=0 (plane!)
  */
-
 public class AlgoCurvatureSurface extends AlgoElement {
 	// input
 	private GeoPointND A;
@@ -44,8 +59,7 @@ public class AlgoCurvatureSurface extends AlgoElement {
 	 * @param f
 	 *            2var function
 	 */
-	public AlgoCurvatureSurface(Construction cons, GeoPointND A,
-			GeoFunctionNVar f) {
+	public AlgoCurvatureSurface(Construction cons, GeoPointND A, GeoFunctionNVar f) {
 		super(cons);
 		this.A = A;
 		this.f = f;
@@ -104,8 +118,7 @@ public class AlgoCurvatureSurface extends AlgoElement {
 			expand();
 			lastExpression = f.getFunctionExpression();
 		}
-		if (!A.isFinite() || fx == null || fxx == null || fy == null
-				|| fyy == null || fxy == null) {
+		if (!A.isFinite() || fx == null || fxx == null || fy == null || fyy == null || fxy == null) {
 			n.setUndefined();
 			return;
 		}
@@ -130,5 +143,4 @@ public class AlgoCurvatureSurface extends AlgoElement {
 
 		n.setValue(k);
 	}
-
 }

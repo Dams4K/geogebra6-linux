@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoApplyMatrix.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 24. September 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -51,7 +49,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 
 	/**
 	 * Creates new shear or stretch algorithm
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param in
@@ -63,8 +61,8 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 	 * @param shear
 	 *            shear if true, stretch otherwise
 	 */
-	public AlgoShearOrStretch(Construction cons, GeoElement in, GeoVec3D l,
-			GeoNumberValue num, boolean shear) {
+	public AlgoShearOrStretch(
+			Construction cons, GeoElement in, GeoVec3D l, GeoNumberValue num, boolean shear) {
 		super(cons);
 		this.shear = shear;
 		this.line = l;
@@ -115,7 +113,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 
 	/**
 	 * Returns the resulting element
-	 * 
+	 *
 	 * @return resulting element
 	 */
 	@Override
@@ -130,8 +128,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 			return;
 		}
 		if (inGeo.isGeoFunction()) {
-			((GeoFunction) inGeo)
-					.toGeoCurveCartesian((GeoCurveCartesian) outGeo);
+			((GeoFunction) inGeo).toGeoCurveCartesian((GeoCurveCartesian) outGeo);
 		} else {
 			setOutGeo();
 		}
@@ -157,8 +154,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 		} else {
 			GeoPointND sp = ((GeoVector) line).getStartPoint();
 			if (sp != null) {
-				Coords qCoords = ((GeoVector) line).getStartPoint()
-						.getCoordsInD2();
+				Coords qCoords = ((GeoVector) line).getStartPoint().getCoordsInD2();
 				qx = -qCoords.getX();
 				qy = -qCoords.getY();
 			}
@@ -171,8 +167,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 		tranOut.translate(negativeStartPoint);
 
 		if (shear) {
-			out.matrixTransform(1 - c * s * n, c * c * n, -s * s * n,
-					1 + s * c * n);
+			out.matrixTransform(1 - c * s * n, c * c * n, -s * s * n, 1 + s * c * n);
 		} else {
 			stretch(out, c, s, n);
 		}
@@ -201,11 +196,9 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 	protected void setTransformedObject(GeoElement g, GeoElement g2) {
 		inGeo = g;
 		outGeo = g2;
-		if (!(outGeo instanceof GeoList)
-				&& (outGeo instanceof MatrixTransformable)) {
+		if (!(outGeo instanceof GeoList) && (outGeo instanceof MatrixTransformable)) {
 			out = (MatrixTransformable) outGeo;
 		}
-
 	}
 
 	@Override
@@ -230,8 +223,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 		if (shear || num == null) {
 			return arc == null || arc.positiveOrientation();
 		}
-		return (arc == null || arc.positiveOrientation())
-				^ (num.getDouble() < 0);
+		return (arc == null || arc.positiveOrientation()) ^ (num.getDouble() < 0);
 	}
 
 	@Override
@@ -243,5 +235,4 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 		// stretch
 		return n;
 	}
-
 }

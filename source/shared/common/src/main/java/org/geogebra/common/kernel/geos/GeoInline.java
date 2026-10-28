@@ -1,19 +1,36 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.geos;
 
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GPoint2D;
+import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.draw.DrawInline;
 import org.geogebra.common.euclidian.draw.HasTextFormat;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.arithmetic.NumberValue;
 import org.geogebra.common.kernel.arithmetic.ValueType;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.kernel.matrix.Coords;
 import org.geogebra.common.util.MyMath;
-import org.geogebra.common.util.StringUtil;
 
-public abstract class GeoInline extends GeoElement implements Translateable, Rotatable,
-		RectangleTransformable {
+public abstract class GeoInline extends GeoElement
+		implements Translateable, Rotatable, RectangleTransformable {
 
 	private GPoint2D location;
 
@@ -28,14 +45,16 @@ public abstract class GeoInline extends GeoElement implements Translateable, Rot
 	private double contentWidth;
 	private double contentHeight;
 
-	private double xScale;
-	private double yScale;
-
 	// only used for loading files that were created before zoom was enabled for text elements
 	private boolean zoomingEnabled = true;
+	private double scale = 1;
 
+	/**
+	 * @param cons construction
+	 */
 	public GeoInline(Construction cons) {
 		super(cons);
+		zoomIfNeeded();
 	}
 
 	@Override
@@ -167,82 +186,49 @@ public abstract class GeoInline extends GeoElement implements Translateable, Rot
 		double x = location.getX();
 		double y = location.getY();
 
-		location.setLocation((x - qx) * cos + (qy - y) * sin + qx,
-				(x - qx) * sin + (y - qy) * cos + qy);
+		location.setLocation(
+				(x - qx) * cos + (qy - y) * sin + qx, (x - qx) * sin + (y - qy) * cos + qy);
 	}
 
 	/**
 	 * returns all class-specific xml tags for getXML
 	 */
 	@Override
-	protected void getStyleXML(StringBuilder sb) {
-		getXMLfixedTag(sb);
-		getXMLvisualTags(sb);
-		sb.append("\t<contentSize width=\"");
-		sb.append(contentWidth);
-		sb.append("\" height=\"");
-		sb.append(contentHeight);
-		sb.append("\"/>\n");
+	protected void getStyleXML(XMLStringBuilder sb) {
+		getXMLFixedTag(sb);
+		getXMVisualTags(sb);
+		sb.startTag("contentSize")
+				.attr("width", contentWidth)
+				.attr("height", contentHeight)
+				.endTag();
 
 		XMLBuilder.appendPosition(sb, this);
 	}
 
 	@Override
-	public void getXMLtags(StringBuilder sb) {
-		super.getXMLtags(sb);
-		sb.append("\t<content val=\"");
-		StringUtil.encodeXML(sb, getContent());
-		sb.append("\"/>\n");
+	public void getXMLTags(XMLStringBuilder sb) {
+		super.getXMLTags(sb);
+		sb.startTag("content").attr("val", getContent()).endTag();
 	}
 
 	/**
 	 * @return text formatter
 	 */
 	public HasTextFormat getFormatter() {
-		DrawInline drawable = (DrawInline) kernel.getApplication()
-				.getActiveEuclidianView().getDrawableFor(this);
+		DrawInline drawable =
+				(DrawInline) kernel.getApplication().getActiveEuclidianView().getDrawableFor(this);
 		return drawable == null ? null : drawable.getController();
 	}
 
 	/**
-	 * Zooming in x direction
-	 *
-	 * @param factor
-	 *            zoom factor;
-	 */
-	private void zoomX(double factor) {
-		width *= factor;
-	}
-
-	/**
-	 * Zooming in y direction
-	 *
-	 * @param factor
-	 *            zoom factor;
-	 *
-	 */
-	private void zoomY(double factor) {
-		height *= factor;
-	}
-
-	/**
-	 * Zooms the text element
+	 * Zooms the text element.
 	 */
 	public void zoomIfNeeded() {
-		if (xScale == 0) {
-			xScale = app.getActiveEuclidianView().getXscale();
-			yScale = app.getActiveEuclidianView().getYscale();
-			return;
-		}
-
-		if (xScale != app.getActiveEuclidianView().getXscale()) {
-			zoomX(app.getActiveEuclidianView().getXscale() / xScale);
-			xScale = app.getActiveEuclidianView().getXscale();
-		}
-		if (yScale != app.getActiveEuclidianView().getYscale()) {
-			zoomY(app.getActiveEuclidianView().getYscale() / yScale);
-			yScale = app.getActiveEuclidianView().getYscale();
-		}
+		EuclidianView view = app.getActiveEuclidianView();
+		double xScale = view != null ? view.getXscale() : EuclidianView.SCALE_STANDARD;
+		double yScale = view != null ? view.getYscale() : EuclidianView.SCALE_STANDARD;
+		width = contentWidth * xScale / EuclidianView.SCALE_STANDARD * scale;
+		height = contentHeight * yScale / EuclidianView.SCALE_STANDARD * scale;
 	}
 
 	public double getContentWidth() {
@@ -261,10 +247,6 @@ public abstract class GeoInline extends GeoElement implements Translateable, Rot
 		this.contentHeight = contentHeight;
 	}
 
-	public void setWidth(double width) {
-		this.width = width;
-	}
-
 	public void setHeight(double height) {
 		this.height = height;
 	}
@@ -281,6 +263,9 @@ public abstract class GeoInline extends GeoElement implements Translateable, Rot
 		return isLockedForMultiuser;
 	}
 
+	/**
+	 * @param locked whether editing is locked (because of other user)
+	 */
 	public void setLockedForMultiuser(boolean locked) {
 		isLockedForMultiuser = locked;
 	}
@@ -300,5 +285,18 @@ public abstract class GeoInline extends GeoElement implements Translateable, Rot
 	public void setSizeOnly(double width, double height) {
 		this.width = width;
 		this.height = height;
+	}
+
+	@Override
+	public boolean hasBackgroundColor() {
+		return true;
+	}
+
+	/**
+	 * Set a scale factor for legacy text elements for backward compatible rendering.
+	 * @param scale scale factor
+	 */
+	public void setScale(double scale) {
+		this.scale = scale;
 	}
 }

@@ -1,8 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.geos;
 
 import java.util.TreeMap;
 
 import org.geogebra.common.geogebra3D.kernel3D.transform.MirrorableAtPlane;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.AutoColor;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.Kernel;
@@ -35,13 +52,12 @@ import org.geogebra.common.plugin.GeoClass;
 
 /**
  * Class for cartesian curves in 3D
- * 
+ *
  * @author Mathieu
- * 
+ *
  */
 public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
-		implements Functional2Var, Traceable, Region,
-		MirrorableAtPlane, RotatableND, Transformable {
+		implements Functional2Var, Traceable, Region, MirrorableAtPlane, RotatableND, Transformable {
 	private boolean isSurfaceOfRevolutionAroundOx = false;
 	private CoordMatrix4x4 tmpMatrix4x4;
 	private double[] xyzuv;
@@ -60,7 +76,7 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 
 	/**
 	 * empty constructor (for ConstructionDefaults3D)
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 */
@@ -71,7 +87,7 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param point
@@ -79,14 +95,13 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 	 * @param fun
 	 *            functions
 	 */
-	public GeoSurfaceCartesian3D(Construction c, ExpressionNode point,
-			FunctionNVar[] fun) {
+	public GeoSurfaceCartesian3D(Construction c, ExpressionNode point, FunctionNVar[] fun) {
 		super(c, point, fun);
 		isSurfaceOfRevolutionAroundOx = false;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param surface
 	 *            Surface to be copied
 	 */
@@ -102,8 +117,7 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 		p.set(fun[0].evaluate(tmp), fun[1].evaluate(tmp), fun[2].evaluate(tmp));
 	}
 
-	private boolean setNormalFromNeighbours(Coords3 p, double u, double v,
-			Coords3 n) {
+	private boolean setNormalFromNeighbours(Coords3 p, double u, double v, Coords3 n) {
 
 		evaluatePoint(u + SurfaceEvaluable.NUMERICAL_DELTA, v, p1);
 		if (!p1.isDefined()) {
@@ -155,7 +169,7 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 
 	/**
 	 * set the jacobian matrix for bivariate newton method
-	 * 
+	 *
 	 * @param uv
 	 *            parameter values
 	 * @param vx
@@ -167,8 +181,8 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 	 * @param matrix
 	 *            output matrix
 	 */
-	public void setJacobianForBivariate(double[] uv, double vx, double vy,
-			double vz, CoordMatrix matrix) {
+	public void setJacobianForBivariate(
+			double[] uv, double vx, double vy, double vz, CoordMatrix matrix) {
 
 		final double dfxu = fun1evaluate(0, 0, uv);
 		final double dfyu = fun1evaluate(0, 1, uv);
@@ -182,14 +196,13 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 
 		matrix.set(2, 1, vx * dfzu - vz * dfxu);
 		matrix.set(2, 2, vx * dfzv - vz * dfxv);
-
 	}
 
 	/**
 	 * set vector for bivariate newton method ie
-	 * 
+	 *
 	 * vector = this(u,v) (X) v + c
-	 * 
+	 *
 	 * @param uv
 	 *            parameters
 	 * @param xyz
@@ -209,8 +222,15 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 	 * @param vector
 	 *            output vector
 	 */
-	public void setVectorForBivariate(double[] uv, double[] xyz, double vx,
-			double vy, double vz, double cx, double cy, double cz,
+	public void setVectorForBivariate(
+			double[] uv,
+			double[] xyz,
+			double vx,
+			double vy,
+			double vz,
+			double cx,
+			double cy,
+			double cz,
 			Coords vector) {
 
 		xyz[0] = fun[0].evaluate(uv);
@@ -273,7 +293,7 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 
 	/**
 	 * evaluate point at parameters u,v
-	 * 
+	 *
 	 * @param u
 	 *            first parameter
 	 * @param v
@@ -316,11 +336,11 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 	// SPECIFIC XML
 
 	@Override
-	protected void getStyleXML(StringBuilder sb) {
+	protected void getStyleXML(XMLStringBuilder sb) {
 		super.getStyleXML(sb);
 		// level of detail
 		if (getLevelOfDetail() == LevelOfDetail.QUALITY) {
-			sb.append("\t<levelOfDetailQuality val=\"true\"/>\n");
+			sb.startTag("levelOfDetailQuality").attr("val", true).endTag();
 		}
 	}
 
@@ -343,15 +363,14 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 	}
 
 	@Override
-	final public HitType getLastHitType() {
+	public final HitType getLastHitType() {
 		return HitType.ON_FILLING;
 	}
 
 	@Override
-	public void setAllVisualPropertiesExceptEuclidianVisible(GeoElement geo,
-			boolean keepAdvanced, boolean setAuxiliaryProperty) {
-		super.setAllVisualPropertiesExceptEuclidianVisible(geo, keepAdvanced,
-				setAuxiliaryProperty);
+	public void setAllVisualPropertiesExceptEuclidianVisible(
+			GeoElement geo, boolean keepAdvanced, boolean setAuxiliaryProperty) {
+		super.setAllVisualPropertiesExceptEuclidianVisible(geo, keepAdvanced, setAuxiliaryProperty);
 
 		if (geo.hasLevelOfDetail()) {
 			setLevelOfDetail(((SurfaceEvaluable) geo).getLevelOfDetail());
@@ -367,8 +386,7 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 	public ExpressionValue evaluateSurface(double u, double v) {
 		tmp[0] = u;
 		tmp[1] = v;
-		return new Geo3DVec(kernel, fun[0].evaluate(tmp), fun[1].evaluate(tmp),
-				fun[2].evaluate(tmp));
+		return new Geo3DVec(kernel, fun[0].evaluate(tmp), fun[1].evaluate(tmp), fun[2].evaluate(tmp));
 	}
 
 	@Override
@@ -411,9 +429,16 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 			direction = p.getWillingDirection();
 			RegionParameters rp = p.getRegionParameters();
 
-			if (getClosestParameters(rp.getT1(), rp.getT2(), coords.getX(),
-					coords.getY(), coords.getZ(), direction.getX(),
-					direction.getY(), direction.getZ(), xyzuv)) {
+			if (getClosestParameters(
+					rp.getT1(),
+					rp.getT2(),
+					coords.getX(),
+					coords.getY(),
+					coords.getZ(),
+					direction.getX(),
+					direction.getY(),
+					direction.getZ(),
+					xyzuv)) {
 
 				rp.setT1(xyzuv[3]);
 				rp.setT2(xyzuv[4]);
@@ -430,8 +455,7 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 		}
 
 		// find closest point, looking for zero normal
-		getClosestParameters(coords.getX(), coords.getY(), coords.getZ(),
-				xyzuv);
+		getClosestParameters(coords.getX(), coords.getY(), coords.getZ(), xyzuv);
 
 		RegionParameters rp = p.getRegionParameters();
 		rp.setT1(xyzuv[3]);
@@ -443,13 +467,12 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 		p.setWillingCoordsUndefined();
 		p.setWillingDirectionUndefined();
 		resetLastHitParameters();
-
 	}
 
 	/**
 	 * find best point on surface collinear to (x0,y0,z0) point in (vx,vy,vz)
 	 * direction
-	 * 
+	 *
 	 * @param x0
 	 *            origin x
 	 * @param xMax
@@ -470,8 +493,15 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 	 *            (x,y,z,u,v) best point coords and parameters
 	 * @return true if point found
 	 */
-	public boolean getBestCollinear(double x0, double xMax, double y0, double z0,
-			double vx, double vy, double vz, double vSquareNorm,
+	public boolean getBestCollinear(
+			double x0,
+			double xMax,
+			double y0,
+			double z0,
+			double vx,
+			double vy,
+			double vz,
+			double vSquareNorm,
 			double[] xyzuvOut) {
 		if (jacobian == null) {
 			jacobian = new CoordMatrix(2, 2);
@@ -479,7 +509,6 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 			bivariateDelta = new Coords(2);
 			uv = new double[2];
 			xyz = new double[3];
-
 		}
 
 		// we use bivariate newton method:
@@ -488,11 +517,6 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 		// we want vector product AM*AB to equal 0, so A, B, M are collinear
 		// we only check first and second values of AM*AB since third will
 		// be a consequence
-
-		double gxc = z0 * vy - vz * y0;
-		double gyc = x0 * vz - vx * z0;
-		double gzc = y0 * vx - vy * x0;
-
 		double uMin, uMax;
 		if (isSurfaceOfRevolutionAroundOx) {
 			uMin = x0;
@@ -504,6 +528,9 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 
 		double vMin = getMinParameter(1);
 		double vMax = getMaxParameter(1);
+		double gxc = z0 * vy - vz * y0;
+		double gyc = x0 * vz - vx * z0;
+		double gzc = y0 * vx - vy * x0;
 
 		double finalError = Double.NaN;
 		double dotProduct = -1;
@@ -515,12 +542,11 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 			uv[0] = uMin + ui * du;
 			for (int vi = 0; vi <= BIVARIATE_SAMPLES; vi++) {
 				uv[1] = vMin + vi * dv;
-				double error = findBivariateCollinear(x0, y0, z0, vx, vy, vz,
-						vSquareNorm, gxc, gyc, gzc, uv);
+				double error =
+						findBivariateCollinear(x0, y0, z0, vx, vy, vz, vSquareNorm, gxc, gyc, gzc, uv);
 				if (!Double.isNaN(error)) {
 					// check if the hit point is in the correct direction
-					double d = (xyz[0] - x0) * vx + (xyz[1] - y0) * vy
-							+ (xyz[2] - z0) * vz;
+					double d = (xyz[0] - x0) * vx + (xyz[1] - y0) * vy + (xyz[2] - z0) * vz;
 					if (d >= 0) {
 						if (dotProduct < 0 || d < dotProduct) {
 							dotProduct = d;
@@ -539,17 +565,24 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 		return !Double.isNaN(finalError);
 	}
 
-	private double findBivariateCollinear(final double x0, final double y0,
-			final double z0, final double vx, final double vy, final double vz,
-			final double vSquareNorm, final double gxc, final double gyc,
-			final double gzc, double[] uvParams) {
+	private double findBivariateCollinear(
+			final double x0,
+			final double y0,
+			final double z0,
+			final double vx,
+			final double vy,
+			final double vz,
+			final double vSquareNorm,
+			final double gxc,
+			final double gyc,
+			final double gzc,
+			double[] uvParams) {
 
 		for (int i = 0; i < BIVARIATE_JUMPS; i++) {
 
 			// calc angle vector between hitting direction and hitting
 			// origin-point on surface
-			setVectorForBivariate(uvParams, xyz, vx, vy, vz, gxc, gyc, gzc,
-					bivariateVector);
+			setVectorForBivariate(uvParams, xyz, vx, vy, vz, gxc, gyc, gzc, bivariateVector);
 
 			double dx = xyz[0] - x0;
 			double dy = xyz[1] - y0;
@@ -612,7 +645,7 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 
 	/**
 	 * set last hit u,v parameters
-	 * 
+	 *
 	 * @param u
 	 *            first parameter
 	 * @param v
@@ -625,7 +658,7 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if surface of revolution around Ox by definition
 	 */
 	@Override
@@ -635,7 +668,7 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 
 	/**
 	 * set this to be a surface of revolution around Ox
-	 * 
+	 *
 	 * @param flag
 	 *            flag
 	 */
@@ -659,7 +692,7 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 	}
 
 	@Override
-	public void printCASEvalMapXML(StringBuilder sb) {
+	public void printCASEvalMapXML(XMLStringBuilder sb) {
 		// fun.printCASevalMapXML(sb);
 	}
 
@@ -676,7 +709,6 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 		this.fun = fun;
 		this.fun1 = null;
 		this.fun2 = null;
-
 	}
 
 	@Override
@@ -704,12 +736,10 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 			tmpMatrix4x4 = new CoordMatrix4x4();
 		}
 		SurfaceTransform.rotate(fun, kernel, r, tmpMatrix4x4);
-
 	}
 
 	@Override
-	public void rotate(NumberValue r, Coords S,
-			GeoDirectionND orientation) {
+	public void rotate(NumberValue r, Coords S, GeoDirectionND orientation) {
 
 		if (tmpMatrix4x4 == null) {
 			tmpMatrix4x4 = new CoordMatrix4x4();
@@ -736,8 +766,7 @@ public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
 	 * @param cp
 	 *            changeable parent
 	 */
-	final public void setChangeableParent(ChangeableParent cp) {
+	public final void setChangeableParent(ChangeableParent cp) {
 		changeableParent = cp;
 	}
-
 }

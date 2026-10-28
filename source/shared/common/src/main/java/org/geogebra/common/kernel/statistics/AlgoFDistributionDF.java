@@ -1,18 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * Area of polygon P[0], ..., P[n]
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -30,11 +29,10 @@ import org.geogebra.common.plugin.Operation;
 
 /**
  * algorithm for FDistribution[0,1,x]
- * 
+ *
  * @author Michael
  */
-public class AlgoFDistributionDF extends AlgoElement
-		implements AlgoDistributionDF {
+public class AlgoFDistributionDF extends AlgoElement implements AlgoDistributionDF {
 
 	private GeoNumberValue d1; // input
 	private GeoNumberValue d2; // input
@@ -51,8 +49,8 @@ public class AlgoFDistributionDF extends AlgoElement
 	 * @param cumulative
 	 *            cumulative?
 	 */
-	public AlgoFDistributionDF(Construction cons, GeoNumberValue a,
-			GeoNumberValue b, BooleanValue cumulative) {
+	public AlgoFDistributionDF(
+			Construction cons, GeoNumberValue a, GeoNumberValue b, BooleanValue cumulative) {
 		super(cons);
 		this.d1 = a;
 		this.d2 = b;
@@ -115,8 +113,8 @@ public class AlgoFDistributionDF extends AlgoElement
 
 		if (cumulative != null && cumulative.getBoolean()) {
 
-			en = d1En.divide(2).betaRegularized(halfd2,
-					fvEn.multiply(d1).divide(fvEn.multiply(d1).plus(d2)));
+			en = d1En.divide(2)
+					.betaRegularized(halfd2, fvEn.multiply(d1).divide(fvEn.multiply(d1).plus(d2)));
 		} else {
 
 			ExpressionNode beta = halfd1.apply(Operation.BETA, halfd2);
@@ -125,13 +123,12 @@ public class AlgoFDistributionDF extends AlgoElement
 
 			mult = fvEn.multiply(d1).power(halfd1).multiply(mult);
 
-			ExpressionNode div = fvEn.multiply(d1).plus(d2)
-					.power(halfd1.plus(halfd2)).multiply(fv).multiply(beta);
+			ExpressionNode div =
+					fvEn.multiply(d1).plus(d2).power(halfd1.plus(halfd2)).multiply(fv).multiply(beta);
 
 			en = mult.divide(div);
 		}
 
 		ret.getFunctionExpression().setRight(en);
 	}
-
 }

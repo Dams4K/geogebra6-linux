@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.main.video;
 
 import org.gwtproject.dom.client.Element;
@@ -13,7 +29,7 @@ import jsinterop.base.Js;
  * @author laszlo
  *
  */
-public class HTML5VideoWidget extends Widget {
+public final class HTML5VideoWidget extends Widget {
 	private HTMLVideoElement elem;
 	private VideoListener listener;
 
@@ -25,7 +41,7 @@ public class HTML5VideoWidget extends Widget {
 
 		/**
 		 * Called when video is loaded
-		 * 
+		 *
 		 * @param width
 		 *            the original width of the video.
 		 * @param height
@@ -38,10 +54,10 @@ public class HTML5VideoWidget extends Widget {
 		 */
 		void onError();
 	}
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param listener
 	 *            Video listener.
 	 */
@@ -107,7 +123,6 @@ public class HTML5VideoWidget extends Widget {
 	 * @param height
 	 *            to set.
 	 */
-
 	public void setHeight(int height) {
 		if (height < 0) {
 			return;
@@ -170,4 +185,3 @@ public class HTML5VideoWidget extends Widget {
 		}
 	}
 }
-

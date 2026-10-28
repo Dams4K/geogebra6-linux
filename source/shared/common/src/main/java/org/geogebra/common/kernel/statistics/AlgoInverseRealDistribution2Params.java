@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -19,10 +23,9 @@ import org.geogebra.common.kernel.geos.GeoNumberValue;
 import org.geogebra.common.main.settings.ProbabilityCalculatorSettings;
 
 /**
- * 
+ *
  * @author Michael Borcherds
  */
-
 public class AlgoInverseRealDistribution2Params extends AlgoDistribution {
 
 	private final ProbabilityCalculatorSettings.Dist command;
@@ -37,8 +40,12 @@ public class AlgoInverseRealDistribution2Params extends AlgoDistribution {
 	 * @param c
 	 *            variable value
 	 */
-	public AlgoInverseRealDistribution2Params(Construction cons, GeoNumberValue a,
-			GeoNumberValue b, GeoNumberValue c, ProbabilityCalculatorSettings.Dist command) {
+	public AlgoInverseRealDistribution2Params(
+			Construction cons,
+			GeoNumberValue a,
+			GeoNumberValue b,
+			GeoNumberValue c,
+			ProbabilityCalculatorSettings.Dist command) {
 		super(cons, null, a, b, c);
 		this.command = command;
 		compute();
@@ -52,15 +59,14 @@ public class AlgoInverseRealDistribution2Params extends AlgoDistribution {
 	@Override
 	public final void compute() {
 
-		if (input[0].isDefined() && input[1].isDefined()
-				&& input[2].isDefined()) {
+		if (input[0].isDefined() && input[1].isDefined() && input[2].isDefined()) {
 			double param = a.getDouble();
 			double param2 = b.getDouble();
 			double val = c.getDouble();
 			try {
 				RealDistribution dist = getDist(command, param, param2);
 				num.setValue(dist.inverseCumulativeProbability(val)); // P(T <=
-																		// val)
+				// val)
 
 			} catch (Exception e) {
 				num.setUndefined();
@@ -69,5 +75,4 @@ public class AlgoInverseRealDistribution2Params extends AlgoDistribution {
 			num.setUndefined();
 		}
 	}
-
 }

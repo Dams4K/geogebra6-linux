@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.dialog;
 
 import org.geogebra.common.SuiteSubApp;
@@ -23,25 +39,20 @@ public final class AppDescription {
 	public static AppDescription get(SuiteSubApp code) {
 		SvgPerspectiveResources res = SvgPerspectiveResources.INSTANCE;
 		switch (code) {
-		case G3D:
-			return new AppDescription(res.menu_icon_graphics3D_transparent(),
-					"GeoGebra3DGrapher.short");
-		case GEOMETRY:
-			return new AppDescription(res.menu_icon_geometry_transparent(),
-					"Geometry");
-		case CAS:
-			return new AppDescription(res.cas_white_bg(),
-					"CAS");
-		case PROBABILITY:
-			return new AppDescription(res.menu_icon_probability_transparent(),
-					"Probability");
-		case SCIENTIFIC:
-			return new AppDescription(MaterialDesignResources.INSTANCE.scientific(),
-					"Scientific");
-		case GRAPHING:
-		default:
-			return new AppDescription(res.menu_icon_algebra_transparent(),
-					"GraphingCalculator.short");
+			case G3D:
+				return new AppDescription(
+						res.menu_icon_graphics3D_transparent(), "GeoGebra3DGrapher.short");
+			case GEOMETRY:
+				return new AppDescription(res.menu_icon_geometry_transparent(), "Geometry");
+			case CAS:
+				return new AppDescription(res.cas_white_bg(), "CAS");
+			case PROBABILITY:
+				return new AppDescription(res.menu_icon_probability_transparent(), "Probability");
+			case SCIENTIFIC:
+				return new AppDescription(MaterialDesignResources.INSTANCE.scientific(), "Scientific");
+			case GRAPHING:
+			default:
+				return new AppDescription(res.menu_icon_algebra_transparent(), "GraphingCalculator.short");
 		}
 	}
 

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.data;
 
 import org.geogebra.common.gui.view.data.PlotPanelEuclidianViewCommon;
@@ -15,33 +31,32 @@ import org.gwtproject.user.client.ui.Widget;
  *
  *Plot panel for ProbabilityCalculator
  */
-public class PlotPanelEuclidianViewW extends EuclidianViewW
+public final class PlotPanelEuclidianViewW extends EuclidianViewW
 		implements PlotPanelEuclidianViewInterface {
-	
+
 	/**
 	 * default height of the PlotPanelEuclidianViewW
 	 */
 	public static final int DEFAULT_HEIGHT = 300;
-	
+
 	public PlotPanelEuclidianViewCommon commonFields;
-	
+
 	/*************************************************
 	 * Construct the panel
 	 */
 	public PlotPanelEuclidianViewW(Kernel kernel) {
 		super(new PlotPanelEuclidianControllerW(kernel), EVNO_GENERAL, null);
-		
+
 		if (commonFields == null) {
 			setCommonFields();
 		}
-		
+
 		// set preferred size so that updateSize will work and this EV can be
 		// properly initialized
-		setPreferredSize(new Dimension(
-				ProbabilityCalculatorDockPanelW.DEFAULT_WIDTH, DEFAULT_HEIGHT));
+		setPreferredSize(new Dimension(ProbabilityCalculatorDockPanelW.DEFAULT_WIDTH, DEFAULT_HEIGHT));
 		updateSize();
 	}
-	
+
 	private void setCommonFields() {
 		// set fields
 		commonFields = new PlotPanelEuclidianViewCommon(false);
@@ -58,7 +73,7 @@ public class PlotPanelEuclidianViewW extends EuclidianViewW
 	public void setMode(int mode) {
 		// .... do nothing
 	}
-	
+
 	/** Returns viewID */
 	@Override
 	public int getViewID() {
@@ -71,8 +86,8 @@ public class PlotPanelEuclidianViewW extends EuclidianViewW
 	@Override
 	public void setViewId(Kernel kernel) {
 		// get viewID from GuiManager
-		commonFields.setViewID(((GuiManagerW) kernel.getApplication().getGuiManager())
-				.assignPlotPanelID(this));
+		commonFields.setViewID(
+				((GuiManagerW) kernel.getApplication().getGuiManager()).assignPlotPanelID(this));
 	}
 
 	@Override
@@ -89,7 +104,7 @@ public class PlotPanelEuclidianViewW extends EuclidianViewW
 	public void updateSizeKeepDrawables() {
 		super.updateSizeKeepDrawables();
 	}
-	
+
 	/**
 	 * @return panel wrapping the view
 	 */
@@ -101,5 +116,4 @@ public class PlotPanelEuclidianViewW extends EuclidianViewW
 	public boolean isPlotPanel() {
 		return true;
 	}
-
 }

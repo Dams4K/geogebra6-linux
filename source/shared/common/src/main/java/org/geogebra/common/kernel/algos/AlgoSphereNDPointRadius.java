@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoCirclePointRadius.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 15. November 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -30,10 +28,10 @@ import org.geogebra.common.kernel.kernelND.GeoSegmentND;
 import org.geogebra.common.main.PreviewFeature;
 
 /**
- * 
+ *
  * @author Markus + Mathieu
- * 
- * 
+ *
+ *
  *         Generalization of algo for circle/sphere
  */
 public abstract class AlgoSphereNDPointRadius extends AlgoElement {
@@ -44,8 +42,8 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
 	private GeoQuadricND sphereND; // output
 
 	private int type;
-	final static int TYPE_RADIUS = 0;
-	final static int TYPE_SEGMENT = 1;
+	static final int TYPE_RADIUS = 0;
+	static final int TYPE_SEGMENT = 1;
 
 	/**
 	 * @param cons
@@ -55,8 +53,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
 	 * @param r
 	 *            radius
 	 */
-	public AlgoSphereNDPointRadius(Construction cons, GeoPointND M,
-			GeoNumberValue r) {
+	public AlgoSphereNDPointRadius(Construction cons, GeoPointND M, GeoNumberValue r) {
 
 		super(cons);
 
@@ -119,8 +116,8 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
 		}
 
 		// Otherwise do auto-coloring by using the next color.
-		this.sphereND.setObjColor(this.sphereND.getAutoColorScheme()
-				.getNext(!cons.getKernel().isSilentMode()));
+		this.sphereND.setObjColor(
+				this.sphereND.getAutoColorScheme().getNext(!cons.getKernel().isSilentMode()));
 	}
 
 	private void copyStyle(GeoElement from) {
@@ -142,8 +139,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
 	 * @param rgeo
 	 *            radius
 	 */
-	protected AlgoSphereNDPointRadius(Construction cons, GeoPointND M,
-			GeoSegmentND rgeo) {
+	protected AlgoSphereNDPointRadius(Construction cons, GeoPointND M, GeoSegmentND rgeo) {
 
 		super(cons);
 
@@ -163,12 +159,12 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
 
 	/**
 	 * return a conic (2D) or a quadric (3D)
-	 * 
+	 *
 	 * @param cons1
 	 *            construction
 	 * @return a conic (2D) or a quadric (3D)
 	 */
-	abstract protected GeoQuadricND createSphereND(Construction cons1);
+	protected abstract GeoQuadricND createSphereND(Construction cons1);
 
 	// for AlgoElement
 	@Override
@@ -194,7 +190,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
 
 	/**
 	 * Method added for LocusEqu project.
-	 * 
+	 *
 	 * @return center of sphere.
 	 */
 	public GeoPointND getCenter() {
@@ -207,7 +203,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
 
 	/**
 	 * Method added for LocusEqu project.
-	 * 
+	 *
 	 * @return radius of sphere.
 	 */
 	public GeoElement getRadiusGeo() {
@@ -218,13 +214,13 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
 	@Override
 	public final void compute() {
 		switch (type) {
-		default:
-		case TYPE_RADIUS:
-			sphereND.setSphereND(M, r.getDouble());
-			break;
-		case TYPE_SEGMENT:
-			sphereND.setSphereND(M, (GeoSegmentND) rgeo);
-			break;
+			default:
+			case TYPE_RADIUS:
+				sphereND.setSphereND(M, r.getDouble());
+				break;
+			case TYPE_SEGMENT:
+				sphereND.setSphereND(M, (GeoSegmentND) rgeo);
+				break;
 		}
 	}
 
@@ -234,7 +230,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
 
 	/**
 	 * resets the radius value for type TYPE_RADIUS
-	 * 
+	 *
 	 * @param newRadius
 	 *            the new radius
 	 */

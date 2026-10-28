@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.table;
 
 import java.util.HashMap;
@@ -34,8 +50,7 @@ public class TableValuesPointsImpl implements TableValuesPoints {
 	 * @param construction the construction to add points to
 	 * @param view table view
 	 */
-	public TableValuesPointsImpl(Kernel kernel, Construction construction,
-			TableValues view) {
+	public TableValuesPointsImpl(Kernel kernel, Construction construction, TableValues view) {
 		this.kernel = kernel;
 		this.points = new HashMap<>(2);
 		this.construction = construction;
@@ -49,10 +64,9 @@ public class TableValuesPointsImpl implements TableValuesPoints {
 	 * @param view table view
 	 * @return points model
 	 */
-	public static TableValuesPointsImpl create(Kernel kernel, Construction construction,
-			TableValues view) {
-		TableValuesPointsImpl instance = new TableValuesPointsImpl(kernel, construction,
-				view);
+	public static TableValuesPointsImpl create(
+			Kernel kernel, Construction construction, TableValues view) {
+		TableValuesPointsImpl instance = new TableValuesPointsImpl(kernel, construction, view);
 		view.setTableValuePoints(instance);
 		return instance;
 	}
@@ -79,6 +93,9 @@ public class TableValuesPointsImpl implements TableValuesPoints {
 	@Override
 	public void setPointsVisible(int column, boolean visible) {
 		GeoEvaluatable geoEvaluatable = view.getEvaluatable(column);
+		if (geoEvaluatable == null) {
+			return;
+		}
 		geoEvaluatable.setPointsVisible(visible);
 		if (visible && points.get(geoEvaluatable) == null) {
 			createAndAddPoints(geoEvaluatable);
@@ -109,8 +126,7 @@ public class TableValuesPointsImpl implements TableValuesPoints {
 
 	@Override
 	public void removeList(GeoElement element) {
-		points.entrySet().removeIf(
-				entry -> entry.getKey() == element || entry.getValue() == element);
+		points.entrySet().removeIf(entry -> entry.getKey() == element || entry.getValue() == element);
 	}
 
 	// Expression construction utility methods
@@ -144,11 +160,10 @@ public class TableValuesPointsImpl implements TableValuesPoints {
 
 	private GeoList buildPointList(ExpressionValue xValues, ExpressionValue yValues) {
 		GeoList result = null;
-		ExpressionNode vecNode = new MyVecNode(kernel, xValues,
-				yValues).wrap();
+		ExpressionNode vecNode = new MyVecNode(kernel, xValues, yValues).wrap();
 		try {
 			result = (GeoList) kernel.getAlgebraProcessor().processValidExpression(vecNode)[0];
-		} catch (CircularDefinitionException ex) {
+		} catch (CircularDefinitionException ignored) {
 			//
 		}
 		return result;
@@ -164,13 +179,13 @@ public class TableValuesPointsImpl implements TableValuesPoints {
 		points.setFixed(true);
 		points.setTableOrigin(true);
 		points.setLabel("TableValuesPoints");
-		//points.setLabelSet(true);
+		// points.setLabelSet(true);
 		maybeSetPointColor(points, evaluatable);
 	}
 
-	private static void maybeSetPointColor(GeoList points,
-			GeoEvaluatable evaluatable) {
-		GColor color = evaluatable instanceof GeoFunctionable ? evaluatable.getObjectColor()
+	private static void maybeSetPointColor(GeoList points, GeoEvaluatable evaluatable) {
+		GColor color = evaluatable instanceof GeoFunctionable
+				? evaluatable.getObjectColor()
 				: GColor.Y_POINT_COLOR;
 		points.setObjColor(color);
 	}

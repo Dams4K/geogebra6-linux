@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.main;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -16,9 +32,8 @@ public class GeometryTest {
 	@Test
 	public void startApp() {
 		AppletParameters params = new AppletParameters("geometry");
-		params.setAttribute("showToolBar" , "true");
+		params.setAttribute("showToolBar", "true");
 		AppW app = AppMocker.mockApplet(params);
 		assertThat(app.getGuiManager().toolbarHasImageMode(), equalTo(true));
 	}
-
 }

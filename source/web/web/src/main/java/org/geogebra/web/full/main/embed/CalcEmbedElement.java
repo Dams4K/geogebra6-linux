@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.main.embed;
 
 import org.geogebra.common.awt.GColor;
@@ -13,10 +29,10 @@ import org.geogebra.common.main.undo.UndoManager;
 import org.geogebra.common.plugin.ActionType;
 import org.geogebra.common.plugin.ScriptType;
 import org.geogebra.common.util.debug.Log;
+import org.geogebra.web.awt.GGraphics2DW;
 import org.geogebra.web.full.gui.GuiManagerW;
 import org.geogebra.web.full.gui.applet.GeoGebraFrameFull;
 import org.geogebra.web.full.main.EmbedManagerW;
-import org.geogebra.web.html5.awt.GGraphics2DW;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.main.ScriptManagerW;
 
@@ -28,7 +44,7 @@ import jsinterop.base.Js;
 /**
  * Embedded GeoGebra calculator for Notes
  */
-public class CalcEmbedElement extends EmbedElement {
+public final class CalcEmbedElement extends EmbedElement {
 
 	private final GeoGebraFrameFull frame;
 	private UndoRedoGlue undoRedoGlue;
@@ -69,8 +85,7 @@ public class CalcEmbedElement extends EmbedElement {
 
 	@Override
 	public String getContentSync() {
-		return Global.JSON.stringify(
-				frame.getApp().getGgbApi().getFileJSON(false));
+		return Global.JSON.stringify(frame.getApp().getGgbApi().getFileJSON(false));
 	}
 
 	/**
@@ -78,8 +93,7 @@ public class CalcEmbedElement extends EmbedElement {
 	 */
 	@Override
 	public Object getApi() {
-		ScriptManagerW sm = (ScriptManagerW) frame.getApp()
-				.getScriptManager();
+		ScriptManagerW sm = (ScriptManagerW) frame.getApp().getScriptManager();
 		return sm.getApi();
 	}
 
@@ -111,31 +125,31 @@ public class CalcEmbedElement extends EmbedElement {
 		GeoElement chart = frame.getApp().getKernel().lookupLabel("chart");
 
 		switch (chartType) {
-		case PieChart:
-			ev.getSettings().setShowAxes(false);
-			ev.setRealWorldCoordSystem(-4, -4, 4, 4);
-			break;
-		case LineGraph:
-			setGrid(EuclidianView.GRID_CARTESIAN);
-			ev.getSettings().setShowAxes(true);
-			if (isByCS) {
-				chart.setObjColor(GColor.newColorRGB(0x00A8D5));
-			} else {
-				chart.setObjColor(GColor.newColorRGB(0x6557D2));
-			}
-			chart.setLineThickness(8);
-			break;
-		case BarChart:
-			ev.getSettings().setShowAxes(true);
-			if (isByCS) {
-				chart.setObjColor(GColor.newColorRGB(0x00A8D5));
-			} else {
-				chart.setObjColor(GColor.newColorRGB(0x6557D2));
-			}
-			chart.setAlphaValue(181. / 255);
-			break;
-		default:
-			break;
+			case PieChart:
+				ev.getSettings().setShowAxes(false);
+				ev.setRealWorldCoordSystem(-4, -4, 4, 4);
+				break;
+			case LineGraph:
+				setGrid(EuclidianView.GRID_CARTESIAN);
+				ev.getSettings().setShowAxes(true);
+				if (isByCS) {
+					chart.setObjColor(GColor.newColorRGB(0x00A8D5));
+				} else {
+					chart.setObjColor(GColor.newColorRGB(0x6557D2));
+				}
+				chart.setLineThickness(8);
+				break;
+			case BarChart:
+				ev.getSettings().setShowAxes(true);
+				if (isByCS) {
+					chart.setObjColor(GColor.newColorRGB(0x00A8D5));
+				} else {
+					chart.setObjColor(GColor.newColorRGB(0x6557D2));
+				}
+				chart.setAlphaValue(181. / 255);
+				break;
+			default:
+				break;
 		}
 
 		chart.setLabelVisible(false);
@@ -177,14 +191,13 @@ public class CalcEmbedElement extends EmbedElement {
 		frame.getApp().getKernel().notifyRepaint();
 	}
 
-	private static class UndoRedoGlue implements UndoInfoStoredListener {
+	private static final class UndoRedoGlue implements UndoInfoStoredListener {
 
 		private final int embedId;
 		private final UndoManager embeddedUndoManager;
 		private final EmbedManagerW embedManager;
 
-		private UndoRedoGlue(int embedId, UndoManager embeddedUndoManager,
-				EmbedManagerW embedManager) {
+		private UndoRedoGlue(int embedId, UndoManager embeddedUndoManager, EmbedManagerW embedManager) {
 			this.embedId = embedId;
 			this.embeddedUndoManager = embeddedUndoManager;
 			this.embedManager = embedManager;
@@ -196,12 +209,12 @@ public class CalcEmbedElement extends EmbedElement {
 			embedManager.createUndoAction(embedId);
 		}
 
-		protected void executeAction(ActionType action) {
-			if (ActionType.UNDO.equals(action)) {
+		private void executeAction(ActionType action) {
+			if (ActionType.UNDO == action) {
 				undo();
-			} else if (ActionType.REDO.equals(action)) {
+			} else if (ActionType.REDO == action) {
 				redo();
-			} else if (ActionType.EMBEDDED_PRUNE_STATE_LIST.equals(action)) {
+			} else if (ActionType.EMBEDDED_PRUNE_STATE_LIST == action) {
 				pruneStateList();
 			}
 		}
@@ -229,8 +242,7 @@ public class CalcEmbedElement extends EmbedElement {
 		canvas.width = width;
 		canvas.height = height;
 		try {
-			frame.getApp().getGuiManager().getLayout()
-					.getDockManager().paintPanels(canvas, null, 1);
+			frame.getApp().getGuiManager().getLayout().getDockManager().paintPanels(canvas, null, 1);
 		} catch (RuntimeException rte) {
 			Log.debug(rte);
 		}

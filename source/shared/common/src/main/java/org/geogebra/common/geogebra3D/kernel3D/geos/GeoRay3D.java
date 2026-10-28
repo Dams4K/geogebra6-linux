@@ -1,8 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.geos;
 
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.geogebra3D.kernel3D.algos.AlgoJoinPoints3D;
 import org.geogebra.common.geogebra3D.kernel3D.algos.AlgoRayPointVector3D;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.Transform;
 import org.geogebra.common.kernel.algos.AlgoElement;
@@ -24,7 +41,7 @@ import org.geogebra.common.util.DoubleUtil;
 public class GeoRay3D extends GeoLine3D implements GeoRayND, LimitedPath {
 	private boolean allowOutlyingIntersections = false;
 	private boolean keepTypeOnGeometricTransform = true; // for mirroring,
-															// rotation, ...
+	// rotation, ...
 
 	/**
 	 * @param c
@@ -88,7 +105,6 @@ public class GeoRay3D extends GeoLine3D implements GeoRayND, LimitedPath {
 
 		// then check position on segment
 		return respectLimitedPath(p, eps);
-
 	}
 
 	@Override
@@ -105,7 +121,7 @@ public class GeoRay3D extends GeoLine3D implements GeoRayND, LimitedPath {
 	// ///////////////////////////////////////
 
 	@Override
-	final public boolean isLimitedPath() {
+	public final boolean isLimitedPath() {
 		return true;
 	}
 
@@ -131,28 +147,25 @@ public class GeoRay3D extends GeoLine3D implements GeoRayND, LimitedPath {
 
 	@Override
 	public GeoElement[] createTransformedObject(Transform t, String label1) {
-		AlgoElement algoParent1 = keepTypeOnGeometricTransform
-				? getParentAlgorithm() : null;
+		AlgoElement algoParent1 = keepTypeOnGeometricTransform ? getParentAlgorithm() : null;
 
 		// CREATE RAY
 		if (algoParent1 instanceof AlgoJoinPoints3D && t.isAffine()) {
 			// transform points
 			AlgoJoinPoints3D algo = (AlgoJoinPoints3D) algoParent1;
-			GeoPointND[] points = { algo.getP(), algo.getQ() };
+			GeoPointND[] points = {algo.getP(), algo.getQ()};
 			points = t.transformPoints(points);
 			// if(t.isAffine()){
-			GeoElement ray = (GeoElement) kernel.getManager3D().ray3D(label1,
-					points[0], points[1]);
+			GeoElement ray = (GeoElement) kernel.getManager3D().ray3D(label1, points[0], points[1]);
 			ray.setVisualStyleForTransformations(this);
-			GeoElement[] geos = { ray, (GeoElement) points[0],
-					(GeoElement) points[1] };
+			GeoElement[] geos = {ray, (GeoElement) points[0], (GeoElement) points[1]};
 			return geos;
 			// }
 		}
 		// create LINE
 		GeoElement transformedLine = t.getTransformedLine(this);
 		transformedLine.setLabel(label1);
-		GeoElement[] ret = { transformedLine };
+		GeoElement[] ret = {transformedLine};
 		return ret;
 	}
 
@@ -171,8 +184,7 @@ public class GeoRay3D extends GeoLine3D implements GeoRayND, LimitedPath {
 
 	@Override
 	public GeoElement copyInternal(Construction cons1) {
-		GeoRay3D ray = new GeoRay3D(cons1,
-				(GeoPointND) startPoint.copyInternal(cons1));
+		GeoRay3D ray = new GeoRay3D(cons1, (GeoPointND) startPoint.copyInternal(cons1));
 		ray.set(this);
 		return ray;
 	}
@@ -196,19 +208,11 @@ public class GeoRay3D extends GeoLine3D implements GeoRayND, LimitedPath {
 	}
 
 	@Override
-	protected void getStyleXML(StringBuilder sb) {
+	protected void getStyleXML(XMLStringBuilder sb) {
 		super.getStyleXML(sb);
 
-		// allowOutlyingIntersections
-		sb.append("\t<outlyingIntersections val=\"");
-		sb.append(allowOutlyingIntersections);
-		sb.append("\"/>\n");
-
-		// keepTypeOnGeometricTransform
-		sb.append("\t<keepTypeOnTransform val=\"");
-		sb.append(keepTypeOnGeometricTransform);
-		sb.append("\"/>\n");
-
+		sb.startTag("outlyingIntersections").attr("val", allowOutlyingIntersections).endTag();
+		sb.startTag("keepTypeOnTransform").attr("val", keepTypeOnGeometricTransform).endTag();
 	}
 
 	@Override
@@ -222,22 +226,20 @@ public class GeoRay3D extends GeoLine3D implements GeoRayND, LimitedPath {
 	}
 
 	@Override
-	final protected void getCoordsXML(StringBuilder sb) {
+	protected final void getCoordsXML(XMLStringBuilder sb) {
 		// not needed here
 	}
 
 	@Override
 	public GeoElement copyFreeRay() {
-		GeoPointND startPoint1 = (GeoPointND) getStartPoint()
-				.copyInternal(cons);
+		GeoPointND startPoint1 = (GeoPointND) getStartPoint().copyInternal(cons);
 
 		Coords direction = getDirectionInD3();
 
 		GeoVector3D directionVec = new GeoVector3D(cons);
 		directionVec.setCoords(direction);
 
-		AlgoRayPointVector3D algo = new AlgoRayPointVector3D(cons,
-				startPoint1, directionVec);
+		AlgoRayPointVector3D algo = new AlgoRayPointVector3D(cons, startPoint1, directionVec);
 
 		return algo.getOutput(0);
 	}
@@ -253,7 +255,5 @@ public class GeoRay3D extends GeoLine3D implements GeoRayND, LimitedPath {
 		// check direction
 		Coords equation = getCartesianEquationVector(ev.getMatrix());
 		return equation != null;
-
 	}
-
 }

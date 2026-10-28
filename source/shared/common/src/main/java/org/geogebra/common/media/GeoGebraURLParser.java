@@ -1,9 +1,24 @@
-package org.geogebra.common.media;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
+package org.geogebra.common.media;
 
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.debug.Log;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Helper methods for getting material ID from URLs
@@ -21,8 +36,10 @@ public final class GeoGebraURLParser {
 			return false;
 		}
 		String host = urlNoProtocol.split("/")[0];
-		return "geogebra.org".equals(host) || "ggbm.at".equals(host)
-				|| "ggbtu.be".equals(host) || host.endsWith(".geogebra.org");
+		return "geogebra.org".equals(host)
+				|| "ggbm.at".equals(host)
+				|| "ggbtu.be".equals(host)
+				|| host.endsWith(".geogebra.org");
 	}
 
 	/**
@@ -30,7 +47,7 @@ public final class GeoGebraURLParser {
 	 *            GeoGebra URL
 	 * @return material sharing key (or numeric ID); null if URL does not specify any ID
 	 */
-	public static @CheckForNull String getIDfromURL(String url) {
+	public static @Nullable String getIDfromURL(String url) {
 		String urlNoProtocol = removeProtocol(url);
 		final String material = "/material/show/id/";
 
@@ -69,7 +86,7 @@ public final class GeoGebraURLParser {
 		}
 		// fetch ID
 		id = pathAndQuery.substring(start, end);
-		return id.length() > 5 ||  id.matches("\\d+") ? id : null;
+		return id.length() > 5 || id.matches("\\d+") ? id : null;
 	}
 
 	/**

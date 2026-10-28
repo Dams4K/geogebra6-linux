@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.cas.view;
 
 import java.util.Objects;
@@ -6,7 +22,12 @@ import org.geogebra.common.euclidian.event.PointerEventType;
 import org.geogebra.common.gui.popup.autocompletion.InputSuggestions;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.localization.AutocompleteProvider;
+import org.geogebra.common.util.CommandSyntaxLookupImpl;
 import org.geogebra.common.util.StringUtil;
+import org.geogebra.editor.share.event.MathFieldListener;
+import org.geogebra.editor.share.input.KeyboardInputAdapter;
+import org.geogebra.editor.share.serializer.TeXSerializer;
+import org.geogebra.editor.web.MathFieldW;
 import org.geogebra.web.editor.MathFieldProcessing;
 import org.geogebra.web.full.gui.inputfield.AutoCompletePopup;
 import org.geogebra.web.full.gui.util.SyntaxAdapterImplWithPaste;
@@ -19,40 +40,31 @@ import org.geogebra.web.html5.gui.util.MathKeyboardListener;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.util.EventUtil;
 import org.gwtproject.canvas.client.Canvas;
-import org.gwtproject.dom.client.Element;
-import org.gwtproject.dom.client.Style;
 import org.gwtproject.dom.style.shared.Overflow;
 import org.gwtproject.dom.style.shared.Unit;
 import org.gwtproject.event.dom.client.BlurEvent;
 import org.gwtproject.event.dom.client.BlurHandler;
 import org.gwtproject.event.dom.client.HumanInputEvent;
 import org.gwtproject.user.client.ui.FlowPanel;
-import org.gwtproject.user.client.ui.Label;
 import org.gwtproject.user.client.ui.Widget;
-
-import com.himamis.retex.editor.share.event.MathFieldListener;
-import com.himamis.retex.editor.share.input.KeyboardInputAdapter;
-import com.himamis.retex.editor.share.serializer.TeXSerializer;
-import com.himamis.retex.editor.share.util.Unicode;
-import com.himamis.retex.editor.web.MathFieldW;
 
 /**
  * ReTeX editor for CAS
  *
  */
-public class CASLaTeXEditor extends FlowPanel implements CASEditorW,
-		MathKeyboardListener, MathFieldListener, BlurHandler {
+public final class CASLaTeXEditor extends FlowPanel
+		implements CASEditorW, MathKeyboardListener, MathFieldListener, BlurHandler {
 	/** suggestions */
 	AutoCompletePopup sug;
+
 	private final InputSuggestions inputSuggestions;
 	private final MathFieldW mf;
 	/** keyboard connector */
 	RetexKeyboardListener retexListener;
-	private AppWFull app;
-	private CASTableControllerW controller;
+
+	private final AppWFull app;
+	private final CASTableControllerW controller;
 	private boolean autocomplete = true;
-	private Widget dummy;
-	private Canvas canvas;
 	private boolean editAsText;
 
 	/**
@@ -61,27 +73,30 @@ public class CASLaTeXEditor extends FlowPanel implements CASEditorW,
 	 * @param controller
 	 *            controller
 	 */
-	public CASLaTeXEditor(final AppW app,
-			final CASTableControllerW controller) {
+	public CASLaTeXEditor(final AppW app, final CASTableControllerW controller) {
 		this.app = (AppWFull) app;
 		this.controller = controller;
 		inputSuggestions = new InputSuggestions(null);
-		canvas = Canvas.createIfSupported();
-		mf = new MathFieldW(new SyntaxAdapterImplWithPaste(app.getKernel()), this,
-				canvas, this, app.getEditorFeatures());
+		Canvas canvas = Canvas.createIfSupported();
+		mf = new MathFieldW(
+				new SyntaxAdapterImplWithPaste(app.getKernel()),
+				this,
+				canvas,
+				this,
+				app.getEditorFeatures());
+		mf.getInternal().getInputController().setCommandSyntaxLookup(new CommandSyntaxLookupImpl(app));
 		retexListener = new RetexKeyboardListener(canvas, mf);
 		mf.setOnBlur(this);
 		add(mf);
-		dummy = new Label(
-				app.getLocalization().getMenu("InputLabel") + Unicode.ELLIPSIS);
-		dummy.addStyleName("CAS_dummyLabel");
 		this.getElement().getStyle().setOverflow(Overflow.HIDDEN);
 		updateWidth();
+		updateFontSize();
 	}
 
 	private void updateWidth() {
-		int width = app.getGuiManager().getLayout().getDockManager()
-				.getPanel(App.VIEW_CAS).getOffsetWidth() - 35;
+		int width =
+				app.getGuiManager().getLayout().getDockManager().getPanel(App.VIEW_CAS).getOffsetWidth()
+						- 35;
 		if (width > 0) {
 			this.getElement().getStyle().setWidth(width, Unit.PX);
 		}
@@ -89,7 +104,7 @@ public class CASLaTeXEditor extends FlowPanel implements CASEditorW,
 
 	@Override
 	public void onBlur(BlurEvent event) {
-		// autocommitting empty text produces $1
+		// make sure submitting empty text on blur does not create a cell
 		if (!isSuggesting()) {
 			onEnter(false);
 			controller.stopEditing();
@@ -178,12 +193,10 @@ public class CASLaTeXEditor extends FlowPanel implements CASEditorW,
 
 	@Override
 	public void setFocus(boolean focus) {
-		remove(focus ? dummy : mf);
 		if (focus) {
 			updateWidth();
+			setWidget(mf.asWidget());
 		}
-		setWidget(focus ? mf.asWidget()
-				: dummy);
 		mf.setFocus(focus);
 	}
 
@@ -193,8 +206,9 @@ public class CASLaTeXEditor extends FlowPanel implements CASEditorW,
 			return;
 		}
 		// got here by blur: do not use previous cell ref
-		if (!keepFocus && (StringUtil.empty(getText())
-				|| Objects.equals(controller.getTextBeforeEdit(), getText()))) {
+		if (!keepFocus
+				&& (StringUtil.empty(getText())
+						|| Objects.equals(controller.getTextBeforeEdit(), getText()))) {
 			this.setFocus(false);
 			return;
 		}
@@ -219,8 +233,7 @@ public class CASLaTeXEditor extends FlowPanel implements CASEditorW,
 		CancelEventTimer.keyboardSetVisible();
 		ClickStartHandler.init(this, new ClickStartHandler(false, false) {
 			@Override
-			public void onClickStart(int x, int y,
-					final PointerEventType type) {
+			public void onClickStart(int x, int y, final PointerEventType type) {
 				doClickStart();
 				gui.setActivePanelAndToolbar(App.VIEW_CAS);
 			}
@@ -231,7 +244,7 @@ public class CASLaTeXEditor extends FlowPanel implements CASEditorW,
 	/**
 	 * Click start callback
 	 */
-	protected void doClickStart() {
+	private void doClickStart() {
 		setFocus(true);
 		app.showKeyboard(retexListener);
 		// prevent that keyboard is closed on clicks (changing
@@ -246,8 +259,8 @@ public class CASLaTeXEditor extends FlowPanel implements CASEditorW,
 
 	@Override
 	public void insertString(String text) {
-		new MathFieldProcessing(mf).autocomplete(
-				app.getParserFunctions().toEditorAutocomplete(text, app.getLocalization()));
+		new MathFieldProcessing(mf)
+				.autocomplete(app.getParserFunctions().toEditorAutocomplete(text, app.getLocalization()));
 	}
 
 	@Override
@@ -291,9 +304,11 @@ public class CASLaTeXEditor extends FlowPanel implements CASEditorW,
 		double scaleX = app.getGeoGebraElement().getScaleX();
 		int left = (int) ((getAbsoluteLeft() - (int) app.getAbsLeft()) / scaleX);
 		int top = getAbsoluteTop() - (int) app.getAbsTop();
-		getInputSuggestions().popupSuggestions(left,
-				top - 3, // extra padding of editor
-				getOffsetHeight() + 5); // extra padding of editor
+		getInputSuggestions()
+				.popupSuggestions(
+						left,
+						top - 3, // extra padding of editor
+						getOffsetHeight() + 5); // extra padding of editor
 		mf.scrollParentHorizontally(this);
 	}
 
@@ -346,8 +361,10 @@ public class CASLaTeXEditor extends FlowPanel implements CASEditorW,
 
 	@Override
 	public void adjustCaret(HumanInputEvent<?> event) {
-		mf.adjustCaret(EventUtil.getTouchOrClickClientX(event),
-				EventUtil.getTouchOrClickClientY(event), app.getGeoGebraElement().getScaleX());
+		mf.adjustCaret(
+				EventUtil.getTouchOrClickClientX(event),
+				EventUtil.getTouchOrClickClientY(event),
+				app.getGeoGebraElement().getScaleX());
 	}
 
 	@Override
@@ -364,16 +381,7 @@ public class CASLaTeXEditor extends FlowPanel implements CASEditorW,
 	 * Updates the font size.
 	 */
 	public void updateFontSize() {
-		int targetFontSize = app.getSettings().getFontSettings()
-				.getAppFontSize();
-
+		int targetFontSize = app.getSettings().getFontSettings().getAppFontSize();
 		mf.setFontSize(targetFontSize);
-		setDummyFontSize(targetFontSize);
-	}
-
-	private void setDummyFontSize(int size) {
-		Element element = dummy.getElement();
-		Style style = element.getStyle();
-		style.setFontSize(size, Unit.PX);
 	}
 }

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -82,7 +86,7 @@ public class AlgoRayPointVector extends AlgoElement {
 
 	/**
 	 * Returns the ray
-	 * 
+	 *
 	 * @return resulting ray
 	 */
 	public GeoRay getRay() {
@@ -91,7 +95,7 @@ public class AlgoRayPointVector extends AlgoElement {
 
 	/**
 	 * Returns the endpoint
-	 * 
+	 *
 	 * @return the endpoint
 	 */
 	GeoPoint getP() {
@@ -100,7 +104,7 @@ public class AlgoRayPointVector extends AlgoElement {
 
 	/**
 	 * Returns the direction
-	 * 
+	 *
 	 * @return direction vector
 	 */
 	public GeoVector getv() {
@@ -115,12 +119,14 @@ public class AlgoRayPointVector extends AlgoElement {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("RayThroughAWithDirectionB",
-				"Ray through %0 with direction %1", P.getLabel(tpl),
-				v.getLabel(tpl));
+		return getLoc()
+				.getPlainDefault(
+						"RayThroughAWithDirectionB",
+						"Ray through %0 with direction %1",
+						P.getLabel(tpl),
+						v.getLabel(tpl));
 	}
-
 }

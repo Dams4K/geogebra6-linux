@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.plugin;
 
 import java.util.HashMap;
@@ -6,17 +22,17 @@ import org.geogebra.common.kernel.geos.GeoElement;
 
 /**
  * Simple geometry getter with 4 lines for each geometry type:
- * 
+ *
  * ## name (if filtered to one geo export)
- * 
+ *
  * # type
- * 
+ *
  * v x y z x y z ... (vertices)
- * 
+ *
  * n x y z x y z ... (normals)
- * 
+ *
  * c r g b a r g b a ... (colors)
- * 
+ *
  * t i1 i2 i3 ... (triangles indices)
  *
  */
@@ -27,16 +43,16 @@ public class Geometry3DGetterSimple implements Geometry3DGetter {
 	private String exportName;
 	private boolean filterGeoNames;
 
-	private static class GeometryStringBuilders {
-		public StringBuilder vsb;
-		public StringBuilder nsb;
-		public StringBuilder csb;
-		public StringBuilder tsb;
-		public GeometryType type;
-		public int index;
-		public int nextShift;
+	private static final class GeometryStringBuilders {
+		private StringBuilder vsb;
+		private StringBuilder nsb;
+		private StringBuilder csb;
+		private StringBuilder tsb;
+		private GeometryType type;
+		private int index;
+		private int nextShift;
 
-		public GeometryStringBuilders(GeometryType type) {
+		GeometryStringBuilders(GeometryType type) {
 			this.type = type;
 			index = 0;
 			nextShift = 0;
@@ -49,25 +65,20 @@ public class Geometry3DGetterSimple implements Geometry3DGetter {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param name
 	 *            geo name to filter; set it to "" if no filtering
 	 */
 	public Geometry3DGetterSimple(String name) {
 		geometryStringsMap = new HashMap<>();
 		exportName = name;
-		if (exportName != null && !"".equals(exportName)) {
-			filterGeoNames = true;
-		} else {
-			filterGeoNames = false;
-		}
+		filterGeoNames = exportName != null && !exportName.isEmpty();
 	}
 
 	@Override
 	public boolean handles(GeoElement geo, GeometryType type) {
 		if (filterGeoNames) {
-			boolean ret = exportName.equals(geo.getLabelSimple());
-			return ret;
+			return exportName.equals(geo.getLabelSimple());
 		}
 		return true;
 	}
@@ -85,22 +96,31 @@ public class Geometry3DGetterSimple implements Geometry3DGetter {
 	}
 
 	@Override
-	public void addVertexNormalColor(double x, double y, double z, double nx,
-			double ny, double nz, double r, double g, double b, double a) {
+	public void addVertexNormalColor(
+			double x,
+			double y,
+			double z,
+			double nx,
+			double ny,
+			double nz,
+			double r,
+			double g,
+			double b,
+			double a) {
 		currentGeometryStrings.vsb.append(" ");
 		currentGeometryStrings.vsb.append(x);
 		currentGeometryStrings.vsb.append(" ");
 		currentGeometryStrings.vsb.append(y);
 		currentGeometryStrings.vsb.append(" ");
 		currentGeometryStrings.vsb.append(z);
-	
+
 		currentGeometryStrings.nsb.append(" ");
 		currentGeometryStrings.nsb.append(nx);
 		currentGeometryStrings.nsb.append(" ");
 		currentGeometryStrings.nsb.append(ny);
 		currentGeometryStrings.nsb.append(" ");
 		currentGeometryStrings.nsb.append(nz);
-		
+
 		currentGeometryStrings.csb.append(" ");
 		currentGeometryStrings.csb.append(r);
 		currentGeometryStrings.csb.append(" ");
@@ -128,7 +148,7 @@ public class Geometry3DGetterSimple implements Geometry3DGetter {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return result
 	 */
 	public StringBuilder get() {
@@ -139,8 +159,7 @@ public class Geometry3DGetterSimple implements Geometry3DGetter {
 			sb.append("\n");
 		}
 		boolean notFirst = false;
-		for (GeometryStringBuilders geometryStrings : geometryStringsMap
-				.values()) {
+		for (GeometryStringBuilders geometryStrings : geometryStringsMap.values()) {
 			if (notFirst) {
 				sb.append("\n");
 			} else {
@@ -159,5 +178,4 @@ public class Geometry3DGetterSimple implements Geometry3DGetter {
 		}
 		return sb;
 	}
-
 }

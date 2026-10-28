@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
@@ -18,11 +34,11 @@ import org.geogebra.common.kernel.arithmetic.MyNumberPair;
 import org.geogebra.common.kernel.geos.GeoFunction;
 import org.geogebra.common.plugin.Operation;
 
-class PlotConditionalFunction {
+final class PlotConditionalFunction {
 	private final EuclidianView view;
 	private final PathPlotter gp;
-	private static final List<Operation> supported = Arrays.asList(Operation.IF_ELSE,
-			Operation.IF_LIST);
+	private static final List<Operation> supported =
+			Arrays.asList(Operation.IF_ELSE, Operation.IF_LIST);
 	private ExpressionNode node;
 	private Operation operation;
 	private GeoFunction geoFunction;
@@ -32,13 +48,12 @@ class PlotConditionalFunction {
 	private boolean fillCurve;
 	private GPoint labelPoint;
 
-	public PlotConditionalFunction(EuclidianView view, PathPlotter gp) {
+	PlotConditionalFunction(EuclidianView view, PathPlotter gp) {
 		this.view = view;
 		this.gp = gp;
 	}
 
-	boolean update(GeoFunction f, double min, double max,
-			boolean labelVisible, boolean fillCurve) {
+	boolean update(GeoFunction f, double min, double max, boolean labelVisible, boolean fillCurve) {
 		geoFunction = f;
 		node = geoFunction.getFunctionExpression();
 		operation = node.getOperation();
@@ -84,8 +99,13 @@ class PlotConditionalFunction {
 	private void plotBetweenLimits(List<ExpressionValue> conditions) {
 		List<Double> limits = getLimits(conditions);
 		for (int i = 0; i < limits.size() - 1; i++) {
-			GPoint partialLabel = CurvePlotter.plotCurve(geoFunction, limits.get(i),
-					limits.get(i + 1), view, gp, labelVisible,
+			GPoint partialLabel = CurvePlotter.plotCurve(
+					geoFunction,
+					limits.get(i),
+					limits.get(i + 1),
+					view,
+					gp,
+					labelVisible,
 					fillCurve ? Gap.CORNER : Gap.MOVE_TO);
 			if (labelVisible && labelPoint == null) {
 				labelPoint = partialLabel;
@@ -126,7 +146,7 @@ class PlotConditionalFunction {
 		}
 	}
 
-	public GPoint getLabelPoint() {
+	GPoint getLabelPoint() {
 		return labelPoint;
 	}
 }

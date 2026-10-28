@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * Gridable.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 18.08.2011, 17:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.desktop.export;
@@ -63,14 +61,13 @@ public class PrintGridable implements Printable {
 		ArrayList<Integer> boundsHor = new ArrayList<>();
 		boundsHor.add(sum);
 		for (int i = 0; i < colWidths.length; i++) {
-			if ((sum + colWidths[i]
-					- boundsHor.get(boundsHor.size() - 1) > pWidth) // the
-																		// next
-																		// cell
-																		// won't
-																		// fit
+			if ((sum + colWidths[i] - boundsHor.get(boundsHor.size() - 1) > pWidth) // the
+					// next
+					// cell
+					// won't
+					// fit
 					&& (sum > boundsHor.get(boundsHor.size() - 1))) { // the size
-																	// increased
+				// increased
 				boundsHor.add(sum);
 			}
 			sum += colWidths[i];
@@ -81,14 +78,13 @@ public class PrintGridable implements Printable {
 		ArrayList<Integer> boundsVer = new ArrayList<>();
 		boundsVer.add(sum);
 		for (int i = 0; i < rowHeights.length; i++) {
-			if ((sum + rowHeights[i]
-					- boundsVer.get(boundsVer.size() - 1) > pHeight) // the
-																		// next
-																		// cell
-																		// won't
-																		// fit
+			if ((sum + rowHeights[i] - boundsVer.get(boundsVer.size() - 1) > pHeight) // the
+					// next
+					// cell
+					// won't
+					// fit
 					&& (sum > boundsVer.get(boundsVer.size() - 1))) { // the size
-																	// increased
+				// increased
 				boundsVer.add(sum);
 			}
 			sum += rowHeights[i];
@@ -105,7 +101,9 @@ public class PrintGridable implements Printable {
 		int px = pageIndex % pagesHor;
 		int py = pageIndex / pagesHor;
 
-		Rectangle bounds = new Rectangle(boundsHor.get(px), boundsVer.get(py),
+		Rectangle bounds = new Rectangle(
+				boundsHor.get(px),
+				boundsVer.get(py),
 				boundsHor.get(px + 1) - boundsHor.get(px),
 				boundsVer.get(py + 1) - boundsVer.get(py));
 
@@ -144,5 +142,4 @@ public class PrintGridable implements Printable {
 	public void setTitleOffset(int offset) {
 		this.titleOffset = offset;
 	}
-
 }

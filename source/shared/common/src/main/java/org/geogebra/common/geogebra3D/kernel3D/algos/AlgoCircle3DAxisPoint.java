@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -37,7 +41,7 @@ public class AlgoCircle3DAxisPoint extends AlgoElement3D {
 
 	private Coords center = Coords.createInhomCoorsInD3();
 
-	static final private Coords O = new Coords(0, 0);
+	private static final Coords O = new Coords(0, 0);
 
 	/**
 	 * @param cons
@@ -49,8 +53,7 @@ public class AlgoCircle3DAxisPoint extends AlgoElement3D {
 	 * @param point
 	 *            center
 	 */
-	public AlgoCircle3DAxisPoint(Construction cons, String label,
-			GeoLineND axis, GeoPointND point) {
+	public AlgoCircle3DAxisPoint(Construction cons, String label, GeoLineND axis, GeoPointND point) {
 		super(cons);
 
 		this.axis = axis;
@@ -60,8 +63,7 @@ public class AlgoCircle3DAxisPoint extends AlgoElement3D {
 		circle.setCoordSys(coordsys);
 
 		setInputOutput(
-				new GeoElement[] { (GeoElement) axis, (GeoElement) point },
-				new GeoElement[] { circle });
+				new GeoElement[] {(GeoElement) axis, (GeoElement) point}, new GeoElement[] {circle});
 
 		// compute line
 		compute();
@@ -69,7 +71,7 @@ public class AlgoCircle3DAxisPoint extends AlgoElement3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return circle
 	 */
 	public GeoConic3D getCircle() {
@@ -89,12 +91,11 @@ public class AlgoCircle3DAxisPoint extends AlgoElement3D {
 		Coords v1 = p.sub(center);
 
 		setCircle(circle, coordsys, center, v1, d);
-
 	}
 
 	/**
 	 * set conic to circle with center, radius vector, axis direction
-	 * 
+	 *
 	 * @param conic
 	 *            conic
 	 * @param coordsys
@@ -106,8 +107,8 @@ public class AlgoCircle3DAxisPoint extends AlgoElement3D {
 	 * @param d
 	 *            axis direction
 	 */
-	static final public void setCircle(GeoConicND conic, CoordSys coordsys,
-			Coords center, Coords v1, Coords d) {
+	public static void setCircle(
+			GeoConicND conic, CoordSys coordsys, Coords center, Coords v1, Coords d) {
 
 		// recompute the coord sys
 		coordsys.resetCoordSys();
@@ -130,9 +131,7 @@ public class AlgoCircle3DAxisPoint extends AlgoElement3D {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
-		return getLoc().getPlain("CircleOfAxisAThroughB",
-				axis.getLabel(tpl), point.getLabel(tpl));
+	public final String toString(StringTemplate tpl) {
+		return getLoc().getPlain("CircleOfAxisAThroughB", axis.getLabel(tpl), point.getLabel(tpl));
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.parser;
 
 import org.geogebra.common.kernel.Construction;
@@ -20,7 +36,7 @@ public class GParser extends Parser {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 * @param cons
@@ -47,9 +63,8 @@ public class GParser extends Parser {
 	}
 
 	@Override
-	public ParseException generateParseException() {
-		GParseException ex = new GParseException(getKernel().getLocalization()
-				.getInvalidInputError());
+	public ParseException generateParseException(String ignored) {
+		GParseException ex = new GParseException(getKernel().getLocalization().getInvalidInputError());
 		if (jj_nt != null && jj_nt.image != null) {
 			ex.details = "Unexpected next token: " + jj_nt.image;
 		} else if (token.image != null) {
@@ -59,5 +74,4 @@ public class GParser extends Parser {
 		}
 		return ex;
 	}
-
 }

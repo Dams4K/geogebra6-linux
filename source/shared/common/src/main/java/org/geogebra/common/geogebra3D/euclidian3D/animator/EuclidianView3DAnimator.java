@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.animator;
 
 import java.util.LinkedList;
@@ -16,13 +32,20 @@ public class EuclidianView3DAnimator {
 
 	/** Animation type */
 	public enum AnimationType {
-		OFF, ANIMATED_SCALE, CONTINUE_ROTATION, ROTATION, ROTATION_NO_ANIMATION,
+		OFF,
+		ANIMATED_SCALE,
+		CONTINUE_ROTATION,
+		ROTATION,
+		ROTATION_NO_ANIMATION,
 
-		TRANSLATION, SCREEN_TRANSLATE_AND_SCALE, MOUSE_MOVE, AXIS_SCALE
+		TRANSLATION,
+		SCREEN_TRANSLATE_AND_SCALE,
+		MOUSE_MOVE,
+		AXIS_SCALE
 	}
 
-	static final private double ROTATION_CONTINUE_MAX_DELAY = 200;
-	static final private double ROTATION_CONTINUE_MIN_ROT_SPEED = 0.01;
+	private static final double ROTATION_CONTINUE_MAX_DELAY = 200;
+	private static final double ROTATION_CONTINUE_MIN_ROT_SPEED = 0.01;
 
 	private EuclidianView3D view3D;
 	private LinkedList<EuclidianView3DAnimation> animationList;
@@ -33,7 +56,7 @@ public class EuclidianView3DAnimator {
 	private EuclidianView3DAnimationScale animationScale;
 
 	/**
-	 * 
+	 *
 	 * @param view3D
 	 *            3D view
 	 */
@@ -57,7 +80,7 @@ public class EuclidianView3DAnimator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param x translation in x
 	 * @param y translation in y
 	 * @param z translation in z
@@ -72,7 +95,7 @@ public class EuclidianView3DAnimator {
 	/**
 	 * @param newScale new scale
 	 */
-	synchronized public void setAnimatedCoordSystem(double newScale) {
+	public synchronized void setAnimatedCoordSystem(double newScale) {
 		stopAnimation();
 		animation = animationScale;
 		animationScale.set(newScale);
@@ -101,22 +124,23 @@ public class EuclidianView3DAnimator {
 		}
 
 		// if speed is too small, no animation
-		if (Math.abs(rotSpeed) < ROTATION_CONTINUE_MIN_ROT_SPEED * view3D
-				.getApplication()
-				.getFactorFor(((EuclidianController3D) view3D
-						.getEuclidianController()).getRotationSpeedHandler()
-								.getPointerEventType())) {
+		if (Math.abs(rotSpeed)
+				< ROTATION_CONTINUE_MIN_ROT_SPEED
+						* view3D
+								.getApplication()
+								.getFactorFor(((EuclidianController3D) view3D.getEuclidianController())
+										.getRotationSpeedHandler()
+										.getPointerEventType())) {
 			stopAnimation();
 			return;
 		}
 
-		addAnimation(new EuclidianView3DAnimationContinueRotation(view3D, this,
-				delay, rotSpeed));
+		addAnimation(new EuclidianView3DAnimationContinueRotation(view3D, this, delay, rotSpeed));
 	}
 
 	/**
 	 * Sets coordinate system from mouse move
-	 * 
+	 *
 	 * @param dx
 	 *            delta x
 	 * @param dy
@@ -124,7 +148,7 @@ public class EuclidianView3DAnimator {
 	 * @param mode
 	 *            mouse move mode
 	 */
-	synchronized public void setCoordSystemFromMouseMove(int dx, int dy, MoveMode mode) {
+	public synchronized void setCoordSystemFromMouseMove(int dx, int dy, MoveMode mode) {
 		animation = animationMouse;
 		animationMouse.set(dx, dy, mode);
 	}
@@ -137,15 +161,15 @@ public class EuclidianView3DAnimator {
 	 * @param mode
 	 *            scale mode
 	 */
-	synchronized final public void setCoordSystemFromAxisScale(double factor, double scaleOld,
-			MoveMode mode) {
+	public final synchronized void setCoordSystemFromAxisScale(
+			double factor, double scaleOld, MoveMode mode) {
 		animation = animationAxis;
 		animationAxis.set(factor, scaleOld, mode);
 	}
 
 	/**
 	 * rotate to new angles
-	 * 
+	 *
 	 * @param aN
 	 *            new Oz angle
 	 * @param bN
@@ -157,8 +181,8 @@ public class EuclidianView3DAnimator {
 	 * @param storeUndo
 	 *            if undo will be stored at the end
 	 */
-	public void setRotAnimation(double aN, double bN, boolean checkSameValues, boolean animated,
-			boolean storeUndo) {
+	public void setRotAnimation(
+			double aN, double bN, boolean checkSameValues, boolean animated, boolean storeUndo) {
 
 		if (Double.isNaN(aN) || Double.isNaN(bN)) {
 			Log.error("NaN values for setRotAnimation");
@@ -166,13 +190,12 @@ public class EuclidianView3DAnimator {
 		}
 
 		if (animated) {
-			addAnimation(new EuclidianView3DAnimationRotation(view3D, this, aN, bN, checkSameValues,
-					storeUndo));
+			addAnimation(
+					new EuclidianView3DAnimationRotation(view3D, this, aN, bN, checkSameValues, storeUndo));
 		} else {
-			addAnimation(new EuclidianView3DAnimationRotationOneStep(view3D, this, aN, bN,
-					checkSameValues, storeUndo));
+			addAnimation(new EuclidianView3DAnimationRotationOneStep(
+					view3D, this, aN, bN, checkSameValues, storeUndo));
 		}
-
 	}
 
 	/**
@@ -187,7 +210,7 @@ public class EuclidianView3DAnimator {
 
 	/**
 	 * zoom y &amp; z axes ratio regarding x axis
-	 * 
+	 *
 	 * @param zoomFactorY zoom factor (y over x)
 	 * @param zoomFactorZ zoom factor (z over x)
 	 */
@@ -196,7 +219,7 @@ public class EuclidianView3DAnimator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param point
 	 *            point to center the view about
 	 */
@@ -207,7 +230,7 @@ public class EuclidianView3DAnimator {
 	/**
 	 * animate the view for changing scale, orientation, etc.
 	 */
-	synchronized public void animate() {
+	public synchronized void animate() {
 		if (animation != null && (view3D.isZoomable() || animation.animationAllowed())) {
 			animation.animate();
 		}
@@ -221,7 +244,7 @@ public class EuclidianView3DAnimator {
 	 * @param scaleFactor
 	 *            scale factor
 	 */
-	synchronized public void screenTranslateAndScale(double dx, double dy, double scaleFactor) {
+	public synchronized void screenTranslateAndScale(double dx, double dy, double scaleFactor) {
 		animationScreenScale.set(dx, dy, scaleFactor);
 		animation = animationScreenScale;
 	}
@@ -238,7 +261,7 @@ public class EuclidianView3DAnimator {
 	/**
 	 * stops the animations
 	 */
-	synchronized public void stopAnimation() {
+	public synchronized void stopAnimation() {
 		if (getAnimationType() != AnimationType.OFF) {
 			view3D.getEuclidianController().onCoordSystemChanged();
 		}
@@ -258,17 +281,17 @@ public class EuclidianView3DAnimator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return animation type
 	 */
-	synchronized public AnimationType getAnimationType() {
+	public synchronized AnimationType getAnimationType() {
 		if (animation != null) {
 			return animation.getType();
 		}
 		return AnimationType.OFF;
 	}
 
-	synchronized private void addAnimation(EuclidianView3DAnimation anim) {
+	private synchronized void addAnimation(EuclidianView3DAnimation anim) {
 		if (animation == null || animation.getType() == AnimationType.CONTINUE_ROTATION) {
 			animation = anim;
 			animation.setupForStart();
@@ -276,5 +299,4 @@ public class EuclidianView3DAnimator {
 			animationList.add(anim);
 		}
 	}
-
 }

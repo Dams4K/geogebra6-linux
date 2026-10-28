@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -40,12 +44,12 @@ import org.geogebra.common.plugin.Operation;
  *
  * @author Markus
  */
-public class AlgoDependentBoolean extends AlgoElement implements
-		SymbolicParametersAlgo, SymbolicParametersBotanaAlgoAre, DependentAlgo {
+public class AlgoDependentBoolean extends AlgoElement
+		implements SymbolicParametersAlgo, SymbolicParametersBotanaAlgoAre, DependentAlgo {
 
 	private final GeoBoolean bool; // output
 	private DependentBooleanAdapter proverAdapter;
-	private final static CasAlgoChecker casAlgoChecker = new CasAlgoChecker();
+	private static final CasAlgoChecker casAlgoChecker = new CasAlgoChecker();
 
 	/**
 	 * @param cons construction
@@ -110,7 +114,7 @@ public class AlgoDependentBoolean extends AlgoElement implements
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// was defined as e.g. c = a & b
 		return bool.getDefinition().toString(tpl);
 	}
@@ -121,8 +125,7 @@ public class AlgoDependentBoolean extends AlgoElement implements
 	}
 
 	@Override
-	public void getFreeVariables(HashSet<PVariable> variables)
-			throws NoSymbolicParametersException {
+	public void getFreeVariables(HashSet<PVariable> variables) throws NoSymbolicParametersException {
 
 		SymbolicParametersAlgo algo = getRootAlgo();
 		if (algo != null) {
@@ -135,8 +138,7 @@ public class AlgoDependentBoolean extends AlgoElement implements
 	}
 
 	@Override
-	public int[] getDegrees(AbstractProverReciosMethod a)
-			throws NoSymbolicParametersException {
+	public int[] getDegrees(AbstractProverReciosMethod a) throws NoSymbolicParametersException {
 		SymbolicParametersAlgo algo = getRootAlgo();
 		if (algo != null) {
 			int[] ret = algo.getDegrees(a);
@@ -148,8 +150,7 @@ public class AlgoDependentBoolean extends AlgoElement implements
 	}
 
 	@Override
-	public BigInteger[] getExactCoordinates(
-			HashMap<PVariable, BigInteger> values)
+	public BigInteger[] getExactCoordinates(HashMap<PVariable, BigInteger> values)
 			throws NoSymbolicParametersException {
 
 		SymbolicParametersAlgo algo = getRootAlgo();
@@ -173,8 +174,7 @@ public class AlgoDependentBoolean extends AlgoElement implements
 		throw new NoSymbolicParametersException();
 	}
 
-	private SymbolicParametersAlgo getRootAlgo()
-			throws NoSymbolicParametersException {
+	private SymbolicParametersAlgo getRootAlgo() throws NoSymbolicParametersException {
 		ExpressionNode root = bool.getDefinition();
 		if (!root.getLeft().isGeoElement() || !root.getRight().isGeoElement()) {
 			throw new NoSymbolicParametersException();
@@ -184,8 +184,7 @@ public class AlgoDependentBoolean extends AlgoElement implements
 		GeoElement right = (GeoElement) root.getRight();
 
 		if (root.getOperation().equals(Operation.PERPENDICULAR)) {
-			AlgoArePerpendicular algo = new AlgoArePerpendicular(cons, left,
-					right);
+			AlgoArePerpendicular algo = new AlgoArePerpendicular(cons, left, right);
 
 			return algo;
 		}
@@ -203,8 +202,7 @@ public class AlgoDependentBoolean extends AlgoElement implements
 	}
 
 	@Override
-	public PPolynomial[][] getBotanaPolynomials()
-			throws NoSymbolicParametersException {
+	public PPolynomial[][] getBotanaPolynomials() throws NoSymbolicParametersException {
 		return getProverAdapter().getBotanaPolynomials(bool, cons);
 	}
 
@@ -238,7 +236,6 @@ public class AlgoDependentBoolean extends AlgoElement implements
 	 * @throws NoSymbolicParametersException
 	 *             when no polynomials can be obtained
 	 */
-
 	public String getStrForGiac() throws NoSymbolicParametersException {
 		return getProverAdapter().getStrForGiac(bool, cons);
 	}
@@ -249,5 +246,4 @@ public class AlgoDependentBoolean extends AlgoElement implements
 	public String getUserGiacString() {
 		return getProverAdapter().getUserGiacString(bool, cons);
 	}
-
 }

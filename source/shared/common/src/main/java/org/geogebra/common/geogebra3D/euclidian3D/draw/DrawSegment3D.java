@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import java.util.ArrayList;
@@ -12,7 +28,7 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * Class for drawing segments
- * 
+ *
  * @author matthieu
  *
  */
@@ -23,7 +39,7 @@ public class DrawSegment3D extends DrawCoordSys1D {
 
 	/**
 	 * Common constructor
-	 * 
+	 *
 	 * @param a_view3D
 	 *            view
 	 * @param segment
@@ -61,33 +77,29 @@ public class DrawSegment3D extends DrawCoordSys1D {
 
 	/**
 	 * Constructor for previewable
-	 * 
+	 *
 	 * @param a_view3D
 	 *            view
 	 * @param selectedPoints
 	 *            endpoints
 	 */
-	public DrawSegment3D(EuclidianView3D a_view3D,
-			ArrayList<GeoPointND> selectedPoints) {
+	public DrawSegment3D(EuclidianView3D a_view3D, ArrayList<GeoPointND> selectedPoints) {
 
-		super(a_view3D, selectedPoints,
-				new GeoSegment3D(a_view3D.getKernel().getConstruction()));
+		super(a_view3D, selectedPoints, new GeoSegment3D(a_view3D.getKernel().getConstruction()));
 		setDrawMinMax(0, 1);
 	}
 
 	@Override
 	protected Coords[] calcPoints() {
 		GeoSegmentND seg = (GeoSegmentND) getGeoElement();
-		return new Coords[] { seg.getStartInhomCoords(),
-				seg.getEndInhomCoords() };
+		return new Coords[] {seg.getStartInhomCoords(), seg.getEndInhomCoords()};
 	}
 
 	@Override
 	protected void setStartEndPoints(Coords p1, Coords p2) {
 		super.setStartEndPoints(p1, p2);
 
-		radius = getLineThickness() * PlotterBrush.LINE3D_THICKNESS
-				/ getView3D().getScale();
+		radius = getLineThickness() * PlotterBrush.LINE3D_THICKNESS / getView3D().getScale();
 
 		for (int i = 1; i <= 3; i++) {
 			if (p1.get(i) < p2.get(i)) {
@@ -102,11 +114,10 @@ public class DrawSegment3D extends DrawCoordSys1D {
 
 	@Override
 	public void enlargeBounds(Coords min, Coords max, boolean dontExtend) {
-        if (dontExtend) {
-            enlargeBounds(min, max, boundsMin, boundsMax);
-        } else {
-            enlargeBounds(min, max, boundsMin, boundsMax, radius);
-        }
-    }
-
+		if (dontExtend) {
+			enlargeBounds(min, max, boundsMin, boundsMax);
+		} else {
+			enlargeBounds(min, max, boundsMin, boundsMax, radius);
+		}
+	}
 }

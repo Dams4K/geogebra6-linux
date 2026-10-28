@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.plot;
 
 import org.geogebra.common.euclidian.EuclidianView;
@@ -17,8 +33,7 @@ public class CurveSegmentInfo {
 	private static final double MAX_ANGLE = 10; // degrees
 	private static final double MAX_ANGLE_OFF_SCREEN = 45; // degrees
 	public static final double MAX_BEND = Math.tan(MAX_ANGLE * Kernel.PI_180);
-	private static final double MAX_BEND_OFF_SCREEN = Math
-			.tan(MAX_ANGLE_OFF_SCREEN * Kernel.PI_180);
+	private static final double MAX_BEND_OFF_SCREEN = Math.tan(MAX_ANGLE_OFF_SCREEN * Kernel.PI_180);
 
 	private final EuclidianView view;
 	private boolean distanceOK;
@@ -51,13 +66,16 @@ public class CurveSegmentInfo {
 	 * @param diff left-right difference in pixels.
 	 * @param prevDiff the
 	 */
-	public void update(double[] evalLeft, double[] evalRight, double[] diff, double[] prevDiff,
+	public void update(
+			double[] evalLeft,
+			double[] evalRight,
+			double[] diff,
+			double[] prevDiff,
 			CurveEvaluable curve) {
 		offScreen = view.isSegmentOffView(evalLeft, evalRight);
 		reachedminStep = Math.abs(diff[0]) < curve.getMinDistX();
 		distanceOK = offScreen || isDistanceOK(diff);
-		angleOK = isAngleOK(prevDiff, diff, offScreen
-				? MAX_BEND_OFF_SCREEN : MAX_BEND);
+		angleOK = isAngleOK(prevDiff, diff, offScreen ? MAX_BEND_OFF_SCREEN : MAX_BEND);
 	}
 
 	/**

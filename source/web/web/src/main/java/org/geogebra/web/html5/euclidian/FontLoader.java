@@ -1,42 +1,40 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.euclidian;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.geogebra.web.html5.gui.laf.FontFamily;
-import org.geogebra.web.html5.util.WebFont;
+import org.geogebra.common.properties.impl.objects.FontProperty;
+import org.geogebra.common.util.debug.Log;
 import org.gwtproject.dom.client.StyleInjector;
 
-import elemental2.core.JsArray;
-import jsinterop.annotations.JsFunction;
-import jsinterop.base.JsPropertyMap;
+import elemental2.dom.DomGlobal;
 
 public final class FontLoader {
-	private static Map<String, FontState> injected = new HashMap<>();
-	private static FontFamily[] bundled = new FontFamily[]{FontFamily.DYSLEXIC,
-			FontFamily.QUICKSAND, FontFamily.SOURCE_SANS_PRO, FontFamily.TITILLIUM,
-			FontFamily.ABeZehBlueRedEDUBold, FontFamily.ABeZehBlueRedEDULight,
-			FontFamily.ABeZehBlueRedEDURegular, FontFamily.ABeZehEDUBold,
-			FontFamily.ABeZehEDUBoldItalic, FontFamily.ABeZehEDUItalic,
-			FontFamily.ABeZehEDULight, FontFamily.ABeZehEDULightItalic,
-			FontFamily.ABeZehEDURegular, FontFamily.ABeZehHokuspokusEDUDEBold,
-			FontFamily.ABeZehHokuspokusEDUDERegular, FontFamily.ABeZehHokuspokusEDUENBold,
-			FontFamily.ABeZehHokuspokusEDUENRegular, FontFamily.ABeZehIconsEDUDeutsch,
-			FontFamily.ABeZehIconsEDUEnglish, FontFamily.ABeZehIconsEDUFrancais,
-			FontFamily.ABeZehLinieEDULight, FontFamily.ABeZehLinieEDURegular,
-			FontFamily.ABeZehPfeilEDULight, FontFamily.ABeZehPfeilEDURegular,
-			FontFamily.ABeZehPfeilEDULINKSLight, FontFamily.ABeZehPunktEDULight,
-			FontFamily.ABeZehPunktEDURegular};
+	private static final Map<String, FontState> injected = new HashMap<>();
 
-	private enum FontState { LOADING, ACTIVE }
+	private enum FontState {
+		LOADING,
+		ACTIVE
+	}
 
 	private FontLoader() {
 		// utility class: font shared for all app instances
-	}
-
-	@JsFunction
-	interface FontLoadCallback {
-		void fontLoaded(String familyName, String variation);
 	}
 
 	/**
@@ -48,10 +46,29 @@ public final class FontLoader {
 		if (baseUrl.isEmpty()) {
 			return;
 		}
-		for (FontFamily family: bundled) {
-			if (family.cssName().equals(familyName)) {
+		for (FontProperty.FontFamily family : FontProperty.FontFamily.values()) {
+			if (isBundled(family) && family.cssName().equals(familyName)) {
 				loadFontFile(familyName.split(",")[0], baseUrl, callback);
 				return;
+			}
+		}
+	}
+
+	private static boolean isBundled(FontProperty.FontFamily family) {
+		return family == FontProperty.FontFamily.DYSLEXIC || family.name().startsWith("BY_DS");
+	}
+
+	/**
+	 * Load all bundled web fonts.
+	 * @param baseUrl URL of the parent folder for web fonts.
+	 */
+	public static void loadAllBundled(String baseUrl) {
+		if (baseUrl.isEmpty()) {
+			return;
+		}
+		for (FontProperty.FontFamily family : FontProperty.FontFamily.values()) {
+			if (isBundled(family)) {
+				loadFontFile(family.cssName().split(",")[0], baseUrl, () -> {});
 			}
 		}
 	}
@@ -66,22 +83,24 @@ public final class FontLoader {
 			injected.put(familyName, FontState.LOADING);
 		}
 		if (injected.get(familyName) != FontState.ACTIVE) {
-			loadWebFont(familyName, (activeFontName, variation) -> {
-				injected.put(activeFontName, FontState.ACTIVE);
-				callback.run();
-			});
+			loadWebFont(familyName, callback);
 		}
 	}
 
-	private static void loadWebFont(String family, FontLoadCallback callback) {
-		JsPropertyMap<?> toLoad = JsPropertyMap.of(
-			"fontactive", callback,
-			"custom", JsPropertyMap.of(
-				"families", JsArray.of(family)
-			)
-		);
-		if (WebFont.get() != null) {
-			WebFont.get().load(toLoad);
-		}
+	private static void loadWebFont(String familyName, Runnable callback) {
+		// the WOFF files are valid for all sizes, pick arbitrary single digit size here
+		DomGlobal.document
+				.fonts
+				.load("8px " + familyName)
+				.then(ignore -> {
+					injected.put(familyName, FontState.ACTIVE);
+					callback.run();
+					return null;
+				})
+				.catch_(err -> {
+					callback.run();
+					Log.warn(err);
+					return null;
+				});
 	}
 }

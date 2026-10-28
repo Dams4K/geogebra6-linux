@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.main.embed;
 
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -13,7 +29,7 @@ import jsinterop.base.JsPropertyMap;
 /**
  * Embedded element GM element for Notes
  */
-public class GraspableEmbedElement extends EmbedElement {
+public final class GraspableEmbedElement extends EmbedElement {
 
 	private GMCanvas api;
 	private String content;
@@ -25,19 +41,18 @@ public class GraspableEmbedElement extends EmbedElement {
 	 * @param embedManager
 	 *            embed manager
 	 */
-	public GraspableEmbedElement(Widget widget,
-			final EmbedManagerW embedManager) {
+	public GraspableEmbedElement(Widget widget, final EmbedManagerW embedManager) {
 		super(widget);
 		this.embedManager = embedManager;
 	}
 
 	/**
 	 * Set API, execute waiting actions
-	 * 
+	 *
 	 * @param core
 	 *            core API
 	 */
-	protected void setAPI(GMCanvas core) {
+	private void setAPI(GMCanvas core) {
 		this.api = core;
 		if (content != null) {
 			api.loadFromJSON(content);
@@ -47,8 +62,7 @@ public class GraspableEmbedElement extends EmbedElement {
 
 	void initCanvas(int id) {
 		Object ggbApi = embedManager.getScriptManager().getApi();
-		GMCanvas canvas = new GMCanvas("#gm-div" + id,
-				JsPropertyMap.of("ggbNotesAPI", ggbApi));
+		GMCanvas canvas = new GMCanvas("#gm-div" + id, JsPropertyMap.of("ggbNotesAPI", ggbApi));
 
 		canvas.controller.on("undoable-action", () -> {
 			embedManager.createUndoAction(id);
@@ -83,10 +97,8 @@ public class GraspableEmbedElement extends EmbedElement {
 	public void setSize(int contentWidth, int contentHeight) {
 		getElement().getStyle().setWidth(contentWidth - 2, Unit.PX);
 		getElement().getStyle().setHeight(contentHeight - 2, Unit.PX);
-		Browser.scale(getElement(),
-				getGreatParent().getElement().getOffsetWidth()
-						/ (double) contentWidth,
-				0, 0);
+		Browser.scale(
+				getElement(), getGreatParent().getElement().getOffsetWidth() / (double) contentWidth, 0, 0);
 	}
 
 	@Override

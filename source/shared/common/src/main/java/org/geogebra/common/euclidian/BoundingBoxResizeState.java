@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
 import java.util.ArrayList;
@@ -11,7 +27,7 @@ import org.geogebra.common.kernel.geos.RectangleTransformable;
 
 /**
  * State holder for bounding box resize (multi selection)
- * 
+ *
  * @author Hunor Karaman
  *
  */
@@ -36,8 +52,7 @@ public class BoundingBoxResizeState {
 	 * @param view
 	 *            current view
 	 */
-	public BoundingBoxResizeState(GRectangle2D rect, ArrayList<GeoElement> geos,
-			EuclidianView view) {
+	public BoundingBoxResizeState(GRectangle2D rect, ArrayList<GeoElement> geos, EuclidianView view) {
 		ratios = new HashMap<>();
 		this.rect = rect;
 		this.geos = geos;
@@ -61,10 +76,8 @@ public class BoundingBoxResizeState {
 				ArrayList<GPoint2D> forGeo = new ArrayList<>(2);
 				GRectangle2D rectangle = view.getBoundingBox().getRectangle();
 				for (GPoint2D pt : dr.toPoints()) {
-					double relativeX = relativeDist(pt.getX(), rectangle.getMinX(),
-							rectangle.getWidth());
-					double relativeY = relativeDist(pt.getY(), rectangle.getMinY(),
-							rectangle.getHeight());
+					double relativeX = relativeDist(pt.getX(), rectangle.getMinX(), rectangle.getWidth());
+					double relativeY = relativeDist(pt.getY(), rectangle.getMinY(), rectangle.getHeight());
 					forGeo.add(new MyPoint(relativeX, relativeY));
 				}
 
@@ -105,7 +118,7 @@ public class BoundingBoxResizeState {
 			for (GeoElement geo : geos) {
 				DrawableND dr = view.getDrawableFor(geo);
 				// check and update thresholds
-				if (dr != null && geo instanceof  RectangleTransformable) {
+				if (dr != null && geo instanceof RectangleTransformable) {
 					updateThresholdsFor((RectangleTransformable) geo);
 				}
 			}

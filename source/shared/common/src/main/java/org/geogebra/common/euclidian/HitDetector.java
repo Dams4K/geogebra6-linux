@@ -1,6 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 import org.geogebra.common.awt.GPoint;
 import org.geogebra.common.awt.GRectangle;
@@ -10,7 +27,6 @@ import org.geogebra.common.kernel.geos.GeoButton;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoElement.HitType;
 import org.geogebra.common.kernel.geos.GeoList;
-import org.geogebra.common.kernel.geos.TestGeo;
 
 import com.google.j2objc.annotations.Weak;
 
@@ -18,8 +34,10 @@ public class HitDetector {
 	private ArrayList<GeoElement> hitPointOrBoundary;
 	private ArrayList<GeoElement> hitFilling;
 	private ArrayList<GeoElement> hitLabel;
+
 	@Weak
 	private final EuclidianView ev;
+
 	private Hits hits;
 
 	public HitDetector(EuclidianView ev) {
@@ -46,8 +64,7 @@ public class HitDetector {
 			if (d.isEuclidianVisible()) {
 				if (d.hit(p.x, p.y, hitThreshold)) {
 					GeoElement geo = d.getGeoElement();
-					hitMask = hitMask || (geo.isMask() || geo.isMeasurementTool())
-							&& !ev.hasSpotlight();
+					hitMask = hitMask || (geo.isMask() || geo.isMeasurementTool()) && !ev.hasSpotlight();
 
 					if (geo.getLastHitType() == HitType.ON_BOUNDARY) {
 						hitPointOrBoundary.add(geo);
@@ -93,8 +110,7 @@ public class HitDetector {
 		}
 		for (int i = hits.size() - 1; i >= 0; i--) {
 			GeoElement geo = hits.get(i);
-			if (geo.getLayer() < maxlayer || (hitMask && !geo.isMask() && !geo
-					.isMeasurementTool())) {
+			if (geo.getLayer() < maxlayer || (hitMask && !geo.isMask() && !geo.isMeasurementTool())) {
 				hits.remove(i);
 			}
 		}
@@ -149,32 +165,34 @@ public class HitDetector {
 	/**
 	 * sets array of GeoElements whose visual representation is inside of the
 	 * given screen rectangle
-	 * 
+	 *
 	 * @param rect
 	 *            rectangle
 	 */
 	public void setIntersectionHits(GRectangle rect) {
 		hits.init();
-		addIntersectionHits(rect, TestGeo.OBJECT);
+		addIntersectionHits(rect, unused -> true);
 	}
 
 	/**
 	 * sets array of GeoElements whose visual representation is inside of the
 	 * given screen rectangle
-	 * 
+	 *
 	 * @param rect
 	 *            rectangle
 	 * @param filter
 	 *            filter to only check some geos
 	 */
-	public void addIntersectionHits(GRectangle rect, TestGeo filter) {
+	public void addIntersectionHits(GRectangle rect, Predicate<GeoElement> filter) {
 		if (rect == null) {
 			return;
 		}
 
 		for (Drawable d : ev.getAllDrawableList()) {
 			GeoElement geo = d.getGeoElement();
-			if (geo.isEuclidianVisible() && geo.isSelectionAllowed(ev) && filter.test(geo)
+			if (geo.isEuclidianVisible()
+					&& geo.isSelectionAllowed(ev)
+					&& filter.test(geo)
 					&& !hits.contains(geo)
 					&& d.intersectsRectangle(rect)) {
 				d.setPartialHitClip(rect);
@@ -193,7 +211,7 @@ public class HitDetector {
 	/**
 	 * sets array of GeoElements whose visual representation is inside of the
 	 * given screen rectangle
-	 * 
+	 *
 	 * @param rect
 	 *            selection area
 	 */
@@ -227,7 +245,7 @@ public class HitDetector {
 
 	/**
 	 * Update hits based on cursor position and event type
-	 * 
+	 *
 	 * @param p
 	 *            position
 	 * @param type
@@ -239,7 +257,7 @@ public class HitDetector {
 		} else {
 			int capturingThreshold = ev.getApplication().getCapturingThreshold(type);
 			setHits(p, capturingThreshold);
-			if (type == PointerEventType.TOUCH && getHits().size() == 0) {
+			if (type == PointerEventType.TOUCH && getHits().isEmpty()) {
 				setHits(p, capturingThreshold * 3);
 			}
 		}

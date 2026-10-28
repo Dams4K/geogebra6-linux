@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.animator;
 
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
@@ -30,7 +46,7 @@ public class EuclidianView3DAnimationScreenScale extends EuclidianView3DAnimatio
 	private Coords tmpCoords1 = new Coords(4);
 
 	/**
-	 * 
+	 *
 	 * @param view3D 3D view
 	 * @param animator animator
 	 */
@@ -39,7 +55,7 @@ public class EuclidianView3DAnimationScreenScale extends EuclidianView3DAnimatio
 	}
 
 	/**
-	 * 
+	 *
 	 * @param dx
 	 *            translation x in screen coordinates
 	 * @param dy
@@ -103,13 +119,13 @@ public class EuclidianView3DAnimationScreenScale extends EuclidianView3DAnimatio
 		view3D.setXZero(xZeroOld + screenTranslateAndScaleDX);
 		view3D.setYZero(yZeroOld + screenTranslateAndScaleDY);
 		view3D.setZZero(zZeroOld + screenTranslateAndScaleDZ);
-		view3D.getSettings().updateOriginFromView(view3D.getXZero(), view3D.getYZero(),
-				view3D.getZZero());
+		view3D
+				.getSettings()
+				.updateOriginFromView(view3D.getXZero(), view3D.getYZero(), view3D.getZZero());
 		view3D.setScale(xScaleEnd, yScaleEnd, zScaleEnd);
 		view3D.updateMatrix();
 		view3D.setViewChangedByZoom();
 		view3D.setViewChangedByTranslate();
 		end();
 	}
-
 }

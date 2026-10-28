@@ -1,14 +1,17 @@
 /*
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-This code has been written initially for Scilab (http://www.scilab.org/).
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by
-the Free Software Foundation.
-
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.desktop.gui.editor;
@@ -43,8 +46,8 @@ import org.geogebra.desktop.main.AppD;
  * @author Calixte DENIZET
  *
  */
-public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
-		MouseListener, MouseMotionListener, FocusListener {
+public class GeoGebraEditorPane extends JEditorPane
+		implements CaretListener, MouseListener, MouseMotionListener, FocusListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -64,7 +67,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Default Constructor
-	 * 
+	 *
 	 * @param app
 	 *            app
 	 *
@@ -106,8 +109,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 			super.setEditorKit(javascriptKit);
 			setFont(javascriptKit.getStylePreferences().tokenFont);
 			lexer = new JavascriptLexer(getDocument());
-			((JavascriptEditorKit.JavascriptDocument) getDocument())
-					.setTextComponent(this);
+			((JavascriptEditorKit.JavascriptDocument) getDocument()).setTextComponent(this);
 		}
 
 		matchLR = new MatchingBlockManager(getDocument(), this, true);
@@ -140,7 +142,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 	/**
 	 * Returns preferred dimension for the given number of rows and columns when
 	 * using the current font.
-	 * 
+	 *
 	 * @param row row
 	 * @param column column
 	 * @return size
@@ -204,8 +206,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 			int rtok = lexer.getKeyword(pos, true);
 			if (matchingEnable) {
 				matchLR.searchMatchingBlock(ltok, start);
-				matchRL.searchMatchingBlock(rtok,
-						lexer.start + lexer.yychar() + lexer.yylength());
+				matchRL.searchMatchingBlock(rtok, lexer.start + lexer.yychar() + lexer.yylength());
 			}
 
 			if (type == ScriptType.GGBSCRIPT && rtok == GeoGebraLexerConstants.OPENCLOSE) {
@@ -213,19 +214,15 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 				rtok = lexer.getKeyword(pos, true);
 				if (rtok == GeoGebraLexerConstants.COMMAND) {
 					try {
-						HelpOnKeywordPanel panel = HelpOnKeywordPanel
-								.getInstance(app,
-										getDocument().getText(
-												lexer.start + lexer.yychar(),
-												lexer.yylength()));
+						HelpOnKeywordPanel panel = HelpOnKeywordPanel.getInstance(
+								app, getDocument().getText(lexer.start + lexer.yychar(), lexer.yylength()));
 						Point p = this.getLocationOnScreen();
 						Rectangle r = modelToView(pos);
 						if (helpPopup != null) {
 							helpPopup.hide();
 						}
-						helpPopup = PopupFactory.getSharedInstance().getPopup(
-								this, panel, p.x + r.x,
-								p.y + r.y + 2 + r.height);
+						helpPopup = PopupFactory.getSharedInstance()
+								.getPopup(this, panel, p.x + r.x, p.y + r.y + 2 + r.height);
 						helpPopup.show();
 					} catch (BadLocationException | IllegalComponentStateException ex) {
 						//
@@ -268,8 +265,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 	 */
 	public KeywordEvent getKeywordEvent(int position) {
 		int tok = lexer.getKeyword(position, true);
-		return new KeywordEvent(this, null, tok, lexer.start + lexer.yychar(),
-				lexer.yylength());
+		return new KeywordEvent(this, null, tok, lexer.start + lexer.yychar(), lexer.yylength());
 	}
 
 	/**
@@ -283,11 +279,10 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 	 *            of the event : KeywordListener.ONMOUSECLICKED or
 	 *            KeywordListener.ONMOUSEOVER
 	 */
-	protected void preventConcernedKeywordListener(int position, EventObject ev,
-			int type1) {
+	protected void preventConcernedKeywordListener(int position, EventObject ev, int type1) {
 		int tok = lexer.getKeyword(position, true);
-		KeywordEvent kev = new KeywordEvent(this, ev, tok,
-				lexer.start + lexer.yychar(), lexer.yylength());
+		KeywordEvent kev =
+				new KeywordEvent(this, ev, tok, lexer.start + lexer.yychar(), lexer.yylength());
 		for (KeywordListener listener : kwListeners) {
 			if (type1 == listener.getType()) {
 				listener.caughtKeyword(kev);
@@ -303,8 +298,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		preventConcernedKeywordListener(getCaretPosition(), e,
-				KeywordListener.ONMOUSECLICKED);
+		preventConcernedKeywordListener(getCaretPosition(), e, KeywordListener.ONMOUSECLICKED);
 	}
 
 	/**
@@ -359,8 +353,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 	 */
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		preventConcernedKeywordListener(viewToModel(e.getPoint()), e,
-				KeywordListener.ONMOUSEOVER);
+		preventConcernedKeywordListener(viewToModel(e.getPoint()), e, KeywordListener.ONMOUSEOVER);
 	}
 
 	/**

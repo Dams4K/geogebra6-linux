@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbar.mow.toolbox.components;
 
 import java.util.List;
@@ -12,7 +28,7 @@ import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.main.JsEval;
 import org.geogebra.web.html5.main.toolbox.CustomIconSpec;
 
-public class IconButtonWithMenu extends IconButton {
+public final class IconButtonWithMenu extends IconButton {
 	private final AppW appW;
 	private final List<Integer> tools;
 	private CategoryMenuPopup iconButtonPopup;
@@ -26,8 +42,13 @@ public class IconButtonWithMenu extends IconButton {
 	 * @param deselectButtons - deselect button callback
 	 * @param toolbox - notes toolbox
 	 */
-	public IconButtonWithMenu(AppW appW, IconSpec icon, String ariaLabel,
-			List<Integer> tools, Runnable deselectButtons, NotesToolbox toolbox) {
+	public IconButtonWithMenu(
+			AppW appW,
+			IconSpec icon,
+			String ariaLabel,
+			List<Integer> tools,
+			Runnable deselectButtons,
+			NotesToolbox toolbox) {
 		super(appW, icon, ariaLabel, ariaLabel, "", () -> {}, null);
 		this.appW = appW;
 		this.tools = tools;
@@ -105,9 +126,12 @@ public class IconButtonWithMenu extends IconButton {
 			createPopup();
 		}
 		CustomIconSpec customIconSpec = new CustomIconSpec(url);
-		iconButtonPopup.addItem(new AriaMenuItem(name, () -> {
-			JsEval.callNativeFunction(callback);
-			appW.setMoveMode();
-		}, customIconSpec));
+		iconButtonPopup.addItem(new AriaMenuItem(
+				name,
+				() -> {
+					JsEval.callNativeFunction(callback);
+					appW.setMoveMode();
+				},
+				customIconSpec));
 	}
 }

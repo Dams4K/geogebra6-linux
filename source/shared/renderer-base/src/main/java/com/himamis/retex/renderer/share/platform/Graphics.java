@@ -23,32 +23,31 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  *
- * Linking this library statically or dynamically with other modules 
- * is making a combined work based on this library. Thus, the terms 
- * and conditions of the GNU General Public License cover the whole 
+ * Linking this library statically or dynamically with other modules
+ * is making a combined work based on this library. Thus, the terms
+ * and conditions of the GNU General Public License cover the whole
  * combination.
- * 
- * As a special exception, the copyright holders of this library give you 
- * permission to link this library with independent modules to produce 
- * an executable, regardless of the license terms of these independent 
- * modules, and to copy and distribute the resulting executable under terms 
- * of your choice, provided that you also meet, for each linked independent 
- * module, the terms and conditions of the license of that module. 
- * An independent module is a module which is not derived from or based 
- * on this library. If you modify this library, you may extend this exception 
- * to your version of the library, but you are not obliged to do so. 
- * If you do not wish to do so, delete this exception statement from your 
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce
+ * an executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under terms
+ * of your choice, provided that you also meet, for each linked independent
+ * module, the terms and conditions of the license of that module.
+ * An independent module is a module which is not derived from or based
+ * on this library. If you modify this library, you may extend this exception
+ * to your version of the library, but you are not obliged to do so.
+ * If you do not wish to do so, delete this exception statement from your
  * version.
- * 
+ *
  */
 package com.himamis.retex.renderer.share.platform;
 
-import com.himamis.retex.renderer.share.platform.graphics.BasicStroke;
-import com.himamis.retex.renderer.share.platform.graphics.Color;
+import org.geogebra.common.awt.AwtFactory;
+import org.geogebra.common.awt.GBasicStroke;
+
 import com.himamis.retex.renderer.share.platform.graphics.GraphicsFactory;
 import com.himamis.retex.renderer.share.platform.graphics.Image;
-import com.himamis.retex.renderer.share.platform.graphics.Stroke;
-import com.himamis.retex.renderer.share.platform.graphics.Transform;
 
 public class Graphics {
 
@@ -58,23 +57,11 @@ public class Graphics {
 		graphicsFactory = FactoryProvider.getInstance().getGraphicsFactory();
 	}
 
-	public Color createColor(int r, int g, int b) {
-		return graphicsFactory.createColor(r, g, b);
+	public GBasicStroke createBasicStroke(double width, int cap, int join, double miterLimit) {
+		return AwtFactory.getPrototype().newBasicStroke(width, cap, join, miterLimit, null);
 	}
 
-	public Color createColor(double r, double g, double b) {
-		int red = (int) Math.round(r * 255);
-		int green = (int) Math.round(g * 255);
-		int blue = (int) Math.round(b * 255);
-		return createColor(red, green, blue);
-	}
-
-	public BasicStroke createBasicStroke(double width, int cap, int join,
-			double miterLimit) {
-		return graphicsFactory.createBasicStroke(width, cap, join, miterLimit);
-	}
-
-	public BasicStroke createBasicStroke(double width, int cap, int join) {
+	public GBasicStroke createBasicStroke(double width, int cap, int join) {
 		return createBasicStroke(width, cap, join, 10.0);
 	}
 
@@ -86,12 +73,8 @@ public class Graphics {
 		return createImage(width, height, Image.TYPE_INT_RGB);
 	}
 
-	public Transform createTransform() {
-		return graphicsFactory.createTransform();
+	public GBasicStroke creStateBasicStroke(double thickness, double[] dashes) {
+		return AwtFactory.getPrototype()
+				.newBasicStroke(thickness, GBasicStroke.CAP_BUTT, GBasicStroke.JOIN_MITER, 10.0, dashes);
 	}
-
-	public Stroke createBasicStroke(double thickness, double[] dashes) {
-		return graphicsFactory.createBasicStroke(thickness, dashes);
-	}
-
 }

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -30,7 +34,7 @@ import org.geogebra.common.spreadsheet.core.TabularRange;
  * Algorithm to create a GeoList with GeoElement objects of a given range in
  * GeoGebra's spreadsheet. For example, CellRange[A1, B2] (or A1:B2) returns the
  * list {A1, B1, A2, B2}.
- * 
+ *
  * @author Markus Hohenwarter
  * @since 29.06.2008
  */
@@ -57,19 +61,35 @@ public class AlgoCellRange extends AlgoElement {
 	/**
 	 * Creates an algorithm that produces a list of GeoElements for a range of
 	 * cells in the spreadsheet.
-	 * 
+	 *
 	 * @param startCell
 	 *            e.g. A1
 	 * @param endCell
 	 *            e.g. B2
 	 */
-	public AlgoCellRange(Construction cons, String label, String startCell,
-			String endCell) {
-		super(cons);
+	public AlgoCellRange(Construction cons, String startCell, String endCell) {
+		this(cons, startCell, endCell, true);
+	}
+
+	/**
+	 * Creates an algorithm that produces a list of GeoElements for a range of
+	 * cells in the spreadsheet.
+	 *
+	 * @param startCell
+	 *            e.g. A1
+	 * @param endCell
+	 *            e.g. B2
+	 * @param addToConstructionList
+	 *            whether to add the algorithm to the construction list; use
+	 *            {@code false} for helper ranges that must not be saved
+	 *            to XML (and thus to undo points)
+	 */
+	public AlgoCellRange(
+			Construction cons, String startCell, String endCell, boolean addToConstructionList) {
+		super(cons, addToConstructionList);
 		this.startCell = startCell;
 		this.endCell = endCell;
 		setInputOutput();
-		geoList.setLabel(label);
 	}
 
 	@Override
@@ -96,7 +116,9 @@ public class AlgoCellRange extends AlgoElement {
 		}
 
 		super.remove();
-		cons.getApplication().getSpreadsheetTableModel().getCellRangeManager()
+		cons.getApplication()
+				.getSpreadsheetTableModel()
+				.getCellRangeManager()
 				.unregisterCellRangeListenerAlgo(this);
 
 		geoList.clear();
@@ -104,7 +126,7 @@ public class AlgoCellRange extends AlgoElement {
 
 	/**
 	 * update list (add/remove geo)
-	 * 
+	 *
 	 * @param geo
 	 *            geo to add/remove
 	 * @param isRemoveAction
@@ -148,12 +170,11 @@ public class AlgoCellRange extends AlgoElement {
 		while (it.hasNext()) {
 			geo.addToUpdateSetOnly(it.next());
 		}
-
 	}
 
 	/**
 	 * add geo at location into the list
-	 * 
+	 *
 	 * @param geo
 	 *            element
 	 * @param loc
@@ -178,7 +199,6 @@ public class AlgoCellRange extends AlgoElement {
 		add(geo);
 
 		geoList.updateRepaint();
-
 	}
 
 	// for AlgoElement
@@ -209,13 +229,12 @@ public class AlgoCellRange extends AlgoElement {
 	}
 
 	private void initFields() {
-		startCoords = GeoElementSpreadsheet
-				.getSpreadsheetCoordsForLabel(startCell);
-		endCoords = GeoElementSpreadsheet.getSpreadsheetCoordsForLabel(endCell);
+		startCoords = GeoElementSpreadsheet.getSpreadsheetCoordsSafe(startCell);
+		endCoords = GeoElementSpreadsheet.getSpreadsheetCoordsSafe(endCell);
 		toStringOutput = startCell + ":" + endCell;
 
-		tabularRange = new TabularRange(startCoords.row, startCoords.column,
-				endCoords.row, endCoords.column);
+		tabularRange =
+				new TabularRange(startCoords.row, startCoords.column, endCoords.row, endCoords.column);
 
 		// build list with cells in range
 		listItems = initCellRangeList(startCoords, endCoords);
@@ -225,14 +244,14 @@ public class AlgoCellRange extends AlgoElement {
 	 * Builds geoList with current objects in range of spreadsheet. Renaming of
 	 * all cells added to the geoList is turned off, otherwise the user could
 	 * move an object out of the range by renaming it.
-	 * 
+	 *
 	 * @param rangeStart
 	 *            range start point
 	 * @param rangeEnd
 	 *            range end point
 	 */
-	private ArrayList<GeoElement> initCellRangeList(SpreadsheetCoords rangeStart,
-			SpreadsheetCoords rangeEnd) {
+	private ArrayList<GeoElement> initCellRangeList(
+			SpreadsheetCoords rangeStart, SpreadsheetCoords rangeEnd) {
 		ArrayList<GeoElement> listItems1 = new ArrayList<>();
 
 		// check if we have valid spreadsheet coordinates
@@ -254,8 +273,7 @@ public class AlgoCellRange extends AlgoElement {
 		for (int colIndex = minCol; colIndex <= maxCol; colIndex++) {
 			for (int rowIndex = minRow; rowIndex <= maxRow; rowIndex++) {
 				// get cell object for col, row
-				String cellLabel = GeoElementSpreadsheet
-						.getSpreadsheetCellName(colIndex, rowIndex);
+				String cellLabel = GeoElementSpreadsheet.getSpreadsheetCellName(colIndex, rowIndex);
 				GeoElement geo = kernel.lookupLabel(cellLabel);
 
 				// create missing object in cell range
@@ -269,7 +287,7 @@ public class AlgoCellRange extends AlgoElement {
 				listItems1.add(geo);
 				maxExistingCol = colIndex;
 				maxExistingRow = rowIndex; // we want max existing row in max
-											// col
+				// col
 
 				// make sure that this cell object cannot be renamed by the user
 				// renaming would move the object outside of our range
@@ -295,12 +313,12 @@ public class AlgoCellRange extends AlgoElement {
 	}
 
 	@Override
-	final public String getDefinition(StringTemplate tpl) {
+	public final String getDefinition(StringTemplate tpl) {
 		return getStringOutput(tpl);
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		return getStringOutput(tpl);
 	}
 
@@ -326,18 +344,16 @@ public class AlgoCellRange extends AlgoElement {
 	 * @return {start point, end point}
 	 */
 	public SpreadsheetCoords[] getRectangle() {
-		SpreadsheetCoords startCoords1 = GeoElementSpreadsheet
-				.getSpreadsheetCoordsForLabel(startCell);
-		SpreadsheetCoords endCoords1 = GeoElementSpreadsheet
-				.getSpreadsheetCoordsForLabel(endCell);
+		SpreadsheetCoords startCoords1 = GeoElementSpreadsheet.getSpreadsheetCoordsForLabel(startCell);
+		SpreadsheetCoords endCoords1 = GeoElementSpreadsheet.getSpreadsheetCoordsForLabel(endCell);
 
-		SpreadsheetCoords[] ret = { startCoords1, endCoords1 };
+		SpreadsheetCoords[] ret = {startCoords1, endCoords1};
 		return ret;
 	}
 
 	/**
 	 * add algo to input items update sets
-	 * 
+	 *
 	 * @param algo
 	 *            algorithm
 	 */
@@ -355,15 +371,23 @@ public class AlgoCellRange extends AlgoElement {
 		return endCell;
 	}
 
+	public SpreadsheetCoords getStartCoords() {
+		return startCoords;
+	}
+
+	public SpreadsheetCoords getEndCoords() {
+		return endCoords;
+	}
+
 	/**
 	 * Change the range covered by this algo.
 	 * @param tabularRange new range
 	 */
 	public void setRange(TabularRange tabularRange) {
-		this.startCell = GeoElementSpreadsheet.getSpreadsheetCellName(tabularRange.getMinColumn(),
-				tabularRange.getMinRow());
-		this.endCell = GeoElementSpreadsheet.getSpreadsheetCellName(tabularRange.getMaxColumn(),
-				tabularRange.getMaxRow());
+		this.startCell = GeoElementSpreadsheet.getSpreadsheetCellName(
+				tabularRange.getMinColumn(), tabularRange.getMinRow());
+		this.endCell = GeoElementSpreadsheet.getSpreadsheetCellName(
+				tabularRange.getMaxColumn(), tabularRange.getMaxRow());
 		initFields();
 		updateList();
 	}

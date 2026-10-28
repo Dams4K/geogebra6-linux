@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -23,8 +27,8 @@ import org.geogebra.common.kernel.geos.GeoText;
 import org.geogebra.common.util.StringUtil;
 
 /**
- * 
- * 
+ *
+ *
  * @author G. Sturr
  */
 public class AlgoZMeanTest extends AlgoElement {
@@ -52,8 +56,13 @@ public class AlgoZMeanTest extends AlgoElement {
 	 * @param tail
 	 *            &lt; or &gt; for one-sided test, default two-sided
 	 */
-	public AlgoZMeanTest(Construction cons, GeoNumeric mean, GeoNumeric sd,
-			GeoNumeric n, GeoNumeric hypMean, GeoText tail) {
+	public AlgoZMeanTest(
+			Construction cons,
+			GeoNumeric mean,
+			GeoNumeric sd,
+			GeoNumeric n,
+			GeoNumeric hypMean,
+			GeoText tail) {
 		super(cons);
 		this.hypMean = hypMean;
 		this.tail = tail;
@@ -63,7 +72,6 @@ public class AlgoZMeanTest extends AlgoElement {
 		result = new GeoList(cons);
 		setInputOutput(); // for AlgoElement
 		compute();
-
 	}
 
 	/**
@@ -80,8 +88,13 @@ public class AlgoZMeanTest extends AlgoElement {
 	 * @param tail
 	 *            &lt; or &gt; for one-sided test, default two-sided
 	 */
-	public AlgoZMeanTest(Construction cons, String label, GeoList list,
-			GeoNumeric sd, GeoNumeric hypMean, GeoText tail) {
+	public AlgoZMeanTest(
+			Construction cons,
+			String label,
+			GeoList list,
+			GeoNumeric sd,
+			GeoNumeric hypMean,
+			GeoText tail) {
 		super(cons);
 		this.hypMean = hypMean;
 		this.tail = tail;
@@ -115,7 +128,6 @@ public class AlgoZMeanTest extends AlgoElement {
 			input[1] = sd;
 			input[2] = hypMean;
 			input[3] = tail;
-
 		}
 
 		setOnlyOutput(result);
@@ -154,7 +166,7 @@ public class AlgoZMeanTest extends AlgoElement {
 		double testStatistic = (mean1 - hyp) / se;
 
 		NormalDistribution normalDist = new NormalDistribution(0, 1);
-		double P = 0;
+		double P;
 		try {
 			P = normalDist.cumulativeProbability(testStatistic);
 		} catch (Exception e) {
@@ -168,7 +180,6 @@ public class AlgoZMeanTest extends AlgoElement {
 		result.clear();
 		result.addNumber(P, null);
 		result.addNumber(testStatistic, null);
-
 	}
 
 	/**
@@ -189,5 +200,4 @@ public class AlgoZMeanTest extends AlgoElement {
 		}
 		return pValue;
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.algebra;
 
 import java.util.ArrayList;
@@ -16,7 +32,7 @@ import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.main.error.ErrorHelper;
 import org.geogebra.common.scientific.LabelController;
 
-public class SuggestionStatistics extends Suggestion {
+public final class SuggestionStatistics extends Suggestion {
 
 	private static Suggestion INSTANCE = new SuggestionStatistics();
 
@@ -27,8 +43,11 @@ public class SuggestionStatistics extends Suggestion {
 	private static final int MAX = 4;
 
 	private ArrayList<String> statCommands = new ArrayList<>(Arrays.asList(
-			Commands.Min.getCommand(), Commands.Q1.getCommand(), Commands.Median.getCommand(),
-			Commands.Q3.getCommand(), Commands.Max.getCommand()));
+			Commands.Min.getCommand(),
+			Commands.Q1.getCommand(),
+			Commands.Median.getCommand(),
+			Commands.Q3.getCommand(),
+			Commands.Max.getCommand()));
 
 	@Override
 	public void runCommands(GeoElementND geo) {
@@ -66,13 +85,13 @@ public class SuggestionStatistics extends Suggestion {
 	private static void ensureCommandsAreLoaded(AlgebraProcessor algebraProcessor) {
 		try {
 			algebraProcessor.getCommandDispatcher().getStatsCommandProcessorFactory();
-		} catch (CommandNotLoadedError e) {
+		} catch (CommandNotLoadedError expected) {
 			// ignore
 		}
 	}
 
-	protected void processCommand(AlgebraProcessor algebraProcessor, String cmd,
-			boolean isSymbolicMode) {
+	private void processCommand(
+			AlgebraProcessor algebraProcessor, String cmd, boolean isSymbolicMode) {
 		LabelHiderCallback callback;
 		if (isSymbolicMode) {
 			callback = new LabelHiderCallback();
@@ -80,15 +99,15 @@ public class SuggestionStatistics extends Suggestion {
 		} else {
 			callback = null;
 		}
-		algebraProcessor.processAlgebraCommandNoExceptionHandling(cmd, false,
-				ErrorHelper.silent(), false, callback);
+		algebraProcessor.processAlgebraCommandNoExceptionHandling(
+				cmd, false, ErrorHelper.silent(), false, callback);
 	}
 
 	private static boolean[] getNeededAlgos(GeoElementND geo) {
 		boolean[] neededAlgos = {true, true, true, true, true};
 
-		GeoElementND statGeoElement = geo instanceof GeoSymbolic
-				? ((GeoSymbolic) geo).getTwinGeo() : geo;
+		GeoElementND statGeoElement =
+				geo instanceof GeoSymbolic ? ((GeoSymbolic) geo).getTwinGeo() : geo;
 
 		if (statGeoElement instanceof GeoList && ((GeoList) statGeoElement).size() < 2) {
 			neededAlgos[Q1] = false;
@@ -111,8 +130,8 @@ public class SuggestionStatistics extends Suggestion {
 	}
 
 	private static boolean isListOfNumbers(GeoElementND geoElement) {
-		GeoElementND statGeoElement = geoElement instanceof GeoSymbolic
-				? ((GeoSymbolic) geoElement).getTwinGeo() : geoElement;
+		GeoElementND statGeoElement =
+				geoElement instanceof GeoSymbolic ? ((GeoSymbolic) geoElement).getTwinGeo() : geoElement;
 
 		if (statGeoElement instanceof GeoList && ((GeoList) statGeoElement).size() > 0) {
 			GeoList geoList = (GeoList) statGeoElement;
@@ -122,14 +141,17 @@ public class SuggestionStatistics extends Suggestion {
 	}
 
 	@Override
-	protected boolean allAlgosExist(GetCommand className, GeoElement[] input,
-			boolean[] algosMissing) {
+	protected boolean allAlgosExist(
+			GetCommand className, GeoElement[] input, boolean[] algosMissing) {
 
 		if (statCommands.contains(className.getCommand())) {
 			algosMissing[statCommands.indexOf(className.getCommand())] = false;
 		}
 
-		return !algosMissing[MIN] && !algosMissing[Q1] && !algosMissing[MEDIAN]
-				&& !algosMissing[Q3] && !algosMissing[MAX];
+		return !algosMissing[MIN]
+				&& !algosMissing[Q1]
+				&& !algosMissing[MEDIAN]
+				&& !algosMissing[Q3]
+				&& !algosMissing[MAX];
 	}
 }

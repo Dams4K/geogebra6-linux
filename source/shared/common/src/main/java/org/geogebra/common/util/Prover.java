@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
 import java.util.ArrayList;
@@ -8,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.algos.AlgoDependentBoolean;
@@ -21,7 +38,6 @@ import org.geogebra.common.kernel.geos.GeoPoint;
 import org.geogebra.common.kernel.prover.AbstractProverReciosMethod;
 import org.geogebra.common.kernel.prover.ProverBotanasMethod;
 import org.geogebra.common.kernel.prover.ProverPureSymbolicMethod;
-import org.geogebra.common.main.Localization;
 import org.geogebra.common.plugin.EuclidianStyleConstants;
 import org.geogebra.common.util.debug.Log;
 
@@ -29,12 +45,11 @@ import org.geogebra.common.util.debug.Log;
  * Prover package for GeoGebra. Allows using multiple backends for theorem
  * proving.
  */
-
 public abstract class Prover {
 
 	/**
 	 * Enum list of supported prover backends for GeoGebra
-	 * 
+	 *
 	 * @author Zoltan Kovacs
 	 *
 	 */
@@ -77,7 +92,7 @@ public abstract class Prover {
 
 	/**
 	 * Possible results of an attempted proof
-	 * 
+	 *
 	 * @author Zoltan Kovacs
 	 *
 	 */
@@ -118,6 +133,7 @@ public abstract class Prover {
 	 */
 	/* input */
 	private int timeout = 5;
+
 	private ProverEngine engine = ProverEngine.AUTO;
 
 	private Construction construction;
@@ -143,13 +159,14 @@ public abstract class Prover {
 	 * time may be saved.
 	 */
 	private boolean returnExtraNDGs;
+
 	private List<ProverEngine> proveAutoOrder;
 	private List<ProverEngine> proveDetailsAutoOrder;
 
 	/**
 	 * An object which contains a condition description (e.g. "AreCollinear")
 	 * and an ordered list of GeoElement's (e.g. A, B, C)
-	 * 
+	 *
 	 * @author Zoltan Kovacs
 	 */
 	public static class NDGCondition {
@@ -171,7 +188,7 @@ public abstract class Prover {
 
 		/**
 		 * Gets readability score for this NDG condition.
-		 * 
+		 *
 		 * @return score
 		 */
 		public double getReadability() {
@@ -180,7 +197,7 @@ public abstract class Prover {
 
 		/**
 		 * Sets readability score for this NDG condition.
-		 * 
+		 *
 		 * @param readability
 		 *            score
 		 */
@@ -190,7 +207,7 @@ public abstract class Prover {
 
 		/**
 		 * A short textual description of the condition
-		 * 
+		 *
 		 * @return the condition
 		 */
 		public String getCondition() {
@@ -199,7 +216,7 @@ public abstract class Prover {
 
 		/**
 		 * Sets a condition text
-		 * 
+		 *
 		 * @param condition
 		 *            the text, e.g. "AreCollinear"
 		 */
@@ -209,7 +226,7 @@ public abstract class Prover {
 
 		/**
 		 * Returns the GeoElements for a given condition
-		 * 
+		 *
 		 * @return the array of GeoElements
 		 */
 		public GeoElement[] getGeos() {
@@ -218,7 +235,7 @@ public abstract class Prover {
 
 		/**
 		 * Sets the GeoElements for a given condition
-		 * 
+		 *
 		 * @param object
 		 *            the array of GeoElements
 		 */
@@ -255,8 +272,7 @@ public abstract class Prover {
 					&& Arrays.equals(geos, ((NDGCondition) obj).geos);
 		}
 
-		private static GeoLine line(GeoPoint P1, GeoPoint P2,
-				Construction cons) {
+		private static GeoLine line(GeoPoint P1, GeoPoint P2, Construction cons) {
 			TreeSet<GeoElement> geos = cons.getGeoSetConstructionOrder();
 			// TODO: Maybe there is a better way here to lookup the appropriate
 			// line
@@ -265,15 +281,15 @@ public abstract class Prover {
 				if (ge instanceof GeoLine) {
 					GeoPoint Q1 = ((GeoLine) ge).getStartPoint();
 					GeoPoint Q2 = ((GeoLine) ge).getEndPoint();
-					if (Q1 != null && Q2 != null
-							&& ((Q1.equals(P1) && Q2.equals(P2))
-							|| (Q1.equals(P2) && Q2.equals(P1)))) {
+					if (Q1 != null
+							&& Q2 != null
+							&& ((Q1.equals(P1) && Q2.equals(P2)) || (Q1.equals(P2) && Q2.equals(P1)))) {
 						return (GeoLine) ge;
 					}
 				}
 			}
 			// If there is no such line, we simply create one.
-			boolean oldMacroMode = cons.isSuppressLabelsActive();
+			final boolean oldMacroMode = cons.isSuppressLabelsActive();
 			cons.setSuppressLabelCreation(false);
 			AlgoJoinPoints ajp = new AlgoJoinPoints(cons, null, P1, P2);
 			GeoLine line = ajp.getLine();
@@ -292,7 +308,7 @@ public abstract class Prover {
 
 		/**
 		 * Rewrites the NDG to a simpler form.
-		 * 
+		 *
 		 * @param cons
 		 *            the current construction
 		 */
@@ -300,8 +316,7 @@ public abstract class Prover {
 			String cond = this.getCondition();
 			if ("AreCollinear".equals(cond)) {
 				sortGeos();
-			} else if ("ArePerpendicular".equals(cond)
-					&& this.geos.length == 3) {
+			} else if ("ArePerpendicular".equals(cond) && this.geos.length == 3) {
 				// ArePerpendicular[Line[P1,P3],Line[P3,P2]].
 				GeoPoint P1 = (GeoPoint) this.geos[0];
 				GeoPoint P2 = (GeoPoint) this.geos[1];
@@ -375,7 +390,7 @@ public abstract class Prover {
 
 	/**
 	 * Gives the current statement to prove
-	 * 
+	 *
 	 * @return the statement (usually a GeoBoolean)
 	 */
 	public GeoElement getStatement() {
@@ -384,7 +399,7 @@ public abstract class Prover {
 
 	/**
 	 * Sets the maximal time spent in the Prover for the given proof.
-	 * 
+	 *
 	 * @param timeout
 	 *            The timeout in seconds
 	 */
@@ -394,7 +409,7 @@ public abstract class Prover {
 
 	/**
 	 * Sets the maximal time spent in the Prover for the given proof.
-	 * 
+	 *
 	 * @return The timeout in seconds
 	 */
 	public int getTimeout() {
@@ -403,7 +418,7 @@ public abstract class Prover {
 
 	/**
 	 * Sets the prover engine.
-	 * 
+	 *
 	 * @param engine
 	 *            The engine subsystem
 	 */
@@ -413,7 +428,7 @@ public abstract class Prover {
 
 	/**
 	 * Gets the prover engine.
-	 * 
+	 *
 	 * @return the engine subsystem
 	 */
 	public ProverEngine getProverEngine() {
@@ -423,7 +438,7 @@ public abstract class Prover {
 	/**
 	 * Sets the GeoGebra construction as the set of the used objects in the
 	 * proof.
-	 * 
+	 *
 	 * @param construction
 	 *            The GeoGebra construction
 	 */
@@ -433,7 +448,7 @@ public abstract class Prover {
 
 	/**
 	 * Sets the statement to be proven.
-	 * 
+	 *
 	 * @param root
 	 *            The statement to be proven
 	 */
@@ -443,7 +458,7 @@ public abstract class Prover {
 
 	/**
 	 * Adds a non-degeneracy condition to the prover object
-	 * 
+	 *
 	 * @param ndgc
 	 *            the condition itself
 	 */
@@ -488,15 +503,14 @@ public abstract class Prover {
 		if (algoParent == null) {
 			if (statement.getValueForInputBar().equals("true")) {
 				result = ProofResult.TRUE; // Trust in
-																// kernel's
-																// wisdom
+				// kernel's
+				// wisdom
 			} else if (statement.getValueForInputBar().equals("false")) {
 				result = ProofResult.FALSE; // Trust in kernel's wisdom
-			}
-			else {
+			} else {
 				result = ProofResult.UNKNOWN; // Not sure if this is executed at
 			}
-												// all, but for sure.
+			// all, but for sure.
 			return;
 		}
 
@@ -517,12 +531,10 @@ public abstract class Prover {
 			it = proveAutoOrder.iterator();
 		}
 		result = ProofResult.UNKNOWN;
-		while ((result == ProofResult.UNKNOWN
-				|| result == ProofResult.TRUE_NDG_UNREADABLE)
+		while ((result == ProofResult.UNKNOWN || result == ProofResult.TRUE_NDG_UNREADABLE)
 				&& it.hasNext()) {
 			ProverEngine pe = it.next();
-			if (pe == ProverEngine.OPENGEOPROVER_WU
-					|| pe == ProverEngine.OPENGEOPROVER_AREA) {
+			if (pe == ProverEngine.OPENGEOPROVER_WU || pe == ProverEngine.OPENGEOPROVER_AREA) {
 				/*
 				 * Checking if OGP is capable of working on this statement
 				 * properly or not.
@@ -530,8 +542,7 @@ public abstract class Prover {
 				AlgoElement ae = statement.getParentAlgorithm();
 				if (ae instanceof AlgoDependentBoolean) {
 					/* see triangle-midsegment6 */
-					Log.debug(
-							"OGP cannot safely check expressions, OGP will be ignored");
+					Log.debug("OGP cannot safely check expressions, OGP will be ignored");
 					continue; /* try the next prover */
 				}
 			}
@@ -543,7 +554,7 @@ public abstract class Prover {
 	 * A helper method to override the last found proof result with the new one,
 	 * if the new one is not unknown, or if the result is null yet, then we
 	 * prefer the unknown result.
-	 * 
+	 *
 	 * @param pr
 	 *            the new result
 	 * @return decision which result is better
@@ -561,24 +572,19 @@ public abstract class Prover {
 		if (currentEngine == ProverEngine.BOTANAS_PROVER) {
 			ProverBotanasMethod pbm = new ProverBotanasMethod();
 			result = override(pbm.prove(this));
-			return;
 		} else if (currentEngine == ProverEngine.RECIOS_PROVER) {
 			result = override(getReciosProver().prove(this));
-			return;
 		} else if (currentEngine == ProverEngine.PURE_SYMBOLIC_PROVER) {
 			result = override(ProverPureSymbolicMethod.prove(this));
-			return;
 		} else if (currentEngine == ProverEngine.OPENGEOPROVER_WU
 				|| currentEngine == ProverEngine.OPENGEOPROVER_AREA) {
 			result = override(openGeoProver(currentEngine));
-			return;
 		}
-
 	}
 
 	/**
 	 * Gets non-degeneracy conditions of the current proof.
-	 * 
+	 *
 	 * @return The XML output string of the NDG condition
 	 */
 	public HashSet<NDGCondition> getNDGConditions() {
@@ -587,7 +593,7 @@ public abstract class Prover {
 
 	/**
 	 * Gets the proof result
-	 * 
+	 *
 	 * @return The result (TRUE, FALSE or UNKNOWN)
 	 */
 	public ProofResult getProofResult() {
@@ -597,7 +603,7 @@ public abstract class Prover {
 	/**
 	 * If the result of the proof can be expressed by a boolean value, then it
 	 * returns that value.
-	 * 
+	 *
 	 * @return The result of the proof (true, false or null)
 	 */
 	public ExtendedBoolean getYesNoAnswer() {
@@ -617,7 +623,7 @@ public abstract class Prover {
 	/**
 	 * A minimal version of the construction XML. Only elements/commands are
 	 * preserved, the rest is deleted.
-	 * 
+	 *
 	 * @param cons
 	 *            The construction
 	 * @param statement
@@ -626,9 +632,8 @@ public abstract class Prover {
 	 */
 	// TODO: Cut even more unneeded parts to reduce unneeded traffic between OGP
 	// and GeoGebra.
-	protected static String simplifiedXML(Construction cons,
-			GeoElement statement) {
-		StringBuilder sb = new StringBuilder();
+	protected static String simplifiedXML(Construction cons, GeoElement statement) {
+		XMLStringBuilder sb = new XMLStringBuilder();
 		cons.getConstructionElementsXML_OGP(sb, statement);
 
 		// /* FIXME: EXTREMELY DIRTY HACK. This should be handled in OGP instead
@@ -654,7 +659,7 @@ public abstract class Prover {
 
 	/**
 	 * Calls OpenGeoProver
-	 * 
+	 *
 	 * @param pe
 	 *            Prover Engine
 	 * @return the proof result
@@ -663,7 +668,7 @@ public abstract class Prover {
 
 	/**
 	 * Will the prover return extra NDGs?
-	 * 
+	 *
 	 * @return yes or no
 	 */
 	public boolean isReturnExtraNDGs() {
@@ -672,7 +677,7 @@ public abstract class Prover {
 
 	/**
 	 * The prover may return extra NDGs
-	 * 
+	 *
 	 * @param returnExtraNDGs
 	 *            setting for the prover
 	 */
@@ -683,13 +688,12 @@ public abstract class Prover {
 	/**
 	 * Formulate figure in readable format: create a mathematically readable
 	 * statement. TODO: create translation keys.
-	 * 
+	 *
 	 * @param statement
 	 *            the input statement
 	 * @return a localized statement in readable format
 	 */
 	public static String getTextFormat(GeoElement statement) {
-		Localization loc = statement.getKernel().getLocalization();
 		ArrayList<String> freePoints = new ArrayList<>();
 		Iterator<GeoElement> it = statement.getAllPredecessors().iterator();
 		StringBuilder hypotheses = new StringBuilder();
@@ -698,10 +702,8 @@ public abstract class Prover {
 			if (geo.isGeoPoint() && geo.getParentAlgorithm() == null) {
 				freePoints.add(geo.getLabelSimple());
 			} else if (!(geo instanceof GeoNumeric)) {
-				String definition = geo.getDefinitionDescription(
-						StringTemplate.noLocalDefault);
-				String textLocalized = loc.getPlain("LetABeB",
-						geo.getLabelSimple(), definition);
+				String definition = geo.getDefinitionDescription(StringTemplate.noLocalDefault);
+				String textLocalized = getPhrase("LetABeB", geo.getLabelSimple(), definition);
 				hypotheses.append(textLocalized).append(".\n");
 			}
 		}
@@ -715,15 +717,22 @@ public abstract class Prover {
 		int l = freePointsText.length();
 		if (l > 0) {
 			freePointsText.deleteCharAt(l - 1);
-			theoremText.append(loc.getPlain("LetABeArbitraryPoints",
-					freePointsText.toString())).append(".\n");
+			theoremText
+					.append(getPhrase("LetABeArbitraryPoints", freePointsText.toString()))
+					.append(".\n");
 		}
 
 		theoremText.append(hypotheses);
 
 		String toProveStr = String.valueOf(statement.getParentAlgorithm());
-		theoremText.append(loc.getPlain("ProveThat", toProveStr)).append(".");
+		theoremText.append(getPhrase("ProveThat", toProveStr)).append(".");
 		return theoremText.toString();
+	}
+
+	// If we ever need this to be a user-facing string, use localization.
+	// For the moment this is only used for fingerprinting => keep locale independent.
+	private static String getPhrase(String key, String... parameters) {
+		return key + " " + String.join(", ", parameters);
 	}
 
 	/**
@@ -749,5 +758,4 @@ public abstract class Prover {
 	public Construction getConstruction() {
 		return construction;
 	}
-
 }

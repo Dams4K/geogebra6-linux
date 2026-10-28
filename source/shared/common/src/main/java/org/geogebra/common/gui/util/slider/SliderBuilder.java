@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.util.slider;
 
 import org.geogebra.common.awt.GPoint2D;
@@ -93,47 +109,32 @@ public class SliderBuilder {
 	}
 
 	private AsyncOperation<Boolean> getMaxProcessingCallback() {
-		return new AsyncOperation<Boolean>() {
-			@Override
-			public void callback(Boolean ok) {
-				if (!ok) {
-					return;
-				}
-				processedData.setMin(inputHandler.getNum());
-				inputHandler.processInput(
-						input.getMax(),
-						errorHandler,
-						getStepProcessingCallback());
+		return ok -> {
+			if (!ok) {
+				return;
 			}
+			processedData.setMin(inputHandler.getNum());
+			inputHandler.processInput(input.getMax(), errorHandler, getStepProcessingCallback());
 		};
 	}
 
 	private AsyncOperation<Boolean> getStepProcessingCallback() {
-		return new AsyncOperation<Boolean>() {
-			@Override
-			public void callback(Boolean ok) {
-				if (!ok) {
-					return;
-				}
-				processedData.setMax(inputHandler.getNum());
-				inputHandler.processInput(
-						input.getStep(),
-						errorHandler,
-						getSliderSetupCallback());
+		return ok -> {
+			if (!ok) {
+				return;
 			}
+			processedData.setMax(inputHandler.getNum());
+			inputHandler.processInput(input.getStep(), errorHandler, getSliderSetupCallback());
 		};
 	}
 
 	private AsyncOperation<Boolean> getSliderSetupCallback() {
-		return new AsyncOperation<Boolean>() {
-			@Override
-			public void callback(Boolean ok) {
-				if (!ok) {
-					return;
-				}
-				processedData.setStep(inputHandler.getNum());
-				setupSlider(createSlider());
+		return ok -> {
+			if (!ok) {
+				return;
 			}
+			processedData.setStep(inputHandler.getNum());
+			setupSlider(createSlider());
 		};
 	}
 

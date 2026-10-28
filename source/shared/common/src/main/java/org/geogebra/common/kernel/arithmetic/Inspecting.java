@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.arithmetic;
 
 import org.geogebra.common.kernel.geos.GeoDummyVariable;
@@ -24,8 +40,7 @@ public interface Inspecting {
 	 * @return {@code true} if the expression contains operations &lt; ,&lt;=, &gt;, &gt;=
 	 */
 	static boolean isInequality(ExpressionValue value) {
-		return value.isExpressionNode()
-				&& ((ExpressionNode) value).getOperation().isInequality();
+		return value.isExpressionNode() && ((ExpressionNode) value).getOperation().isInequality();
 	}
 
 	/**
@@ -52,8 +67,7 @@ public interface Inspecting {
 		if (value.isExpressionNode()) {
 			ExpressionNode en = (ExpressionNode) value;
 			if (en.getOperation() == Operation.DIVIDE) {
-				return en.getRightTree().evaluatesToNDVector()
-						&& en.getLeftTree().evaluatesToNDVector();
+				return en.getRightTree().evaluatesToNDVector() && en.getLeftTree().evaluatesToNDVector();
 			}
 		}
 		return false;
@@ -72,9 +86,12 @@ public interface Inspecting {
 			return false;
 		}
 		GeoElement geo = (GeoElement) value;
-		return !geo.isIndependent() || geo.isLabelSet()
-				|| geo.isLocalVariable() || value instanceof GeoDummyVariable
-				|| geo.isGeoCasCell() || geo.isRandomGeo();
+		return !geo.isIndependent()
+				|| geo.isLabelSet()
+				|| geo.isLocalVariable()
+				|| value instanceof GeoDummyVariable
+				|| geo.isGeoCasCell()
+				|| geo.isRandomGeo();
 	}
 
 	/**

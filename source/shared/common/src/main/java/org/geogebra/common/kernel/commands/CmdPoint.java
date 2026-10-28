@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -14,13 +30,13 @@ import org.geogebra.common.main.MyError;
 
 /**
  * Point[ &lt;Path&gt; ]
- * 
+ *
  * Point[ &lt;Point&gt;, &lt;Vector&gt; ]
  */
 public class CmdPoint extends CommandProcessor {
 	/**
 	 * Creates new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -35,62 +51,50 @@ public class CmdPoint extends CommandProcessor {
 		GeoElement[] arg;
 
 		switch (n) {
-		case 1:
-			arg = resArgs(c, info);
-			// need to check isGeoList first as {1,2} can be a Path but we want
-			// Point[{1,2}] to create a point
-			if (arg[0].isGeoList() && arg[0]
-					.getGeoElementForPropertiesDialog().isGeoNumeric()) {
-				if ((((GeoList) arg[0]).get(0).isGeoNumeric()
-						&& ((GeoList) arg[0]).size() == 2)
-						|| (((GeoList) arg[0]).get(0).isGeoList()
-								&& ((GeoList) ((GeoList) arg[0]).get(0))
-										.size() == 2)) {
+			case 1:
+				arg = resArgs(c, info);
+				// need to check isGeoList first as {1,2} can be a Path but we want
+				// Point[{1,2}] to create a point
+				if (arg[0].isGeoList() && AlgoPointsFromList.isSupportedList((GeoList) arg[0])) {
+					AlgoPointsFromList algo = new AlgoPointsFromList(
+							cons, c.getLabels(), !cons.isSuppressLabelsActive(), (GeoList) arg[0]);
 
-					AlgoPointsFromList algo = new AlgoPointsFromList(cons,
-							c.getLabels(), !cons.isSuppressLabelsActive(),
-							(GeoList) arg[0]);
-
-					GeoElement[] ret = algo.getPoints();
-
+					return algo.getOutputPoints().stream()
+							.map(GeoPointND::toGeoElement)
+							.toArray(GeoElement[]::new);
+				}
+				// no elseif to make sure we return something
+				if (arg[0].isPath()) {
+					GeoElement[] ret = {getAlgoDispatcher().point(c.getLabel(), (Path) arg[0], null)};
 					return ret;
 				}
-			}
-			// no elseif to make sure we return something
-			if (arg[0].isPath()) {
-				GeoElement[] ret = { getAlgoDispatcher().point(c.getLabel(),
-						(Path) arg[0], null) };
-				return ret;
-			}
-			throw argErr(c, arg[0]);
+				throw argErr(c, arg[0]);
 
-		case 2:
-			arg = resArgs(c, info);
-			if ((ok[0] = arg[0].isPath())
-					&& (ok[1] = arg[1] instanceof GeoNumberValue)) {
-				GeoElement[] ret = { point(c.getLabel(), (Path) arg[0],
-						(GeoNumberValue) arg[1]) };
-				return ret;
-			} else if ((ok[0] = arg[0].isGeoPoint())
-					&& (ok[1] = arg[1].isGeoVector())) {
+			case 2:
+				arg = resArgs(c, info);
+				if ((ok[0] = arg[0].isPath()) && (ok[1] = arg[1] instanceof GeoNumberValue)) {
+					GeoElement[] ret = {point(c.getLabel(), (Path) arg[0], (GeoNumberValue) arg[1])};
+					return ret;
+				} else if ((ok[0] = arg[0].isGeoPoint()) && (ok[1] = arg[1].isGeoVector())) {
 
-				GeoElement[] ret = { (GeoElement) point(c.getLabel(),
-						(GeoPointND) arg[0], (GeoVectorND) arg[1]) };
-				return ret;
-			} else {
-				if (!ok[0]) {
-					throw argErr(c, arg[0]);
+					GeoElement[] ret = {
+						(GeoElement) point(c.getLabel(), (GeoPointND) arg[0], (GeoVectorND) arg[1])
+					};
+					return ret;
+				} else {
+					if (!ok[0]) {
+						throw argErr(c, arg[0]);
+					}
+					throw argErr(c, arg[1]);
 				}
-				throw argErr(c, arg[1]);
-			}
 
-		default:
-			throw argNumErr(c);
+			default:
+				throw argNumErr(c);
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @param label
 	 *            label
 	 * @param path
@@ -104,7 +108,7 @@ public class CmdPoint extends CommandProcessor {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param label
 	 *            label
 	 * @param point
@@ -113,12 +117,10 @@ public class CmdPoint extends CommandProcessor {
 	 *            vector
 	 * @return point + vector
 	 */
-	protected GeoPointND point(String label, GeoPointND point,
-			GeoVectorND vector) {
+	protected GeoPointND point(String label, GeoPointND point, GeoVectorND vector) {
 		AlgoPointVector algo = new AlgoPointVector(cons, point, vector);
 		algo.getQ().setLabel(label);
 
 		return algo.getQ();
 	}
-
 }

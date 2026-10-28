@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.cas;
@@ -23,7 +27,7 @@ import org.geogebra.common.kernel.geos.GeoNumeric;
 
 /**
  * Try to expand the given function
- * 
+ *
  * @author Michael Borcherds
  */
 public class AlgoFactors extends AlgoElement implements UsesCAS {
@@ -94,8 +98,7 @@ public class AlgoFactors extends AlgoElement implements UsesCAS {
 			sb.append("))");
 			// cached evaluation of MPReduce as we are only using variable
 			// values
-			String listOut = kernel.evaluateCachedGeoGebraCAS(sb.toString(),
-					arbconst);
+			String listOut = kernel.evaluateCachedGeoGebraCAS(sb.toString(), arbconst);
 
 			if (listOut == null || listOut.length() == 0) {
 				g.setUndefined();
@@ -112,8 +115,7 @@ public class AlgoFactors extends AlgoElement implements UsesCAS {
 
 				// force first element in each row to be a function, even if
 				// constant
-				for (int i = 0; i < g.size()
-						&& g.get(i) instanceof GeoList; i++) {
+				for (int i = 0; i < g.size() && g.get(i) instanceof GeoList; i++) {
 					GeoList factor = (GeoList) g.get(i);
 					if (factor.get(0) instanceof GeoNumeric) {
 						GeoElement constant = factor.get(0);
@@ -131,5 +133,4 @@ public class AlgoFactors extends AlgoElement implements UsesCAS {
 			g.setUndefined();
 		}
 	}
-
 }

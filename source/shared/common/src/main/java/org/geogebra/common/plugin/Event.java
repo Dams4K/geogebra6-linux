@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.plugin;
 
 import java.util.ArrayList;
@@ -7,7 +23,7 @@ import org.geogebra.common.kernel.geos.GeoElement;
 
 /**
  * Event to be handled by EventListener
- * 
+ *
  * @author Arnaud
  */
 public class Event {
@@ -67,8 +83,7 @@ public class Event {
 	 * @param targets
 	 *            extra targets
 	 */
-	public Event(EventType type, GeoElement target,
-			 String argument, ArrayList<GeoElement> targets) {
+	public Event(EventType type, GeoElement target, String argument, ArrayList<GeoElement> targets) {
 		this.type = type;
 		this.target = target;
 		this.argument = argument;
@@ -110,7 +125,7 @@ public class Event {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return primary target
 	 */
 	public GeoElement getTarget() {
@@ -118,7 +133,7 @@ public class Event {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return secondary target
 	 */
 	public ArrayList<GeoElement> getTargets() {
@@ -126,7 +141,7 @@ public class Event {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return argument
 	 */
 	public String getArgument() {

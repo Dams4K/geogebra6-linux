@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoPoint3D;
@@ -20,8 +36,7 @@ public class AlgoIntersectPlaneConic extends AlgoIntersectConic3D {
 	 * @param c
 	 *            conic
 	 */
-	public AlgoIntersectPlaneConic(Construction cons, GeoCoordSys2D plane,
-			GeoConicND c) {
+	public AlgoIntersectPlaneConic(Construction cons, GeoCoordSys2D plane, GeoConicND c) {
 		super(cons, (GeoElement) plane, c);
 	}
 
@@ -46,12 +61,10 @@ public class AlgoIntersectPlaneConic extends AlgoIntersectConic3D {
 	 * @param points
 	 *            output point
 	 */
-	public final void intersect(GeoCoordSys2D plane, GeoConicND conic,
-			GeoPoint3D[] points) {
+	public final void intersect(GeoCoordSys2D plane, GeoConicND conic, GeoPoint3D[] points) {
 		// calc intersection line of the plane and the plane including the conic
 		intersection = CoordMatrixUtil.intersectPlanes(
-				plane.getCoordSys().getMatrixOrthonormal(),
-				conic.getCoordSys().getMatrixOrthonormal());
+				plane.getCoordSys().getMatrixOrthonormal(), conic.getCoordSys().getMatrixOrthonormal());
 
 		super.intersect(conic, points);
 	}
@@ -80,5 +93,4 @@ public class AlgoIntersectPlaneConic extends AlgoIntersectConic3D {
 	protected void checkIsOnFirstGeo(GeoPoint3D p) {
 		// nothing to do here
 	}
-
 }

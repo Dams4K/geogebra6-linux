@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDependentNumber.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -33,7 +31,7 @@ import org.geogebra.common.kernel.geos.HasSymbolicMode;
 
 /**
  * Returns a description of a GeoElement as a GeoText in LaTeX format.
- * 
+ *
  * @author Markus
  */
 public class AlgoLaTeX extends AlgoElement {
@@ -55,8 +53,12 @@ public class AlgoLaTeX extends AlgoElement {
 	 * @param showName
 	 *            whether to append left hand side of the definition
 	 */
-	public AlgoLaTeX(Construction cons, String label, GeoElement geo,
-			GeoBoolean substituteVars, GeoBoolean showName) {
+	public AlgoLaTeX(
+			Construction cons,
+			String label,
+			GeoElement geo,
+			GeoBoolean substituteVars,
+			GeoBoolean showName) {
 		super(cons);
 		this.geo = geo;
 		this.substituteVars = substituteVars;
@@ -136,10 +138,6 @@ public class AlgoLaTeX extends AlgoElement {
 
 		// whether to use a formula renderer
 		boolean useLaTeX = true;
-
-		boolean substitute = substituteVars == null
-				|| substituteVars.getBoolean();
-
 		// undefined 0/0 should be ?, undefined If[x>0,"a"] should be ""
 		if (!geo.isDefined() && !geo.isGeoText()) {
 			text.setTextString("?");
@@ -149,72 +147,69 @@ public class AlgoLaTeX extends AlgoElement {
 			text.setTextString("");
 
 		} else {
-
-			boolean show = showName != null && showName.getBoolean();
-
-			if (!geo.isLabelSet()) {
-				// eg FormulaText[(1,1), true, true]
-				show = false;
-			}
-
-			StringTemplate tpl = text.getStringTemplate().deriveReal()
-					.deriveWithSimplification();
-
-			GeoElement geoToShow = geo;
-			if (geo.getCorrespondingCasCell() != null) {
-				// it's a twin geo, display the corresponding CAS cell
-				geoToShow = geo.getCorrespondingCasCell();
-			}
-			if (show) {
-				if (geoToShow.isGeoCasCell()) {
-					// input: overriding rounding is probably OK
-					text.setTextString(((GeoCasCell) geoToShow).getOutputOrInput(
-									StringTemplate.numericLatex, substitute));
-
-				} else {
-					text.setTextString(
-							geoToShow.getLaTeXAlgebraDescription(substitute,
-									tpl));
-				}
-				if (text.getTextString() == null) {
-					String desc = geoToShow
-							.getAlgebraDescription(text.getStringTemplate());
-					if (geoToShow.hasIndexLabel()) {
-						desc = GeoElement.indicesToHTML(desc, true);
-					}
-					text.setTextString(desc);
-					useLaTeX = false;
-				}
-			} else {
-				String textString = null;
-				if (geoToShow.isGeoText()) {
-					textString = ((GeoText) geo).getTextString();
-				} else {
-					if (geoToShow.isGeoCasCell()) {
-						GeoCasCell geoCasCell = (GeoCasCell) geoToShow;
-						ExpressionValue geoCasCellValue = geoCasCell.getValue();
-						if (geoCasCellValue != null) {
-							textString = geoCasCellValue.toString(geoCasCell.getLaTeXTemplate());
-						}
-					}
-					if (textString == null) {
-						ExpressionNode definition = geoToShow.getDefinition();
-						if (definition != null) {
-							definition.initRationalizedFraction();
-						}
-						textString = getGeoString(geoToShow, tpl, substitute);
-					}
-				}
-				text.setTextString(textString);
-			}
+			useLaTeX = computeValid();
 		}
 
 		text.setLaTeX(useLaTeX, false);
+	}
+
+	private boolean computeValid() {
+		boolean show = showName != null && showName.getBoolean();
+		boolean substitute = substituteVars == null || substituteVars.getBoolean();
+		if (!geo.isLabelSet()) {
+			// eg FormulaText[(1,1), true, true]
+			show = false;
+		}
+
+		StringTemplate tpl = text.getStringTemplate().deriveReal().deriveWithSimplification();
+
+		GeoElement geoToShow = geo;
+		if (geo.getCorrespondingCasCell() != null) {
+			// it's a twin geo, display the corresponding CAS cell
+			geoToShow = geo.getCorrespondingCasCell();
+		}
+		if (show) {
+			if (geoToShow.isGeoCasCell()) {
+				// input: overriding rounding is probably OK
+				text.setTextString(
+						((GeoCasCell) geoToShow).getOutputOrInput(StringTemplate.numericLatex, substitute));
+
+			} else {
+				text.setTextString(geoToShow.getLaTeXAlgebraDescription(substitute, tpl));
+			}
+			if (text.getTextString() == null) {
+				String desc = geoToShow.getAlgebraDescription(text.getStringTemplate());
+				if (geoToShow.hasIndexLabel()) {
+					desc = GeoElement.indicesToHTML(desc, true);
+				}
+				text.setTextString(desc);
+				return false;
+			}
+		} else if (geoToShow.isGeoText()) {
+			text.setTextString(((GeoText) geo).getTextString());
+		} else {
+			String textString = null;
+			if (geoToShow.isGeoCasCell()) {
+				GeoCasCell geoCasCell = (GeoCasCell) geoToShow;
+				ExpressionValue geoCasCellValue = geoCasCell.getValue();
+				if (geoCasCellValue != null) {
+					textString = geoCasCellValue.toString(geoCasCell.getLaTeXTemplate());
+				}
+			}
+			if (textString == null) {
+				ExpressionNode definition = geoToShow.getDefinition();
+				if (definition != null) {
+					definition.initRationalizedFraction();
+				}
+				textString = getGeoString(geoToShow, tpl, substitute);
+			}
+			text.setTextString(textString);
+		}
+		return true;
 	}
 
 	@Override
 	public boolean isLaTeXTextCommand() {
 		return true;
 	}
-
 }

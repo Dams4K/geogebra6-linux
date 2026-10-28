@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.properties.impl.graphics;
 
 import org.geogebra.common.gui.view.consprotocol.ConstructionProtocolNavigation;
@@ -9,7 +25,7 @@ import org.geogebra.common.properties.aliases.BooleanProperty;
 import org.geogebra.common.properties.impl.AbstractValuedProperty;
 
 public class NavigationBarPlayButtonProperty extends AbstractValuedProperty<Boolean>
-	implements BooleanProperty, SettingsDependentProperty {
+		implements BooleanProperty, SettingsDependentProperty {
 	private final App app;
 	private final int viewID;
 	private final EuclidianSettings evSettings;
@@ -20,8 +36,8 @@ public class NavigationBarPlayButtonProperty extends AbstractValuedProperty<Bool
 	 * @param app application
 	 * @param viewID euclidian view ID
 	 */
-	public NavigationBarPlayButtonProperty(Localization localization, App app, int viewID,
-			EuclidianSettings settings) {
+	public NavigationBarPlayButtonProperty(
+			Localization localization, App app, int viewID, EuclidianSettings settings) {
 		super(localization, "PlayButton");
 		this.evSettings = settings;
 		this.app = app;
@@ -30,16 +46,16 @@ public class NavigationBarPlayButtonProperty extends AbstractValuedProperty<Bool
 
 	@Override
 	protected void doSetValue(Boolean value) {
-		ConstructionProtocolNavigation cpn = app.getGuiManager()
-				.getConstructionProtocolNavigation(viewID);
+		ConstructionProtocolNavigation cpn =
+				app.getGuiManager().getConstructionProtocolNavigation(viewID);
 		cpn.setPlayButtonVisible(!cpn.isPlayButtonVisible());
 		app.setUnsaved();
 	}
 
 	@Override
 	public Boolean getValue() {
-		ConstructionProtocolNavigation cpn = app.getGuiManager()
-				.getConstructionProtocolNavigation(viewID);
+		ConstructionProtocolNavigation cpn =
+				app.getGuiManager().getConstructionProtocolNavigation(viewID);
 		return cpn == null || cpn.isPlayButtonVisible();
 	}
 

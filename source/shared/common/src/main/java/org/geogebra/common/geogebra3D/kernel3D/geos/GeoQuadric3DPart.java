@@ -1,5 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.geos;
 
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.arithmetic.MyDouble;
@@ -17,12 +34,12 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * Class for part of a quadric (e.g. side of a limited cone, cylinder, ...)
- * 
+ *
  * @author mathieu
- * 
+ *
  */
-public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
-		FromMeta, GeoQuadric3DPartInterface, GeoQuadric3DLimitedOrPart {
+public class GeoQuadric3DPart extends GeoQuadric3D
+		implements GeoNumberValue, FromMeta, GeoQuadric3DPartInterface, GeoQuadric3DLimitedOrPart {
 	private double bottom;
 	private double top;
 
@@ -37,7 +54,7 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 */
@@ -47,7 +64,7 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 
 	/**
 	 * Copy constructor
-	 * 
+	 *
 	 * @param quadric
 	 *            original
 	 */
@@ -65,7 +82,7 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 
 	/**
 	 * sets the min and max values for limits
-	 * 
+	 *
 	 * @param min
 	 *            limit for bottom
 	 * @param max
@@ -116,22 +133,21 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 	}
 
 	@Override
-	public void set(Coords origin, Coords direction, Coords eigen, double r,
-			double r2) {
+	public void set(Coords origin, Coords direction, Coords eigen, double r, double r2) {
 		switch (type) {
-		default:
-		case QUADRIC_CYLINDER:
-			setCylinder(origin, direction, eigen, r, r2);
-			break;
-		case QUADRIC_HYPERBOLIC_CYLINDER:
-			setHyperbolicCylinder(origin, direction, eigen, r, r2);
-			break;
-		case QUADRIC_PARABOLIC_CYLINDER:
-			setParabolicCylinder(origin, direction, eigen, r2);
-			break;
-		case QUADRIC_CONE:
-			setCone(origin, direction, eigen, r, r2);
-			break;
+			default:
+			case QUADRIC_CYLINDER:
+				setCylinder(origin, direction, eigen, r, r2);
+				break;
+			case QUADRIC_HYPERBOLIC_CYLINDER:
+				setHyperbolicCylinder(origin, direction, eigen, r, r2);
+				break;
+			case QUADRIC_PARABOLIC_CYLINDER:
+				setParabolicCylinder(origin, direction, eigen, r2);
+				break;
+			case QUADRIC_CONE:
+				setCone(origin, direction, eigen, r, r2);
+				break;
 		}
 	}
 
@@ -143,9 +159,9 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 	@Override
 	public String toValueString(StringTemplate tpl) {
 		switch (type) {
-		case QUADRIC_CYLINDER:
-		case QUADRIC_CONE:
-			return kernel.format(area, tpl);
+			case QUADRIC_CYLINDER:
+			case QUADRIC_CONE:
+				return kernel.format(area, tpl);
 			default:
 				Log.debug("todo-GeoQuadric3DPart");
 				return "?";
@@ -167,8 +183,7 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 	// ////////////////////////
 
 	@Override
-	protected void getNormalProjectionParameters(Coords coords,
-			double[] parameters) {
+	protected void getNormalProjectionParameters(Coords coords, double[] parameters) {
 
 		super.getNormalProjectionParameters(coords, parameters);
 
@@ -180,8 +195,8 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 	}
 
 	@Override
-	protected Coords[] getProjection(Coords willingCoords,
-			Coords willingDirection, double t1, double t2) {
+	protected Coords[] getProjection(
+			Coords willingCoords, Coords willingDirection, double t1, double t2) {
 
 		if (DoubleUtil.isGreater(t2, t1)) {
 			return getProjectionSorted(willingCoords, willingDirection, t1, t2);
@@ -209,7 +224,7 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 
 	/**
 	 * try with t1, then with t2, assuming t1 < t2
-	 * 
+	 *
 	 * @param willingCoords
 	 *            willing coords
 	 * @param willingDirection
@@ -220,11 +235,10 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 	 *            second possible parameter
 	 * @return closest point
 	 */
-	private Coords[] getProjectionSorted(Coords willingCoords,
-			Coords willingDirection, double t1, double t2) {
+	private Coords[] getProjectionSorted(
+			Coords willingCoords, Coords willingDirection, double t1, double t2) {
 
-		super.getNormalProjectionParameters(
-				willingCoords.add(willingDirection.mul(t1)), tmpDouble2);
+		super.getNormalProjectionParameters(willingCoords.add(willingDirection.mul(t1)), tmpDouble2);
 
 		// check if first parameters are inside
 		if (DoubleUtil.isGreater(getMinParameter(1), tmpDouble2[1])) {
@@ -232,23 +246,21 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 		} else if (DoubleUtil.isGreater(tmpDouble2[1], getMaxParameter(1))) {
 			tmpDouble2[1] = getMaxParameter(1);
 		} else {
-			return new Coords[] { getPoint(tmpDouble2[0], tmpDouble2[1]),
-					new Coords(tmpDouble2) }; // first
+			return new Coords[] {getPoint(tmpDouble2[0], tmpDouble2[1]), new Coords(tmpDouble2)}; // first
 			// parameters
 			// are
 			// inside
 		}
 
 		// first parameters are outside, check second parameters
-		super.getNormalProjectionParameters(
-				willingCoords.add(willingDirection.mul(t2)), tmpDouble2bis);
+		super.getNormalProjectionParameters(willingCoords.add(willingDirection.mul(t2)), tmpDouble2bis);
 		if (DoubleUtil.isGreater(getMinParameter(1), tmpDouble2bis[1])) {
 			tmpDouble2bis[1] = getMinParameter(1);
 		} else if (DoubleUtil.isGreater(tmpDouble2bis[1], getMaxParameter(1))) {
 			tmpDouble2bis[1] = getMaxParameter(1);
 		} else {
-			return new Coords[] { getPoint(tmpDouble2bis[0], tmpDouble2bis[1]),
-					new Coords(tmpDouble2bis) }; // first
+			return new Coords[] {getPoint(tmpDouble2bis[0], tmpDouble2bis[1]), new Coords(tmpDouble2bis)
+			}; // first
 			// parameters
 			// are
 			// inside
@@ -260,11 +272,9 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 		double d1 = l1.distLine(willingCoords, willingDirection);
 		double d2 = l2.distLine(willingCoords, willingDirection);
 		if (DoubleUtil.isGreater(d1, d2)) {
-			return new Coords[] { getPoint(tmpDouble2bis[0], tmpDouble2bis[1]),
-					new Coords(tmpDouble2bis) };
+			return new Coords[] {getPoint(tmpDouble2bis[0], tmpDouble2bis[1]), new Coords(tmpDouble2bis)};
 		}
-		return new Coords[] { getPoint(tmpDouble2[0], tmpDouble2[1]),
-				new Coords(tmpDouble2) };
+		return new Coords[] {getPoint(tmpDouble2[0], tmpDouble2[1]), new Coords(tmpDouble2)};
 	}
 
 	@Override
@@ -277,8 +287,7 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 
 		// check if coords respect limits
 		super.getNormalProjectionParameters(coords, tmpDouble2);
-		return tmpDouble2[1] >= getMinParameter(1)
-				&& tmpDouble2[1] <= getMaxParameter(1);
+		return tmpDouble2[1] >= getMinParameter(1) && tmpDouble2[1] <= getMaxParameter(1);
 	}
 
 	@Override
@@ -305,41 +314,40 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 	 */
 	public void calcArea() {
 		switch (type) {
-		case QUADRIC_CYLINDER:
-			if (!DoubleUtil.isEqual(getHalfAxis(0), getHalfAxis(1))) {
-				area = EllipticArcLength.getEllipseCircumference(getHalfAxis(0),
-						getHalfAxis(1)) * (max - min);
-			} else {
-				area = 2 * getHalfAxis(0) * Math.PI * (max - min);
-			}
-			break;
-		case QUADRIC_CONE:
-			if (!DoubleUtil.isEqual(getHalfAxis(0), getHalfAxis(1))) {
-				double h = max - min;
-				double a = getHalfAxis(0) * h;
-				double b = getHalfAxis(1) * h;
+			case QUADRIC_CYLINDER:
+				if (!DoubleUtil.isEqual(getHalfAxis(0), getHalfAxis(1))) {
+					area = EllipticArcLength.getEllipseCircumference(getHalfAxis(0), getHalfAxis(1))
+							* (max - min);
+				} else {
+					area = 2 * getHalfAxis(0) * Math.PI * (max - min);
+				}
+				break;
+			case QUADRIC_CONE:
+				if (!DoubleUtil.isEqual(getHalfAxis(0), getHalfAxis(1))) {
+					double h = max - min;
+					double a = getHalfAxis(0) * h;
+					double b = getHalfAxis(1) * h;
 
-				area = 0.5 * a
-						* Math.sqrt(
-								b * b + h * h)
-						* EllipticArcLength.getEllipseCircumference(1,
-								Math.sqrt(1 - (1 - b / a * b / a)
-										/ (1 + b / h * b / h)));
-				return;
-			}
-			double r2 = getHalfAxis(0);
-			r2 *= r2;
-			double h2;
-			if (min * max < 0) { // "double-cone"
-				h2 = min * min + max * max;
-			} else { // truncated cone
-				h2 = Math.abs(max * max - min * min);
-			}
-			area = Math.PI * h2 * r2 * Math.sqrt(1 + 1 / r2);
-			break;
-		default:
-			Log.debug("todo-area");
-			area = Double.NaN;
+					area = 0.5
+							* a
+							* Math.sqrt(b * b + h * h)
+							* EllipticArcLength.getEllipseCircumference(
+									1, Math.sqrt(1 - (1 - b / a * b / a) / (1 + b / h * b / h)));
+					return;
+				}
+				double r2 = getHalfAxis(0);
+				r2 *= r2;
+				double h2;
+				if (min * max < 0) { // "double-cone"
+					h2 = min * min + max * max;
+				} else { // truncated cone
+					h2 = Math.abs(max * max - min * min);
+				}
+				area = Math.PI * h2 * r2 * Math.sqrt(1 + 1 / r2);
+				break;
+			default:
+				Log.debug("todo-area");
+				area = Double.NaN;
 		}
 	}
 
@@ -386,7 +394,7 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 
 	@Override
 	public GeoElement[] getMetas() {
-		return new GeoElement[] { meta };
+		return new GeoElement[] {meta};
 	}
 
 	/**
@@ -412,11 +420,10 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 		top *= rAbs;
 		min *= rAbs;
 		max *= rAbs;
-
 	}
 
 	@Override
-	protected void getMatrixXML(StringBuilder sb) {
+	protected void getMatrixXML(XMLStringBuilder sb) {
 		// no matrix needed since it comes from an algo
 	}
 
@@ -431,11 +438,10 @@ public class GeoQuadric3DPart extends GeoQuadric3D implements GeoNumberValue,
 	}
 
 	/**
-	 * 
+	 *
 	 * @return GeoQuadric3D type string
 	 */
 	public String getQuadricTypeString() {
 		return super.getTypeString();
 	}
-
 }

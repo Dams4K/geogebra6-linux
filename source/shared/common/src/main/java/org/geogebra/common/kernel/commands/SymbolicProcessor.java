@@ -1,11 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javax.annotation.Nonnull;
 
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.Kernel;
@@ -32,6 +46,7 @@ import org.geogebra.common.main.localization.CommandErrorMessageBuilder;
 import org.geogebra.common.plugin.Operation;
 import org.geogebra.common.util.SymbolicUtil;
 import org.geogebra.common.util.debug.Log;
+import org.jspecify.annotations.NonNull;
 
 import com.google.j2objc.annotations.Weak;
 
@@ -42,6 +57,7 @@ import com.google.j2objc.annotations.Weak;
 public class SymbolicProcessor {
 	@Weak
 	private Kernel kernel;
+
 	@Weak
 	private Construction cons;
 
@@ -66,18 +82,18 @@ public class SymbolicProcessor {
 			if (v instanceof Variable) {
 				return ((Variable) v).getName().equals(label);
 			}
-			return v instanceof GeoDummyVariable && ((GeoDummyVariable) v)
-					.getVarName().equals(label);
+			return v instanceof GeoDummyVariable
+					&& ((GeoDummyVariable) v).getVarName().equals(label);
 		}
 	}
 
 	private static final class SubExpressionEvaluator implements Traversing {
-		private ExpressionValue root;
-		private SymbolicProcessor processor;
-		private EvalInfo evalInfo;
+		private final ExpressionValue root;
+		private final SymbolicProcessor processor;
+		private final EvalInfo evalInfo;
 
-		public SubExpressionEvaluator(SymbolicProcessor symbolicProcessor,
-				ExpressionValue root, EvalInfo evalInfo) {
+		private SubExpressionEvaluator(
+				SymbolicProcessor symbolicProcessor, ExpressionValue root, EvalInfo evalInfo) {
 			this.processor = symbolicProcessor;
 			this.root = root;
 			this.evalInfo = evalInfo;
@@ -92,15 +108,14 @@ public class SymbolicProcessor {
 				GeoSymbolic symbolic = processor.evalSymbolicNoLabel(ev, evalInfo);
 				ExpressionValue symbolicValue = symbolic.getValue();
 				ExpressionValue outputValue = symbolicValue != null ? symbolicValue.unwrap() : null;
-				if (outputValue instanceof NumberValue
-						&& !((NumberValue) outputValue).isDefined()) {
+				if (outputValue instanceof NumberValue && !((NumberValue) outputValue).isDefined()) {
 					// If processing of sub-expression failed
 					return ev;
 				}
 				return symbolic;
 			}
-			if (ev instanceof GeoDummyVariable && ((GeoDummyVariable) ev)
-					.getElementWithSameName() != null) {
+			if (ev instanceof GeoDummyVariable
+					&& ((GeoDummyVariable) ev).getElementWithSameName() != null) {
 				return ((GeoDummyVariable) ev).getElementWithSameName();
 			}
 			return ev;
@@ -123,7 +138,7 @@ public class SymbolicProcessor {
 	 * @param replaced symbolic expression
 	 * @return evaluated expression
 	 */
-	protected GeoSymbolic doEvalSymbolicNoLabel(@Nonnull ExpressionNode replaced, EvalInfo info) {
+	protected GeoSymbolic doEvalSymbolicNoLabel(@NonNull ExpressionNode replaced, EvalInfo info) {
 		ExpressionValue expressionValue = replaced.unwrap();
 		Command cmd;
 		CommandDispatcher cmdDispatcher = kernel.getAlgebraProcessor().cmdDispatcher;
@@ -134,11 +149,10 @@ public class SymbolicProcessor {
 				Commands command = Commands.stringToCommand(cmd.getName());
 				boolean isAvailable = kernel.getGeoGebraCAS().isCommandAvailable(cmd);
 				if (command != null && !cmdDispatcher.isAllowedByCommandFilters(command)
-					|| (command == null && isAvailable)) {
+						|| (command == null && isAvailable)) {
 					throw new MyError(kernel.getLocalization(), MyError.Errors.UnknownCommand);
 				}
-				if (!isAvailable
-						&& isInvalidArgNumberInFallback(cmd)) {
+				if (!isAvailable && isInvalidArgNumberInFallback(cmd)) {
 					throw buildArgNumberError(cmd);
 				}
 				CommandProcessor processor = cmdDispatcher.commandTableSwitch(cmd);
@@ -154,24 +168,19 @@ public class SymbolicProcessor {
 			Log.debug(e.getMessage());
 		}
 
-		Set<GeoElement> vars = replaced
-				.getVariables(SymbolicMode.SYMBOLIC_AV);
+		Set<GeoElement> vars = replaced.getVariables(SymbolicMode.SYMBOLIC_AV);
 		ArrayList<GeoElement> noDummyVars = new ArrayList<>();
-		if (vars != null) {
-			for (GeoElement var : vars) {
-				if (var instanceof GeoDummyVariable) {
-					cons.addProtectedLabel(((GeoDummyVariable) var).getVarName());
-				} else if (var != null) {
-					noDummyVars.add(var);
-				}
+		for (GeoElement var : vars) {
+			if (var instanceof GeoDummyVariable dummy) {
+				cons.addProtectedLabel(dummy.getVarName());
+			} else if (var != null) {
+				noDummyVars.add(var);
 			}
 		}
 		GeoSymbolic symbolic;
-		if (noDummyVars.size() > 0) {
-			AlgoDependentSymbolic ads =
-					new AlgoDependentSymbolic(cons,
-							replaced, noDummyVars, info.getArbitraryConstant(),
-							info.isLabelOutput());
+		if (!noDummyVars.isEmpty()) {
+			AlgoDependentSymbolic ads = new AlgoDependentSymbolic(
+					cons, replaced, noDummyVars, info.getArbitraryConstant(), info.isLabelOutput());
 			symbolic = (GeoSymbolic) ads.getOutput(0);
 		} else {
 			symbolic = new GeoSymbolic(cons, replaced);
@@ -191,13 +200,14 @@ public class SymbolicProcessor {
 		boolean invalidArgNumber = false;
 		try {
 			kernel.getConstruction().setSuppressLabelCreation(true);
-			EvalInfo info = new EvalInfo(false, false)
-					.withScripting(false);
-			kernel.getAlgebraProcessor().getCommandDispatcher()
+			EvalInfo info = new EvalInfo(false, false).withScripting(false);
+			kernel
+					.getAlgebraProcessor()
+					.getCommandDispatcher()
 					.processCommand(cmd.deepCopy(kernel), info);
 		} catch (MyError err) {
 			invalidArgNumber = err.getErrorType() == MyError.Errors.IllegalArgumentNumber;
-		} catch (Throwable t) {
+		} catch (Throwable ignored) {
 			// something else went wrong
 		} finally {
 			kernel.getConstruction().setSuppressLabelCreation(oldSilent);
@@ -206,12 +216,13 @@ public class SymbolicProcessor {
 	}
 
 	private MyError buildArgNumberError(Command cmd) {
-		CommandErrorMessageBuilder builder =
-				kernel.getLocalization().getCommandErrorMessageBuilder();
-		return MyError.forCommand(kernel.getLocalization(),
+		CommandErrorMessageBuilder builder = kernel.getLocalization().getCommandErrorMessageBuilder();
+		return MyError.forCommand(
+				kernel.getLocalization(),
 				builder.buildArgumentNumberError(cmd.getName(), cmd.getArgumentNumber()),
 				cmd.getName(),
-				null, MyError.Errors.IllegalArgumentNumber);
+				null,
+				MyError.Errors.IllegalArgumentNumber);
 	}
 
 	protected GeoElement evalSymbolicNoLabel(ExpressionValue ve) {
@@ -223,27 +234,24 @@ public class SymbolicProcessor {
 	 * @return processed geo
 	 */
 	protected GeoSymbolic evalSymbolicNoLabel(ExpressionValue ve, EvalInfo info) {
-		ve.resolveVariables(
-				info.withLabels(false).withSymbolicMode(SymbolicMode.SYMBOLIC_AV));
+		ve.resolveVariables(info.withLabels(false).withSymbolicMode(SymbolicMode.SYMBOLIC_AV));
 
 		// Maybe throw exception to terminate processing
 		ve.toString(StringTemplate.latexTemplateCAS);
 
 		if (ve.unwrap() instanceof Command) {
 			String cmdName = ((Command) ve.unwrap()).getName();
-			if (Commands.Sequence.name().equals(cmdName)
-					|| Commands.Assume.name().equals(cmdName)) {
+			if (Commands.Sequence.name().equals(cmdName) || Commands.Assume.name().equals(cmdName)) {
 				return doEvalSymbolicNoLabel(ve.wrap(), info);
 			}
 		}
-		EvalInfo subInfo = new EvalInfo().withArbitraryConstant(info.getArbitraryConstant())
-				.withLabels(false);
+		EvalInfo subInfo =
+				new EvalInfo().withArbitraryConstant(info.getArbitraryConstant()).withLabels(false);
 		SubExpressionEvaluator evaluator = new SubExpressionEvaluator(this, ve, subInfo);
 		ExpressionNode replaced = ve.traverse(evaluator).wrap();
 		if (replaced.any(new RecursiveEquationFinder(ve))) {
-			replaced = new Equation(kernel,
-					new GeoDummyVariable(cons, ve.wrap().getLabel()), replaced)
-					.wrap();
+			replaced =
+					new Equation(kernel, new GeoDummyVariable(cons, ve.wrap().getLabel()), replaced).wrap();
 			ve.wrap().setLabel(null);
 		}
 		return doEvalSymbolicNoLabel(replaced, info);
@@ -302,8 +310,7 @@ public class SymbolicProcessor {
 	}
 
 	private boolean isFunctionNCall(ExpressionNode value) {
-		if (value.getOperation() == Operation.FUNCTION_NVAR
-				&& value.getRight() instanceof MyList) {
+		if (value.getOperation() == Operation.FUNCTION_NVAR && value.getRight() instanceof MyList) {
 			MyList args = (MyList) value.getRight();
 			for (int i = 0; i < args.size(); i++) {
 				ExpressionValue arg = args.getItem(i);
@@ -318,7 +325,7 @@ public class SymbolicProcessor {
 
 	private FunctionVariable[] extractFunctionVariables(ExpressionNode value) {
 		assert isFunctionCall(value);
-		return new FunctionVariable[]{(FunctionVariable) value.getRight()};
+		return new FunctionVariable[] {(FunctionVariable) value.getRight()};
 	}
 
 	private FunctionVariable[] extractFunctionNVariables(ExpressionNode value) {
@@ -330,8 +337,7 @@ public class SymbolicProcessor {
 			if (arg instanceof FunctionVariable) {
 				vars[i] = (FunctionVariable) arg;
 			} else {
-				vars[i] =
-						new FunctionVariable(kernel, arg.toString(StringTemplate.defaultTemplate));
+				vars[i] = new FunctionVariable(kernel, arg.toString(StringTemplate.defaultTemplate));
 			}
 		}
 		return vars;
@@ -370,7 +376,6 @@ public class SymbolicProcessor {
 	public static void autoCompleteVariables(Command cmd) {
 		ExpressionNode en = cmd.getArgument(0);
 		Kernel kernel = cmd.getKernel();
-		Construction cons = kernel.getConstruction();
 		/*
 		 * Solve command has one argument which is an expression | equation |
 		 * list
@@ -403,29 +408,26 @@ public class SymbolicProcessor {
 			return o1.compareTo(o2);
 		});
 		cmd.getArgument(0).traverse(Traversing.DummyVariableCollector.getCollector(set));
-		int n = en.unwrap() instanceof MyList
-				? ((MyList) en.unwrap()).size() : 1;
+		int n = en.unwrap() instanceof MyList ? ((MyList) en.unwrap()).size() : 1;
 		// for equation (t,t) = (2s-1,3s+3)
 		// make sure that we allow the correct number of variables
 		// needed for TRAC-5440
 		if (en.unwrap() instanceof Equation) {
 			// 2DVector -> allow 2 variables
-			if (((Equation) en.unwrap()).getLHS()
-					.evaluatesToNonComplex2DVector()
-					&& ((Equation) en.unwrap()).getRHS()
-					.evaluatesToNonComplex2DVector()) {
+			if (((Equation) en.unwrap()).getLHS().evaluatesToNonComplex2DVector()
+					&& ((Equation) en.unwrap()).getRHS().evaluatesToNonComplex2DVector()) {
 				n = 2;
 			}
 			// 3DVector -> allow 3 variables
 			if (((Equation) en.unwrap()).getLHS().evaluatesTo3DVector()
-					&& ((Equation) en.unwrap()).getRHS()
-					.evaluatesTo3DVector()) {
+					&& ((Equation) en.unwrap()).getRHS().evaluatesTo3DVector()) {
 				n = 3;
 			}
 		}
 
 		MyList variables = new MyList(kernel, n);
 		int i = 0;
+		Construction cons = kernel.getConstruction();
 		Iterator<String> ite = set.iterator();
 		if (n == 1) {
 			if (ite.hasNext()) {
@@ -433,8 +435,7 @@ public class SymbolicProcessor {
 			}
 		} else {
 			while (i < n && ite.hasNext()) {
-				variables
-						.addListElement(new GeoDummyVariable(cons, ite.next()));
+				variables.addListElement(new GeoDummyVariable(cons, ite.next()));
 				i++;
 			}
 			if (variables.size() > 0) {
@@ -442,5 +443,4 @@ public class SymbolicProcessor {
 			}
 		}
 	}
-
 }

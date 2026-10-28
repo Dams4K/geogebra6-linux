@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.euclidian.draw;
@@ -15,8 +19,7 @@ package org.geogebra.common.euclidian.draw;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GArea;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.GPoint2D;
@@ -27,7 +30,6 @@ import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.GeneralPathClipped;
 import org.geogebra.common.euclidian.Previewable;
 import org.geogebra.common.euclidian.event.PointerEventType;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.ConstructionDefaults;
 import org.geogebra.common.kernel.MyPoint;
@@ -39,6 +41,7 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.kernel.matrix.Coords;
 import org.geogebra.common.util.DoubleUtil;
 import org.geogebra.common.util.MyMath;
+import org.jspecify.annotations.NonNull;
 
 /**
  *
@@ -50,7 +53,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 	private boolean isVisible;
 	private boolean labelVisible;
 
-	private final @Nonnull GeneralPathClipped gp;
+	private final @NonNull GeneralPathClipped gp;
 	private double[] coords = new double[2];
 	private ArrayList<GeoPointND> points;
 
@@ -86,7 +89,9 @@ public class DrawPolygon extends Drawable implements Previewable {
 	public DrawPolygon(EuclidianView view, ArrayList<GeoPointND> points) {
 		this.view = view;
 		this.points = points;
-		geo = view.getKernel().getConstruction().getConstructionDefaults()
+		geo = view.getKernel()
+				.getConstruction()
+				.getConstructionDefaults()
 				.getDefaultGeo(ConstructionDefaults.DEFAULT_POLYGON);
 		gp = new GeneralPathClipped(view);
 		gp.resetWithThickness(geo.getLineThickness());
@@ -94,7 +99,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 	}
 
 	@Override
-	final public void update() {
+	public final void update() {
 		isVisible = geo.isEuclidianVisible();
 		if (isVisible) {
 			labelVisible = geo.isLabelVisible();
@@ -113,7 +118,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 			}
 
 			// polygon on screen?
-			if (!view.intersects(gp) && !geo.isInverseFill()) {
+			if (!view.intersects(gp.getGeneralPath()) && !geo.isInverseFill()) {
 				isVisible = false;
 				// don't return here to make sure that getBounds() works for
 				// offscreen points too
@@ -124,12 +129,12 @@ public class DrawPolygon extends Drawable implements Previewable {
 
 	@Override
 	public void drawTrace(GGraphics2D g2) {
-		fill(g2, gp);
+		fill(g2, gp.getGeneralPath());
 	}
 
 	private void createInverseShape() {
-		setShape(AwtFactory.getPrototype().newArea(view.getBoundingPath()));
-		getShape().subtract(AwtFactory.getPrototype().newArea(gp));
+		setShape(view.getBoundsArea());
+		getShape().subtract(AwtFactory.getPrototype().newArea(gp.getGeneralPath()));
 		fillShape = true;
 	}
 
@@ -189,23 +194,22 @@ public class DrawPolygon extends Drawable implements Previewable {
 	}
 
 	@Override
-	final public void draw(GGraphics2D g2) {
+	public final void draw(GGraphics2D g2) {
 		if (isVisible) {
 			// fill using default/hatching/image as appropriate
-			fill(g2, fillShape ? getShape() : gp);
+			fill(g2, fillShape ? getShape() : gp.getGeneralPath());
 			if (isHighlighted()) {
 				g2.setPaint(poly.getSelColor());
 				g2.setStroke(selStroke);
-				g2.draw(gp);
+				gp.draw(g2);
 			}
 
 			// polygons (e.g. in GeoLists) that don't have labeled segments
 			// should also draw their border
-			if (!poly.wasInitLabelsCalled()
-					&& poly.getLineThickness() > 0) {
+			if (!poly.wasInitLabelsCalled() && poly.getLineThickness() > 0) {
 				g2.setPaint(getObjectColor());
 				g2.setStroke(objStroke);
-				g2.draw(gp);
+				gp.draw(g2);
 			}
 
 			if (labelVisible) {
@@ -217,7 +221,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 	}
 
 	@Override
-	final public void updatePreview() {
+	public final void updatePreview() {
 		int size = points.size();
 		isVisible = size > 0;
 
@@ -227,104 +231,100 @@ public class DrawPolygon extends Drawable implements Previewable {
 	}
 
 	@Override
-	final public void updateMousePos(double mouseRWx, double mouseRWy) {
-		double xRW = mouseRWx;
-		double yRW = mouseRWy;
+	public final void updateMousePos(double mouseRWx, double mouseRWy) {
 		if (isVisible) {
-			int mx;
-			int my;
-
 			// round angle to nearest 15 degrees if alt pressed
 			if (view.getEuclidianController().isAltDown()) {
-
-				GeoPointND p = points.get(points.size() - 1);
-				double px = p.getInhomX();
-				double py = p.getInhomY();
-
-				if (points.size() > 1) {
-					Construction cons = view.getKernel().getConstruction();
-					GeoPoint intersection = new GeoPoint(cons);
-					GeoLine l = new GeoLine(cons);
-					GeoLine l2 = new GeoLine(cons);
-					GeoPointND p2 = points.get(0);
-					double px2 = p2.getInhomX();
-					double py2 = p2.getInhomY();
-					double nearestX = Double.MAX_VALUE;
-					double nearestY = Double.MAX_VALUE;
-					double dist = Double.MAX_VALUE;
-					for (int angle = 0; angle < 180; angle += 15) {
-
-						if (angle == 90) {
-							l.setCoords(1, 0, -px);
-						} else {
-							double gradient = Math.tan(angle * Math.PI / 180.0);
-							l.setCoords(gradient, -1.0, py - gradient * px);
-						}
-
-						for (int ang2 = 0; ang2 < 180; ang2 += 15) {
-							if (ang2 == angle) {
-								continue;
-							} else if (DoubleUtil.isEqual(ang2, 90)) {
-								l2.setCoords(1.0, 0, -px2);
-							} else {
-								double gradient2 = Math
-										.tan(ang2 * Math.PI / 180.0);
-								l2.setCoords(gradient2, -1.0,
-										py2 - gradient2 * px2);
-							}
-
-							// calculate intersection
-							GeoVec3D.cross(l, l2, intersection);
-
-							double x1 = intersection.x / intersection.z;
-							double y1 = intersection.y / intersection.z;
-
-							double d = MyMath.length(x1 - xRW, y1 - yRW);
-							if (d < dist) {
-								nearestX = x1;
-								nearestY = y1;
-								dist = d;
-							}
-						}
-					}
-
-					xRW = nearestX;
-					yRW = nearestY;
-				} else {
-					double angle = Math.atan2(yRW - py, xRW - px) * 180
-							/ Math.PI;
-					double radius = Math.sqrt(
-							(py - yRW) * (py - yRW) + (px - xRW) * (px - xRW));
-
-					// round angle to nearest 15 degrees
-					angle = Math.round(angle / 15) * 15;
-
-					xRW = px + radius * Math.cos(angle * Math.PI / 180);
-					yRW = py + radius * Math.sin(angle * Math.PI / 180);
-				}
-
-				mx = view.toScreenCoordX(xRW);
-				my = view.toScreenCoordY(yRW);
-
-				endPoint.setLocation(xRW, yRW);
-				view.getEuclidianController().setLineEndPoint(endPoint);
-				gp.lineTo(mx, my);
+				handleUpdateWithAlt(mouseRWx, mouseRWy);
 			} else {
 				view.getEuclidianController().setLineEndPoint(null);
+				gp.lineTo(view.toScreenCoordX(mouseRWx), view.toScreenCoordY(mouseRWy));
 			}
-			gp.lineTo(view.toScreenCoordX(xRW), view.toScreenCoordY(yRW));
 		}
 	}
 
+	private void handleUpdateWithAlt(double mouseRWx, double mouseRWy) {
+		double xRW = mouseRWx;
+		double yRW = mouseRWy;
+		GeoPointND p = points.get(points.size() - 1);
+		double px = p.getInhomX();
+		double py = p.getInhomY();
+
+		if (points.size() > 1) {
+			Construction cons = view.getKernel().getConstruction();
+			GeoPoint intersection = new GeoPoint(cons);
+			GeoLine l = new GeoLine(cons);
+			GeoLine l2 = new GeoLine(cons);
+			GeoPointND p2 = points.get(0);
+			double px2 = p2.getInhomX();
+			double py2 = p2.getInhomY();
+			double nearestX = Double.MAX_VALUE;
+			double nearestY = Double.MAX_VALUE;
+			double dist = Double.MAX_VALUE;
+			for (int angle = 0; angle < 180; angle += 15) {
+
+				if (angle == 90) {
+					l.setCoords(1, 0, -px);
+				} else {
+					double gradient = Math.tan(angle * Math.PI / 180.0);
+					l.setCoords(gradient, -1.0, py - gradient * px);
+				}
+
+				for (int ang2 = 0; ang2 < 180; ang2 += 15) {
+					if (ang2 == angle) {
+						continue;
+					} else if (DoubleUtil.isEqual(ang2, 90)) {
+						l2.setCoords(1.0, 0, -px2);
+					} else {
+						double gradient2 = Math.tan(ang2 * Math.PI / 180.0);
+						l2.setCoords(gradient2, -1.0, py2 - gradient2 * px2);
+					}
+
+					// calculate intersection
+					GeoVec3D.cross(l, l2, intersection);
+
+					double x1 = intersection.x / intersection.z;
+					double y1 = intersection.y / intersection.z;
+
+					double d = MyMath.length(x1 - xRW, y1 - yRW);
+					if (d < dist) {
+						nearestX = x1;
+						nearestY = y1;
+						dist = d;
+					}
+				}
+			}
+
+			xRW = nearestX;
+			yRW = nearestY;
+		} else {
+			double angle = Math.atan2(yRW - py, xRW - px) * 180 / Math.PI;
+			double radius = Math.sqrt((py - yRW) * (py - yRW) + (px - xRW) * (px - xRW));
+
+			// round angle to nearest 15 degrees
+			angle = Math.round(angle / 15) * 15;
+
+			xRW = px + radius * Math.cos(angle * Math.PI / 180);
+			yRW = py + radius * Math.sin(angle * Math.PI / 180);
+		}
+
+		int mx = view.toScreenCoordX(xRW);
+		int my = view.toScreenCoordY(yRW);
+
+		endPoint.setLocation(xRW, yRW);
+		view.getEuclidianController().setLineEndPoint(endPoint);
+		gp.lineTo(mx, my);
+	}
+
 	@Override
-	final public void drawPreview(GGraphics2D g2) {
+	public final void drawPreview(GGraphics2D g2) {
 		if (isVisible) {
-			fill(g2, geo.isInverseFill() ? getShape() : gp);
+			fill(g2, geo.isInverseFill() ? getShape() : gp.getGeneralPath());
 
 			g2.setPaint(getObjectColor());
 			updateStrokes(geo);
 			g2.setStroke(objStroke);
-			g2.draw(gp);
+			gp.draw(g2);
 		}
 	}
 
@@ -334,18 +334,17 @@ public class DrawPolygon extends Drawable implements Previewable {
 	}
 
 	@Override
-	final public boolean hit(int x, int y, int hitThreshold) {
-		GShape t = geo.isInverseFill() ? getShape() : gp;
+	public final boolean hit(int x, int y, int hitThreshold) {
+		GShape t = geo.isInverseFill() ? getShape() : gp.getGeneralPath();
 		int eps = getFillingHitThreshold(hitThreshold, getBounds());
-		boolean contains = t.contains(AwtFactory.getPrototype().newRectangle(x - eps,
-				y - eps, 2 * eps, 2 * eps));
+		boolean contains =
+				t.contains(AwtFactory.getPrototype().newRectangle(x - eps, y - eps, 2 * eps, 2 * eps));
 
 		if (geo.isFilled() && contains) {
 			return true;
 		}
 
-		boolean intersects = t.intersects(x - eps,
-				y - eps, 2 * eps, 2 * eps);
+		boolean intersects = t.intersects(x - eps, y - eps, 2 * eps, 2 * eps);
 
 		return intersects && !contains;
 	}
@@ -360,7 +359,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 	}
 
 	@Override
-	final public boolean isInside(GRectangle rect) {
+	public final boolean isInside(GRectangle rect) {
 		return gp.getBounds() != null && rect.contains(gp.getBounds());
 	}
 
@@ -368,7 +367,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 	 * Returns the bounding box of this Drawable in screen coordinates.
 	 */
 	@Override
-	final public GRectangle getBounds() {
+	public final GRectangle getBounds() {
 		if (!geo.isDefined() || !geo.isEuclidianVisible()) {
 			return null;
 		}
@@ -383,7 +382,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 		if (geo.isInverseFill()) {
 			createInverseShape();
 		} else {
-			setShape(AwtFactory.getPrototype().newArea(gp));
+			setShape(AwtFactory.getPrototype().newArea(gp.getGeneralPath()));
 		}
 		return super.getShape();
 	}
@@ -391,8 +390,11 @@ public class DrawPolygon extends Drawable implements Previewable {
 	@Override
 	public void fromPoints(ArrayList<GPoint2D> pts) {
 		for (int i = 0; i < pts.size(); i++) {
-			poly.getPoint(i).setCoords(view.toRealWorldCoordX(pts.get(i).getX()),
-					view.toRealWorldCoordY(pts.get(i).getY()), 1);
+			poly.getPoint(i)
+					.setCoords(
+							view.toRealWorldCoordX(pts.get(i).getX()),
+							view.toRealWorldCoordY(pts.get(i).getY()),
+							1);
 		}
 	}
 
@@ -401,8 +403,8 @@ public class DrawPolygon extends Drawable implements Previewable {
 		List<GPoint2D> ret = new ArrayList<>(this.poly.getNumPoints());
 		for (GeoPointND pt : this.poly.getPoints()) {
 			pt.updateCoords2D();
-			MyPoint screenPt = new MyPoint(view.toScreenCoordXd(pt.getX2D()),
-					view.toScreenCoordYd(pt.getY2D()));
+			MyPoint screenPt =
+					new MyPoint(view.toScreenCoordXd(pt.getX2D()), view.toScreenCoordYd(pt.getY2D()));
 			ret.add(screenPt);
 		}
 		return ret;

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.arithmetic;
@@ -18,18 +22,20 @@ import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.commands.EvalInfo;
 import org.geogebra.common.kernel.geos.GeoElement;
+import org.geogebra.common.main.Localization;
 
 import com.google.j2objc.annotations.Weak;
 
 /**
  * Helper class to evaluate expressions with GeoText objects in it.
- * 
+ *
  * @see ExpressionNode#evaluate(StringTemplate)
  * @author Markus Hohenwarter
  */
 public class MyStringBuffer extends ValidExpression implements TextValue {
 
 	private StringBuilder sb;
+
 	@Weak
 	private Kernel kernel;
 
@@ -109,12 +115,12 @@ public class MyStringBuffer extends ValidExpression implements TextValue {
 	}
 
 	@Override
-	final public String toValueString(StringTemplate tpl) {
+	public final String toValueString(StringTemplate tpl) {
 		return sb.toString();
 	}
 
 	@Override
-	final public String toOutputValueString(StringTemplate tpl) {
+	public final String toOutputValueString(StringTemplate tpl) {
 		StringBuffer sb2 = new StringBuffer(sb.length() + 2);
 
 		sb2.append('"');
@@ -125,7 +131,7 @@ public class MyStringBuffer extends ValidExpression implements TextValue {
 	}
 
 	@Override
-	final public String toLaTeXString(boolean symbolic, StringTemplate tpl) {
+	public final String toLaTeXString(boolean symbolic, StringTemplate tpl) {
 		return sb.toString();
 	}
 
@@ -135,7 +141,7 @@ public class MyStringBuffer extends ValidExpression implements TextValue {
 	}
 
 	@Override
-	final public boolean contains(ExpressionValue ev) {
+	public final boolean contains(ExpressionValue ev) {
 		return ev == this;
 	}
 
@@ -144,6 +150,11 @@ public class MyStringBuffer extends ValidExpression implements TextValue {
 	 */
 	public Kernel getKernel() {
 		return kernel;
+	}
+
+	@Override
+	public Localization getLocalization() {
+		return kernel.getLocalization();
 	}
 
 	@Override

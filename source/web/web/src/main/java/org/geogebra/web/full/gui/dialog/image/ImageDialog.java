@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.dialog.image;
 
 import org.geogebra.web.full.css.MaterialDesignResources;
@@ -16,7 +32,7 @@ import org.gwtproject.dom.style.shared.Unit;
 import org.gwtproject.user.client.ui.FileUpload;
 import org.gwtproject.user.client.ui.FlowPanel;
 
-public class ImageDialog extends ComponentDialog implements WebcamDialogInterface {
+public final class ImageDialog extends ComponentDialog implements WebcamDialogInterface {
 	private FlowPanel cameraPanel;
 	private WebCamInputPanel webcamInputPanel;
 	private StandardButton captureBtn;
@@ -34,16 +50,18 @@ public class ImageDialog extends ComponentDialog implements WebcamDialogInterfac
 	}
 
 	private void buildGUI() {
-		FileUpload uploadImage = UploadImagePanel.getUploadButton((AppW) app,
-				(fileName, content) -> {
-					((AppW) app).imageDropHappened(fileName, content);
-					hide();
-				});
+		FileUpload uploadImage = UploadImagePanel.getUploadButton((AppW) app, (fileName, content) -> {
+			((AppW) app).imageDropHappened(fileName, content);
+			hide();
+		});
 
-		InfoErrorData uploadData = new InfoErrorData(null, "ImageDialog.UploadImageMsg",
-				"ImageDialog.Browse", MaterialDesignResources.INSTANCE.upload());
-		ComponentInfoErrorPanel uploadPanel = new ComponentInfoErrorPanel(app.getLocalization(),
-				uploadData, uploadImage::click);
+		InfoErrorData uploadData = new InfoErrorData(
+				null,
+				"ImageDialog.UploadImageMsg",
+				"ImageDialog.Browse",
+				MaterialDesignResources.INSTANCE.upload());
+		ComponentInfoErrorPanel uploadPanel =
+				new ComponentInfoErrorPanel(app.getLocalization(), uploadData, uploadImage::click);
 		uploadPanel.disableActionButton(!((AppW) app).enableFileFeatures());
 
 		TabData uploadTab = new TabData("Upload", uploadPanel);
@@ -52,16 +70,15 @@ public class ImageDialog extends ComponentDialog implements WebcamDialogInterfac
 		loadCameraPanel();
 		TabData cameraTab = new TabData("Camera", cameraPanel);
 
-		tab = new ComponentTab(app.getLocalization(), uploadTab, cameraTab);
+		tab = new ComponentTab((AppW) app, "Image", uploadTab, cameraTab);
 		addDialogContent(tab);
 		webcamInputPanel.startVideo();
 	}
 
 	private FlowPanel getErrorPanel(String title, String msg) {
-		InfoErrorData cameraData = new InfoErrorData(title, msg, null,
-				MaterialDesignResources.INSTANCE.no_camera());
-		return new ComponentInfoErrorPanel(app.getLocalization(),
-				cameraData, null);
+		InfoErrorData cameraData =
+				new InfoErrorData(title, msg, null, MaterialDesignResources.INSTANCE.no_camera());
+		return new ComponentInfoErrorPanel(app.getLocalization(), cameraData, null);
 	}
 
 	private void loadCameraPanel() {
@@ -74,14 +91,13 @@ public class ImageDialog extends ComponentDialog implements WebcamDialogInterfac
 		}
 
 		cameraPanel.clear();
-		cameraPanel.setStyleName("cameraPanel");
+		cameraPanel.setStyleName("cameraPanel tabPanel");
 		cameraPanel.add(webcamInputPanel);
 		cameraPanel.add(captureBtn);
 	}
 
 	private void initCaptureBtn() {
-		captureBtn = new StandardButton(
-				MaterialDesignResources.INSTANCE.camera_white(), null, 24);
+		captureBtn = new StandardButton(MaterialDesignResources.INSTANCE.camera_white(), null, 24);
 		captureBtn.setStyleName("mowFloatingButton");
 		AriaHelper.setTitle(captureBtn, app.getLocalization().getMenu("ImageDialog.Capture"));
 
@@ -135,10 +151,11 @@ public class ImageDialog extends ComponentDialog implements WebcamDialogInterfac
 	@Override
 	public void onResize() {
 		super.onResize();
-		tab.onResize();
 		if (!cameraPanel.getStyleName().contains("error")) {
-			cameraPanel.getElement().getStyle().setHeight(webcamInputPanel.getOffsetHeight() + 28,
-					Unit.PX);
+			cameraPanel
+					.getElement()
+					.getStyle()
+					.setHeight(webcamInputPanel.getOffsetHeight() + 28, Unit.PX);
 		}
 	}
 }

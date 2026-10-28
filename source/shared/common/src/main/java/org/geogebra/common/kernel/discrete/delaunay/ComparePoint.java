@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.discrete.delaunay;
 
 import java.util.Comparator;
@@ -7,7 +23,7 @@ import org.geogebra.common.util.DoubleUtil;
 class ComparePoint implements Comparator<PointDt> {
 	private int _flag;
 
-	public ComparePoint(int i) {
+	ComparePoint(int i) {
 		_flag = i;
 	}
 
@@ -88,16 +104,15 @@ class ComparePoint implements Comparator<PointDt> {
 		return ans;
 	}
 
-	public static boolean greaterThan(double x, double y) {
+	static boolean greaterThan(double x, double y) {
 		return DoubleUtil.isGreater(x, y);
 	}
 
-	public static boolean lessThan(double x, double y) {
+	static boolean lessThan(double x, double y) {
 		return DoubleUtil.isGreater(y, x);
 	}
 
-	public static boolean equals(double x, double y) {
+	static boolean equals(double x, double y) {
 		return DoubleUtil.isEqual(x, y);
 	}
-
 }

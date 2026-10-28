@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoConicSection;
@@ -24,13 +40,11 @@ public class AlgoCornerConicSection extends AlgoElement3D {
 	 * @param conic
 	 *            conic section
 	 */
-	public AlgoCornerConicSection(Construction c, String[] labels,
-			GeoConicSection conic) {
+	public AlgoCornerConicSection(Construction c, String[] labels, GeoConicSection conic) {
 		super(c);
 
 		this.conic = conic;
-		algoParent = (AlgoIntersectPlaneQuadricLimited) conic
-				.getParentAlgorithm();
+		algoParent = (AlgoIntersectPlaneQuadricLimited) conic.getParentAlgorithm();
 
 		outputPoints = createOutputPoints();
 
@@ -42,19 +56,15 @@ public class AlgoCornerConicSection extends AlgoElement3D {
 		// update();
 
 		compute();
-
 	}
 
 	private OutputHandler<GeoElement> createOutputPoints() {
-		return new OutputHandler<>(new ElementFactory<GeoElement>() {
-			@Override
-			public GeoPoint3D newElement() {
-				GeoPoint3D p = new GeoPoint3D(cons);
-				p.setCoords(0, 0, 0, 1);
-				p.setUndefined();
-				p.setParentAlgorithm(AlgoCornerConicSection.this);
-				return p;
-			}
+		return new OutputHandler<>(() -> {
+			GeoPoint3D p = new GeoPoint3D(cons);
+			p.setCoords(0, 0, 0, 1);
+			p.setUndefined();
+			p.setParentAlgorithm(this);
+			return p;
 		});
 	}
 
@@ -62,8 +72,7 @@ public class AlgoCornerConicSection extends AlgoElement3D {
 	public void compute() {
 
 		// first check if input is defined
-		if (!conic.isDefined()
-				|| conic.getType() == GeoConicNDConstants.CONIC_EMPTY) {
+		if (!conic.isDefined() || conic.getType() == GeoConicNDConstants.CONIC_EMPTY) {
 			for (int index = 0; index < outputPoints.size(); index++) {
 				outputPoints.getElement(index).setUndefined();
 			}
@@ -122,10 +131,10 @@ public class AlgoCornerConicSection extends AlgoElement3D {
 
 	/*
 	 * private void setPoint(double parameter, int index){
-	 * 
+	 *
 	 * Log.debug(index+": "+parameter); if (Double.isNaN(parameter)){
 	 * outputPoints.getElement(index).setUndefined(); return; }
-	 * 
+	 *
 	 * pp.setT(parameter); conic.pathChangedWithoutCheck(coords, pp); GeoPointND
 	 * point = (GeoPointND) outputPoints.getElement(index);
 	 * point.setCoords(conic.getCoordSys().getPoint(coords),false);
@@ -140,14 +149,16 @@ public class AlgoCornerConicSection extends AlgoElement3D {
 	private void setLabels(String[] labels) {
 		// if only one label (e.g. "A") for more than one output, new labels
 		// will be A_1, A_2, ...
-		if (labels != null && labels.length == 1 && outputPoints.size() > 1
-				&& labels[0] != null && !labels[0].equals("")) {
+		if (labels != null
+				&& labels.length == 1
+				&& outputPoints.size() > 1
+				&& labels[0] != null
+				&& !labels[0].equals("")) {
 			outputPoints.setIndexLabels(labels[0]);
 
 		} else {
 			outputPoints.setLabels(labels);
 		}
-
 	}
 
 	@Override
@@ -159,7 +170,7 @@ public class AlgoCornerConicSection extends AlgoElement3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return corners
 	 */
 	public GeoPoint3D[] getCorners() {
@@ -167,5 +178,4 @@ public class AlgoCornerConicSection extends AlgoElement3D {
 		outputPoints.getOutput(ret);
 		return ret;
 	}
-
 }

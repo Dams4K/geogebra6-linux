@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -22,15 +26,14 @@ import org.geogebra.common.kernel.kernelND.GeoElementND;
 
 /**
  * random element of a GeoList object.
- * 
+ *
  * Note: the type of the returned GeoElement object is determined by the type of
  * the first list element. If the list is initially empty, a GeoNumeric object
  * is created for element.
- * 
+ *
  * @author Michael
  * @version 2010-06-01
  */
-
 public class AlgoRandomElement extends AlgoElement implements SetRandomValue {
 
 	private GeoList geoList; // input
@@ -38,7 +41,7 @@ public class AlgoRandomElement extends AlgoElement implements SetRandomValue {
 
 	/**
 	 * Creates new random element algo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param geoList
@@ -55,8 +58,7 @@ public class AlgoRandomElement extends AlgoElement implements SetRandomValue {
 			// if the list was non-empty at some point before saving, get the
 			// same type of geo
 			// saved in XML from 4.1.131.0
-			element = kernel.createGeoElement(cons,
-					geoList.getTypeStringForXML());
+			element = kernel.createGeoElement(cons, geoList.getTypeStringForXML());
 		}
 
 		// desperate case: empty list
@@ -87,7 +89,7 @@ public class AlgoRandomElement extends AlgoElement implements SetRandomValue {
 
 	/**
 	 * Returns chosen element
-	 * 
+	 *
 	 * @return chosen element
 	 */
 	public GeoElement getElement() {
@@ -101,8 +103,8 @@ public class AlgoRandomElement extends AlgoElement implements SetRandomValue {
 			return;
 		}
 
-		GeoElement randElement = geoList.get((int) Math.floor(
-				cons.getApplication().getRandomNumber() * geoList.size()));
+		GeoElement randElement = geoList.get(
+				(int) Math.floor(kernel.randomNumberGenerator.getRandomNumber() * geoList.size()));
 		// check type:
 		if (randElement.getGeoClassType() == element.getGeoClassType()) {
 			element.set(randElement);
@@ -121,5 +123,4 @@ public class AlgoRandomElement extends AlgoElement implements SetRandomValue {
 		}
 		return false;
 	}
-
 }

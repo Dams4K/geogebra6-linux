@@ -1,32 +1,45 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.geogebra3D.web.gui;
 
 import org.geogebra.common.awt.GPoint;
 import org.geogebra.common.euclidian.EuclidianViewInterfaceCommon;
-import org.geogebra.common.main.OptionType;
 import org.geogebra.web.full.gui.ContextMenuGeoElementW;
 import org.geogebra.web.full.gui.GuiManagerW;
 import org.geogebra.web.full.gui.layout.DockPanelW;
-import org.geogebra.web.full.gui.properties.PropertiesViewW;
 import org.geogebra.web.full.main.GDevice;
 import org.geogebra.web.geogebra3D.web.euclidian3D.EuclidianView3DW;
 import org.geogebra.web.geogebra3D.web.gui.layout.panels.EuclidianDockPanel3DW;
-import org.geogebra.web.geogebra3D.web.gui.view.properties.PropertiesView3DW;
 import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.user.client.Command;
 
 /**
  * web gui manager for 3D
- * 
+ *
  * @author mathieu
  *
  */
-public class GuiManager3DW extends GuiManagerW {
+public final class GuiManager3DW extends GuiManagerW {
 
 	private DockPanelW euclidian3Dpanel;
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param device
@@ -46,7 +59,6 @@ public class GuiManager3DW extends GuiManagerW {
 		}
 
 		return false;
-
 	}
 
 	@Override
@@ -58,17 +70,17 @@ public class GuiManager3DW extends GuiManagerW {
 	public void showDrawingPadPopup3D(EuclidianViewInterfaceCommon view, GPoint p) {
 		// clear highlighting and selections in views
 		getApp().getActiveEuclidianView().resetMode();
-		getDrawingPadpopupMenu3D(p.x, p.y).showScaled(
-				((EuclidianView3DW) view).getG2P().getElement(), p.x, p.y);
+		getDrawingPadPopupMenu3D()
+				.showScaled(((EuclidianView3DW) view).getG2P().getElement(), p.x, p.y);
 	}
 
-	private ContextMenuGeoElementW getDrawingPadpopupMenu3D(int x, int y) {
-		currentPopup = new ContextMenuGraphicsWindow3DW(getApp(), x, y);
+	private ContextMenuGeoElementW getDrawingPadPopupMenu3D() {
+		currentPopup = new ContextMenuGraphicsWindow3DW(getApp());
 		return (ContextMenuGeoElementW) currentPopup;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return command to show/hide 3D axis
 	 */
 	public Command getShowAxes3DAction() {
@@ -82,7 +94,7 @@ public class GuiManager3DW extends GuiManagerW {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return command to show/hide 3D grid
 	 */
 	public Command getShowGrid3DAction() {
@@ -96,23 +108,16 @@ public class GuiManager3DW extends GuiManagerW {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return command to show/hide 3D plane
 	 */
 	public Command getShowPlane3DAction() {
 		return () -> {
 			// toggle plane
-			((EuclidianView3DW) getApp().getEuclidianView3D())
-					.getSettings().togglePlane();
+			((EuclidianView3DW) getApp().getEuclidianView3D()).getSettings().togglePlane();
 			// getApp().getEuclidianView().repaint();
 			getApp().storeUndoInfo();
 			getApp().updateMenubar();
 		};
 	}
-
-	@Override
-	protected PropertiesViewW newPropertiesViewW(AppW app1, OptionType optionType) {
-		return new PropertiesView3DW(app1, optionType);
-	}
-
 }

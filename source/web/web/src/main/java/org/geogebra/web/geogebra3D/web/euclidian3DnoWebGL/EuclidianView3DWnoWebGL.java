@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.geogebra3D.web.euclidian3DnoWebGL;
 
 import org.geogebra.common.awt.GBufferedImage;
@@ -6,8 +22,8 @@ import org.geogebra.common.geogebra3D.euclidian3D.EuclidianController3D;
 import org.geogebra.common.geogebra3D.euclidian3D.openGL.Renderer;
 import org.geogebra.common.main.settings.EuclidianSettings;
 import org.geogebra.common.util.debug.Log;
+import org.geogebra.web.awt.GBufferedImageW;
 import org.geogebra.web.geogebra3D.web.euclidian3D.EuclidianView3DW;
-import org.geogebra.web.html5.gawt.GBufferedImageW;
 import org.geogebra.web.html5.gui.util.Dom;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.main.GgbFile;
@@ -17,24 +33,23 @@ import elemental2.dom.HTMLImageElement;
 
 /**
  * (dummy) 3D view for browsers that don't support webGL
- * 
+ *
  * @author mathieu
  *
  */
-public class EuclidianView3DWnoWebGL extends EuclidianView3DW {
+public final class EuclidianView3DWnoWebGL extends EuclidianView3DW {
 
 	private GBufferedImage thumb;
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param ec
 	 *            controller
 	 * @param settings
 	 *            settings
 	 */
-	public EuclidianView3DWnoWebGL(EuclidianController3D ec,
-	        EuclidianSettings settings) {
+	public EuclidianView3DWnoWebGL(EuclidianController3D ec, EuclidianSettings settings) {
 		super(ec, settings);
 		setCurrentFile(((AppW) ec.getApplication()).getCurrentFile());
 	}
@@ -52,17 +67,16 @@ public class EuclidianView3DWnoWebGL extends EuclidianView3DW {
 	@Override
 	public void repaint() {
 		if (thumb != null) {
-			getG2P().scale(
-					(double) getG2P().getOffsetWidth() / thumb.getWidth(),
-					(double) getG2P().getOffsetHeight() / thumb.getHeight());
+			getG2P()
+					.scale(
+							(double) getG2P().getOffsetWidth() / thumb.getWidth(),
+							(double) getG2P().getOffsetHeight() / thumb.getHeight());
 			getG2P().drawImage(thumb, 0, 0);
 		}
 
 		getG2P().setColor(GColor.BLACK);
 		if (!getApplication().isScreenshotGenerator()) {
-			getG2P().drawString(
-					getApplication().getLocalization().getMenu("NoWebGL"), 10,
-					20);
+			getG2P().drawString(getApplication().getLocalization().getMenu("NoWebGL"), 10, 20);
 		}
 	}
 
@@ -84,10 +98,15 @@ public class EuclidianView3DWnoWebGL extends EuclidianView3DW {
 	 */
 	public void onResize() {
 		getG2P().setCoordinateSpaceSize(this.getWidth(), this.getHeight());
-		getG2P().getElement().getParentElement().getStyle()
+		getG2P()
+				.getElement()
+				.getParentElement()
+				.getStyle()
 				.setWidth(getG2P().getCoordinateSpaceWidth(), Unit.PX);
-		getG2P().getElement().getParentElement().getStyle()
+		getG2P()
+				.getElement()
+				.getParentElement()
+				.getStyle()
 				.setHeight(getG2P().getCoordinateSpaceHeight(), Unit.PX);
 	}
-
 }

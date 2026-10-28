@@ -1,6 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.util;
 
-import org.geogebra.common.main.App;
+import org.geogebra.common.factories.UtilFactory;
 import org.geogebra.common.util.GTimer;
 
 import com.google.j2objc.annotations.Weak;
@@ -22,15 +38,14 @@ public class DropDownList {
 	private final DropDownListener listener;
 
 	/**
-	 * @param app
-	 *            application
 	 * @param listener
 	 *            selection listener
 	 */
-	public DropDownList(App app, DropDownListener listener) {
+	public DropDownList(DropDownListener listener) {
 		this.listener = listener;
-		clickTimer = app.newTimer(this::doRunClick, clickDelay);
-		scrollTimer = app.newTimer(this::doScroll, scrollDelay);
+		UtilFactory factory = UtilFactory.getPrototype();
+		clickTimer = factory.newTimer(this::doRunClick, clickDelay);
+		scrollTimer = factory.newTimer(this::doScroll, scrollDelay);
 	}
 
 	/**
@@ -54,7 +69,7 @@ public class DropDownList {
 
 	/**
 	 * Start click timer.
-	 * 
+	 *
 	 * @param x
 	 *            pointer x
 	 * @param y
@@ -70,7 +85,7 @@ public class DropDownList {
 
 	/**
 	 * Start scroll timer.
-	 * 
+	 *
 	 * @param x
 	 *            pointer x
 	 * @param y

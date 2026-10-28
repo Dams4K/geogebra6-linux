@@ -1,17 +1,22 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.geos;
 
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.MatrixTransformable;
 import org.geogebra.common.kernel.Path;
@@ -33,12 +38,19 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * PolyLine (open Polygon) through given points
- * 
+ *
  * @author Michael Borcherds, adapted from GeoPolygon
  */
-public class GeoPolyLine extends GeoElement implements GeoNumberValue,
-		Traceable, Transformable, Mirrorable, MatrixTransformable,
-		Translateable, Dilateable, GeoPoly, HasSegmentStyle {
+public class GeoPolyLine extends GeoElement
+		implements GeoNumberValue,
+				Traceable,
+				Transformable,
+				Mirrorable,
+				MatrixTransformable,
+				Translateable,
+				Dilateable,
+				GeoPoly,
+				HasSegmentStyle {
 
 	/** maximum number of points when created by tool */
 	public static final int POLYLINE_MAX_POINTS = 500;
@@ -58,7 +70,7 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 
 	/**
 	 * common constructor for 2D.
-	 * 
+	 *
 	 * @param cons
 	 *            the construction
 	 * @param label
@@ -77,7 +89,7 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 	 */
 	public GeoPolyLine(Construction cons) {
 		super(cons);
-		this.points = new GeoPointND[] {};
+		this.points = new GeoPointND[0];
 		// moved from GeoElement's constructor
 		// must be called from the subclass, see
 		// http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
@@ -119,8 +131,7 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 	 * @param startPoint of the segment.
 	 * @param endPoint of the segment.
 	 */
-	public static void setSegmentPoints(GeoSegment segment, GeoPoint startPoint,
-			GeoPoint endPoint) {
+	public static void setSegmentPoints(GeoSegment segment, GeoPoint startPoint, GeoPoint endPoint) {
 		segment.setStartPoint(startPoint);
 		segment.setEndPoint(endPoint);
 		GeoVec3D.lineThroughPoints(startPoint, endPoint, segment);
@@ -134,7 +145,7 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 
 	/**
 	 * return number for points
-	 * 
+	 *
 	 * @return number for points
 	 */
 	@Override
@@ -174,8 +185,7 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 		if (points.length != poly.points.length) {
 			GeoPointND[] tempPoints = new GeoPointND[poly.points.length];
 			for (int i = 0; i < tempPoints.length; i++) {
-				tempPoints[i] = i < points.length ? points[i]
-						: new GeoPoint(cons);
+				tempPoints[i] = i < points.length ? points[i] : new GeoPoint(cons);
 			}
 			points = tempPoints;
 		}
@@ -215,7 +225,7 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 	 * polyline p.
 	 */
 	@Override
-	final public ExtendedBoolean isEqualExtended(GeoElementND geo) {
+	public final ExtendedBoolean isEqualExtended(GeoElementND geo) {
 		boolean pointsOK = false;
 		if (geo.isGeoPolyLine()) {
 			GeoPolyLine g = (GeoPolyLine) geo;
@@ -224,11 +234,8 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 				pointsOK = true;
 				for (int i = 0; i < numPoints && pointsOK; i++) {
 					pointsOK = this.getPointND(i).isEqual(g.getPointND(i))
-							|| this
-									.getPointND(i)
-									.isEqual(g.getPointND(numPoints - 1 - i));
+							|| this.getPointND(i).isEqual(g.getPointND(numPoints - 1 - i));
 				}
-
 			}
 		}
 		return ExtendedBoolean.newExtendedBoolean(pointsOK);
@@ -244,7 +251,7 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 	}
 
 	@Override
-	final public String toValueString(StringTemplate tpl) {
+	public final String toValueString(StringTemplate tpl) {
 		return kernel.format(getLength(), tpl);
 	}
 
@@ -259,12 +266,12 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 	/**
 	 * @return length of the polyline
 	 */
-	final public double getLength() {
+	public final double getLength() {
 		return length;
 	}
 
 	@Override
-	final public double getDouble() {
+	public final double getDouble() {
 		return getLength();
 	}
 
@@ -371,13 +378,12 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 				pp.t += points.length - 1;
 			}
 			index = (int) Math.floor(pp.t);
-			
+
 			if (index >= points.length - 1) {
 				index = points.length - 2;
 			}
 		}
-		setSegmentPoints((GeoPoint) points[index],
-				(GeoPoint) points[index + 1]);
+		setSegmentPoints((GeoPoint) points[index], (GeoPoint) points[index + 1]);
 
 		double segParameter = pp.t - index;
 
@@ -447,7 +453,7 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 	 * returns all class-specific xml tags for getXML GeoGebra File Format
 	 */
 	@Override
-	protected void getStyleXML(StringBuilder sb) {
+	protected void getStyleXML(XMLStringBuilder sb) {
 		getLineStyleXML(sb);
 		super.getStyleXML(sb);
 		appendStartEndStyle(sb);
@@ -465,7 +471,7 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 
 	/**
 	 * Returns i-th vertex
-	 * 
+	 *
 	 * @param i
 	 *            index
 	 * @return i-th vertex
@@ -499,7 +505,7 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 
 	/**
 	 * Set vertices of the polyline
-	 * 
+	 *
 	 * @param points
 	 *            new vertices
 	 */
@@ -523,13 +529,11 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 	}
 
 	@Override
-	public void matrixTransform(double a00, double a01, double a10,
-			double a11) {
+	public void matrixTransform(double a00, double a01, double a10, double a11) {
 		for (int i = 0; i < points.length; i++) {
 			points[i].matrixTransform(a00, a01, a10, a11);
 		}
 		calcLength();
-
 	}
 
 	@Override
@@ -597,11 +601,18 @@ public class GeoPolyLine extends GeoElement implements GeoNumberValue,
 	}
 
 	@Override
-	public void matrixTransform(double a00, double a01, double a02, double a10,
-			double a11, double a12, double a20, double a21, double a22) {
+	public void matrixTransform(
+			double a00,
+			double a01,
+			double a02,
+			double a10,
+			double a11,
+			double a12,
+			double a20,
+			double a21,
+			double a22) {
 		for (int i = 0; i < points.length; i++) {
-			points[i].matrixTransform(a00, a01, a02, a10, a11, a12,
-					a20, a21, a22);
+			points[i].matrixTransform(a00, a01, a02, a10, a11, a12, a20, a21, a22);
 		}
 		calcLength();
 	}

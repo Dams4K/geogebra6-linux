@@ -1,5 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GArea;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.GPoint;
@@ -8,17 +25,17 @@ import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.plot.CurvePlotter;
 import org.geogebra.common.euclidian.plot.Gap;
 import org.geogebra.common.euclidian.plot.GeneralPathClippedForCurvePlotter;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.arithmetic.Inequality;
 import org.geogebra.common.kernel.arithmetic.Inequality.IneqType;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoFunction;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Drawable for drawing inequalities like x &lt; sin(y) or y &lt; x^3. Never
  * stands on its own, always part of DrawInequality tree
  */
-class DrawParametricInequality extends SetDrawable {
+class DrawParametricInequality extends SetDrawable implements MatchBorder {
 
 	private Inequality paramIneq;
 	private GeneralPathClippedForCurvePlotter gp;
@@ -32,8 +49,7 @@ class DrawParametricInequality extends SetDrawable {
 	 *            top level element (the function which may consist of several
 	 *            inequalities)
 	 */
-	protected DrawParametricInequality(Inequality ineq, EuclidianView view,
-			GeoElement geo) {
+	protected DrawParametricInequality(Inequality ineq, EuclidianView view, GeoElement geo) {
 		this.view = view;
 		this.paramIneq = ineq;
 		this.geo = geo;
@@ -41,7 +57,7 @@ class DrawParametricInequality extends SetDrawable {
 
 	@Override
 	public GArea getShape() {
-		return AwtFactory.getPrototype().newArea(gp);
+		return AwtFactory.getPrototype().newArea(gp.getGeneralPath());
 	}
 
 	/**
@@ -56,23 +72,23 @@ class DrawParametricInequality extends SetDrawable {
 		if (isHighlighted()) {
 			g2.setPaint(geo.getSelColor());
 			g2.setStroke(selStroke);
-			g2.draw(gp);
+			gp.draw(g2);
 		}
 
-		fill(g2, gp); // fill using default/hatching/image as
+		fill(g2, gp.getGeneralPath()); // fill using default/hatching/image as
 		// appropriate
 
 		if (geo.getLineThickness() > 0) {
 			g2.setPaint(getObjectColor());
 			g2.setStroke(objStroke);
-			g2.draw(gp);
+			gp.draw(g2);
 		}
 	}
 
 	@Override
 	public boolean hit(int x, int y, int hitThreshold) {
-		return gp.contains(x, y) || gp.intersects(x - hitThreshold,
-				y - hitThreshold, 2 * hitThreshold, 2 * hitThreshold);
+		return gp.contains(x, y)
+				|| gp.intersects(x - hitThreshold, y - hitThreshold, 2 * hitThreshold, 2 * hitThreshold);
 	}
 
 	@Override
@@ -84,7 +100,6 @@ class DrawParametricInequality extends SetDrawable {
 	@Override
 	public void setGeoElement(GeoElement geo) {
 		this.geo = geo;
-
 	}
 
 	@Override
@@ -103,15 +118,13 @@ class DrawParametricInequality extends SetDrawable {
 			double axEv = view.toScreenCoordYd(ax);
 			if (paramIneq.isAboveBorder()) {
 				gp.moveTo(view.getWidth() + 10, axEv);
-				labelPos = CurvePlotter.plotCurve(border, ax, bx, view, gp,
-						true, Gap.RESET_XMAX);
+				labelPos = CurvePlotter.plotCurve(border, ax, bx, view, gp, true, Gap.RESET_XMAX);
 				gp.lineTo(view.getWidth() + 10, gp.getCurrentPoint().getY());
 				gp.lineTo(view.getWidth() + 10, axEv);
 				gp.closePath();
 			} else {
 				gp.moveTo(-10, axEv);
-				labelPos = CurvePlotter.plotCurve(border, ax, bx, view, gp,
-						true, Gap.RESET_XMIN);
+				labelPos = CurvePlotter.plotCurve(border, ax, bx, view, gp, true, Gap.RESET_XMIN);
 				gp.lineTo(-10, gp.getCurrentPoint().getY());
 				gp.lineTo(-10, axEv);
 				gp.closePath();
@@ -122,21 +135,18 @@ class DrawParametricInequality extends SetDrawable {
 			double axEv = view.toScreenCoordXd(ax);
 			if (paramIneq.isAboveBorder()) {
 				gp.moveTo(axEv, -10);
-				labelPos = CurvePlotter.plotCurve(border, ax, bx, view, gp,
-						true, Gap.RESET_YMIN);
+				labelPos = CurvePlotter.plotCurve(border, ax, bx, view, gp, true, Gap.RESET_YMIN);
 				gp.lineTo(gp.getCurrentPoint().getX(), -10);
 				gp.lineTo(axEv, -10);
 				gp.closePath();
 			} else {
 				gp.moveTo(axEv, view.getHeight() + 10);
-				labelPos = CurvePlotter.plotCurve(border, ax, bx, view, gp,
-						true, Gap.RESET_YMAX);
+				labelPos = CurvePlotter.plotCurve(border, ax, bx, view, gp, true, Gap.RESET_YMAX);
 				gp.lineTo(gp.getCurrentPoint().getX(), view.getHeight() + 10);
 				gp.lineTo(axEv, view.getHeight() + 10);
 				gp.closePath();
 			}
 			border.evaluateCurve(ax);
-
 		}
 		if (this.geo.isLabelVisible() && labelPos != null) {
 			xLabel = labelPos.getX();
@@ -145,10 +155,12 @@ class DrawParametricInequality extends SetDrawable {
 		}
 	}
 
-	/**
-	 * @return true when x is the parameter (false for y)
-	 */
-	boolean isXparametric() {
-		return paramIneq.getType() == IneqType.INEQUALITY_PARAMETRIC_X;
+	@Override
+	public boolean matchBorder(@NonNull GeoElement border) {
+		GeoElement ineqBorder = getBorder();
+		if (ineqBorder != null && ineqBorder.equals(border)) {
+			return paramIneq.getType() == IneqType.INEQUALITY_PARAMETRIC_X;
+		}
+		return false;
 	}
 }

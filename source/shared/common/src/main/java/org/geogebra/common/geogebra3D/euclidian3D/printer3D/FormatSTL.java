@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.printer3D;
 
 import org.geogebra.common.awt.GColor;
@@ -10,13 +26,13 @@ import org.geogebra.common.kernel.matrix.Coords;
  */
 public class FormatSTL extends Format {
 
-	private ReusableArrayList<Double> verticesList = new ReusableArrayList<>();
-	private ReusableArrayList<Double> normalsList = new ReusableArrayList<>();
+	private final ReusableArrayList<Double> verticesList = new ReusableArrayList<>();
+	private final ReusableArrayList<Double> normalsList = new ReusableArrayList<>();
 
-	private Coords tmpCoords1 = new Coords(3);
-	private Coords tmpCoords2 = new Coords(3);
-	private Coords tmpCoords3 = new Coords(3);
-	private Coords n = new Coords(3);
+	private final Coords tmpCoords1 = new Coords(3);
+	private final Coords tmpCoords2 = new Coords(3);
+	private final Coords tmpCoords3 = new Coords(3);
+	private final Coords n = new Coords(3);
 
 	private double scale;
 
@@ -55,14 +71,18 @@ public class FormatSTL extends Format {
 	}
 
 	@Override
-	public void getObjectStart(StringBuilder sb, String type, GeoElement geo, boolean transparency,
-			GColor color, double alpha) {
+	public void getObjectStart(
+			StringBuilder sb,
+			String type,
+			GeoElement geo,
+			boolean transparency,
+			GColor color,
+			double alpha) {
 		// nothing to do
 	}
 
 	@Override
-	public void getPolyhedronStart(StringBuilder sb, boolean isFlat,
-			boolean isCurve) {
+	public void getPolyhedronStart(StringBuilder sb, boolean isFlat, boolean isCurve) {
 		currentExportIsCurve = isCurve;
 		if (currentExportAsFilledSolids()) {
 			polygonHandler.startPolygon(isFlat);
@@ -88,12 +108,10 @@ public class FormatSTL extends Format {
 		} else {
 			polygonHandler.addVertex(x * scale, y * scale, z * scale);
 		}
-
 	}
 
 	@Override
-	public void getVertices(StringBuilder sb, double x, double y, double z,
-			double thickness) {
+	public void getVertices(StringBuilder sb, double x, double y, double z, double thickness) {
 		int index = verticesList.getLength();
 		double nx = normalsList.get(index);
 		double ny = normalsList.get(index + 1);
@@ -130,15 +148,15 @@ public class FormatSTL extends Format {
 			return true;
 		}
 
-		double v1x = verticesList.get(3 * v1);
-		double v1y = verticesList.get(3 * v1 + 1);
-		double v1z = verticesList.get(3 * v1 + 2);
-		double v2x = verticesList.get(3 * v2);
-		double v2y = verticesList.get(3 * v2 + 1);
-		double v2z = verticesList.get(3 * v2 + 2);
-		double v3x = verticesList.get(3 * v3);
-		double v3y = verticesList.get(3 * v3 + 1);
-		double v3z = verticesList.get(3 * v3 + 2);
+		final double v1x = verticesList.get(3 * v1);
+		final double v1y = verticesList.get(3 * v1 + 1);
+		final double v1z = verticesList.get(3 * v1 + 2);
+		final double v2x = verticesList.get(3 * v2);
+		final double v2y = verticesList.get(3 * v2 + 1);
+		final double v2z = verticesList.get(3 * v2 + 2);
+		final double v3x = verticesList.get(3 * v3);
+		final double v3y = verticesList.get(3 * v3 + 1);
+		final double v3z = verticesList.get(3 * v3 + 2);
 
 		// calculate normal from vertices
 		tmpCoords1.set(v1x, v1y, v1z);
@@ -151,32 +169,30 @@ public class FormatSTL extends Format {
 
 		// out normal
 		switch (normal) {
-		case ExportToPrinter3D.NORMAL_SAME_INDEX:
-			// use first normal
-			n.setX(normalsList.get(3 * v1));
-			n.setY(normalsList.get(3 * v1 + 1));
-			n.setZ(normalsList.get(3 * v1 + 2));
-			break;
-		case ExportToPrinter3D.NORMAL_NOT_SET:
-			// use normals from vertices
-			n.set3(tmpCoords1);
-			break;
-		default:
-			// use normal index
-			n.setX(normalsList.get(3 * normal));
-			n.setY(normalsList.get(3 * normal + 1));
-			n.setZ(normalsList.get(3 * normal + 2));
-			break;
+			case ExportToPrinter3D.NORMAL_SAME_INDEX:
+				// use first normal
+				n.setX(normalsList.get(3 * v1));
+				n.setY(normalsList.get(3 * v1 + 1));
+				n.setZ(normalsList.get(3 * v1 + 2));
+				break;
+			case ExportToPrinter3D.NORMAL_NOT_SET:
+				// use normals from vertices
+				n.set3(tmpCoords1);
+				break;
+			default:
+				// use normal index
+				n.setX(normalsList.get(3 * normal));
+				n.setY(normalsList.get(3 * normal + 1));
+				n.setZ(normalsList.get(3 * normal + 2));
+				break;
 		}
 
-		boolean notReversed = normal == ExportToPrinter3D.NORMAL_NOT_SET
-				|| tmpCoords1.dotproduct(n) > 0;
+		boolean notReversed =
+				normal == ExportToPrinter3D.NORMAL_NOT_SET || tmpCoords1.dotproduct(n) > 0;
 		if (notReversed) {
-			getTriangle(sb, n.getX(), n.getY(), n.getZ(), v1x, v1y, v1z, v2x,
-					v2y, v2z, v3x, v3y, v3z);
+			getTriangle(sb, n.getX(), n.getY(), n.getZ(), v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z);
 		} else {
-			getTriangle(sb, n.getX(), n.getY(), n.getZ(), v1x, v1y, v1z, v3x,
-					v3y, v3z, v2x, v2y, v2z);
+			getTriangle(sb, n.getX(), n.getY(), n.getZ(), v1x, v1y, v1z, v3x, v3y, v3z, v2x, v2y, v2z);
 		}
 
 		return notReversed;
@@ -184,7 +200,7 @@ public class FormatSTL extends Format {
 
 	/**
 	 * write triangle to string builder
-	 * 
+	 *
 	 * @param sb
 	 *            string builder
 	 * @param nx
@@ -212,9 +228,19 @@ public class FormatSTL extends Format {
 	 * @param v3z
 	 *            third vertex z
 	 */
-	public void getTriangle(StringBuilder sb, double nx,
-			double ny, double nz, double v1x, double v1y, double v1z,
-			double v2x, double v2y, double v2z, double v3x, double v3y,
+	public void getTriangle(
+			StringBuilder sb,
+			double nx,
+			double ny,
+			double nz,
+			double v1x,
+			double v1y,
+			double v1z,
+			double v2x,
+			double v2y,
+			double v2z,
+			double v3x,
+			double v3y,
 			double v3z) {
 		appendNewline(sb);
 		sb.append("facet normal ");
@@ -256,7 +282,6 @@ public class FormatSTL extends Format {
 		// end
 		appendNewline(sb);
 		sb.append("endfacet");
-
 	}
 
 	@Override

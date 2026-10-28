@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -27,8 +31,7 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
 /**
  * Two tangents through point P to conic section c
  */
-public abstract class AlgoTangentPointND extends AlgoElement
-		implements TangentAlgo {
+public abstract class AlgoTangentPointND extends AlgoElement implements TangentAlgo {
 
 	protected GeoPointND P; // input
 	protected GeoConicND c; // input
@@ -49,8 +52,7 @@ public abstract class AlgoTangentPointND extends AlgoElement
 	 * @param c
 	 *            conic
 	 */
-	public AlgoTangentPointND(Construction cons, String[] labels, GeoPointND P,
-			GeoConicND c) {
+	public AlgoTangentPointND(Construction cons, String[] labels, GeoPointND P, GeoConicND c) {
 		this(cons, P, c);
 		LabelManager.setLabels(labels, getOutput());
 	}
@@ -82,12 +84,12 @@ public abstract class AlgoTangentPointND extends AlgoElement
 	/**
 	 * set polar
 	 */
-	abstract protected void setPolar();
+	protected abstract void setPolar();
 
 	/**
 	 * set tangents
 	 */
-	abstract protected void setTangents();
+	protected abstract void setTangents();
 
 	@Override
 	public Commands getClassName() {
@@ -115,7 +117,7 @@ public abstract class AlgoTangentPointND extends AlgoElement
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if tangents will be defined
 	 */
 	protected boolean checkUndefined() {
@@ -167,32 +169,31 @@ public abstract class AlgoTangentPointND extends AlgoElement
 	/**
 	 * set tangent equal to polar
 	 */
-	abstract protected void setTangentFromPolar(int i);
+	protected abstract void setTangentFromPolar(int i);
 
 	/**
-	 * 
+	 *
 	 * @return true if P is on c
 	 */
-	abstract protected boolean isIntersectionPointIncident();
+	protected abstract boolean isIntersectionPointIncident();
 
 	/**
 	 * update polar line
 	 */
-	abstract protected void updatePolarLine();
+	protected abstract void updatePolarLine();
 
 	/**
 	 * update tangents
 	 */
-	abstract protected void updateTangents();
+	protected abstract void updateTangents();
 
 	@Override
 	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("TangentToAThroughB",
-				"Tangent to %0 through %1", c.getLabel(tpl),
-				P.getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault(
+						"TangentToAThroughB", "Tangent to %0 through %1", c.getLabel(tpl), P.getLabel(tpl));
 	}
 
 	@Override

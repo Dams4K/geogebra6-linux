@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.algos;
 
 import java.util.ArrayList;
@@ -51,8 +67,13 @@ public class AlgoNSolveODE extends AlgoElement {
 	 * @param endX
 	 *            until when should be integrated (X-coords)
 	 */
-	public AlgoNSolveODE(Construction cons, String[] labels, GeoList fun,
-			GeoNumeric startX, GeoList startY, GeoNumeric endX) {
+	public AlgoNSolveODE(
+			Construction cons,
+			String[] labels,
+			GeoList fun,
+			GeoNumeric startX,
+			GeoList startY,
+			GeoNumeric endX) {
 
 		super(cons);
 
@@ -119,18 +140,16 @@ public class AlgoNSolveODE extends AlgoElement {
 		al = new ArrayList<>(dim);
 
 		for (int i = 0; i < dim; i++) {
-			al.add(new ArrayList<MyPoint>());
+			al.add(new ArrayList<>());
 		}
 
-		FirstOrderIntegrator integrator = new DormandPrince54Integrator(0.001,
-				0.01, 0.000001, 0.0001);
+		FirstOrderIntegrator integrator = new DormandPrince54Integrator(0.001, 0.01, 0.000001, 0.0001);
 		FirstOrderDifferentialEquations ode = new ODEN(fun);
 
 		integrator.addStepHandler(stepHandler);
 
 		for (int i = 0; i < dim; i++) {
-			al.get(i).add(new MyPoint(startX.getDouble(), y0[i],
-					SegmentType.MOVE_TO));
+			al.get(i).add(new MyPoint(startX.getDouble(), y0[i], SegmentType.MOVE_TO));
 		}
 		try {
 			integrator.integrate(ode, t0, y0, endX.getDouble(), y0);
@@ -157,15 +176,14 @@ public class AlgoNSolveODE extends AlgoElement {
 
 		@Override
 		public void init(double ts0, double[] ys0, double t) {
-			//this.
+			// this.
 		}
 
 		@Override
 		public void handleStep(StepInterpolator interpolator, boolean isLast) {
 			double t = interpolator.getCurrentTime();
 			if (!Double.isFinite(t)) {
-				throw new IllegalArgumentException(
-						"Invalid value of time:" + t);
+				throw new IllegalArgumentException("Invalid value of time:" + t);
 			}
 			double[] y1 = interpolator.getInterpolatedState();
 			for (int i = 0; i < y1.length; i++) {
@@ -174,10 +192,10 @@ public class AlgoNSolveODE extends AlgoElement {
 		}
 	};
 
-	private class ODEN implements FirstOrderDifferentialEquations {
-		private GeoList fun1;
+	private final class ODEN implements FirstOrderDifferentialEquations {
+		private final GeoList fun1;
 
-		public ODEN(GeoList fun) {
+		private ODEN(GeoList fun) {
 			this.fun1 = fun;
 		}
 
@@ -197,7 +215,5 @@ public class AlgoNSolveODE extends AlgoElement {
 				yDot[i] = ((FunctionalNVar) fun1.get(i)).evaluate(input1);
 			}
 		}
-
 	}
-
 }

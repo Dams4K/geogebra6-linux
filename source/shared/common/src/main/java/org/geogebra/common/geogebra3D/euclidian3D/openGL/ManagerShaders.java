@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.openGL;
 
 import java.util.ArrayList;
@@ -12,9 +28,9 @@ import org.geogebra.common.kernel.discrete.PolygonTriangulation.TriangleFan;
 import org.geogebra.common.kernel.matrix.Coords;
 
 /**
- * 
+ *
  * Manager using shaders
- * 
+ *
  * @author ggb3D
  *
  */
@@ -43,23 +59,23 @@ public class ManagerShaders extends Manager {
 	/**
 	 * alpha value for invisible parts
 	 */
-	static final public float ALPHA_INVISIBLE_VALUE = -1f;
+	public static final float ALPHA_INVISIBLE_VALUE = -1f;
 	/** color value for invisible parts */
 	public static final GColor COLOR_INVISIBLE = GColor.newColor(0, 0, 0, 0);
 
-	private GLBufferManagerCurves bufferManagerCurves;
-	private GLBufferManagerCurvesClipped bufferManagerCurvesClipped;
-	private GLBufferManagerSurfaces bufferManagerSurfaces;
-	private GLBufferManagerSurfaces bufferManagerSurfacesClosed;
-	private GLBufferManagerSurfacesClipped bufferManagerSurfacesClipped;
-	private GLBufferManagerPoints bufferManagerPoints;
-	private GLBufferManagerTemplatesForPoints bufferTemplates;
+	private final GLBufferManagerCurves bufferManagerCurves;
+	private final GLBufferManagerCurvesClipped bufferManagerCurvesClipped;
+	private final GLBufferManagerSurfaces bufferManagerSurfaces;
+	private final GLBufferManagerSurfaces bufferManagerSurfacesClosed;
+	private final GLBufferManagerSurfacesClipped bufferManagerSurfacesClipped;
+	private final GLBufferManagerPoints bufferManagerPoints;
+	private final GLBufferManagerTemplatesForPoints bufferTemplates;
 	private GLBufferManager currentBufferManager;
 	private GColor currentColor;
 	private int currentLayer;
 	private int currentTextureType;
 	private GLBufferIndicesArray indices;
-	private float[] translate;
+	private final float[] translate;
 	private float scale;
 
 	private boolean indicesDone;
@@ -89,7 +105,7 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param renderer
 	 *            renderer
 	 * @param view3D
@@ -103,9 +119,9 @@ public class ManagerShaders extends Manager {
 
 		setScalerView();
 
-		bufferTemplates = new GLBufferManagerTemplatesForPoints();
+		bufferTemplates = new GLBufferManagerTemplatesForPoints(this);
 		bufferManagerCurves = new GLBufferManagerCurves(this);
-		bufferManagerCurvesClipped = new GLBufferManagerCurvesClipped();
+		bufferManagerCurvesClipped = new GLBufferManagerCurvesClipped(this);
 		bufferManagerSurfaces = new GLBufferManagerSurfaces(this);
 		bufferManagerSurfacesClosed = new GLBufferManagerSurfaces(this);
 		bufferManagerSurfacesClipped = new GLBufferManagerSurfacesClipped(this);
@@ -149,8 +165,8 @@ public class ManagerShaders extends Manager {
 			currentGeometriesSet = geometriesSetList.get(old);
 			// don't use packed set for non-packed geometries
 			if (currentGeometriesSet != null && currentGeometriesSet.usePacking() != mayBePacked) {
-                currentGeometriesSet = null;
-            }
+				currentGeometriesSet = null;
+			}
 		} else {
 			currentGeometriesSet = null;
 		}
@@ -204,7 +220,7 @@ public class ManagerShaders extends Manager {
 		currentGeometriesSet.setTextures(textures, textures.getLength());
 		currentGeometriesSet.setColors(colors, colors.getLength());
 		currentGeometriesSet.bindGeometry(-1, TypeElement.NONE); // TODO remove
-																	// that
+		// that
 	}
 
 	@Override
@@ -223,8 +239,7 @@ public class ManagerShaders extends Manager {
 	@Override
 	public int startPolygons(Drawable3D d) {
 		setPackSurface(d, false);
-		int index = startNewList(d.getReusableSurfaceIndex(), true);
-		return index;
+		return startNewList(d.getReusableSurfaceIndex(), true);
 	}
 
 	@Override
@@ -237,7 +252,7 @@ public class ManagerShaders extends Manager {
 	public void remove(int index) {
 
 		if (index >= 0 && index != currentOld) { // negative index is for no
-													// geometry
+			// geometry
 			indicesRemoved.push(index);
 			removeGeometrySet(index);
 		}
@@ -254,8 +269,7 @@ public class ManagerShaders extends Manager {
 
 		currentGeometriesSet = geometriesSetList.get(index);
 		if (currentGeometriesSet != null) {
-			for (int i = 0; i < currentGeometriesSet
-					.getGeometriesLength(); i++) {
+			for (int i = 0; i < currentGeometriesSet.getGeometriesLength(); i++) {
 				currentGeometriesSet.get(i).draw(renderer);
 			}
 		}
@@ -284,8 +298,7 @@ public class ManagerShaders extends Manager {
 
 		currentGeometriesSet = geometriesSetList.get(index);
 		if (currentGeometriesSet != null && !currentGeometriesSet.usePacking()) {
-			for (int i = 0; i < currentGeometriesSet
-					.getGeometriesLength(); i++) {
+			for (int i = 0; i < currentGeometriesSet.getGeometriesLength(); i++) {
 				currentGeometriesSet.get(i).drawLabel(renderer);
 			}
 		}
@@ -337,8 +350,7 @@ public class ManagerShaders extends Manager {
 	}
 
 	@Override
-	public void rectangleGeometry(double x, double y, double z, double width,
-			double height) {
+	public void rectangleGeometry(double x, double y, double z, double width, double height) {
 
 		startGeometry(Type.TRIANGLE_STRIP);
 		texture(0, 0);
@@ -350,7 +362,6 @@ public class ManagerShaders extends Manager {
 		texture(1, 1);
 		vertexInt(x + width, y + height, z);
 		endGeometry();
-
 	}
 
 	/*
@@ -427,15 +438,14 @@ public class ManagerShaders extends Manager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param mayBePacked
 	 *            true if this set may be in packed buffer
 	 * @return new geometries set
 	 */
 	protected GeometriesSet newGeometriesSet(boolean mayBePacked) {
 		if (mayBePacked && currentBufferManager != null) {
-			return new GeometriesSetPacking(this,
-					currentBufferManager, currentColor, currentLayer);
+			return new GeometriesSetPacking(this, currentBufferManager, currentColor, currentLayer);
 		}
 		return new GeometriesSet(this);
 	}
@@ -467,11 +477,11 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * remove geometry set at index
-	 * 
+	 *
 	 * @param index
 	 *            index
 	 */
-	final protected void removeGeometrySet(int index) {
+	protected final void removeGeometrySet(int index) {
 		GeometriesSet set = removeGeometrySetFromList(index);
 		if (set != null) {
 			set.removeBuffers();
@@ -480,7 +490,7 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * remove geometry set corresponding to index
-	 * 
+	 *
 	 * @param index
 	 *            geometry set index
 	 * @return geometry set corresponding to index (if exists)
@@ -490,8 +500,7 @@ public class ManagerShaders extends Manager {
 	}
 
 	@Override
-	public void drawPolygonConvex(Coords n, Coords[] v, int length,
-			boolean reverse) {
+	public void drawPolygonConvex(Coords n, Coords[] v, int length, boolean reverse) {
 
 		startGeometry(Type.TRIANGLES);
 
@@ -511,12 +520,11 @@ public class ManagerShaders extends Manager {
 		} else {
 			endGeometry(length, TypeElement.FAN_DIRECT);
 		}
-
 	}
 
 	@Override
-	public void drawTriangleFans(Coords n, Coords[] verticesWithIntersections,
-			int length, ArrayList<TriangleFan> triFanList) {
+	public void drawTriangleFans(
+			Coords n, Coords[] verticesWithIntersections, int length, ArrayList<TriangleFan> triFanList) {
 
 		startGeometry(Type.TRIANGLES);
 
@@ -558,14 +566,13 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * set indices reference when drawing triangle fans
-	 * 
+	 *
 	 * @param size
 	 *            number of triangles
 	 */
 	protected void setIndicesForDrawTriangleFans(int size) {
 		if (currentBufferManager == null) {
-			bufferIndicesForDrawTriangleFans = getCurrentGeometryIndices(
-					size * 3);
+			bufferIndicesForDrawTriangleFans = getCurrentGeometryIndices(size * 3);
 		} else {
 			initIndices(size);
 		}
@@ -573,7 +580,7 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * put new index to indices buffer
-	 * 
+	 *
 	 * @param index
 	 *            index
 	 */
@@ -596,7 +603,7 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * draw curves
-	 * 
+	 *
 	 * @param renderer1
 	 *            renderer
 	 * @param hidden
@@ -608,7 +615,7 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * draw clipped curves
-	 * 
+	 *
 	 * @param renderer1
 	 *            renderer
 	 * @param hidden
@@ -622,7 +629,7 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * draw surfaces
-	 * 
+	 *
 	 * @param renderer1
 	 *            renderer
 	 */
@@ -632,7 +639,7 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * draw points
-	 * 
+	 *
 	 * @param renderer1
 	 *            renderer
 	 */
@@ -642,7 +649,7 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * draw closed surfaces
-	 * 
+	 *
 	 * @param renderer1
 	 *            renderer
 	 */
@@ -652,7 +659,7 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * draw closed surfaces
-	 * 
+	 *
 	 * @param renderer1
 	 *            renderer
 	 */
@@ -664,30 +671,26 @@ public class ManagerShaders extends Manager {
 
 	@Override
 	public void setPackCurve(Drawable3D d, boolean clipped) {
-		currentBufferManager = clipped ? bufferManagerCurvesClipped
-				: bufferManagerCurves;
+		currentBufferManager = clipped ? bufferManagerCurvesClipped : bufferManagerCurves;
 		this.currentColor = d.getColor();
 		this.currentLayer = d.getLayer();
-		this.currentTextureType = Textures
-				.getDashIdFromLineType(d.getLineType(), d.getLineTypeHidden());
+		this.currentTextureType =
+				Textures.getDashIdFromLineType(d.getLineType(), d.getLineTypeHidden());
 	}
 
 	@Override
 	public void updateColorAndLayer(GColor color, int layer, int index) {
 		GeometriesSet geometrySet = getGeometrySet(index);
 		if (geometrySet instanceof GeometriesSetPacking) {
-			((GeometriesSetPacking) geometrySet)
-					.updateColorAndLayer(color, layer);
+			((GeometriesSetPacking) geometrySet).updateColorAndLayer(color, layer);
 		}
 	}
 
 	@Override
-	public void updateVisibility(boolean visible, int index, int alpha,
-			int layer) {
+	public void updateVisibility(boolean visible, int index, int alpha, int layer) {
 		GeometriesSet geometrySet = getGeometrySet(index);
 		if (geometrySet instanceof GeometriesSetPacking) {
-			((GeometriesSetPacking) geometrySet)
-					.updateVisibility(visible, alpha, layer);
+			((GeometriesSetPacking) geometrySet).updateVisibility(visible, alpha, layer);
 		}
 	}
 
@@ -718,9 +721,9 @@ public class ManagerShaders extends Manager {
 
 	@Override
 	public void setPackSurface(Drawable3D d, boolean clipped) {
-		currentBufferManager = clipped ? bufferManagerSurfacesClipped
-				: d.addedFromClosedSurface() ? bufferManagerSurfacesClosed
-				: bufferManagerSurfaces;
+		currentBufferManager = clipped
+				? bufferManagerSurfacesClipped
+				: d.addedFromClosedSurface() ? bufferManagerSurfacesClosed : bufferManagerSurfaces;
 		this.currentColor = d.getSurfaceColor();
 		this.currentLayer = d.getLayer();
 	}
@@ -738,7 +741,7 @@ public class ManagerShaders extends Manager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return current indices
 	 */
 	public ReusableArrayList<Short> getIndices() {
@@ -759,7 +762,7 @@ public class ManagerShaders extends Manager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return translate (for point drawing)
 	 */
 	public float[] getTranslate() {
@@ -767,7 +770,7 @@ public class ManagerShaders extends Manager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return scale (for point drawing)
 	 */
 	public float getScale() {
@@ -776,18 +779,18 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * set current buffer manager
-	 * 
+	 *
 	 * @param bufferManager
 	 *            buffer manager
 	 */
-	public void setCurrentBufferManager(GLBufferManager bufferManager) {
+	private void setCurrentBufferManager(GLBufferManager bufferManager) {
 		currentBufferManager = bufferManager;
 	}
 
 	/**
 	 * end geometry with known size, elements length, vertices and normals
 	 * arrays
-	 * 
+	 *
 	 * @param size
 	 *            indices size
 	 * @param elementsLength
@@ -797,8 +800,8 @@ public class ManagerShaders extends Manager {
 	 * @param normals1
 	 *            normals array
 	 */
-	public void endGeometry(int size, int elementsLength,
-			ArrayList<Double> vertices1, ArrayList<Double> normals1) {
+	public void endGeometry(
+			int size, int elementsLength, ArrayList<Double> vertices1, ArrayList<Double> normals1) {
 		currentGeometriesSet.setVertices(vertices1, elementsLength * 3);
 		currentGeometriesSet.setNormals(normals1, elementsLength * 3);
 		currentGeometriesSet.setTextures(null, 0);
@@ -807,7 +810,7 @@ public class ManagerShaders extends Manager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return buffer templates (for points)
 	 */
 	public GLBufferManagerTemplatesForPoints getBufferTemplates() {
@@ -816,7 +819,7 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * set old type (used for last geometry)
-	 * 
+	 *
 	 * @param type
 	 *            type
 	 */
@@ -825,7 +828,7 @@ public class ManagerShaders extends Manager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return last geometry type
 	 */
 	public TypeElement getOldType() {
@@ -834,7 +837,7 @@ public class ManagerShaders extends Manager {
 
 	/**
 	 * set if indices have been done once (at least)
-	 * 
+	 *
 	 * @param flag
 	 *            flag
 	 */
@@ -843,7 +846,7 @@ public class ManagerShaders extends Manager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return if indices have been done once (at least)
 	 */
 	public boolean getIndicesDone() {

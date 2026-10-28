@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.geos;
@@ -25,7 +29,7 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * Locus of points
- * 
+ *
  * @author Markus
  */
 public class GeoLocus3D extends GeoLocusND<MyPoint3D> {
@@ -34,7 +38,7 @@ public class GeoLocus3D extends GeoLocusND<MyPoint3D> {
 
 	/**
 	 * Creates new locus
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 */
@@ -49,8 +53,7 @@ public class GeoLocus3D extends GeoLocusND<MyPoint3D> {
 
 	@Override
 	public void insertPoint(double x, double y, double z, boolean lineTo) {
-		myPointList.add(new MyPoint3D(x, y, z, lineTo ? SegmentType.LINE_TO
-				: SegmentType.MOVE_TO));
+		myPointList.add(new MyPoint3D(x, y, z, lineTo ? SegmentType.LINE_TO : SegmentType.MOVE_TO));
 	}
 
 	@Override
@@ -75,10 +78,10 @@ public class GeoLocus3D extends GeoLocusND<MyPoint3D> {
 		PathParameter pp = P.getPathParameter();
 		if (closestPoint != null) {
 			coords.setX(closestPoint.x); // (1 - closestPointParameter) *
-										// locusPoint.x +
+			// locusPoint.x +
 			// closestPointParameter * locusPoint2.x;
 			coords.setY(closestPoint.y); // (1 - closestPointParameter) *
-										// locusPoint.y +
+			// locusPoint.y +
 			// closestPointParameter * locusPoint2.y;
 			coords.setZ(closestPoint.getZ());
 			coords.setW(1.0);
@@ -127,8 +130,7 @@ public class GeoLocus3D extends GeoLocusND<MyPoint3D> {
 				coords = ((GeoPoint3D) changingPoint).getWillingCoords();
 
 				if (((GeoPoint3D) changingPoint).hasWillingDirection()) {
-					return project.distLine(coords,
-							((GeoPoint3D) changingPoint).getWillingDirection());
+					return project.distLine(coords, ((GeoPoint3D) changingPoint).getWillingDirection());
 				}
 			}
 		}

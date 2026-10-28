@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel;
 
 import java.util.ArrayList;
@@ -7,23 +23,22 @@ import org.geogebra.common.kernel.kernelND.GeoElementND;
 
 /**
  * @author mathieu
- * 
+ *
  *         Class that stores an ordered set of ConstructionElements, beginning
  *         with the minor ceID value, and going in the direction of the second
  *         minor ceID value.
- * 
+ *
  *         This allow to compare cycles between each others.
- * 
+ *
  *         Warning: the cycle supposes that there's no ConstructionElement that
  *         appears twice; but there's no test to ensure this when using add()
  *         method.
- * 
+ *
  *         Use setDirection() when the cycle is fed to ensure good direction
  *         comparison.
  *
  *         This class is used e.g. for describing points of polygons.
  */
-
 public class ConstructionElementCycle extends ArrayList<GeoElementND>
 		implements Comparable<ConstructionElementCycle> {
 
@@ -40,15 +55,14 @@ public class ConstructionElementCycle extends ArrayList<GeoElementND>
 
 	/**
 	 * return the cycle constituted of P1 and P2
-	 * 
+	 *
 	 * @param P1
 	 *            first element
 	 * @param P2
 	 *            second element
 	 * @return the cycle constituted of P1 and P2
 	 */
-	static public ConstructionElementCycle segmentDescription(
-			GeoElement P1, GeoElement P2) {
+	public static ConstructionElementCycle segmentDescription(GeoElement P1, GeoElement P2) {
 		ConstructionElementCycle cycle = new ConstructionElementCycle();
 		cycle.add(P1);
 		cycle.add(P2);
@@ -111,8 +125,7 @@ public class ConstructionElementCycle extends ArrayList<GeoElementND>
 		int diff = 0;
 		// find the first two different elements, return the difference or 0
 		for (int i = 0; diff == 0 && i < size(); i++) {
-			diff = getCycleNext()
-					.compareTo(cycle.getCycleNext().toGeoElement());
+			diff = getCycleNext().compareTo(cycle.getCycleNext().toGeoElement());
 		}
 		return diff;
 	}
@@ -163,5 +176,4 @@ public class ConstructionElementCycle extends ArrayList<GeoElementND>
 
 		return sb.toString();
 	}
-
 }

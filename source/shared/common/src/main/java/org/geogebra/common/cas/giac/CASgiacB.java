@@ -1,24 +1,41 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.cas.giac;
 
 import java.util.ArrayList;
 
+import org.geogebra.common.awt.annotations.HasNativeSubclass;
 import org.geogebra.common.cas.CASparser;
 import org.geogebra.common.cas.error.TimeoutException;
 import org.geogebra.common.cas.giac.binding.CASGiacBinding;
 import org.geogebra.common.cas.giac.binding.Context;
 import org.geogebra.common.cas.giac.binding.Gen;
 import org.geogebra.common.util.debug.Log;
-import org.geogebra.common.util.debug.crashlytics.CrashlyticsLogger;
 
 /**
  * Giac connector using C++ or JNI binding
  */
+@HasNativeSubclass
 public abstract class CASgiacB extends CASgiac {
 
 	/**
 	 * Giac's context.
 	 */
-	private Context context;
+	Context context;
 	/** result from thread */
 	protected volatile String threadResult;
 
@@ -48,47 +65,8 @@ public abstract class CASgiacB extends CASgiac {
 	}
 
 	@Override
-	final public void clearResult() {
+	public final void clearResult() {
 		threadResult = null;
-	}
-
-	/**
-	 * @param exp0 String to send to Giac
-	 * @param timeoutMilliseconds timeout in milliseconds
-	 * @return String from Giac
-	 */
-	final String evalRaw(String exp0, long timeoutMilliseconds) {
-		CASGiacBinding binding = createBinding();
-		// #5439
-		// reset Giac before each call
-		init(exp0, timeoutMilliseconds);
-
-		String exp = wrapInevalfa(exp0);
-
-		debug("giac evalRaw input: ", exp);
-
-		String cachedResult = getResultFromCache(exp);
-
-		if (cachedResult != null && !cachedResult.isEmpty()) {
-			return cachedResult;
-		}
-		String casInput = "caseval(" + exp + ")";
-
-		CrashlyticsLogger.log("Giac Input: " + casInput);
-
-		Gen g = binding.createGen(casInput, context);
-		g = g.eval(1, context);
-		String ret = g.print(context);
-
-		debug("giac evalRaw output: ", ret);
-
-		if (ret != null && ret.startsWith("\"") && ret.endsWith("\"")) {
-			ret = ret.substring(1, ret.length() - 1);
-		}
-
-		addResultToCache(exp, ret);
-
-		return ret;
 	}
 
 	/**
@@ -99,7 +77,7 @@ public abstract class CASgiacB extends CASgiac {
 		Log.debug(prefix + giacString);
 	}
 
-	private void init(String exp, long timeoutMilliseconds) {
+	void init(String exp, long timeoutMilliseconds) {
 		CASGiacBinding binding = createBinding();
 		Gen g = binding.createGen(initString, context);
 		g.eval(1, context);
@@ -116,15 +94,12 @@ public abstract class CASgiacB extends CASgiac {
 			 * contains an internal GeoGebra CAS command, then that command will be executed
 			 * in Giac. TODO: find a better a way.
 			 */
-			if (function.functionName == null
-					|| (foundInInput = (exp
-					.indexOf(function.functionName) > -1))) {
+			if (function.functionName == null || (foundInInput = exp.contains(function.functionName))) {
 				g = binding.createGen(function.definitionString, context);
 				g.eval(1, context);
 				/* Some commands may require additional commands to load. */
 				if (foundInInput) {
-					ArrayList<CustomFunctions> dependencies = CustomFunctions
-							.prereqs(function);
+					ArrayList<CustomFunctions> dependencies = CustomFunctions.prereqs(function);
 					for (CustomFunctions dep : dependencies) {
 						Log.debug(function + " implicitly loads " + dep);
 						g = binding.createGen(dep.definitionString, context);
@@ -135,10 +110,8 @@ public abstract class CASgiacB extends CASgiac {
 		}
 
 		long timeout = timeoutMilliseconds / 1000;
-		binding.createGen("caseval(\"timeout " + timeout + "\")", context)
-				.eval(1, context);
-		binding.createGen("caseval(\"ckevery 20\")", context)
-				.eval(1, context);
+		binding.createGen("caseval(\"timeout " + timeout + "\")", context).eval(1, context);
+		binding.createGen("caseval(\"ckevery 20\")", context).eval(1, context);
 
 		// make sure we don't always get the same value!
 		int seed = getSeed(exp);
@@ -149,7 +122,7 @@ public abstract class CASgiacB extends CASgiac {
 	@Override
 	public String evaluateCAS(String input) {
 		// don't need to replace Unicode when sending to JNI
-		String exp = casParser.replaceIndices(input, false);
+		String exp = CASparser.replaceIndices(input, false);
 
 		try {
 			return evaluate(exp, timeoutMillis);
@@ -163,9 +136,8 @@ public abstract class CASgiacB extends CASgiac {
 	}
 
 	@Override
-	protected String evaluate(final String exp, final long timeoutMillis0)
-			throws Throwable {
-		Runnable evalFunction = () -> threadResult = evalRaw(exp, timeoutMillis0);
+	protected String evaluate(final String exp, final long timeoutMillis0) throws Throwable {
+		EvalFunction evalFunction = new EvalFunction(this, exp, timeoutMillis0);
 
 		threadResult = null;
 
@@ -186,7 +158,7 @@ public abstract class CASgiacB extends CASgiac {
 	 * @param evaluateFunction function
 	 * @throws Throwable exception
 	 */
-	protected abstract void callEvaluateFunction(Runnable evaluateFunction) throws Throwable;
+	protected abstract void callEvaluateFunction(EvalFunction evaluateFunction) throws Throwable;
 
 	@Override
 	public boolean externalCAS() {

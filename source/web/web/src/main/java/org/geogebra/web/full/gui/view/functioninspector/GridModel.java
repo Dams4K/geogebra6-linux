@@ -1,11 +1,28 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.functioninspector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.geogebra.common.util.debug.Log;
 
-public class GridModel {
+public final class GridModel {
 
 	private IGridListener listener;
 	private List<String> headers;
@@ -54,7 +71,7 @@ public class GridModel {
 		 */
 		void removeLastRow();
 	}
-	
+
 	public static class DataCell {
 		private boolean editable;
 		private Object value;
@@ -89,7 +106,7 @@ public class GridModel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param col
 	 *            number of columns
 	 * @param listener
@@ -113,9 +130,8 @@ public class GridModel {
 	 *            value
 	 */
 	public void setData(int row, int col, Object value) {
-		if (col < getColumnCount() && row < getRowCount())  {
-			Log.debug("[GRID MODEL] setData(" + row + ", " + col + ", " + value
-					+ ")");
+		if (col < getColumnCount() && row < getRowCount()) {
+			Log.debug("[GRID MODEL] setData(" + row + ", " + col + ", " + value + ")");
 			DataCell cell = new DataCell(value, false);
 			data.get(row).set(col, cell);
 			listener.updateDataCell(row, col, cell);
@@ -132,12 +148,12 @@ public class GridModel {
 	public String getData(int row, int col) {
 		// // Log.debug("[GRIDMODEL] getData(" + col + ", " + row + ")");
 		DataCell result = null;
-		if (col < columnCount && row < rowCount)  {
+		if (col < columnCount && row < rowCount) {
 			List<DataCell> list = data.get(row);
 			result = list.get(col);
 		}
 		// Log.debug("[GRIDMODEL] = " + result);
-		
+
 		return result == null ? "" : result.toString();
 	}
 
@@ -147,7 +163,7 @@ public class GridModel {
 	 * @return column's header
 	 */
 	public String getHeader(int col) {
-		if (col < getColumnCount())  {
+		if (col < getColumnCount()) {
 			return headers.get(col);
 		}
 		return "";
@@ -170,19 +186,19 @@ public class GridModel {
 		data.add(row);
 		listener.addRow(row);
 	}
-	
+
 	/**
 	 * Add a row with given cell contents.
-	 * 
+	 *
 	 * @param values
 	 *            row content
 	 */
 	public void addAsRow(List<String> values) {
 		List<DataCell> row = new ArrayList<>();
-		for (Object value: values)  {
+		for (Object value : values) {
 			row.add(new DataCell(value, false));
 		}
-		
+
 		addRow(row);
 	}
 
@@ -192,9 +208,7 @@ public class GridModel {
 	 */
 	public void setHeaders(String[] names) {
 		headers.clear();
-		for (String title: names) {
-			headers.add(title);
-		}
+		headers.addAll(Arrays.asList(names));
 		listener.setHeaders(names);
 	}
 
@@ -219,7 +233,7 @@ public class GridModel {
 		}
 		return cells;
 	}
-	
+
 	/**
 	 * @param rows
 	 *            number of rows
@@ -228,7 +242,7 @@ public class GridModel {
 		if (rows == rowCount) {
 			return;
 		}
-		
+
 		if (rows > rowCount) {
 			for (int row = rowCount; row < rows; row++) {
 				addRow(newRowCells());
@@ -253,7 +267,7 @@ public class GridModel {
 	public void addColumn(String name) {
 		columnCount++;
 		headers.add(name);
-		for (List<DataCell> rowData: data) {
+		for (List<DataCell> rowData : data) {
 			rowData.add(new DataCell(null, false));
 		}
 		// Log.debug(headers.toString());
@@ -266,25 +280,23 @@ public class GridModel {
 	public void removeColumn() {
 		// Log.debug("removeColumn");
 		int col = headers.size() - 1;
-		
+
 		// Log.debug(headers.toString());
 		headers.remove(col);
 		for (int row = 0; row < data.size(); row++) {
 			List<DataCell> rowData = data.get(row);
 			if (col < rowData.size()) {
 				rowData.remove(col);
-			} else {
-				// Log.debug("Warning: rowData size is " + rowData.size());
 			}
 		}
-		
+
 		listener.removeColumn();
 		columnCount--;
 	}
 
 	/**
 	 * Make a cell editable.
-	 * 
+	 *
 	 * @param row
 	 *            row
 	 * @param col
@@ -295,7 +307,7 @@ public class GridModel {
 			editCell.setEditable(false);
 		}
 
-		if (row >= 0 &&  row < data.size() && col >= 0 && col < getColumnCount()) {
+		if (row >= 0 && row < data.size() && col >= 0 && col < getColumnCount()) {
 			editCell = data.get(row).get(col);
 			editCell.setEditable(false);
 		}

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel;
@@ -16,11 +20,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.util.StringUtil;
 
 /**
  * Manages macros (user defined tools).
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class MacroManager {
@@ -30,7 +35,7 @@ public class MacroManager {
 
 	/**
 	 * Creates new macro manager
-	 * 
+	 *
 	 */
 	public MacroManager() {
 		macroMap = new HashMap<>();
@@ -48,7 +53,7 @@ public class MacroManager {
 
 	/**
 	 * Returns macro with given name
-	 * 
+	 *
 	 * @param name
 	 *            macro's command name
 	 * @return macro
@@ -59,7 +64,7 @@ public class MacroManager {
 
 	/**
 	 * Removes given macro
-	 * 
+	 *
 	 * @param macro
 	 *            macro for removal
 	 */
@@ -78,7 +83,7 @@ public class MacroManager {
 
 	/**
 	 * Sets the command name of a macro.
-	 * 
+	 *
 	 * @param macro
 	 *            macro
 	 * @param cmdName
@@ -124,7 +129,7 @@ public class MacroManager {
 
 	/**
 	 * Returns the current number of macros handled by this MacroManager.
-	 * 
+	 *
 	 * @return current number of macros
 	 */
 	public int getMacroNumber() {
@@ -133,7 +138,7 @@ public class MacroManager {
 
 	/**
 	 * Returns an array of all macros handled by this MacroManager.
-	 * 
+	 *
 	 * @return an array of all macros handled by this MacroManager.
 	 */
 	public ArrayList<Macro> getAllMacros() {
@@ -142,7 +147,7 @@ public class MacroManager {
 
 	/**
 	 * Updates all macros that need to be
-	 * 
+	 *
 	 * @param prop
 	 *            what property changed
 	 */
@@ -155,26 +160,21 @@ public class MacroManager {
 	}
 
 	/**
-	 * Returns an XML representation of the specified macros in this kernel.
-	 * 
+	 * Appends an XML representation of the specified macros in this kernel to a XML string.
+	 *
 	 * @param macros
 	 *            list of macros
-	 * @return XML representation as one string
+	 * @param builder XML string builder
 	 */
-	public static String getMacroXML(List<Macro> macros) {
+	public static void getMacroXML(List<Macro> macros, XMLStringBuilder builder) {
 		if (macros == null) {
-			return "";
+			return;
 		}
-
-		StringBuilder sb = new StringBuilder();
 		// save selected macros
-		for (int i = 0; i < macros.size(); i++) {
-			Macro macro = macros.get(i);
+		for (Macro macro : macros) {
 			if (macro != null) {
-				macro.getXML(sb);
+				macro.getXML(builder);
 			}
 		}
-		return sb.toString();
 	}
-
 }

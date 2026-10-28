@@ -1,19 +1,24 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GAffineTransform;
 import org.geogebra.common.awt.GBasicStroke;
 import org.geogebra.common.awt.GColor;
@@ -25,17 +30,18 @@ import org.geogebra.common.awt.GShape;
 import org.geogebra.common.euclidian.Drawable;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.GeneralPathClipped;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.geos.GeoTurtle;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
+import org.geogebra.common.main.GeoGebraColorConstants;
 
 /**
- * 
+ *
  * @author G.Sturr adapted from DrawPolyLine
  */
 public class DrawTurtle extends Drawable {
 	/** turtle */
 	protected GeoTurtle turtle;
+
 	private boolean isVisible;
 	private boolean labelVisible;
 	/** list of paths */
@@ -45,20 +51,17 @@ public class DrawTurtle extends Drawable {
 
 	private double turnAngle = 0.0;
 
-	private GRectangle turtleImageBounds = AwtFactory.getPrototype()
-			.newRectangle();
+	private GRectangle turtleImageBounds = AwtFactory.getPrototype().newRectangle();
 	private double imageSize = 10;
 	private double[] currentCoords = new double[2];
-	private GAffineTransform at = AwtFactory.getPrototype()
-			.newAffineTransform();
+	private GAffineTransform at = AwtFactory.getPrototype().newAffineTransform();
 	// ===================================================
 	// Turtle Shapes
 	//
 	// TODO: handle images when Common supports loading internal images
 	// ===================================================
 
-	private GEllipse2DDouble ellipse = AwtFactory.getPrototype()
-			.newEllipse2DDouble();
+	private GEllipse2DDouble ellipse = AwtFactory.getPrototype().newEllipse2DDouble();
 	private GBasicStroke stroke1 = AwtFactory.getPrototype().newBasicStroke(1f);
 	private GBasicStroke stroke2 = AwtFactory.getPrototype().newBasicStroke(2f);
 	private GGeneralPath gPath = AwtFactory.getPrototype().newGeneralPath();
@@ -82,29 +85,27 @@ public class DrawTurtle extends Drawable {
 		turtle.setCoords(turtle.inhomX, turtle.inhomY);
 	}
 
-	private static class PartialPath {
-		public GColor color;
-		public int thickness;
-		public GeneralPathClipped path1;
-		private GBasicStroke stroke;
+	private static final class PartialPath {
+		private final GColor color;
+		private final GeneralPathClipped path1;
+		private final GBasicStroke stroke;
 
-		public PartialPath(GColor c, int th, GeneralPathClipped p) {
+		private PartialPath(GColor c, int th, GeneralPathClipped p) {
 			color = c;
-			thickness = th;
 			path1 = p;
-			stroke = AwtFactory.getPrototype().newBasicStroke(thickness);
+			stroke = AwtFactory.getPrototype().newBasicStroke(th);
 		}
 
-		public void draw(GGraphics2D g2) {
+		private void draw(GGraphics2D g2) {
 			g2.setColor(color);
 			g2.setStroke(stroke);
-			g2.draw(path1);
+			path1.draw(g2);
 		}
 	}
 
-	private class DrawState implements GeoTurtle.DrawState {
+	private final class DrawState implements GeoTurtle.DrawState {
 		private boolean penDown = true;
-		private GColor penColor = GColor.BLACK;
+		private GColor penColor = GeoGebraColorConstants.NEUTRAL_900;
 		private int penThickness = 1;
 		private int nlines = 0;
 		double turnAngle1 = 0d;
@@ -112,7 +113,7 @@ public class DrawTurtle extends Drawable {
 		// private GeoPointND currentPosition = turtle.getStartPoint();
 		double[] coords = new double[2];
 
-		public DrawState() {
+		private DrawState() {
 			currentPath = new GeneralPathClipped(getView());
 			currentPath.resetWithThickness(geo.getLineThickness());
 			penDown = false;
@@ -179,10 +180,9 @@ public class DrawTurtle extends Drawable {
 			}
 		}
 
-		public void finishPartialPath() {
+		private void finishPartialPath() {
 			if (nlines > 0) {
-				pathList.add(
-						new PartialPath(penColor, penThickness, currentPath));
+				pathList.add(new PartialPath(penColor, penThickness, currentPath));
 			}
 			currentPath = new GeneralPathClipped(getView());
 			currentPath.resetWithThickness(geo.getLineThickness());
@@ -191,7 +191,7 @@ public class DrawTurtle extends Drawable {
 	}
 
 	@Override
-	final public void update() {
+	public final void update() {
 
 		isVisible = geo.isEuclidianVisible();
 
@@ -230,14 +230,13 @@ public class DrawTurtle extends Drawable {
 			turnAngle = ds.turnAngle1;
 		}
 
-		turtleImageBounds.setFrame(currentCoords[0] - imageSize / 2,
-				currentCoords[1] - imageSize / 2, imageSize, imageSize);
+		turtleImageBounds.setFrame(
+				currentCoords[0] - imageSize / 2, currentCoords[1] - imageSize / 2, imageSize, imageSize);
 
 		// turtle path on screen?
 		isVisible = false;
 		GRectangle bounds = getBounds();
-		isVisible = bounds != null && bounds.intersects(0, 0,
-				view.getWidth(), view.getHeight());
+		isVisible = bounds != null && bounds.intersects(0, 0, view.getWidth(), view.getHeight());
 		if (isVisible) {
 			at.setTransform(1, 0, 0, 1, 1, 0);
 			at.translate(currentCoords[0], currentCoords[1]);
@@ -249,7 +248,7 @@ public class DrawTurtle extends Drawable {
 	}
 
 	@Override
-	final public void draw(GGraphics2D g2) {
+	public final void draw(GGraphics2D g2) {
 
 		if (isVisible) {
 
@@ -264,7 +263,7 @@ public class DrawTurtle extends Drawable {
 				g2.setPaint(turtle.getSelColor());
 				g2.setStroke(selStroke);
 				for (PartialPath path : pathList) {
-					g2.draw(path.path1);
+					path.path1.draw(g2);
 				}
 			}
 
@@ -282,26 +281,23 @@ public class DrawTurtle extends Drawable {
 				g2.transform(at);
 				// temp - until x,y parameters won't be used in drawImage on
 				// desktop for SVG images
-				if (turtle.getFillImage().isSVG()
-						&& !turtle.kernel.getApplication().isHTML5Applet()) {
+				if (turtle.getFillImage().isSVG() && !turtle.kernel.getApplication().isHTML5Applet()) {
 					g2.translate(-imgWidth / 2.0, -imgHeight / 2.0);
 				}
-				g2.drawImage(turtle.getFillImage(), -imgWidth / 2,
-						-imgHeight / 2);
+				g2.drawImage(turtle.getFillImage(), -imgWidth / 2, -imgHeight / 2);
 				g2.restoreTransform();
 			} else {
 				// draw rotated turtle
 				drawTurtleShape(g2);
 			}
-
 		}
 	}
 
 	@Override
-	final public boolean hit(int x, int y, int hitThreshold) {
+	public final boolean hit(int x, int y, int hitThreshold) {
 		for (PartialPath path : pathList) {
-			if (path.path1.intersects(x - hitThreshold, y - hitThreshold,
-					2 * hitThreshold, 2 * hitThreshold)) {
+			if (path.path1.intersects(
+					x - hitThreshold, y - hitThreshold, 2 * hitThreshold, 2 * hitThreshold)) {
 				return true;
 			}
 		}
@@ -309,7 +305,7 @@ public class DrawTurtle extends Drawable {
 	}
 
 	@Override
-	final public boolean isInside(GRectangle rect) {
+	public final boolean isInside(GRectangle rect) {
 		return pathList != null && rect.contains(getBounds());
 	}
 
@@ -329,10 +325,9 @@ public class DrawTurtle extends Drawable {
 	 * Returns the bounding box of this Drawable in screen coordinates.
 	 */
 	@Override
-	final public GRectangle getBounds() {
+	public final GRectangle getBounds() {
 
-		if (!geo.isDefined() || !geo.isEuclidianVisible()
-				|| turtleImageBounds == null) {
+		if (!geo.isDefined() || !geo.isEuclidianVisible() || turtleImageBounds == null) {
 			return null;
 		}
 
@@ -350,7 +345,7 @@ public class DrawTurtle extends Drawable {
 		// back legs
 		g2.setStroke(stroke2);
 
-		g2.setColor(GColor.BLACK);
+		g2.setColor(GeoGebraColorConstants.NEUTRAL_900);
 
 		g2.draw(legs);
 
@@ -361,13 +356,13 @@ public class DrawTurtle extends Drawable {
 		// head
 		g2.setColor(GColor.GRAY);
 		g2.fill(head);
-		g2.setColor(GColor.BLACK);
+		g2.setColor(GeoGebraColorConstants.NEUTRAL_900);
 		g2.draw(head);
 
 		// body
 		g2.setColor(GColor.GREEN);
 		g2.fill(body);
-		g2.setColor(GColor.BLACK);
+		g2.setColor(GeoGebraColorConstants.NEUTRAL_900);
 		g2.draw(body);
 
 		// pen color dot
@@ -410,5 +405,4 @@ public class DrawTurtle extends Drawable {
 		ellipse.setFrame(-3, -3, 6, 6);
 		dot = at.createTransformedShape(ellipse);
 	}
-
 }

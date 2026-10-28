@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.gui.view.functioninspector;
@@ -27,11 +31,10 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * View for inspecting selected GeoFunctions
- * 
+ *
  * @author G. Sturr, 2011-2-12
- * 
+ *
  */
-
 public abstract class FunctionInspector
 		implements View, UpdateFonts, SetLabels, IFunctionInspectorListener {
 
@@ -48,7 +51,7 @@ public abstract class FunctionInspector
 
 	/**
 	 * Constructs a FunctionInspector
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param selectedGeo
@@ -148,7 +151,6 @@ public abstract class FunctionInspector
 		}
 		getModel().updateGeos(isIntervalTabSelected());
 		updateGUI();
-
 	}
 
 	protected abstract void updateIntervalFields();
@@ -201,7 +203,7 @@ public abstract class FunctionInspector
 	}
 
 	@Override
-	final public void updateVisualStyle(GeoElement geo, GProperty prop) {
+	public final void updateVisualStyle(GeoElement geo, GProperty prop) {
 		update(geo);
 	}
 
@@ -253,8 +255,7 @@ public abstract class FunctionInspector
 		if (sl == null) {
 			sl = new GeoElementSelectionListener() {
 				@Override
-				public void geoElementSelected(GeoElement geo,
-						boolean addToSelection) {
+				public void geoElementSelected(GeoElement geo, boolean addToSelection) {
 					insertGeoElement(geo);
 				}
 			};
@@ -264,7 +265,7 @@ public abstract class FunctionInspector
 
 	/**
 	 * Sets the function to be inspected and updates the entire GUI
-	 * 
+	 *
 	 * @param geo
 	 *            The function to be inspected
 	 */
@@ -288,7 +289,6 @@ public abstract class FunctionInspector
 		getModel().updateTestPoint();
 
 		isChangingValue = false;
-
 	}
 
 	protected void setStart(double x) {
@@ -299,7 +299,6 @@ public abstract class FunctionInspector
 		} catch (Exception e1) {
 			Log.debug(e1);
 		}
-
 	}
 
 	protected abstract void changeStart(double x);
@@ -309,7 +308,6 @@ public abstract class FunctionInspector
 		this.updateGUI();
 		this.updateIntervalFields();
 		this.updateTestPoint();
-
 	}
 
 	protected abstract void createOptionsButton();
@@ -340,5 +338,4 @@ public abstract class FunctionInspector
 	public void setKernel(Kernel kernel) {
 		this.kernel = kernel;
 	}
-
 }

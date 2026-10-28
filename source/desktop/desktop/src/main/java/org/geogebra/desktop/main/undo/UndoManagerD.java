@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.desktop.main.undo;
@@ -15,8 +19,6 @@ package org.geogebra.desktop.main.undo;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 import javax.swing.DefaultListSelectionModel;
 
@@ -33,14 +35,14 @@ import org.geogebra.desktop.io.MyXMLioD;
 /**
  * UndoManager handles undo information for a Construction. It uses an undo info
  * list with construction snapshots in temporary files.
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class UndoManagerD extends UndoManager {
 
 	/**
 	 * Creates a new UndowManager for the given Construction.
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 */
@@ -63,32 +65,26 @@ public class UndoManagerD extends UndoManager {
 
 	/**
 	 * Adds construction state to undo info list.
-	 * 
+	 *
 	 * @param undoXML
 	 *            string builder with construction XML
 	 */
 	synchronized void doStoreUndoInfo(final StringBuilder undoXML) {
-		// avoid security problems calling from JavaScript ie setUndoPoint()
-		AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
-			try {
-				// perform the security-sensitive operation here
-				// save to file
-				AppState appStateToAdd = new FileAppState(undoXML);
+		try {
+			// save to file
+			AppState appStateToAdd = new FileAppState(undoXML);
 
-				// insert undo info
-				UndoCommand command = new UndoCommand(appStateToAdd);
-				maybeStoreUndoCommand(command);
-				pruneStateList();
-				if (undoInfoList.size() > 1) {
-					notifyUnsaved();
-				}
-			} catch (Exception | OutOfMemoryError e) {
-				Log.debug("storeUndoInfo: " + e);
-				Log.debug(e);
+			// insert undo info
+			UndoCommand command = new UndoCommand(appStateToAdd);
+			maybeStoreUndoCommand(command);
+			pruneStateList();
+			if (undoInfoList.size() > 1) {
+				notifyUnsaved();
 			}
-
-			return null;
-		});
+		} catch (Exception | OutOfMemoryError e) {
+			Log.debug("storeUndoInfo: " + e);
+			Log.debug(e);
+		}
 
 		onStoreUndo();
 	}
@@ -97,8 +93,7 @@ public class UndoManagerD extends UndoManager {
 	 * restore info at position pos of undo list
 	 */
 	@Override
-	final protected synchronized void loadUndoInfo(final AppState info,
-			String slideID) {
+	protected final synchronized void loadUndoInfo(final AppState info, String slideID) {
 		if (!(info instanceof FileAppState)) {
 			Log.warn("Invalid undo state");
 			restoreCurrentUndoInfo();
@@ -116,14 +111,14 @@ public class UndoManagerD extends UndoManager {
 			// keep information form listSelectionModel
 			CASViewD casView = null;
 			DefaultListSelectionModel listSelModel = null;
-			if (app.getGuiManager() != null && app.getGuiManager().hasCasView()
-					&& app.getView(App.VIEW_CAS) instanceof CASViewD) {
-				casView = (CASViewD) app.getView(App.VIEW_CAS);
+			if (app.getGuiManager() != null
+					&& app.getGuiManager().hasCasView()
+					&& app.getGuiManager().getCasView() instanceof CASViewD) {
+				casView = (CASViewD) app.getGuiManager().getCasView();
 			}
-			if (casView != null && casView.getListSelModel() != null && casView
-					.getListSelModel() instanceof DefaultListSelectionModel) {
-				listSelModel = (DefaultListSelectionModel) casView
-						.getListSelModel();
+			if (casView != null
+					&& casView.getListSelModel() instanceof DefaultListSelectionModel listModel) {
+				listSelModel = listModel;
 			}
 
 			int anchorIndex = 0;
@@ -153,10 +148,8 @@ public class UndoManagerD extends UndoManager {
 			Log.error("Problem setting undo info");
 			Log.debug(e);
 			restoreCurrentUndoInfo();
-		} catch (java.lang.OutOfMemoryError err) {
+		} catch (OutOfMemoryError err) {
 			Log.error("UndoManager.loadUndoInfo: " + err);
 		}
-
 	}
-
 }

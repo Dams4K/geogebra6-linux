@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.arithmetic.simplifiers;
 
 import java.util.ArrayList;
@@ -29,22 +45,19 @@ public final class FlattenNode implements Inspecting, Iterable<ExpressionValue> 
 
 	@Override
 	public boolean check(ExpressionValue ev) {
-		if (ev.isLeaf() || ev.isOperation(Operation.MULTIPLY) || ExpressionValueUtils.isSqrtNode(
-				ev)) {
+		if (ev.isLeaf() || ev.isOperation(Operation.MULTIPLY) || ExpressionValueUtils.isSqrtNode(ev)) {
 			flatten.add(ev);
 			int multiplier = utils.getNumberForGCD(ev.wrap());
 			multipliers.add(minus ? -multiplier : multiplier);
 			minus = false;
 			return true;
-
 		}
 		if (ev.isOperation(Operation.PLUS) || ev.isOperation(Operation.MINUS)) {
 			minus = false;
 			boolean leftInspect = ev.wrap().getLeft().any(this);
 			minus = ev.isOperation(Operation.MINUS);
 			boolean rightInspect = ev.wrap().getRight().any(this);
-			return leftInspect
-					&& rightInspect;
+			return leftInspect && rightInspect;
 		}
 		return false;
 	}
@@ -65,6 +78,9 @@ public final class FlattenNode implements Inspecting, Iterable<ExpressionValue> 
 		return flatten.get(index);
 	}
 
+	/**
+	 * @return the flattened terms recombined into a single reduced expression
+	 */
 	public ExpressionNode getReducedExpression() {
 		return utils.reduceExpressions(flatten);
 	}

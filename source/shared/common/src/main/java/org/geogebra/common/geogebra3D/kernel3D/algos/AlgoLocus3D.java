@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -46,8 +50,8 @@ public class AlgoLocus3D extends AlgoLocusND<MyPoint3D> {
 	 * @param registerCE
 	 *            whether to listen to zoom/pan
 	 */
-	public AlgoLocus3D(Construction cons, GeoPointND Q, GeoPointND P,
-			int min_steps, boolean registerCE) {
+	public AlgoLocus3D(
+			Construction cons, GeoPointND Q, GeoPointND P, int min_steps, boolean registerCE) {
 		super(cons, Q, P, min_steps, registerCE);
 	}
 
@@ -61,8 +65,7 @@ public class AlgoLocus3D extends AlgoLocusND<MyPoint3D> {
 	 * @param P
 	 *            moving point
 	 */
-	public AlgoLocus3D(Construction cons, String label, GeoPointND Q,
-			GeoPointND P) {
+	public AlgoLocus3D(Construction cons, String label, GeoPointND Q, GeoPointND P) {
 		super(cons, label, Q, P);
 	}
 
@@ -90,7 +93,7 @@ public class AlgoLocus3D extends AlgoLocusND<MyPoint3D> {
 
 		} else {
 			maxZdist[i] = Double.POSITIVE_INFINITY; // we don't check z for 2D
-													// views
+			// views
 
 			farZmin[i] = Double.NEGATIVE_INFINITY;
 			farZmax[i] = Double.POSITIVE_INFINITY;
@@ -121,8 +124,8 @@ public class AlgoLocus3D extends AlgoLocusND<MyPoint3D> {
 
 	@Override
 	protected boolean distanceOK(GeoPointND point, int i) {
-		double[] min = { farXmin[i], farYmin[i], farZmin[i] };
-		double[] max = { farXmax[i], farYmax[i], farZmax[i] };
+		final double[] min = {farXmin[i], farYmin[i], farZmin[i]};
+		final double[] max = {farXmax[i], farYmax[i], farZmax[i]};
 		Coords coords = point.getInhomCoordsInD3();
 
 		// if last point Q' was far away and Q is far away
@@ -134,7 +137,7 @@ public class AlgoLocus3D extends AlgoLocusND<MyPoint3D> {
 		double minX = lastX;
 		double minY = lastY;
 		double minZ = lastZ;
-		
+
 		double maxX = coords.getX();
 		double maxY = coords.getY();
 		double maxZ = coords.getZ();
@@ -152,9 +155,7 @@ public class AlgoLocus3D extends AlgoLocusND<MyPoint3D> {
 		}
 		boolean ok2d = !MyMath.intervalsIntersect(minX, maxX, min[0], max[0])
 				|| !MyMath.intervalsIntersect(minY, maxY, min[1], max[1]);
-		return i < 2 ? ok2d
-				: (ok2d || !MyMath.intervalsIntersect(minZ, maxZ, min[2],
-						max[2]));
+		return i < 2 ? ok2d : (ok2d || !MyMath.intervalsIntersect(minZ, maxZ, min[2], max[2]));
 	}
 
 	@Override
@@ -204,15 +205,18 @@ public class AlgoLocus3D extends AlgoLocusND<MyPoint3D> {
 	}
 
 	private boolean isFarAway(double x, double y, double z, int i) {
-		return x > farXmax[i] || x < farXmin[i] || y > farYmax[i]
-				|| y < farYmin[i] || z > farZmax[i] || z < farZmin[i];
+		return x > farXmax[i]
+				|| x < farXmin[i]
+				|| y > farYmax[i]
+				|| y < farYmin[i]
+				|| z > farZmax[i]
+				|| z < farZmin[i];
 	}
 
 	@Override
 	protected boolean differentFromLast(GeoPointND point) {
 		Coords coords = point.getInhomCoordsInD3();
-		return coords.getX() != lastX || coords.getY() != lastY
-				|| coords.getZ() != lastZ;
+		return coords.getX() != lastX || coords.getY() != lastY || coords.getZ() != lastZ;
 	}
 
 	@Override
@@ -235,5 +239,4 @@ public class AlgoLocus3D extends AlgoLocusND<MyPoint3D> {
 	protected MyPoint3D newCache() {
 		return new MyPoint3D();
 	}
-
 }

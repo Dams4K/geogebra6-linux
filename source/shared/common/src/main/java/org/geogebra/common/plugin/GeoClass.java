@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.plugin;
 
 import org.geogebra.common.util.StringUtil;
@@ -188,24 +204,24 @@ public enum GeoClass {
 	/**
 	 * name MUST be in ggbtrans/properties
 	 */
-	final public String name;
+	public final String name;
 	/** in XML we need 3d extension */
-	final public String xmlName;
+	public final String xmlName;
 	/** for 3D elements */
-	final public boolean is3D;
-	final private int priority;
-	final private int independentPriority;
+	public final boolean is3D;
+
+	private final int priority;
+	private final int independentPriority;
 	/** for FUNCTION_NVAR: Inequality */
-	static final public String INEQUALITY = "Inequality";
+	public static final String INEQUALITY = "Inequality";
 	/** for FUNCTION_NVAR: MultivariableFunction */
-	static final public String MULTIVARIABLE_FUNCTION = "MultivariableFunction";
+	public static final String MULTIVARIABLE_FUNCTION = "MultivariableFunction";
 
 	GeoClass(String name, int priority, boolean is3D) {
 		this(name, StringUtil.toLowerCaseUS(name), priority, priority, is3D);
 	}
 
-	GeoClass(String name, String xmlName, int priority, int independentPriority,
-			boolean is3D) {
+	GeoClass(String name, String xmlName, int priority, int independentPriority, boolean is3D) {
 		this.name = name;
 		this.priority = priority;
 		this.independentPriority = independentPriority;
@@ -215,7 +231,6 @@ public enum GeoClass {
 
 	GeoClass(String name, String xmlName, int priority, boolean is3D) {
 		this(name, xmlName, priority, priority, is3D);
-
 	}
 
 	/**

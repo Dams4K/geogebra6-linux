@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.exam.restrictions;
 
 import static org.geogebra.common.SuiteSubApp.CAS;
@@ -39,14 +55,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-
-import org.geogebra.common.contextmenu.ContextMenuFactory;
 import org.geogebra.common.contextmenu.ContextMenuItemFilter;
 import org.geogebra.common.euclidian.EuclidianConstants;
-import org.geogebra.common.exam.ExamController;
-import org.geogebra.common.exam.ExamType;
+import org.geogebra.common.exam.restrictions.cvte.CvteAlgebraOutputFilter;
 import org.geogebra.common.exam.restrictions.cvte.CvteCommandArgumentFilter;
 import org.geogebra.common.exam.restrictions.cvte.CvteEquationBehaviour;
 import org.geogebra.common.exam.restrictions.cvte.MatrixExpressionFilter;
@@ -72,6 +83,7 @@ import org.geogebra.common.kernel.arithmetic.filter.graphing.PowerInnerProductEx
 import org.geogebra.common.kernel.arithmetic.filter.graphing.VectorProductExpressionFilter;
 import org.geogebra.common.kernel.commands.Commands;
 import org.geogebra.common.kernel.commands.filter.CommandArgumentFilter;
+import org.geogebra.common.kernel.commands.filter.ExamCommandArgumentFilter;
 import org.geogebra.common.kernel.commands.selector.CommandFilter;
 import org.geogebra.common.kernel.commands.selector.CommandNameFilter;
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -80,17 +92,22 @@ import org.geogebra.common.kernel.kernelND.GeoPlaneND;
 import org.geogebra.common.main.syntax.suggestionfilter.LineSelectorSyntaxFilter;
 import org.geogebra.common.main.syntax.suggestionfilter.SyntaxFilter;
 import org.geogebra.common.plugin.Operation;
-import org.geogebra.common.properties.PropertiesRegistry;
-import org.geogebra.common.properties.factory.GeoElementPropertiesFactory;
+import org.geogebra.common.properties.PropertyKey;
 import org.geogebra.common.properties.impl.objects.LinearEquationFormProperty;
 import org.geogebra.common.properties.impl.objects.QuadraticEquationFormProperty;
+import org.geogebra.common.restrictions.FeatureRestriction;
+import org.geogebra.common.restrictions.PropertyRestriction;
+import org.geogebra.common.restrictions.Restrictions;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-public final class CvteExamRestrictions extends ExamRestrictions {
+public final class CvteExamRestrictions extends Restrictions {
 
 	private boolean casEnabled = true;
 
-	CvteExamRestrictions() {
-		super(ExamType.CVTE,
+	/** Constructs the restrictions for CVTE exam. */
+	public CvteExamRestrictions() {
+		super(
 				Set.of(CAS, G3D, GEOMETRY, PROBABILITY, SCIENTIFIC),
 				GRAPHING,
 				createFeatureRestrictions(),
@@ -107,17 +124,14 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 				createEquationBehaviour(),
 				null,
 				null,
-				null);
+				null,
+				new CvteAlgebraOutputFilter());
 	}
 
 	@Override
-	public void applyTo(
-			@Nonnull ExamController.ContextDependencies dependencies,
-			@CheckForNull PropertiesRegistry propertiesRegistry,
-			@CheckForNull GeoElementPropertiesFactory geoElementPropertiesFactory,
-			@CheckForNull ContextMenuFactory contextMenuFactory) {
-		if (dependencies.settings != null) {
-			casEnabled = dependencies.settings.getCasSettings().isEnabled();
+	public void applyTo(@NonNull ContextDependencies cd) {
+		if (cd.settings() != null) {
+			casEnabled = cd.settings().getCasSettings().isEnabled();
 			// Note: The effect we want to achieve here is disable the symbolic versions of the
 			// Derivative and Integral commands, and replace them on the fly with their numeric
 			// counterparts (a requirement of APPS-4871/APPS-4961). This behavior is
@@ -126,38 +140,34 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 			// Careful: setting the "CAS enabled" setting to false here only makes because
 			// CvTE exam is restricted to the Graphing subapp of Suite, and the Graphing
 			// standalone app disables CAS, but it's enabled in Suite (see app config).
-			dependencies.settings.getCasSettings().setEnabled(false);
+			cd.settings().getCasSettings().setEnabled(false);
 		}
-		super.applyTo(dependencies, propertiesRegistry,
-				geoElementPropertiesFactory, contextMenuFactory);
+		super.applyTo(cd);
 	}
 
 	@Override
-	public void removeFrom(
-			@Nonnull ExamController.ContextDependencies dependencies,
-			@CheckForNull PropertiesRegistry propertiesRegistry,
-			@CheckForNull GeoElementPropertiesFactory geoElementPropertiesFactory,
-			@CheckForNull ContextMenuFactory contextMenuFactory) {
-		super.removeFrom(dependencies, propertiesRegistry,
-				geoElementPropertiesFactory, contextMenuFactory);
-		if (dependencies.settings != null) {
-			dependencies.settings.getCasSettings().setEnabled(casEnabled);
+	public void removeFrom(@NonNull ContextDependencies cd) {
+		super.removeFrom(cd);
+		if (cd.settings() != null) {
+			cd.settings().getCasSettings().setEnabled(casEnabled);
 		}
 	}
 
-	private static Set<ExamFeatureRestriction> createFeatureRestrictions() {
+	private static Set<FeatureRestriction> createFeatureRestrictions() {
 		return Set.of(
-				ExamFeatureRestriction.AUTOMATIC_GRAPH_SELECTION_FOR_FUNCTIONS,
-				ExamFeatureRestriction.HIDE_CALCULATED_EQUATION,
-				ExamFeatureRestriction.RESTRICT_CHANGING_EQUATION_FORM,
-				ExamFeatureRestriction.SURD,
-				ExamFeatureRestriction.RATIONALIZATION);
+				FeatureRestriction.AUTOMATIC_GRAPH_SELECTION_FOR_FUNCTIONS,
+				FeatureRestriction.HIDE_CALCULATED_EQUATION,
+				FeatureRestriction.RESTRICT_CHANGING_EQUATION_FORM,
+				FeatureRestriction.SURD,
+				FeatureRestriction.RATIONALIZATION);
 	}
 
 	private static Set<CommandFilter> createCommandFilters() {
-		// Source: https://docs.google.com/spreadsheets/d/1xUnRbtDPGtODKcYhM4tx-uD4G8B1wcpGgSkT4iX8BJA/edit?gid=215139506#gid=215139506
+		// Source:
+		// https://docs.google.com/spreadsheets/d/1xUnRbtDPGtODKcYhM4tx-uD4G8B1wcpGgSkT4iX8BJA/edit?gid=215139506#gid=215139506
 		// note: this is the set of *allowed* commands
-		CommandNameFilter nameFilter = new CommandNameFilter(false,
+		CommandNameFilter nameFilter = new CommandNameFilter(
+				false,
 				Commands.BinomialCoefficient,
 				Commands.Circle,
 				Commands.CurveCartesian,
@@ -200,7 +210,7 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 	}
 
 	private static Set<CommandArgumentFilter> createCommandArgumentFilters() {
-		return Set.of(new CvteCommandArgumentFilter());
+		return Set.of(new ExamCommandArgumentFilter(), new CvteCommandArgumentFilter());
 	}
 
 	private static SyntaxFilter createSyntaxFilter() {
@@ -218,9 +228,28 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 
 	private static OperationFilter createOperationFilter() {
 		Set<Operation> restrictedOperations = Set.of(
-				CONJUGATE, FRACTIONAL_PART, GAMMA, GAMMA_INCOMPLETE, GAMMA_INCOMPLETE_REGULARIZED,
-				POLYGAMMA, RANDOM, NPR, PRODUCT, VECTORPRODUCT, ARG, ALT, BETA, BETA_INCOMPLETE,
-				BETA_INCOMPLETE_REGULARIZED, ERF, PSI, SI, CI, EI, ZETA, LAMBERTW);
+				CONJUGATE,
+				FRACTIONAL_PART,
+				GAMMA,
+				GAMMA_INCOMPLETE,
+				GAMMA_INCOMPLETE_REGULARIZED,
+				POLYGAMMA,
+				RANDOM,
+				NPR,
+				PRODUCT,
+				VECTORPRODUCT,
+				ARG,
+				ALT,
+				BETA,
+				BETA_INCOMPLETE,
+				BETA_INCOMPLETE_REGULARIZED,
+				ERF,
+				PSI,
+				SI,
+				CI,
+				EI,
+				ZETA,
+				LAMBERTW);
 		return operation -> !restrictedOperations.contains(operation);
 	}
 
@@ -230,7 +259,8 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 	}
 
 	private static ToolCollectionFilter createToolsFilter() {
-		// Source: https://docs.google.com/spreadsheets/d/1xUnRbtDPGtODKcYhM4tx-uD4G8B1wcpGgSkT4iX8BJA/edit?gid=1199288464#gid=1199288464
+		// Source:
+		// https://docs.google.com/spreadsheets/d/1xUnRbtDPGtODKcYhM4tx-uD4G8B1wcpGgSkT4iX8BJA/edit?gid=1199288464#gid=1199288464
 		// note: this is the set of *excluded* tools
 		return new ToolCollectionSetFilter(
 				EuclidianConstants.MODE_POINT,
@@ -287,8 +317,7 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 				EuclidianConstants.MODE_RELATION,
 				EuclidianConstants.MODE_BUTTON_ACTION,
 				EuclidianConstants.MODE_SHOW_HIDE_CHECKBOX,
-				EuclidianConstants.MODE_TEXTFIELD_ACTION
-		);
+				EuclidianConstants.MODE_TEXTFIELD_ACTION);
 	}
 
 	private static Set<ExpressionFilter> createInputExpressionFilters() {
@@ -305,10 +334,13 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 		return Set.of(new MatrixExpressionFilter());
 	}
 
-	private static Map<String, PropertyRestriction> createPropertyRestrictions() {
+	private static Map<PropertyKey, PropertyRestriction> createPropertyRestrictions() {
 		// "freeze" the equation form properties
-		return Map.of(LinearEquationFormProperty.NAME_KEY, new PropertyRestriction(true, null),
-				QuadraticEquationFormProperty.NAME_KEY, new PropertyRestriction(true, null));
+		return Map.of(
+				PropertyKey.of(LinearEquationFormProperty.class),
+				new PropertyRestriction(true, null),
+				PropertyKey.of(QuadraticEquationFormProperty.class),
+				new PropertyRestriction(true, null));
 	}
 
 	private static EquationBehaviour createEquationBehaviour() {
@@ -344,7 +376,7 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 	private static final class AllowedExplicitEquationVisibilityRestriction
 			implements VisibilityRestriction {
 		@Override
-		public @Nonnull Effect getEffect(GeoElement geoElement) {
+		public @NonNull Effect getEffect(GeoElement geoElement) {
 			return isExplicitEquation(geoElement) ? ALLOW : IGNORE;
 		}
 	}
@@ -360,9 +392,8 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 	private static final class AllowedCenterAndRadiusCircleCommandVisibilityRestriction
 			implements VisibilityRestriction {
 		@Override
-		public @Nonnull Effect getEffect(GeoElement geoElement) {
-			return geoElement.getParentAlgorithm() instanceof AlgoCirclePointRadius
-					? ALLOW : IGNORE;
+		public @NonNull Effect getEffect(GeoElement geoElement) {
+			return geoElement.getParentAlgorithm() instanceof AlgoCirclePointRadius ? ALLOW : IGNORE;
 		}
 	}
 
@@ -381,7 +412,7 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 	private static final class AllowedLinearEquationVisibilityRestriction
 			implements VisibilityRestriction {
 		@Override
-		public @Nonnull Effect getEffect(GeoElement geoElement) {
+		public @NonNull Effect getEffect(GeoElement geoElement) {
 			return isLinearEquation(geoElement) ? ALLOW : IGNORE;
 		}
 	}
@@ -396,10 +427,9 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 	 *     <li>Circle((0, 0), 2)</li>
 	 * </ul>
 	 */
-	private static final class HiddenConicVisibilityRestriction
-			implements VisibilityRestriction {
+	private static final class HiddenConicVisibilityRestriction implements VisibilityRestriction {
 		@Override
-		public @Nonnull Effect getEffect(GeoElement geoElement) {
+		public @NonNull Effect getEffect(GeoElement geoElement) {
 			return geoElement.isGeoConic() ? HIDE : IGNORE;
 		}
 	}
@@ -423,22 +453,21 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 	 *     <li>x^2 / 9 + x^2 / 4 = 1</li>
 	 * </ul>
 	 */
-	private static final class HiddenEquationVisibilityRestriction
-			implements VisibilityRestriction {
+	private static final class HiddenEquationVisibilityRestriction implements VisibilityRestriction {
 		@Override
-		public @Nonnull Effect getEffect(GeoElement geoElement) {
+		public @NonNull Effect getEffect(GeoElement geoElement) {
 			return isEquation(geoElement) ? HIDE : IGNORE;
 		}
 	}
 
-	private static @CheckForNull String unwrapVariable(ExpressionValue expressionValue) {
+	private static @Nullable String unwrapVariable(ExpressionValue expressionValue) {
 		if (expressionValue instanceof FunctionVariable) {
 			return ((FunctionVariable) expressionValue).getSetVarString();
 		}
 		return null;
 	}
 
-	private static @CheckForNull Equation unwrapEquation(GeoElement geoElement) {
+	private static @Nullable Equation unwrapEquation(GeoElement geoElement) {
 		ExpressionNode definition = geoElement.getDefinition();
 		if (definition != null && definition.unwrap() instanceof Equation) {
 			return (Equation) definition.unwrap();
@@ -455,7 +484,6 @@ public final class CvteExamRestrictions extends ExamRestrictions {
 				|| geoElement instanceof EquationValue;
 	}
 
-	@SuppressWarnings("PMD.SimplifyBooleanReturns")
 	private static boolean isExplicitEquation(GeoElement geoElement) {
 		Equation equation = unwrapEquation(geoElement);
 		if (equation == null) {

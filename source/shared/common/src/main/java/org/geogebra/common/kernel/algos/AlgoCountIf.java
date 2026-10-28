@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -35,7 +39,7 @@ public class AlgoCountIf extends AlgoElement {
 
 	/**
 	 * Algorithm for handling of a CountIf construct
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -45,8 +49,7 @@ public class AlgoCountIf extends AlgoElement {
 	 * @param list
 	 *            filtered list
 	 */
-	public AlgoCountIf(Construction cons, String label, GeoFunction boolFun,
-			GeoList list) {
+	public AlgoCountIf(Construction cons, String label, GeoFunction boolFun, GeoList list) {
 		super(cons);
 		this.boolFun = boolFun;
 		this.list = list;
@@ -103,14 +106,9 @@ public class AlgoCountIf extends AlgoElement {
 						count++;
 					}
 				} else {
-					ExpressionNode ex = boolFun.getFunction()
-							.getExpression().deepCopy(kernel);
-					ex = ex.replace(var,
-							val.evaluate(StringTemplate.defaultTemplate))
-							.wrap();
-					if (((MyBoolean) ex
-							.evaluate(StringTemplate.defaultTemplate))
-									.getBoolean()) {
+					ExpressionNode ex = boolFun.getFunction().getExpression().deepCopy(kernel);
+					ex = ex.replace(var, val.evaluate(StringTemplate.defaultTemplate)).wrap();
+					if (((MyBoolean) ex.evaluate(StringTemplate.defaultTemplate)).getBoolean()) {
 						count++;
 					}
 				}
@@ -121,5 +119,4 @@ public class AlgoCountIf extends AlgoElement {
 			result.setUndefined();
 		}
 	}
-
 }

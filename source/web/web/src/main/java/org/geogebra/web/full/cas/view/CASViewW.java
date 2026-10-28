@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.cas.view;
 
 import org.geogebra.common.cas.view.CASInputHandler;
@@ -22,7 +38,7 @@ import org.gwtproject.user.client.ui.FlowPanel;
  * Web implementation of the CAS view
  *
  */
-public class CASViewW extends CASView implements PrintableW {
+public final class CASViewW extends CASView implements PrintableW {
 
 	private final CASComponentW component;
 	private final AppW app;
@@ -67,12 +83,10 @@ public class CASViewW extends CASView implements PrintableW {
 			@Override
 			public void onClickStart(int x, int y, PointerEventType type) {
 				CASEditorW editor = getConsoleTable().getEditor();
-				if (!StringUtil.empty(editor.getText())
-						&& getConsoleTable().isEditing()) {
+				if (!StringUtil.empty(editor.getText()) && getConsoleTable().isEditing()) {
 					editor.onEnter(true);
 				}
 			}
-
 		});
 	}
 
@@ -104,8 +118,7 @@ public class CASViewW extends CASView implements PrintableW {
 	}
 
 	@Override
-	public void showSubstituteDialog(String prefix, String evalText,
-	        String postfix, int selRow) {
+	public void showSubstituteDialog(String prefix, String evalText, String postfix, int selRow) {
 		if (subDialog != null && subDialog.getDialog().isShowing()) {
 			return;
 		}
@@ -161,17 +174,14 @@ public class CASViewW extends CASView implements PrintableW {
 	 *            make keyboard immediately visible
 	 */
 	public void maybeOpenKeyboard(final boolean force) {
-		if (app.isStartedWithFile()
-				|| app.showView(App.VIEW_ALGEBRA)) {
+		if (app.isStartedWithFile() || app.showView(App.VIEW_ALGEBRA)) {
 			return;
 		}
 		final AppW app1 = app;
 		app.invokeLater(() -> {
 			app1.showKeyboard(getEditor(), force);
 			getEditor().setFocus(true);
-			getConsoleTable().startEditingRow(
-					getConsoleTable().getRowCount() - 1);
-
+			getConsoleTable().startEditingRow(getConsoleTable().getRowCount() - 1);
 		});
 		/*
 		 * getEditor().ensureEditing(); getEditor().setFocus(true);
@@ -180,17 +190,16 @@ public class CASViewW extends CASView implements PrintableW {
 
 	/**
 	 * Update inputs and outputs on zoom
-	 * 
+	 *
 	 * @param ratio
 	 *            CSS pixel ratio
 	 */
 	public void setPixelRatio(double ratio) {
 		if (this.consoleTable != null) {
 			for (int row = 0; row < this.getRowCount(); row++) {
-				if (consoleTable.getWidget(row,
-						CASTableW.COL_CAS_CELLS_WEB) instanceof CASTableCellW) {
-					((CASTableCellW) consoleTable.getWidget(row,
-							CASTableW.COL_CAS_CELLS_WEB)).setPixelRatio(ratio);
+				if (consoleTable.getWidget(row, CASTableW.COL_CAS_CELLS_WEB) instanceof CASTableCellW) {
+					((CASTableCellW) consoleTable.getWidget(row, CASTableW.COL_CAS_CELLS_WEB))
+							.setPixelRatio(ratio);
 				}
 			}
 			if (consoleTable.hasEditor()) {

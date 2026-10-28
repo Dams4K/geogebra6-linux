@@ -1,9 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.main;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.CheckForNull;
 
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.commands.AlgebraProcessor;
@@ -21,6 +35,7 @@ import org.geogebra.web.html5.safeimage.SafeImage;
 import org.geogebra.web.html5.safeimage.SafeImageProvider;
 import org.geogebra.web.html5.util.ArchiveEntry;
 import org.geogebra.web.html5.util.ImageManagerW;
+import org.jspecify.annotations.Nullable;
 
 import elemental2.dom.HTMLImageElement;
 
@@ -74,12 +89,11 @@ public class SafeGeoImageFactory implements SafeImageProvider {
 	 * @param content of the image
 	 * @return the corresponding GeoImage object
 	 */
-	public GeoImage create(String fileName, String content,
-			@CheckForNull FileExtensions originalExtension) {
+	public GeoImage create(
+			String fileName, String content, @Nullable FileExtensions originalExtension) {
 		ensureResultImageExists();
 		ArchiveEntry imageFile = new ArchiveEntry(fileName, content);
-		SafeImage safeImage = new SafeImage(imageFile, this,
-				getPreprocessors(), originalExtension);
+		SafeImage safeImage = new SafeImage(imageFile, this, getPreprocessors(), originalExtension);
 		safeImage.process();
 		return geoImage;
 	}
@@ -119,34 +133,30 @@ public class SafeGeoImageFactory implements SafeImageProvider {
 	@Override
 	public void onReady(ArchiveEntry imageFile) {
 		this.imageFile = imageFile;
-		imageManager.addExternalImage(imageFile.getFileName(),
-				imageFile);
-		imageManager.triggerSingleImageLoading(imageFile.getFileName(),
-				geoImage);
+		imageManager.addExternalImage(imageFile.getFileName(), imageFile);
+		imageManager.triggerSingleImageLoading(imageFile.getFileName(), geoImage);
 		imageElement = imageManager.getExternalImage(imageFile.getFileName(), true);
 
 		imageElement.addEventListener("load", (event) -> onLoad(false));
-		imageElement.addEventListener("error",
-				(event) -> imageElement.src = imageManager.getErrorURL());
+		imageElement.addEventListener(
+				"error", (event) -> imageElement.src = imageManager.getErrorURL());
 	}
 
 	private void onReadyInternal(ArchiveEntry imageFile, String content) {
 		this.imageFile = imageFile;
-		imageElement =
-				imageManager.addInternalImage(imageFile.getFileName(), content);
+		imageElement = imageManager.addInternalImage(imageFile.getFileName(), content);
 		imageElement.addEventListener("load", (event) -> geoImage.updateRepaint());
 		imageElement.addEventListener("load", (event) -> onLoad(true));
-		imageElement.addEventListener("error",
-				(event) -> imageElement.src = imageManager.getErrorURL());
+		imageElement.addEventListener(
+				"error", (event) -> imageElement.src = imageManager.getErrorURL());
 	}
 
 	private void onLoad(boolean isInternalFile) {
 		if (isInternalFile) {
-			geoImage.setInternalImageFileName(imageFile.getFileName(),
-					imageElement.width, imageElement.height);
+			geoImage.setInternalImageFileName(
+					imageFile.getFileName(), imageElement.width, imageElement.height);
 		} else {
-			geoImage.setImageFileName(imageFile.getFileName(),
-					imageElement.width, imageElement.height);
+			geoImage.setImageFileName(imageFile.getFileName(), imageElement.width, imageElement.height);
 		}
 
 		if (autoCorners) {
@@ -159,8 +169,7 @@ public class SafeGeoImageFactory implements SafeImageProvider {
 			geoImage.setAuxiliaryObject(false);
 		}
 		if (app.isWhiteboardActive()) {
-			app.getActiveEuclidianView().getEuclidianController()
-					.selectAndShowSelectionUI(geoImage);
+			app.getActiveEuclidianView().getEuclidianController().selectAndShowSelectionUI(geoImage);
 		}
 		app.setDefaultCursor();
 		if (!isInternalFile) {
@@ -180,8 +189,7 @@ public class SafeGeoImageFactory implements SafeImageProvider {
 			geoImage.setCorner(corner2, 1);
 
 			// make sure 2nd corner is on screen
-			ImageManager.ensure2ndCornerOnScreen(
-					corner1.getInhomX(), corner2, app);
+			ImageManager.ensure2ndCornerOnScreen(corner1.getInhomX(), corner2, app);
 
 			if (corner4 != null) {
 				geoImage.setCorner(corner4, 2);
@@ -222,8 +230,8 @@ public class SafeGeoImageFactory implements SafeImageProvider {
 	 * @param cornerLabel4 Corner4
 	 * @return factory object with corners set.
 	 */
-	public SafeGeoImageFactory withCorners(String cornerLabel1, String cornerLabel2,
-			String cornerLabel4) {
+	public SafeGeoImageFactory withCorners(
+			String cornerLabel1, String cornerLabel2, String cornerLabel4) {
 		this.corner1 = asPoint(cornerLabel1);
 		this.corner2 = asPoint(cornerLabel2);
 		this.corner4 = asPoint(cornerLabel4);
@@ -244,7 +252,6 @@ public class SafeGeoImageFactory implements SafeImageProvider {
 	}
 
 	private GeoPointND asPoint(String label) {
-		return label == null ? null :  algebraProcessor
-				.evaluateToPoint(label, null, true);
+		return label == null ? null : algebraProcessor.evaluateToPoint(label, null, true);
 	}
 }

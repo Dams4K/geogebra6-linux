@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDependentNumber.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -37,7 +35,7 @@ import org.geogebra.common.plugin.Operation;
 
 /**
  * Algorithm for dependent numbers, e.g. c = a + b.
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class AlgoDependentNumber extends AlgoElement
@@ -51,24 +49,22 @@ public class AlgoDependentNumber extends AlgoElement
 
 	/**
 	 * Creates new AlgoDependentNumber
-	 * 
+	 *
 	 * @param cons
 	 *            construction
-	 * 
+	 *
 	 * @param root
 	 *            expression defining the result
 	 * @param isAngle
 	 *            true for angles
 	 */
-
-	public AlgoDependentNumber(Construction cons, ExpressionNode root,
-			boolean isAngle) {
+	public AlgoDependentNumber(Construction cons, ExpressionNode root, boolean isAngle) {
 		this(cons, root, isAngle, null, true);
 	}
 
 	/**
 	 * Creates new AlgoDependentNumber
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param root
@@ -78,14 +74,14 @@ public class AlgoDependentNumber extends AlgoElement
 	 * @param evaluate
 	 *            pre-evaluated result
 	 */
-	public AlgoDependentNumber(Construction cons, ExpressionNode root,
-			boolean isAngle, ExpressionValue evaluate) {
+	public AlgoDependentNumber(
+			Construction cons, ExpressionNode root, boolean isAngle, ExpressionValue evaluate) {
 		this(cons, root, isAngle, evaluate, true);
 	}
 
 	/**
 	 * Creates new AlgoDependentNumber
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param root
@@ -97,15 +93,18 @@ public class AlgoDependentNumber extends AlgoElement
 	 * @param addToConstructionList
 	 *            add object to the construction list
 	 */
-	public AlgoDependentNumber(Construction cons, ExpressionNode root,
-			boolean isAngle, ExpressionValue evaluate,
+	public AlgoDependentNumber(
+			Construction cons,
+			ExpressionNode root,
+			boolean isAngle,
+			ExpressionValue evaluate,
 			boolean addToConstructionList) {
 		this(cons, root, isAngle, evaluate, addToConstructionList, true);
 	}
 
 	/**
 	 * Creates new AlgoDependentNumber
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param root
@@ -119,15 +118,18 @@ public class AlgoDependentNumber extends AlgoElement
 	 * @param rewrite
 	 *            rewrite the related formulas in other geos
 	 */
-	public AlgoDependentNumber(Construction cons, ExpressionNode root,
-			boolean isAngle, ExpressionValue evaluate,
-			boolean addToConstructionList, boolean rewrite) {
+	public AlgoDependentNumber(
+			Construction cons,
+			ExpressionNode root,
+			boolean isAngle,
+			ExpressionValue evaluate,
+			boolean addToConstructionList,
+			boolean rewrite) {
 		super(cons, addToConstructionList);
 		rewriteFormula = rewrite;
 		if (evaluate instanceof GeoNumberValue) {
 			// fix error with a=7, b = a renaming a instead of creating b
-			number = (GeoNumberValue) ((GeoNumberValue) evaluate)
-					.copyInternal(cons);
+			number = (GeoNumberValue) ((GeoNumberValue) evaluate).copyInternal(cons);
 			// just a copy of segment / polygon / arc, not eg. list1(1)
 			if (!number.isGeoNumeric() && root.unwrap().isGeoElement()) {
 				number.setEuclidianVisible(false);
@@ -186,11 +188,12 @@ public class AlgoDependentNumber extends AlgoElement
 			return;
 		}
 		try {
-			NumberValue nv = (NumberValue) number.getDefinition()
-					.evaluate(StringTemplate.defaultTemplate);
+			NumberValue nv =
+					(NumberValue) number.getDefinition().evaluate(StringTemplate.defaultTemplate);
 			ExpressionNode def = number.getDefinition();
 			if (number instanceof GeoNumeric) {
 				((GeoNumeric) number).setValue(nv.getDouble());
+				((GeoNumeric) number).setExactValue(nv.toDecimal());
 			} else {
 				number.set(nv.toGeoElement(cons));
 			}
@@ -201,10 +204,11 @@ public class AlgoDependentNumber extends AlgoElement
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// was defined as e.g. r = 5a - 3b
 		// return 5a - 3b
-		return number.getDefinition() == null ? number.toValueString(tpl)
+		return number.getDefinition() == null
+				? number.toValueString(tpl)
 				: number.getDefinition().toString(tpl);
 	}
 
@@ -224,8 +228,7 @@ public class AlgoDependentNumber extends AlgoElement
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 		return getProverAdapter().getBotanaPolynomials(this, geo);
 	}
 
@@ -239,8 +242,7 @@ public class AlgoDependentNumber extends AlgoElement
 		if (number.getDefinition() != null
 				&& number.getDefinition().getOperation() == Operation.RANDOM) {
 			double val = Math.min(Math.max(d.evaluateDouble(), 0), 1);
-			((GeoNumeric) number.getDefinition().getLeft())
-					.setValue(val);
+			((GeoNumeric) number.getDefinition().getLeft()).setValue(val);
 			number.getDefinition().reset();
 			((GeoNumeric) number).setValue(val);
 			return true;
@@ -258,5 +260,4 @@ public class AlgoDependentNumber extends AlgoElement
 	public boolean isRewriteFormula() {
 		return rewriteFormula;
 	}
-
 }

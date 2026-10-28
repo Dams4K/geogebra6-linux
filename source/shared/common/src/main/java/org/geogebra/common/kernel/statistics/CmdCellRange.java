@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.statistics;
 
 import org.geogebra.common.kernel.Kernel;
@@ -18,7 +34,7 @@ import org.geogebra.common.plugin.Operation;
 public class CmdCellRange extends CommandProcessor {
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -31,18 +47,18 @@ public class CmdCellRange extends CommandProcessor {
 		int n = c.getArgumentNumber();
 		ExpressionNode[] args = c.getArguments();
 		switch (n) {
-		case 2:
-			return new GeoElement[]{ getAlgoCellRange(c).getList() };
-		case 3:
-			AlgoCellRange algo = getAlgoCellRange(c);
-			if (algo.getList().isEmptyList()) {
-				algo.getList().setTypeStringForXML(args[2].unwrap()
-						.toValueString(StringTemplate.defaultTemplate));
-			}
-			return new GeoElement[]{ getAlgoCellRange(c).getList() };
+			case 2:
+				return new GeoElement[] {getAlgoCellRange(c).getList()};
+			case 3:
+				AlgoCellRange algo = getAlgoCellRange(c);
+				if (algo.getList().isEmptyList()) {
+					algo.getList()
+							.setTypeStringForXML(args[2].unwrap().toValueString(StringTemplate.defaultTemplate));
+				}
+				return new GeoElement[] {getAlgoCellRange(c).getList()};
 
-		default:
-			throw argNumErr(c);
+			default:
+				throw argNumErr(c);
 		}
 	}
 
@@ -72,5 +88,4 @@ public class CmdCellRange extends CommandProcessor {
 		}
 		throw argErr(c, expressionNode);
 	}
-
 }

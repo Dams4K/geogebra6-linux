@@ -1,5 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
+import org.geogebra.common.awt.annotations.HasNativeSubclass;
 import org.geogebra.common.move.ggtapi.models.AjaxCallback;
 
 /**
@@ -8,6 +25,7 @@ import org.geogebra.common.move.ggtapi.models.AjaxCallback;
  *
  * @author Zoltan Kovacs
  */
+@HasNativeSubclass
 public abstract class HttpRequest implements Cancelable {
 	/**
 	 * the default HTTP request timeout in seconds
@@ -22,6 +40,7 @@ public abstract class HttpRequest implements Cancelable {
 	 * the textual content of the result (or the error message)
 	 */
 	protected String responseText;
+
 	private String type = "text/plain";
 	private String auth;
 
@@ -46,8 +65,8 @@ public abstract class HttpRequest implements Cancelable {
 	 * @param content
 	 *            already encoded HTTP request content
 	 */
-	public abstract void sendRequestPost(String method, String url, String content,
-			AjaxCallback callback);
+	public abstract void sendRequestPost(
+			String method, String url, String content, AjaxCallback callback);
 
 	/**
 	 * @param timeout_secs
@@ -106,6 +125,9 @@ public abstract class HttpRequest implements Cancelable {
 		return null;
 	}
 
+	/**
+	 * @param csrfToken CSRF token
+	 */
 	public void setRequestCSRFHeader(String csrfToken) {
 		this.csrfToken = csrfToken;
 	}

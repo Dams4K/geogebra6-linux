@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.dialog;
 
 import org.geogebra.common.move.ggtapi.models.Material;
@@ -46,8 +62,8 @@ public abstract class CardRenameDialog extends ComponentDialog {
 
 	private void buildContent() {
 		FlowPanel contentPanel = new FlowPanel();
-		inputField = new ComponentInputField((AppW) app, "",
-				app.getLocalization().getMenu("Rename"), "", "");
+		inputField = new ComponentInputField(
+				(AppW) app, "", app.getLocalization().getMenu("Rename"), "", "", null);
 		contentPanel.add(inputField);
 		initInputFieldActions();
 		setPosBtnDisabled(true);
@@ -60,16 +76,14 @@ public abstract class CardRenameDialog extends ComponentDialog {
 
 	private void initInputFieldActions() {
 		inputField.addInputHandler(this::validate);
-		Scheduler.get().scheduleDeferred(() -> inputField.getTextField()
-				.getTextComponent().setFocus(true));
+		Scheduler.get().scheduleDeferred(inputField::focus);
 	}
 
 	/**
 	 * Enable or disable
 	 */
 	protected void validate() {
-		inputChanged = inputChanged
-				|| !getInputText().equals(getCardTitle());
+		inputChanged = inputChanged || !getInputText().equals(getCardTitle());
 		setPosBtnDisabled(isTextLengthInvalid() || !inputChanged);
 	}
 
@@ -83,6 +97,6 @@ public abstract class CardRenameDialog extends ComponentDialog {
 	@Override
 	public void show() {
 		super.show();
-		Scheduler.get().scheduleDeferred(() -> inputField.getTextField().setFocusAndSelectAll());
+		Scheduler.get().scheduleDeferred(inputField::focusAndSelectAll);
 	}
 }

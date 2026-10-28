@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import java.util.ArrayList;
@@ -15,7 +31,7 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * Class for drawing 1D coord sys (lines, segments, ...)
- * 
+ *
  * @author matthieu
  *
  */
@@ -28,7 +44,7 @@ public class DrawPolyLine3D extends Drawable3DCurves implements Previewable {
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param a_view3D
 	 *            view
 	 * @param p
@@ -40,24 +56,21 @@ public class DrawPolyLine3D extends Drawable3DCurves implements Previewable {
 
 	/**
 	 * common constructor for previewable
-	 * 
+	 *
 	 * @param a_view3d
 	 *            view
 	 * @param points
 	 *            preview points
 	 */
-	public DrawPolyLine3D(EuclidianView3D a_view3d,
-			ArrayList<GeoPointND> points) {
+	public DrawPolyLine3D(EuclidianView3D a_view3d, ArrayList<GeoPointND> points) {
 		super(a_view3d);
 		// p.setIsPickable(false);
 		// setGeoElement(p);
 
-		setGeoElement(
-				new GeoPolyLine3D(a_view3d.getKernel().getConstruction()));
+		setGeoElement(new GeoPolyLine3D(a_view3d.getKernel().getConstruction()));
 		this.selectedPoints = points;
 
 		updatePreview();
-
 	}
 
 	/**
@@ -99,8 +112,7 @@ public class DrawPolyLine3D extends Drawable3DCurves implements Previewable {
 		brush.start(getReusableGeometryIndex());
 		brush.setThickness(getLineThickness(), (float) getView3D().getScale());
 		// brush.setColor(getGeoElement().getObjectColor());
-		brush.setAffineTexture(
-				(float) ((0.5 - minmax[0]) / (minmax[1] - minmax[0])), 0.25f);
+		brush.setAffineTexture((float) ((0.5 - minmax[0]) / (minmax[1] - minmax[0])), 0.25f);
 		GeoPolyLine p = (GeoPolyLine) getGeoElement();
 		int num = p.getNumPoints();
 		if (num > 0) {
@@ -163,7 +175,6 @@ public class DrawPolyLine3D extends Drawable3DCurves implements Previewable {
 		} else {
 			getGeoElement().setEuclidianVisible(false);
 		}
-
 	}
 
 	@Override
@@ -189,5 +200,4 @@ public class DrawPolyLine3D extends Drawable3DCurves implements Previewable {
 			exportToPrinter3D.exportCurve(this, ExportToPrinter3D.Export3DType.CURVE);
 		}
 	}
-
 }

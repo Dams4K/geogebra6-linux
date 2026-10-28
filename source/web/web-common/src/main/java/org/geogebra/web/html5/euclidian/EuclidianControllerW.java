@@ -1,6 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.euclidian;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.geogebra.common.awt.MyImage;
 import org.geogebra.common.euclidian.EuclidianConstants;
@@ -21,7 +38,7 @@ import org.geogebra.common.kernel.geos.GeoText;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.main.App;
 import org.geogebra.common.util.StringUtil;
-import org.geogebra.web.html5.css.GuiResourcesSimple;
+import org.geogebra.web.awt.MyImageW;
 import org.geogebra.web.html5.event.PointerEvent;
 import org.geogebra.web.html5.gui.GuiManagerInterfaceW;
 import org.geogebra.web.html5.gui.tooltip.PreviewPointPopup;
@@ -29,7 +46,8 @@ import org.geogebra.web.html5.gui.tooltip.ToolTipManagerW;
 import org.geogebra.web.html5.gui.util.Dom;
 import org.geogebra.web.html5.gui.util.LongTouchManager;
 import org.geogebra.web.html5.main.AppW;
-import org.geogebra.web.html5.main.MyImageW;
+import org.geogebra.web.html5.main.general.DefaultGeneralIconResources;
+import org.geogebra.web.resources.SVGResource;
 import org.gwtproject.event.dom.client.DropEvent;
 import org.gwtproject.event.dom.client.DropHandler;
 
@@ -40,23 +58,31 @@ import elemental2.dom.WheelEvent;
  * Web version of Euclidian controller
  *
  */
-public class EuclidianControllerW extends EuclidianController implements
-		IsEuclidianController, DropHandler {
+public class EuclidianControllerW extends EuclidianController
+		implements IsEuclidianController, DropHandler {
 
 	private MouseTouchGestureControllerW mtg;
 	private CreateToolImage toolImageW;
+	private PreviewPointPopup popup;
 
 	@Override
-	protected void showSpecialPointPopup(
-			final ArrayList<GeoElement> previewPoints) {
+	protected void showSpecialPointPopup(List<GeoElement> previewPoints) {
 		if (!app.getConfig().hasPreviewPoints()) {
 			return;
 		}
-		final PreviewPointPopup popup = new PreviewPointPopup(
-				(AppW) getApplication(), previewPoints);
-		popup.setPopupPositionAndShow(
-				(offsetWidth, offsetHeight) ->
-						popup.positionPopup(offsetWidth, offsetHeight, previewPoints));
+		if (popup == null) {
+			popup = new PreviewPointPopup((AppW) getApplication());
+		}
+		popup.createContent(previewPoints);
+		popup.setPopupPositionAndShow((offsetWidth, offsetHeight) ->
+				popup.positionPopup(offsetWidth, offsetHeight, previewPoints));
+	}
+
+	@Override
+	protected void hideSpecialPointPopup() {
+		if (popup != null) {
+			popup.hide();
+		}
 	}
 
 	@Override
@@ -93,7 +119,7 @@ public class EuclidianControllerW extends EuclidianController implements
 	}
 
 	@Override
-	public void handleLongTouch(int x, int y) {
+	public void handleLongTouch(double x, double y) {
 		mtg.handleLongTouch(x, y);
 	}
 
@@ -117,11 +143,10 @@ public class EuclidianControllerW extends EuclidianController implements
 			// #plotpanelevno
 			// probably both are Okay not changing the toolbar to full Graphics
 			// view toolbar
-			((GuiManagerInterfaceW) app.getGuiManager())
-					.setActivePanelAndToolbar(App.VIEW_EUCLIDIAN);
+			((GuiManagerInterfaceW) app.getGuiManager()).setActivePanelAndToolbar(App.VIEW_EUCLIDIAN);
 		} else {
 			if (EuclidianConstants.isMoveOrSelectionMode(mode)
-					|| mode == EuclidianConstants.MODE_TRANSLATEVIEW
+					|| mode == EuclidianConstants.MODE_TRANSLATE_VIEW
 					|| mode == EuclidianConstants.MODE_SELECTION_LISTENER) {
 				setMode(mode, ModeSetter.TOOLBAR);
 			}
@@ -146,19 +171,22 @@ public class EuclidianControllerW extends EuclidianController implements
 			getView().setHits(mouseLoc, type);
 			Hits hits = getView().getHits().getTopHits();
 			if (!hits.isEmpty()) {
-				GeoElement hit = hits.get(0);
-				if (hit != null && !hit.isGeoButton() && !hit.isGeoInputBox()
-						&& !hit.isGeoBoolean()) {
-					GeoElement geo = chooseGeo(hits, true);
-					if (geo != null) {
-						runScriptsIfNeeded(geo);
-					}
-				}
+				handleHitForComboBox(hits);
 			}
 
 			return true;
 		}
 		return super.isInputBoxClicked(x, y, type);
+	}
+
+	private void handleHitForComboBox(Hits hits) {
+		GeoElement hit = hits.get(0);
+		if (hit != null && !hit.isGeoButton() && !hit.isGeoInputBox() && !hit.isGeoBoolean()) {
+			GeoElement geo = chooseGeo(hits, true);
+			if (geo != null) {
+				runScriptsIfNeeded(geo);
+			}
+		}
 	}
 
 	@Override
@@ -191,12 +219,10 @@ public class EuclidianControllerW extends EuclidianController implements
 	}
 
 	@Override
-	protected void showPopupMenuChooseGeo(ArrayList<GeoElement> selectedGeos1,
-	        Hits hits) {
+	protected void showPopupMenuChooseGeo(ArrayList<GeoElement> selectedGeos1, Hits hits) {
 		if (app.isUnbundledOrWhiteboard()) {
-			ArrayList<GeoElement> geos = selectedGeos1 != null
-					&& selectedGeos1.isEmpty() ? getAppSelectedGeos()
-					: selectedGeos1;
+			ArrayList<GeoElement> geos =
+					selectedGeos1 != null && selectedGeos1.isEmpty() ? getAppSelectedGeos() : selectedGeos1;
 			app.getGuiManager().showPopupMenu(geos, getView(), mouseLoc);
 		} else {
 			super.showPopupMenuChooseGeo(selectedGeos1, hits);
@@ -222,13 +248,13 @@ public class EuclidianControllerW extends EuclidianController implements
 			return;
 		}
 		ArrayList<String> list = new ArrayList<>();
-		list.add(geo.isLabelSet() ? geo.getLabelSimple() : "\""
-				+ geo.getLaTeXAlgebraDescription(true,
-						StringTemplate.latexTemplate) + "\"");
+		list.add(
+				geo.isLabelSet()
+						? geo.getLabelSimple()
+						: "\"" + geo.getLaTeXAlgebraDescription(true, StringTemplate.latexTemplate) + "\"");
 		String text = EuclidianView.getDraggedLabels(list);
 
-		GeoElementND[] ret = app.getKernel().getAlgebraProcessor()
-				.processAlgebraCommand(text, true);
+		GeoElementND[] ret = app.getKernel().getAlgebraProcessor().processAlgebraCommand(text, true);
 
 		if (ret != null && ret[0] instanceof TextValue) {
 			GeoText geo0 = (GeoText) ret[0];
@@ -237,8 +263,7 @@ public class EuclidianControllerW extends EuclidianController implements
 			int x = event.getNativeEvent().getClientX();
 			int y = event.getNativeEvent().getClientY();
 
-			geo0.setRealWorldLoc(getView().toRealWorldCoordX(x),
-					getView().toRealWorldCoordY(y));
+			geo0.setRealWorldLoc(getView().toRealWorldCoordX(x), getView().toRealWorldCoordY(y));
 			geo0.updateRepaint();
 		}
 	}
@@ -263,35 +288,45 @@ public class EuclidianControllerW extends EuclidianController implements
 
 	@Override
 	public void showDynamicStylebar() {
-		if (((AppW) app).allowStylebar() && !hasMeasurementObjOrSpotlightSelected()) {
+		if (((AppW) app).allowStylebar() && selectedGeoShouldHaveQuickStyleBar()) {
 			getView().getDynamicStyleBar().setVisible(true);
 			getView().getDynamicStyleBar().updateStyleBar();
 		}
 	}
 
-	private boolean hasMeasurementObjOrSpotlightSelected() {
-		return getAppSelectedGeos().stream().anyMatch(f -> f.isMeasurementTool()
-			|| f.isSpotlight());
+	/**
+	 * Measurement tools, spotlight and input-box has no style bar.
+	 * @return whether selected geos should have quick style bar
+	 */
+	private boolean selectedGeoShouldHaveQuickStyleBar() {
+		return !getAppSelectedGeos().isEmpty()
+				&& getAppSelectedGeos().stream()
+						.noneMatch(f -> f.isMeasurementTool() || f.isSpotlight() || f.isGeoInputBox());
 	}
 
 	@Override
 	public void onPointerEventMove(PointerEvent event) {
-		//disable pointer events for the zoom panel when dragging something over it
+		// disable pointer events for the zoom panel when dragging something over it
 		if (draggingOccurred) {
-			((EuclidianViewW) getView())
-					.getDockPanel().enableZoomPanelEvents(false);
+			((EuclidianViewW) getView()).getDockPanel().enableZoomPanelEvents(false);
 		}
 		mtg.onMouseMoveNow(event, System.currentTimeMillis(), true);
 	}
 
 	@Override
 	public void onPointerEventEnd(PointerEvent event) {
-		//enable pointer events for the zoom panel again after dragging something over it
+		// enable pointer events for the zoom panel again after dragging something over it
 		if (draggingOccurred) {
-			((EuclidianViewW) getView())
-					.getDockPanel().enableZoomPanelEvents(true);
+			((EuclidianViewW) getView()).getDockPanel().enableZoomPanelEvents(true);
 		}
 		mtg.onPointerEventEnd(event);
+	}
+
+	@Override
+	public void onPointerCancel() {
+		if (pen != null) {
+			pen.finishStrokePart();
+		}
 	}
 
 	@Override
@@ -322,8 +357,10 @@ public class EuclidianControllerW extends EuclidianController implements
 	@Override
 	public MyImage getRotationImage() {
 		HTMLImageElement img = Dom.createImage();
-		img.src = GuiResourcesSimple.INSTANCE.rotateIcon().getSafeUri().asString();
+		SVGResource rotateIcon = ((AppW) app).isUsingFontAwesome()
+				? DefaultGeneralIconResources.INSTANCE.rotate_arrow_fontawesome()
+				: DefaultGeneralIconResources.INSTANCE.rotate_arrow();
+		img.src = rotateIcon.getSafeUri().asString();
 		return new MyImageW(img, true);
 	}
 }
-

@@ -1,22 +1,22 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoSlope.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
+
+import java.math.BigDecimal;
 
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.Kernel;
@@ -31,27 +31,29 @@ import org.geogebra.common.util.MyMath;
 /**
  * Algorithm for the Sequence[ expression of var, var, from-value, to-value,
  * step ] command.
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class AlgoSequenceRange extends AlgoElement {
 
 	private enum SequenceType {
-		SIMPLE, RANGE, FULL
+		SIMPLE,
+		RANGE,
+		FULL
 	}
 
-	private GeoNumberValue var_from;
-	private GeoNumberValue var_to;
+	private final GeoNumberValue var_from;
+	private final GeoNumberValue var_to;
 	private GeoNumberValue var_step;
-	private GeoList list; // output
+	private final GeoList list; // output
 
-	private SequenceType type;
+	private final SequenceType type;
 
 	private double last_to = Double.MIN_VALUE;
 
 	/**
 	 * Creates simple sequence start..upTo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param from
@@ -61,9 +63,8 @@ public class AlgoSequenceRange extends AlgoElement {
 	 * @param step
 	 *            step
 	 */
-	public AlgoSequenceRange(Construction cons,
-			GeoNumberValue from,
-			GeoNumberValue upTo, GeoNumberValue step) {
+	public AlgoSequenceRange(
+			Construction cons, GeoNumberValue from, GeoNumberValue upTo, GeoNumberValue step) {
 		super(cons);
 
 		type = SequenceType.RANGE;
@@ -78,7 +79,7 @@ public class AlgoSequenceRange extends AlgoElement {
 
 	/**
 	 * Creates simple sequence 1..upTo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param upTo
@@ -109,17 +110,15 @@ public class AlgoSequenceRange extends AlgoElement {
 			input[0] = var_to.toGeoElement();
 		} else {
 			if (var_step == null) {
-				input = new GeoElement[] { var_from.toGeoElement(),
-						var_to.toGeoElement() };
+				input = new GeoElement[] {var_from.toGeoElement(), var_to.toGeoElement()};
 			} else {
-				input = new GeoElement[] { var_from.toGeoElement(),
-						var_to.toGeoElement(),
-						var_step.toGeoElement() };
+				input = new GeoElement[] {
+					var_from.toGeoElement(), var_to.toGeoElement(), var_step.toGeoElement()
+				};
 			}
 		}
 
-		list.setTypeStringForXML(var_to
-				.getGeoClassType().xmlName);
+		list.setTypeStringForXML(var_to.getGeoClassType().xmlName);
 		setOnlyOutput(list);
 
 		setDependencies(); // done by AlgoElement
@@ -127,7 +126,7 @@ public class AlgoSequenceRange extends AlgoElement {
 
 	/**
 	 * Returns list of all contained elements.
-	 * 
+	 *
 	 * @return list of elements
 	 */
 	GeoList getList() {
@@ -152,49 +151,49 @@ public class AlgoSequenceRange extends AlgoElement {
 			from = Math.round(from);
 			to = Math.round(to);
 		}
-		if (from > MyMath.LARGEST_INTEGER || from < -MyMath.LARGEST_INTEGER
+		if (from > MyMath.LARGEST_INTEGER
+				|| from < -MyMath.LARGEST_INTEGER
 				|| to > MyMath.LARGEST_INTEGER
 				|| to < -MyMath.LARGEST_INTEGER) {
 			list.setUndefined();
 			return;
 		}
-		
+
 		list.clear();
+		list.setDefined(true);
 		double step = 1;
+		int sign = to >= from ? 1 : -1;
 		if (var_step != null) {
 			step = var_step.evaluateDouble();
-			if (to < from) {
-				step = -step;
-			}
-			if (DoubleUtil.isZero(step) || step < 0) {
+			if (DoubleUtil.isZero(step) || step * sign < 0) {
 				list.setUndefined();
 				return;
 			}
+		} else {
+			step *= sign;
 		}
 		// also see Operation.java case Sequence:
-		if (from < to) {
-
+		if (var_from.toDecimal() == null
+				|| var_step == null
+				|| var_step.toDecimal() == null
+				|| (to - from) / step > 100) {
 			// Kernel.MIN_PRECISION and isInteger() check for eg
 			// Sequence(1, 2, 0.1)
-
-			// increasing list
-			for (double k = from; k <= to + Kernel.MIN_PRECISION; k += step) {
+			double k = from;
+			for (int steps = 0;
+					k * sign <= to * sign + Kernel.MIN_PRECISION;
+					steps++, k = from + steps * step) {
 				if (DoubleUtil.isInteger(k)) {
 					k = Math.round(k);
 				}
 				list.addNumber(k, null);
 			}
-
 		} else {
-
-			// decreasing list
-			for (double k = from; k >= to - Kernel.MIN_PRECISION; k -= step) {
-				if (DoubleUtil.isInteger(k)) {
-					k = Math.round(k);
-				}
+			for (BigDecimal k = var_from.toDecimal();
+					k.doubleValue() * sign <= to * sign + Kernel.MIN_PRECISION;
+					k = k.add(var_step.toDecimal())) {
 				list.addNumber(k, null);
 			}
-
 		}
 	}
 
@@ -219,5 +218,4 @@ public class AlgoSequenceRange extends AlgoElement {
 		}
 		last_to = to;
 	}
-
 }

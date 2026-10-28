@@ -1,8 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoConic3D;
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoQuadric3DLimited;
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoQuadric3DPart;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.arithmetic.NumberValue;
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -14,7 +31,7 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * Algo for cylinder/cone from a conic and a height
- * 
+ *
  * @author mathieu
  *
  */
@@ -33,7 +50,7 @@ public abstract class AlgoQuadricLimitedConicHeight extends AlgoElement3D {
 	private AlgoQuadricEndTop algoTop;
 
 	/**
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param labels
@@ -45,8 +62,8 @@ public abstract class AlgoQuadricLimitedConicHeight extends AlgoElement3D {
 	 * @param type
 	 *            type (cylinder/cone)
 	 */
-	public AlgoQuadricLimitedConicHeight(Construction c, String[] labels,
-			GeoConicND bottom, GeoNumberValue height, int type) {
+	public AlgoQuadricLimitedConicHeight(
+			Construction c, String[] labels, GeoConicND bottom, GeoNumberValue height, int type) {
 		super(c);
 
 		this.bottom = bottom;
@@ -54,7 +71,7 @@ public abstract class AlgoQuadricLimitedConicHeight extends AlgoElement3D {
 
 		quadric = new GeoQuadric3DLimited(c, type);
 
-		input = new GeoElement[] { bottom, (GeoElement) height };
+		input = new GeoElement[] {bottom, (GeoElement) height};
 
 		bottom.addAlgorithm(this);
 		height.addAlgorithm(this);
@@ -83,32 +100,28 @@ public abstract class AlgoQuadricLimitedConicHeight extends AlgoElement3D {
 
 		if (height instanceof GeoNumeric) {
 			if (height.isIndependent()) {
-				side.setChangeableParent((GeoNumeric) height, bottom,
-						new ExtrudeConverter(), quadric);
-				top.setChangeableParent((GeoNumeric) height, bottom,
-						new ExtrudeConverter(), quadric);
+				side.setChangeableParent((GeoNumeric) height, bottom, new ExtrudeConverter(), quadric);
+				top.setChangeableParent((GeoNumeric) height, bottom, new ExtrudeConverter(), quadric);
 			}
 		}
-
 	}
 
 	/**
 	 * create the top side
 	 */
-	final protected void createTop() {
+	protected final void createTop() {
 		algoTop = new AlgoQuadricEndTop(cons, getQuadric());
 		top = algoTop.getSection();
 		top.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
 		top.setParentAlgorithm(this);
-
 	}
 
 	/**
 	 * sets the output
 	 */
-	final protected void setOutput() {
-		setOutput(new GeoElement[] { getQuadric(), getQuadric().getTop(),
-				getQuadric().getSide() });
+	protected final void setOutput() {
+		setOutput(
+				new GeoElement[] {getQuadric(), getQuadric().getTop(), getQuadric().getSide()});
 	}
 
 	private void setQuadric() {
@@ -140,11 +153,10 @@ public abstract class AlgoQuadricLimitedConicHeight extends AlgoElement3D {
 		algoTop.compute();
 
 		quadric.calcVolume();
-
 	}
 
-	abstract protected void setQuadric(Coords o1, Coords o2, Coords d,
-			Coords eigen, double r, double r2, double min, double max);
+	protected abstract void setQuadric(
+			Coords o1, Coords o2, Coords d, Coords eigen, double r, double r2, double min, double max);
 
 	/**
 	 * @return resulting limited quadric
@@ -172,7 +184,7 @@ public abstract class AlgoQuadricLimitedConicHeight extends AlgoElement3D {
 	// }
 
 	@Override
-	protected void getOutputXML(StringBuilder sb) {
+	protected void getOutputXML(XMLStringBuilder sb) {
 		super.getOutputXML(sb);
 
 		// append XML for bottom once more, to avoid override of specific
@@ -225,5 +237,4 @@ public abstract class AlgoQuadricLimitedConicHeight extends AlgoElement3D {
 		getKernel().notifyUpdate(side);
 		getKernel().notifyUpdate(top);
 	}
-
 }

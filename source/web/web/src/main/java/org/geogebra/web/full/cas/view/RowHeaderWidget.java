@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.cas.view;
 
 import org.geogebra.common.cas.view.CASInputHandler;
@@ -15,7 +31,7 @@ import org.gwtproject.user.client.ui.Label;
 /**
  * Row header with marble
  */
-public class RowHeaderWidget extends FlowPanel implements MarbleRenderer {
+public final class RowHeaderWidget extends FlowPanel implements MarbleRenderer {
 	private final Image marble;
 	private boolean oldValue;
 	private final RowHeaderHandler handler;
@@ -80,10 +96,11 @@ public class RowHeaderWidget extends FlowPanel implements MarbleRenderer {
 		if (value == oldValue) {
 			return;
 		}
-		marble.setUrl(value ? AppResources.INSTANCE.shown().getSafeUri().asString()
-				: AppResources.INSTANCE.hidden().getSafeUri().asString());
+		marble.setUrl(
+				value
+						? AppResources.INSTANCE.shown().getSafeUri().asString()
+						: AppResources.INSTANCE.hidden().getSafeUri().asString());
 		oldValue = value;
-
 	}
 
 	@Override
@@ -94,7 +111,7 @@ public class RowHeaderWidget extends FlowPanel implements MarbleRenderer {
 	/**
 	 * Handler for marble
 	 */
-	protected static class MarbleClickHandler implements ClickHandler {
+	private static final class MarbleClickHandler implements ClickHandler {
 		private final GeoCasCell cell;
 		private final RowHeaderWidget rowHeaderWidget;
 
@@ -104,8 +121,7 @@ public class RowHeaderWidget extends FlowPanel implements MarbleRenderer {
 		 * @param rowHeaderWidget
 		 *            row header
 		 */
-		protected MarbleClickHandler(GeoCasCell cell,
-				RowHeaderWidget rowHeaderWidget) {
+		private MarbleClickHandler(GeoCasCell cell, RowHeaderWidget rowHeaderWidget) {
 			this.cell = cell;
 			this.rowHeaderWidget = rowHeaderWidget;
 		}
@@ -122,5 +138,4 @@ public class RowHeaderWidget extends FlowPanel implements MarbleRenderer {
 	private void cancelAnyEditing() {
 		casTable.cancelEditing();
 	}
-
 }

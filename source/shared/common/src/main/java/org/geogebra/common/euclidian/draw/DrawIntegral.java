@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.euclidian.draw;
@@ -30,7 +34,7 @@ import org.geogebra.common.util.DoubleUtil;
 
 /**
  * Draws definite Integral of a GeoFunction
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class DrawIntegral extends DrawFunctionArea {
@@ -46,7 +50,7 @@ public class DrawIntegral extends DrawFunctionArea {
 
 	/**
 	 * Creates new drawable for integral
-	 * 
+	 *
 	 * @param view
 	 *            view
 	 * @param n
@@ -87,15 +91,14 @@ public class DrawIntegral extends DrawFunctionArea {
 	}
 
 	@Override
-	final public void update() {
+	public final void update() {
 		isVisible = geo.isEuclidianVisible();
 		if (!isVisible) {
 			return;
 		}
 		labelVisible = getTopLevelGeo().isLabelVisible();
 		updateStrokes(n);
-		if (!geo.getDrawAlgorithm().equals(geo.getParentAlgorithm())
-				|| isCasObject) {
+		if (!geo.getDrawAlgorithm().equals(geo.getParentAlgorithm()) || isCasObject) {
 			init();
 		}
 
@@ -141,7 +144,7 @@ public class DrawIntegral extends DrawFunctionArea {
 		gp.lineTo(ax, y0);
 
 		// gp on screen?
-		if (!view.intersects(gp)) {
+		if (!view.intersects(gp.getGeneralPath())) {
 			isVisible = false;
 			// don't return here to make sure that getBounds() works for
 			// offscreen points too
@@ -156,21 +159,21 @@ public class DrawIntegral extends DrawFunctionArea {
 	}
 
 	@Override
-	final public void draw(GGraphics2D g2) {
+	public final void draw(GGraphics2D g2) {
 		if (isVisible) {
 			if (isHighlighted()) {
 				g2.setPaint(n.getSelColor());
 				g2.setStroke(selStroke);
-				g2.draw(gp);
+				gp.draw(g2);
 			}
 
-			fill(g2, gp); // fill using default/hatching/image as
-							// appropriate
+			fill(g2, gp.getGeneralPath()); // fill using default/hatching/image as
+			// appropriate
 
 			if (geo.getLineThickness() > 0) {
 				g2.setPaint(getObjectColor());
 				g2.setStroke(objStroke);
-				g2.draw(gp);
+				gp.draw(g2);
 			}
 
 			if (labelVisible) {
@@ -182,9 +185,8 @@ public class DrawIntegral extends DrawFunctionArea {
 	}
 
 	@Override
-	final public boolean hit(int x, int y, int hitThreshold) {
-		return gp != null
-				&& (gp.contains(x, y) || gp.intersects(x, y, hitThreshold));
+	public final boolean hit(int x, int y, int hitThreshold) {
+		return gp != null && (gp.contains(x, y) || gp.intersects(x, y, hitThreshold));
 	}
 
 	@Override
@@ -193,7 +195,7 @@ public class DrawIntegral extends DrawFunctionArea {
 	}
 
 	@Override
-	final public boolean isInside(GRectangle rect) {
+	public final boolean isInside(GRectangle rect) {
 		return false;
 	}
 
@@ -201,7 +203,7 @@ public class DrawIntegral extends DrawFunctionArea {
 	 * Returns the bounding box of this DrawPoint in screen coordinates.
 	 */
 	@Override
-	final public GRectangle getBounds() {
+	public final GRectangle getBounds() {
 		if (!geo.isDefined() || !geo.isEuclidianVisible() || gp == null) {
 			return null;
 		}

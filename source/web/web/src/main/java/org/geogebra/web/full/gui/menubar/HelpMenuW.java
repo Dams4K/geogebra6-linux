@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.menubar;
 
 import org.geogebra.common.GeoGebraConstants;
@@ -20,7 +36,7 @@ import org.gwtproject.user.client.ui.Label;
 /**
  * The help menu for Classic.
  */
-public class HelpMenuW extends Submenu implements BooleanRenderable {
+public final class HelpMenuW extends Submenu implements BooleanRenderable {
 
 	private AriaMenuItem tutorials;
 	private AriaMenuItem forum;
@@ -59,13 +75,13 @@ public class HelpMenuW extends Submenu implements BooleanRenderable {
 	private void addTutorialItem(final AppW app, Localization loc) {
 		final String tutorialURL = app.getLocalization().getTutorialURL(app.getConfig());
 		if (!StringUtil.empty(tutorialURL)) {
-			tutorials = addItem(
-					MainMenu.getMenuBarItem(MaterialDesignResources.INSTANCE.tutorial_black(),
-							loc.getMenu("Tutorials"),
+			tutorials = addItem(MainMenu.getMenuBarItem(
+					MaterialDesignResources.INSTANCE.tutorial_black(),
+					loc.getMenu("Tutorials"),
 					new MenuCommand(app) {
 
 						@Override
-						public void doExecute() {
+						void doExecute() {
 							app.getFileManager().open(tutorialURL);
 						}
 					}));
@@ -73,61 +89,59 @@ public class HelpMenuW extends Submenu implements BooleanRenderable {
 	}
 
 	private void addManualItem(final AppW app, Localization loc) {
-		manual = addItem(
-				MainMenu.getMenuBarItem(
-						MaterialDesignResources.INSTANCE.manual_black(),
-						loc.getMenu("Manual"),
+		manual = addItem(MainMenu.getMenuBarItem(
+				MaterialDesignResources.INSTANCE.manual_black(),
+				loc.getMenu("Manual"),
 				new MenuCommand(app) {
 
 					@Override
-					public void doExecute() {
+					void doExecute() {
 						app.getGuiManager().openHelp(ManualPage.MAIN_PAGE, null);
 					}
 				}));
 	}
 
 	private void addForumItem(final AppW app, Localization loc) {
-		forum = addItem(
-				MainMenu.getMenuBarItem(
-						SharedResources.INSTANCE.icon_help_black(),
-						loc.getMenu("Help"),
-				new MenuCommand(app) {
+		forum = addItem(MainMenu.getMenuBarItem(
+				SharedResources.INSTANCE.icon_help_black(), loc.getMenu("Help"), new MenuCommand(app) {
 
 					@Override
-					public void doExecute() {
+					void doExecute() {
 						app.getFileManager().open(GeoGebraConstants.FORUM_URL);
 					}
 				}));
 	}
 
 	private void addReportBugItem(final AppW app, Localization loc) {
-		bug = addItem(
-				MainMenu.getMenuBarItem(
-						MaterialDesignResources.INSTANCE.bug_report_black(),
-						loc.getMenu("ReportBug"),
+		bug = addItem(MainMenu.getMenuBarItem(
+				MaterialDesignResources.INSTANCE.bug_report_black(),
+				loc.getMenu("ReportBug"),
 				new MenuCommand(app) {
 
 					@Override
-					public void doExecute() {
+					void doExecute() {
 						app.getFileManager().open(GeoGebraConstants.REPORT_BUG_URL);
 					}
 				}));
 	}
 
 	private void addAboutItem() {
-		about = addItem("AboutLicense", new ShowLicenseAction(),
+		about = addItem(
+				"AboutLicense",
+				new ShowLicenseAction(),
 				new ImageIconSpec(MaterialDesignResources.INSTANCE.info_black()));
 	}
 
 	private void addPrivacyItem() {
-		privacy = addItem("PrivacyPolicy", new ShowPrivacyPolicyAction(),
+		privacy = addItem(
+				"PrivacyPolicy",
+				new ShowPrivacyPolicyAction(),
 				new ImageIconSpec(DefaultMenuIconResources.INSTANCE.privacyPolicy()));
 	}
 
 	private void addVersionNumber(AppW appW) {
 		String versionNr = GeoGebraConstants.getVersionString6();
-		String versionStr = appW.getLocalization().getPlainDefault("VersionA",
-				"Version %0", versionNr);
+		String versionStr = appW.getLocalization().getPlainDefault("VersionA", "Version %0", versionNr);
 		Label version = BaseWidgetFactory.INSTANCE.newDisabledText(versionStr, "versionNr");
 		add(version);
 	}

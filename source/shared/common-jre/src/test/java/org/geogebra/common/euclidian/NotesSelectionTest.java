@@ -1,18 +1,40 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.main.settings.config.AppConfigNotes;
 import org.geogebra.test.annotation.Issue;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class NotesSelectionTest extends BaseEuclidianControllerTest {
+class NotesSelectionTest extends BaseEuclidianControllerTest {
+
+	@BeforeEach
+	void setUp() {
+		setUpController();
+	}
 
 	@Test
-	public void selectionRectangleShouldSelectPartOfStroke() {
+	void selectionRectangleShouldSelectPartOfStroke() {
 		setMode(EuclidianConstants.MODE_PEN);
 		dragStart(100, 100);
 		dragEnd(200, 100);
@@ -23,7 +45,7 @@ public class NotesSelectionTest extends BaseEuclidianControllerTest {
 	}
 
 	@Test
-	public void selectionRectangleShouldSelectPartOfMoreStrokes() {
+	void selectionRectangleShouldSelectPartOfMoreStrokes() {
 		setMode(EuclidianConstants.MODE_PEN);
 		dragStart(100, 100);
 		dragEnd(200, 100);
@@ -39,7 +61,7 @@ public class NotesSelectionTest extends BaseEuclidianControllerTest {
 
 	@Test
 	@Issue("MOW-1744")
-	public void tabToNextGeoShouldHideBoundingBox() {
+	void tabToNextGeoShouldHideBoundingBox() {
 		getApp().setConfig(new AppConfigNotes());
 		setMode(EuclidianConstants.MODE_SHAPE_RECTANGLE);
 		dragStart(50, 50);
@@ -50,7 +72,6 @@ public class NotesSelectionTest extends BaseEuclidianControllerTest {
 	}
 
 	private void assertSelected(GeoElement... geos) {
-		assertArrayEquals(getApp().getSelectionManager().getSelectedGeos().toArray(),
-				geos);
+		assertArrayEquals(getApp().getSelectionManager().getSelectedGeos().toArray(), geos);
 	}
 }

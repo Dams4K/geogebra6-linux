@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.batch;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -15,57 +31,57 @@ import org.geogebra.common.kernel.geos.GProperty;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.util.GTimer;
 import org.geogebra.common.util.GTimerListener;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
-public class BatchedUpdateWrapperTest extends BaseUnitTest {
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
+class BatchedUpdateWrapperTest extends BaseUnitTest {
 	private WrappedViewTest wrappedView;
 
 	@Mock
-	/* package */ GTimer timer;
+	/* package */
+	GTimer timer;
 
 	@Spy
 	private UtilFactoryJre utilFactory;
 
 	private BatchedUpdateWrapper wrapper;
 
-	static abstract private class WrappedViewTest
-			implements WrappableView {
+	private interface WrappedViewTest extends WrappableView {
 
 		@Override
-		public boolean needsUpdateVisualstyle(GProperty property) {
+		default boolean needsUpdateVisualstyle(GProperty property) {
 			return true;
 		}
 
 		@Override
-		public boolean show(GeoElement geo) {
+		default boolean show(GeoElement geo) {
 			return true;
 		}
 
 		@Override
-		public boolean getIsWrapped() {
+		default boolean getIsWrapped() {
 			return true;
 		}
-
 	}
 
-	@Before
-	public void setupBatchedUpdateWrapperTest() {
-		when(utilFactory.newTimer(any(GTimerListener.class), anyInt())).then(
-				invocation -> timer);
-		wrappedView = Mockito.mock(WrappedViewTest.class,
-				Mockito.CALLS_REAL_METHODS);
+	@BeforeEach
+	void setupBatchedUpdateWrapperTest() {
+		when(utilFactory.newTimer(any(GTimerListener.class), anyInt())).then(invocation -> timer);
+		wrappedView = Mockito.mock(WrappedViewTest.class, Mockito.CALLS_REAL_METHODS);
 		wrapper = new BatchedUpdateWrapper(wrappedView, utilFactory);
 	}
 
 	@Test
-	public void testCallsTimerStart() {
+	void testCallsTimerStart() {
 		GeoElement line = getElementFactory().createGeoLine();
 
 		wrapper.add(line);
@@ -75,7 +91,7 @@ public class BatchedUpdateWrapperTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testCallsMethodsWhenTimerRuns() {
+	void testCallsMethodsWhenTimerRuns() {
 		GeoElement line = getElementFactory().createGeoLine();
 
 		wrapper.add(line);
@@ -101,7 +117,7 @@ public class BatchedUpdateWrapperTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testOptimizeUpdateCalls() {
+	void testOptimizeUpdateCalls() {
 		GeoElement line = getElementFactory().createGeoLine();
 		wrapper.update(line);
 		wrapper.update(line);
@@ -112,7 +128,7 @@ public class BatchedUpdateWrapperTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testOptimizeRemove() {
+	void testOptimizeRemove() {
 		GeoElement line = getElementFactory().createGeoLine();
 		wrapper.add(line);
 		wrapper.update(line);
@@ -127,15 +143,17 @@ public class BatchedUpdateWrapperTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testRecursiveAdd() {
+	void testRecursiveAdd() {
 		GeoElement line1 = getElementFactory().createGeoLine();
 
 		wrapper.add(line1);
 
 		doAnswer(invocation -> {
-			addLine();
-			return null;
-		}).when(wrappedView).add(eq(line1));
+					addLine();
+					return null;
+				})
+				.when(wrappedView)
+				.add(eq(line1));
 
 		wrapper.onRun();
 	}

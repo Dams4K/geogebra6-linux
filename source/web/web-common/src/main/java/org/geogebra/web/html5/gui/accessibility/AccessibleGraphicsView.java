@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.accessibility;
 
 import java.util.ArrayList;
@@ -17,8 +33,8 @@ public class AccessibleGraphicsView implements AccessibleWidget, HasSliders {
 
 	private AccessibilityView view;
 	private AppW app;
-	private List<SliderInput> sliderTypes = new ArrayList<>(
-			Arrays.asList(SliderInput.ROTATE_Z, SliderInput.TILT));
+	private List<SliderInput> sliderTypes =
+			new ArrayList<>(Arrays.asList(SliderInput.ROTATE_Z, SliderInput.TILT));
 	private List<SliderW> sliders = new ArrayList<>();
 	// TODO add toggle button for animation, fullscreen button
 
@@ -27,8 +43,8 @@ public class AccessibleGraphicsView implements AccessibleWidget, HasSliders {
 	 * @param sliderFactory slider factory
 	 * @param view          accessibility view
 	 */
-	public AccessibleGraphicsView(AppW app, BaseWidgetFactory sliderFactory,
-			final AccessibilityView view) {
+	public AccessibleGraphicsView(
+			AppW app, BaseWidgetFactory sliderFactory, final AccessibilityView view) {
 		this.app = app;
 		this.view = view;
 		for (int i = 0; i < sliderTypes.size(); i++) {
@@ -101,5 +117,4 @@ public class AccessibleGraphicsView implements AccessibleWidget, HasSliders {
 	public boolean isCompatible(GeoElement geo) {
 		return true;
 	}
-
 }

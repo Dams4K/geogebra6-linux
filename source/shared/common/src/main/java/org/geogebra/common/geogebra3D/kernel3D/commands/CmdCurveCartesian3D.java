@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.commands;
 
 import org.geogebra.common.geogebra3D.kernel3D.algos.AlgoCurveCartesian3D;
@@ -23,7 +39,6 @@ public class CmdCurveCartesian3D extends CmdCurveCartesian {
 	 */
 	public CmdCurveCartesian3D(Kernel kernel) {
 		super(kernel);
-
 	}
 
 	@Override
@@ -47,10 +62,12 @@ public class CmdCurveCartesian3D extends CmdCurveCartesian {
 					&& (ok[4] = arg[4] instanceof GeoNumberValue)
 					&& (ok[5] = arg[5] instanceof GeoNumberValue)) {
 				GeoElement[] ret = new GeoElement[1];
-				ret[0] = kernel.getManager3D().curveCartesian3D(
-						(GeoNumberValue) arg[0], (GeoNumberValue) arg[1],
-						(GeoNumberValue) arg[2], (GeoNumeric) arg[3],
-						(GeoNumberValue) arg[4], (GeoNumberValue) arg[5]);
+				ret[0] = kernel
+						.getManager3D()
+						.curveCartesian3D(
+								(GeoNumberValue) arg[0], (GeoNumberValue) arg[1],
+								(GeoNumberValue) arg[2], (GeoNumeric) arg[3],
+								(GeoNumberValue) arg[4], (GeoNumberValue) arg[5]);
 				ret[0].setLabel(c.getLabel());
 				return ret;
 			}
@@ -59,21 +76,18 @@ public class CmdCurveCartesian3D extends CmdCurveCartesian {
 					throw argErr(c, arg[i]);
 				}
 			}
-
 		}
 
 		return super.process(c, info);
 	}
 
 	@Override
-	protected AlgoCurveCartesian getCurveAlgo(ExpressionNode point,
-			GeoNumberValue[] coords, GeoElement[] arg) {
+	protected AlgoCurveCartesian getCurveAlgo(
+			ExpressionNode point, GeoNumberValue[] coords, GeoElement[] arg) {
 		if (coords.length == 2) {
 			return super.getCurveAlgo(point, coords, arg);
 		}
-		return new AlgoCurveCartesian3D(cons, point, coords,
-				(GeoNumeric) arg[1], (GeoNumberValue) arg[2],
-				(GeoNumberValue) arg[3]);
+		return new AlgoCurveCartesian3D(
+				cons, point, coords, (GeoNumeric) arg[1], (GeoNumberValue) arg[2], (GeoNumberValue) arg[3]);
 	}
-
 }

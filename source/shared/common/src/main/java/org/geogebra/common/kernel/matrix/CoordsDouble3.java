@@ -1,10 +1,26 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.matrix;
 
 import org.geogebra.common.util.DoubleUtil;
 
 /**
  * class for 3 double (x, y, z)
- * 
+ *
  * @author mathieu
  *
  */
@@ -30,12 +46,11 @@ public class CoordsDouble3 extends Coords3 {
 	/**
 	 * constructor
 	 */
-	public CoordsDouble3() {
-	}
+	public CoordsDouble3() {}
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param x
 	 *            x coord
 	 * @param y
@@ -50,33 +65,32 @@ public class CoordsDouble3 extends Coords3 {
 	}
 
 	@Override
-	final public boolean isDefined() {
+	public final boolean isDefined() {
 		return !Double.isNaN(x) && !Double.isNaN(y) && !Double.isNaN(z);
 	}
 
 	@Override
-	final public CoordsDouble3 copyVector() {
+	public final CoordsDouble3 copyVector() {
 
 		return new CoordsDouble3(x, y, z);
-
 	}
 
 	@Override
-	final public void addInside(Coords3 v) {
+	public final void addInside(Coords3 v) {
 		x += v.getXd();
 		y += v.getYd();
 		z += v.getZd();
 	}
 
 	@Override
-	final public void mulInside(float v) {
+	public final void mulInside(float v) {
 		x *= v;
 		y *= v;
 		z *= v;
 	}
 
 	@Override
-	final public void mulInside(double v) {
+	public final void mulInside(double v) {
 		x *= v;
 		y *= v;
 		z *= v;
@@ -91,47 +105,46 @@ public class CoordsDouble3 extends Coords3 {
 	}
 
 	@Override
-	final public void set(float x, float y, float z) {
+	public final void set(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
 
 	@Override
-	final public void set(double x, double y, double z) {
+	public final void set(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-
 	}
 
 	@Override
-	final public double getXd() {
+	public final double getXd() {
 		return x;
 	}
 
 	@Override
-	final public double getYd() {
+	public final double getYd() {
 		return y;
 	}
 
 	@Override
-	final public double getZd() {
+	public final double getZd() {
 		return z;
 	}
 
 	@Override
-	final public float getXf() {
+	public final float getXf() {
 		return (float) x;
 	}
 
 	@Override
-	final public float getYf() {
+	public final float getYf() {
 		return (float) y;
 	}
 
 	@Override
-	final public float getZf() {
+	public final float getZf() {
 		return (float) z;
 	}
 
@@ -152,5 +165,4 @@ public class CoordsDouble3 extends Coords3 {
 		y *= b;
 		z *= c;
 	}
-
 }

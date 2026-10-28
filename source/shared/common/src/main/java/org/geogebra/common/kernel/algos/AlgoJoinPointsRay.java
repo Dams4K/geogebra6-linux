@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoJoinPoints.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -36,8 +34,7 @@ import org.geogebra.common.kernel.prover.polynomial.PVariable;
  *
  * @author Markus
  */
-public class AlgoJoinPointsRay extends AlgoElement
-		implements SymbolicParametersBotanaAlgo {
+public class AlgoJoinPointsRay extends AlgoElement implements SymbolicParametersBotanaAlgo {
 
 	private GeoPoint P; // input
 	private GeoPoint Q; // input
@@ -46,8 +43,7 @@ public class AlgoJoinPointsRay extends AlgoElement
 	private PVariable[] botanaVars;
 
 	/** Creates new AlgoJoinPoints */
-	public AlgoJoinPointsRay(Construction cons, String label, GeoPoint P,
-			GeoPoint Q) {
+	public AlgoJoinPointsRay(Construction cons, String label, GeoPoint P, GeoPoint Q) {
 		super(cons);
 		this.P = P;
 		this.Q = Q;
@@ -72,7 +68,7 @@ public class AlgoJoinPointsRay extends AlgoElement
 
 	/**
 	 * @author Tam
-	 * 
+	 *
 	 *         for special cases of e.g. AlgoIntersectLineConic
 	 */
 	private void addIncidence() {
@@ -122,18 +118,16 @@ public class AlgoJoinPointsRay extends AlgoElement
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 
 		// Michael Borcherds 2008-03-31
 		// simplified to allow better translation
-		return getLoc().getPlainDefault("RayThroughAB", "Ray through %0, %1",
-				P.getLabel(tpl), Q.getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault("RayThroughAB", "Ray through %0, %1", P.getLabel(tpl), Q.getLabel(tpl));
 	}
 
 	@Override
-	public PVariable[] getBotanaVars(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PVariable[] getBotanaVars(GeoElementND geo) throws NoSymbolicParametersException {
 		if (botanaVars != null) {
 			return botanaVars;
 		}
@@ -142,8 +136,7 @@ public class AlgoJoinPointsRay extends AlgoElement
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 		return null;
 	}
 }

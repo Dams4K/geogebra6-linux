@@ -1,13 +1,29 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GDimension;
 import org.geogebra.common.awt.GFont;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.GeoGebraColorConstants;
@@ -16,9 +32,9 @@ import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.debug.Log;
 
 import com.himamis.retex.renderer.share.TeXConstants;
+import com.himamis.retex.renderer.share.TeXFont;
 import com.himamis.retex.renderer.share.TeXFormula;
 import com.himamis.retex.renderer.share.TeXIcon;
-import com.himamis.retex.renderer.share.platform.graphics.Color;
 import com.himamis.retex.renderer.share.platform.graphics.Graphics2DInterface;
 import com.himamis.retex.renderer.share.platform.graphics.HasForegroundColor;
 import com.himamis.retex.renderer.share.platform.graphics.Image;
@@ -37,8 +53,7 @@ public abstract class DrawEquation implements DrawEquationI {
 	public static StringBuilder getJLMCommands() {
 		StringBuilder initJLM = new StringBuilder();
 
-		HashMap<String, GColor> ggbCols = GeoGebraColorConstants
-				.getGeoGebraColors();
+		HashMap<String, GColor> ggbCols = GeoGebraColorConstants.getGeoGebraColors();
 
 		Iterator<Entry<String, GColor>> it = ggbCols.entrySet().iterator();
 
@@ -64,7 +79,6 @@ public abstract class DrawEquation implements DrawEquationI {
 				initJLM.append(',');
 				initJLM.append(col.getBlue());
 				initJLM.append("}{#1}} ");
-
 			}
 		}
 		return initJLM;
@@ -82,7 +96,7 @@ public abstract class DrawEquation implements DrawEquationI {
 
 	/**
 	 * Renders LaTeX equation using JLaTeXMath
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param geo
@@ -111,11 +125,19 @@ public abstract class DrawEquation implements DrawEquationI {
 	 *            line space in centimeters
 	 * @return dimensions of result
 	 */
-	final public GDimension drawEquation(final App app, final GeoElementND geo,
-			final Graphics2DInterface g2, final int x, final int y,
-			final String text, final GFont font, final boolean serif,
-			final Color fgColor, final Color bgColor,
-			boolean useCache, final Integer maxWidth,
+	public final GDimension drawEquation(
+			final App app,
+			final GeoElementND geo,
+			final Graphics2DInterface g2,
+			final int x,
+			final int y,
+			final String text,
+			final GFont font,
+			final boolean serif,
+			final GColor fgColor,
+			final GColor bgColor,
+			boolean useCache,
+			final Integer maxWidth,
 			final Double lineSpace) {
 		// TODO uncomment when \- works
 		// text=addPossibleBreaks(text);
@@ -124,29 +146,26 @@ public abstract class DrawEquation implements DrawEquationI {
 		int height = -1;
 		// int depth = 0;
 
-		int style = font.getLaTeXStyle(serif);
+		int style = getLaTeXStyle(font, serif);
 
 		// if we're exporting, we want to draw it full resolution
 		if (app.isExporting() || !useCache) {
-			TeXIcon icon = createIcon(text, fgColor, font, style, maxWidth,
-					lineSpace);
+			TeXIcon icon = createIcon(text, fgColor, font, style, maxWidth, lineSpace);
 
 			HasForegroundColor fg = new HasForegroundColor() {
 
 				@Override
-				public Color getForegroundColor() {
+				public GColor getForegroundColor() {
 					return fgColor;
 				}
-
 			};
 
 			icon.paintIcon(fg, g2, x, y);
 
-			return AwtFactory.getPrototype().newDimension(icon.getIconWidth(),
-					icon.getIconHeight());
+			return AwtFactory.getPrototype().newDimension(icon.getIconWidth(), icon.getIconHeight());
 		}
 
-		Image im = null;
+		Image im;
 		try {
 			final int[] ret = new int[2];
 			checkFirstCall();
@@ -162,28 +181,24 @@ public abstract class DrawEquation implements DrawEquationI {
 			checkFirstCall();
 
 			try {
-				final TeXFormula formula = TeXFormula
-						.getPartialTeXFormula(text);
-				im = TeXFormula.asImage(formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,
-						font.getSize() + 3, style), convertColor(GColor.BLACK),
-						convertColor(GColor.WHITE), getPixelRatio());
+				final TeXFormula formula = TeXFormula.getPartialTeXFormula(text);
+				im = TeXFormula.asImage(
+						formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style),
+						GColor.BLACK,
+						GColor.WHITE,
+						getPixelRatio());
 
 				// toJavaString() to help diagnose non-printable characters
-				Log.warn("latex syntax error\n" + text + "\n"
-						+ StringUtil.toJavaString(e.getMessage()));
+				Log.warn("latex syntax error\n" + text + "\n" + StringUtil.toJavaString(e.getMessage()));
 
 			} catch (Exception e2) {
 
-				final TeXFormula formula = TeXFormula
-						.getPartialTeXFormula("\\textcolor{red}{?}");
-				im = formula.createBufferedImage(TeXConstants.STYLE_DISPLAY,
-						font.getSize() + 3, convertColor(GColor.BLACK),
-						convertColor(GColor.WHITE));
+				final TeXFormula formula = TeXFormula.getPartialTeXFormula("\\textcolor{red}{?}");
+				im = formula.createBufferedImage(
+						TeXConstants.STYLE_DISPLAY, font.getSize() + 3, GColor.BLACK, GColor.WHITE);
 
 				// toJavaString() to help diagnose non-printable characters
-				Log.error(
-						"serious latex error\n" + text + "\n"
-								+ StringUtil.toJavaString(e.getMessage()));
+				Log.error("serious latex error\n" + text + "\n" + StringUtil.toJavaString(e.getMessage()));
 				Log.debug(e2);
 			}
 		}
@@ -200,6 +215,9 @@ public abstract class DrawEquation implements DrawEquationI {
 		return AwtFactory.getPrototype().newDimension(width, height);
 	}
 
+	/**
+	 * @return device pixel ratio used for rendering LaTeX
+	 */
 	public double getPixelRatio() {
 		return 1;
 	}
@@ -220,8 +238,8 @@ public abstract class DrawEquation implements DrawEquationI {
 	 *            space between lines
 	 * @return rendered LaTeX
 	 */
-	public TeXIcon createIcon(String text, Color fgColor, GFont font, int style,
-			Integer maxWidth, Double lineSpace) {
+	public TeXIcon createIcon(
+			String text, GColor fgColor, GFont font, int style, Integer maxWidth, Double lineSpace) {
 		return createIcon(text, fgColor, font.getSize() + 3, style);
 	}
 
@@ -232,7 +250,7 @@ public abstract class DrawEquation implements DrawEquationI {
 	 * @param style latex font style
 	 * @return icon
 	 */
-	public TeXIcon createIcon(String text, Color fgColor, int fontSize, int style) {
+	public TeXIcon createIcon(String text, GColor fgColor, double fontSize, int style) {
 		checkFirstCall();
 		TeXFormula formula;
 		TeXIcon icon;
@@ -241,8 +259,7 @@ public abstract class DrawEquation implements DrawEquationI {
 			formula = new TeXFormula(text);
 
 			// if (maxWidth == null) {
-			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,
-					fontSize, style, fgColor);
+			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, fontSize, style, fgColor);
 			// } else {
 			// icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,
 			// font.getSize() + 3, TeXLength.Unit.CM,
@@ -251,38 +268,30 @@ public abstract class DrawEquation implements DrawEquationI {
 			// }
 		} catch (final Error e) {
 			Log.debug(e);
-			Log.debug("MyError LaTeX parse exception:" + e.getMessage() + "\n"
-					+ text);
+			Log.debug("MyError LaTeX parse exception:" + e.getMessage() + "\n" + text);
 			// Write error message to Graphics View
 
 			formula = TeXFormula.getPartialTeXFormula("?");
-			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,
-					fontSize, style, fgColor);
+			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, fontSize, style, fgColor);
 
 			// formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 15,
 			// TeXLength.Unit.CM, 4f, TeXConstants.Align.LEFT,
 			// TeXLength.Unit.CM, 0.5f);
-			formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 4,
-					TeXConstants.Align.LEFT);
+			formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 4, TeXConstants.Align.LEFT);
 
 		} catch (final Exception e) {
 			Log.debug(e);
-			Log.debug(
-					"LaTeX parse exception1: " + e.getMessage() + "\n" + text);
+			Log.debug("LaTeX parse exception1: " + e.getMessage() + "\n" + text);
 			// Write error message to Graphics View
 			try {
 				formula = TeXFormula.getPartialTeXFormula(text);
 
-				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,
-						fontSize, style, fgColor);
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, fontSize, style, fgColor);
 			} catch (Exception e2) {
 				// e2.printStackTrace();
-				Log.debug("LaTeX parse exception2: " + e2.getMessage() + "\n"
-						+ text);
-				formula = TeXFormula
-						.getPartialTeXFormula("?");
-				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,
-						fontSize, style, fgColor);
+				Log.debug("LaTeX parse exception2: " + e2.getMessage() + "\n" + text);
+				formula = TeXFormula.getPartialTeXFormula("?");
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, fontSize, style, fgColor);
 			}
 		}
 		icon.setInsets(new Insets(1, 1, 1, 1));
@@ -304,14 +313,17 @@ public abstract class DrawEquation implements DrawEquationI {
 	 *            line space in centimeters
 	 * @return dimensions of result
 	 */
-	final public GDimension measureEquationJLaTeXMath(final App app,
+	public final GDimension measureEquationJLaTeXMath(
+			final App app,
 			final String text,
-			final GFont font, final boolean serif, final Integer maxWidth,
+			final GFont font,
+			final boolean serif,
+			final Integer maxWidth,
 			final Double lineSpace) {
 
 		checkFirstCall();
 		GColor fgColor = GColor.BLACK;
-		int style = font.getLaTeXStyle(serif);
+		int style = getLaTeXStyle(font, serif);
 
 		TeXFormula formula;
 		TeXIcon icon;
@@ -320,8 +332,7 @@ public abstract class DrawEquation implements DrawEquationI {
 			formula = new TeXFormula(text);
 
 			// if (maxWidth == null) {
-			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,
-					font.getSize() + 3, style, convertColor(fgColor));
+			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style, fgColor);
 			// } else {
 			// icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,
 			// font.getSize() + 3, TeXLength.Unit.CM,
@@ -332,27 +343,41 @@ public abstract class DrawEquation implements DrawEquationI {
 			// Write error message to Graphics View
 
 			formula = TeXFormula.getPartialTeXFormula(text);
-			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,
-					font.getSize() + 3, style, convertColor(fgColor));
+			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style, fgColor);
 
 			// formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 15,
 			// TeXLength.Unit.CM, 4f, TeXConstants.Align.LEFT,
 			// TeXLength.Unit.CM, 0.5f);
-			formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 4f,
-					TeXConstants.Align.LEFT);
+			formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 4f, TeXConstants.Align.LEFT);
 
 		} catch (final Exception e) {
 			// Write error message to Graphics View
 
 			formula = TeXFormula.getPartialTeXFormula(text);
-			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY,
-					font.getSize() + 3, style, convertColor(fgColor));
-
+			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style, fgColor);
 		}
 		icon.setInsets(new Insets(1, 1, 1, 1));
 
-		return AwtFactory.getPrototype().newDimension(icon.getIconWidth(),
-				icon.getIconHeight());
+		return AwtFactory.getPrototype().newDimension(icon.getIconWidth(), icon.getIconHeight());
+	}
 
+	/**
+	 * @param serif
+	 *            whether this is serif font
+	 * @return style as required by JLaTeXMath
+	 */
+	public int getLaTeXStyle(GFont font, boolean serif) {
+		int style = 0;
+		if (font.isBold()) {
+			style = style | TeXFont.BOLD;
+		}
+		if (font.isItalic()) {
+			style = style | TeXFont.ITALIC;
+		}
+		if (!serif) {
+			style = style | TeXFont.SANSSERIF;
+		}
+
+		return style;
 	}
 }

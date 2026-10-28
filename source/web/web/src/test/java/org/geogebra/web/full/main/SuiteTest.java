@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.main;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -7,12 +23,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.geogebra.common.SuiteSubApp;
+import org.geogebra.common.exam.ExamController;
 import org.geogebra.common.exam.ExamType;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.algos.AlgoCircleTwoPoints;
 import org.geogebra.common.kernel.commands.AlgebraProcessor;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
-import org.geogebra.common.main.exam.TempStorage;
 import org.geogebra.common.ownership.GlobalScope;
 import org.geogebra.common.scientific.LabelController;
 import org.geogebra.web.full.euclidian.quickstylebar.QuickStyleBar;
@@ -33,7 +49,10 @@ public class SuiteTest {
 		GlobalHeader.INSTANCE.setApp(app);
 		app.startExam(ExamType.GENERIC, null);
 		app.switchToSubapp(SuiteSubApp.GEOMETRY);
-		GlobalScope.examController.finishExam();
+		ExamController examController = GlobalScope.getExamController(app);
+		if (examController != null) {
+			examController.finishExam();
+		}
 		app.endExam();
 		assertTrue(app.getSettings().getCasSettings().isEnabled());
 	}
@@ -62,8 +81,8 @@ public class SuiteTest {
 		String cons = app.getGgbApi().getXML();
 		app.switchToSubapp(SuiteSubApp.PROBABILITY);
 		app.setXML(cons, true);
-		assertTrue(app.getKernel().lookupLabel("gg").getParentAlgorithm()
-				instanceof AlgoCircleTwoPoints);
+		assertTrue(
+				app.getKernel().lookupLabel("gg").getParentAlgorithm() instanceof AlgoCircleTwoPoints);
 	}
 
 	@Test
@@ -92,9 +111,9 @@ public class SuiteTest {
 		new LabelController().hideLabel(geos[0]);
 		app.getGuiManager().addGeoToTableValuesView(geos[0].toGeoElement());
 		assertEquals("f", geos[0].getLabelSimple());
-		assertTrue("CAS should allow adding columns",
-				app.getGuiManager().getTableValuesViewOrNull()
-						.getTableValuesModel().allowsAddingColumns());
+		assertTrue(
+				"CAS should allow adding columns",
+				app.getGuiManager().getTableValuesViewOrNull().getTableValuesModel().allowsAddingColumns());
 	}
 
 	private String getValueString(String label) {

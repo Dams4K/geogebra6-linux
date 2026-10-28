@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.advanced;
@@ -24,18 +28,17 @@ import org.geogebra.common.kernel.optimization.ExtremumFinderI;
  * Minimize[ &lt;dependent variable&gt;, &lt;independent variable&gt; ] (and
  * Maximize[] ) which searches for the independent variable which gives the
  * smallest/largest result for the dependent variable.
- * 
+ *
  * Packages the relationship as a UnivariateFunction for the ExtremumFinder.
- * 
+ *
  * @author Hans-Petter Ulven
  * @version 20.02.2011
- * 
+ *
  *          ToDo: -Bug: Intermediate steps in searching produces traces in
  *          Graphic view -Find a better way to avoid all the recursive calls,
  *          even if they are not executed all the way
- * 
+ *
  */
-
 public abstract class AlgoOptimize extends AlgoElement {
 	/** optimization types */
 	public enum OptimizationType {
@@ -47,18 +50,18 @@ public abstract class AlgoOptimize extends AlgoElement {
 
 	private Construction optCons = null;
 	private ExtremumFinderI extrFinder = null; // Uses ExtremumFinder for the
-												// dirty work
+	// dirty work
 	private UnivariateFunction i_am_not_a_real_function = null;
 	private GeoElement dep = null;
 	private Optimizer indep = null;
 	private GeoElement result = null;
 	private OptimizationType type = OptimizationType.MINIMIZE;
 	private boolean isrunning = false; // To stop recursive calls. Both Maximize
-										// and Minimize.
+	// and Minimize.
 
 	/**
 	 * Constructor for optimization algos
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -70,8 +73,8 @@ public abstract class AlgoOptimize extends AlgoElement {
 	 * @param type
 	 *            maximize or minimize
 	 */
-	public AlgoOptimize(Construction cons, String label, GeoNumberValue dep,
-			Optimizer indep, OptimizationType type) {
+	public AlgoOptimize(
+			Construction cons, String label, GeoNumberValue dep, Optimizer indep, OptimizationType type) {
 		super(cons);
 		this.optCons = cons;
 		this.dep = dep.toGeoElement();
@@ -90,7 +93,7 @@ public abstract class AlgoOptimize extends AlgoElement {
 	protected void setInputOutput() {
 		/*
 		 * input = new GeoElement[1]; input[0] = geoList;
-		 * 
+		 *
 		 * output = new GeoElement[1]; output[0] = max;
 		 */
 		input = new GeoElement[2];
@@ -117,17 +120,23 @@ public abstract class AlgoOptimize extends AlgoElement {
 			return;
 		}
 		if (type == OptimizationType.MINIMIZE) {
-			res = extrFinder.findMinimum(indep.getIntervalMin(),
-					indep.getIntervalMax(), i_am_not_a_real_function, 5.0E-8); // debug("Minimize
-																				// ("+counter+")
-																				// found
-																				// "+res);
+			res = extrFinder.findMinimum(
+					indep.getIntervalMin(),
+					indep.getIntervalMax(),
+					i_am_not_a_real_function,
+					5.0E-8); // debug("Minimize
+			// ("+counter+")
+			// found
+			// "+res);
 		} else {
-			res = extrFinder.findMaximum(indep.getIntervalMin(),
-					indep.getIntervalMax(), i_am_not_a_real_function, 5.0E-8); // debug("Maximize
-																				// ("+counter+")
-																				// found
-																				// "+res);
+			res = extrFinder.findMaximum(
+					indep.getIntervalMin(),
+					indep.getIntervalMax(),
+					i_am_not_a_real_function,
+					5.0E-8); // debug("Maximize
+			// ("+counter+")
+			// found
+			// "+res);
 		}
 		indep.setValue(res);
 		result.set(indep.getGeo());
@@ -144,5 +153,4 @@ public abstract class AlgoOptimize extends AlgoElement {
 	public GeoElement getResult() {
 		return result;
 	}
-
 }

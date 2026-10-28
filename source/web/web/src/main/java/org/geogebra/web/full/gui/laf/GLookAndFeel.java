@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.laf;
 
 import java.util.Date;
@@ -10,6 +26,7 @@ import org.geogebra.common.ownership.GlobalScope;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.lang.Language;
 import org.geogebra.gwtutil.Cookies;
+import org.geogebra.gwtutil.JsObject;
 import org.geogebra.web.full.gui.exam.ExamUtil;
 import org.geogebra.web.html5.Browser;
 import org.geogebra.web.html5.gui.laf.GLookAndFeelI;
@@ -22,20 +39,19 @@ import elemental2.dom.DomGlobal;
 import elemental2.dom.Event;
 import elemental2.dom.EventListener;
 import elemental2.promise.Promise;
-import jsinterop.base.Js;
 
 /**
  * Represents different designs/platforms of GeoGebra deployment
  */
 public class GLookAndFeel implements GLookAndFeelI {
 	/** width of menu */
-	public static final int MENUBAR_WIDTH = 270; //TODO make it smaller - wordWrap
+	public static final int MENUBAR_WIDTH = 270; // TODO make it smaller - wordWrap
 	/** toolbar height + offset */
 	public static final int TOOLBAR_OFFSET = 61;
 	/** toolbar height */
 	public static final int TOOLBAR_HEIGHT = 53;
+
 	private EventListener windowClosingHandler;
-	private EventListener windowCloseHandler;
 
 	@Override
 	public boolean undoRedoSupported() {
@@ -59,28 +75,23 @@ public class GLookAndFeel implements GLookAndFeelI {
 	 */
 	@Override
 	public void addWindowClosingHandler(final AppW app) {
-		if (GlobalScope.examController.isExamActive()) {
+		if (GlobalScope.isExamActive(app)) {
 			return;
 		}
 		// popup when the user wants to exit accidentally
 		if (windowClosingHandler == null) {
-			this.windowClosingHandler = this::askForSave;
-			app.getGlobalHandlers().addEventListener(DomGlobal.window,
-					"beforeunload", windowClosingHandler);
-		}
-
-		if (this.windowCloseHandler == null) {
-			// onClose is called, if user leaves the page correct
-			// not called if browser crashes
-			this.windowCloseHandler = event -> app.getFileManager().deleteAutoSavedFile();
-			app.getGlobalHandlers().addEventListener(DomGlobal.window, "unload",
-					windowCloseHandler);
+			this.windowClosingHandler = (evt) -> askForSave(evt, app);
+			app.getGlobalHandlers()
+					.addEventListener(DomGlobal.window, "beforeunload", windowClosingHandler);
 		}
 	}
 
-	private void askForSave(Event evt) {
+	private void askForSave(Event evt, AppW app) {
+		// delete file now: if cancel is pressed, new autosave file will be created;
+		// on OK we need to clean up
+		app.getFileManager().deleteAutoSavedFile();
 		// Message set by browser https://developer.chrome.com/blog/chrome-51-deprecations/
-		Js.asPropertyMap(evt).set("returnValue", 1);
+		JsObject.of(evt).set("returnValue", 1);
 		evt.preventDefault();
 	}
 
@@ -161,8 +172,7 @@ public class GLookAndFeel implements GLookAndFeelI {
 
 	@Override
 	public Platform getPlatform(int dim, String appName) {
-		return dim > 2 ? Platform.WEB
-				: Platform.WEB_FOR_BROWSER_2D;
+		return dim > 2 ? Platform.WEB : Platform.WEB_FOR_BROWSER_2D;
 	}
 
 	@Override
@@ -174,12 +184,9 @@ public class GLookAndFeel implements GLookAndFeelI {
 	@Override
 	public void storeLanguage(String lang) {
 		if (Browser.isGeoGebraOrg()) {
-			Date exp = new Date(
-					System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365);
+			Date exp = new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365);
 			Language language1 = Language.fromLanguageTagOrLocaleString(lang);
-			Cookies.setCookie("GeoGebraLangUI",
-					language1.toLanguageTag(), exp,
-					"geogebra.org", "/");
+			Cookies.setCookie("GeoGebraLangUI", language1.toLanguageTag(), exp, "geogebra.org", "/");
 		} else {
 			BrowserStorage.LOCAL.setItem("GeoGebraLangUI", lang);
 		}
@@ -204,5 +211,4 @@ public class GLookAndFeel implements GLookAndFeelI {
 	public boolean hasLoginButton() {
 		return Browser.isNotCrossOriginIframe();
 	}
-
 }

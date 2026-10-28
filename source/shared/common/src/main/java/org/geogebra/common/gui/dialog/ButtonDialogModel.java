@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.gui.dialog;
@@ -80,8 +84,7 @@ public class ButtonDialogModel {
 		}
 
 		// XXX See Remark 1 above
-		Script script = app.createScript(scriptType, scriptText,
-				true);
+		Script script = app.createScript(scriptType, scriptText, true);
 		button.setClickScript(script);
 
 		// set caption text
@@ -110,8 +113,7 @@ public class ButtonDialogModel {
 	 * @return initial caption
 	 */
 	public String getInitString() {
-		return button == null ? ""
-				: button.getCaption(StringTemplate.defaultTemplate);
+		return button == null ? "" : button.getCaption(StringTemplate.defaultTemplate);
 	}
 
 	/**
@@ -126,8 +128,7 @@ public class ButtonDialogModel {
 	 */
 	public String getClickScript() {
 		String result = "";
-		Script clickScript = button == null ? null
-				: button.getScript(EventType.CLICK);
+		Script clickScript = button == null ? null : button.getScript(EventType.CLICK);
 		if (clickScript != null) {
 			result = clickScript.getText();
 		}
@@ -149,8 +150,8 @@ public class ButtonDialogModel {
 		ArrayList<GeoElement> options = new ArrayList<>();
 		options.add(null);
 		// combo box to link GeoElement to TextField
-		TreeSet<GeoElement> sortedSet = app.getKernel().getConstruction()
-				.getGeoSetNameDescriptionOrder();
+		TreeSet<GeoElement> sortedSet =
+				app.getKernel().getConstruction().getGeoSetNameDescriptionOrder();
 		for (GeoElement geo : sortedSet) {
 			if (GeoInputBox.isGeoLinkable(geo)) {
 				options.add(geo);

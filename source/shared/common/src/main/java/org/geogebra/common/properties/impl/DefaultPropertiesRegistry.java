@@ -1,23 +1,35 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.properties.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-
-import org.geogebra.common.ownership.NonOwning;
 import org.geogebra.common.properties.PropertiesRegistry;
 import org.geogebra.common.properties.PropertiesRegistryListener;
 import org.geogebra.common.properties.Property;
+import org.geogebra.common.properties.PropertyKey;
+import org.jspecify.annotations.NonNull;
 
 public class DefaultPropertiesRegistry implements PropertiesRegistry {
 
-	private Object context;
-	private final Map<Key, Property> properties = new HashMap();
+	private final Map<PropertyKey, Property> properties = new HashMap<>();
 	private final List<PropertiesRegistryListener> listeners = new ArrayList<>();
 
 	/**
@@ -27,91 +39,38 @@ public class DefaultPropertiesRegistry implements PropertiesRegistry {
 	 * @param listener A listener.
 	 */
 	@Override
-	public void addListener(@Nonnull @NonOwning PropertiesRegistryListener listener) {
+	public void addListener(@NonNull PropertiesRegistryListener listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeListener(@Nonnull PropertiesRegistryListener listener) {
+	public void removeListener(@NonNull PropertiesRegistryListener listener) {
 		listeners.remove(listener);
 	}
 
 	@Override
-	public void setCurrentContext(Object context) {
-		this.context = context;
-	}
-
-	@Override
-	public void register(@Nonnull Property property) {
-		register(property, context);
-	}
-
-	@Override
-	public void register(@Nonnull Property property, Object context) {
-		// TODO what if the previously registered property had registered listeners?
-		properties.put(new Key(property.getRawName(), context), property);
+	public void register(@NonNull Property property) {
+		properties.put(property.getKey(), property);
 		for (PropertiesRegistryListener listener : listeners) {
-			listener.propertyRegistered(property, context);
+			listener.propertyRegistered(property);
 		}
 	}
 
 	@Override
-	public void unregister(@Nonnull Property property) {
-		unregister(property, context);
-	}
-
-	@Override
-	public void unregister(@Nonnull Property property, Object context) {
-		properties.remove(new Key(property.getRawName(), context));
+	public void unregister(@NonNull Property property) {
+		properties.remove(property.getKey());
 		for (PropertiesRegistryListener listener : listeners) {
-			listener.propertyUnregistered(property, context);
+			listener.propertyUnregistered(property);
 		}
 	}
 
 	@Override
-	public Property lookup(@Nonnull String rawName) {
-		return lookup(rawName, context);
+	public Property lookup(@NonNull PropertyKey key) {
+		return properties.get(key);
 	}
 
 	@Override
-	public Property lookup(@Nonnull String rawName, Object context) {
-		return properties.get(new Key(rawName, context));
-	}
-
-	@Override
-	public void releaseProperties(@CheckForNull Object context) {
-		List<Key> keysToRemove = new ArrayList<>();
-		for (Key key : properties.keySet()) {
-			if (key.context == context) {
-				keysToRemove.add(key);
-			}
-		}
-		for (Key key : keysToRemove) {
-			properties.remove(key);
-		}
-	}
-
-	private static final class Key {
-		final String rawName;
-		final Object context;
-
-		Key(String rawName, Object context) {
-			this.rawName = rawName;
-			this.context = context;
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash(rawName, context);
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (!(obj instanceof Key)) {
-				return false;
-			}
-			Key other = (Key) obj;
-			return rawName.equals(other.rawName) && context == other.context;
-		}
+	public void releaseProperties() {
+		properties.clear();
 	}
 }

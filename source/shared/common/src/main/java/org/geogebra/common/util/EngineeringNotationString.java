@@ -1,10 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
 import java.util.function.Function;
 
 import org.geogebra.common.kernel.arithmetic.ExpressionNodeConstants.StringType;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 /**
  * Class that creates an engineering notation based on a numeric input.
@@ -21,8 +36,8 @@ public final class EngineeringNotationString {
 	 * @param formatBaseNumber Function used for formatting the base number
 	 * @return The formatted engineering notation string
 	 */
-	public static String format(double value, StringType stringType,
-			Function<Double, String> formatBaseNumber) {
+	public static String format(
+			double value, StringType stringType, Function<Double, String> formatBaseNumber) {
 		if (value == 0) {
 			return formatEngineeringNotation("0", 0, stringType);
 		}
@@ -47,8 +62,8 @@ public final class EngineeringNotationString {
 		return exponent - adjustment;
 	}
 
-	private static String formatEngineeringNotation(String baseNumber, int exponent,
-			StringType stringType) {
+	private static String formatEngineeringNotation(
+			String baseNumber, int exponent, StringType stringType) {
 		if (stringType == StringType.LATEX) {
 			return baseNumber + " \\cdot 10^{" + exponent + "}";
 		}

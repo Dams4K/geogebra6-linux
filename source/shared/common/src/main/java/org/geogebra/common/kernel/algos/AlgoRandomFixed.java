@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -21,7 +25,7 @@ import org.geogebra.common.kernel.geos.GeoNumeric;
 
 /**
  * Random number on file load, but fixed after that
- * 
+ *
  * @author Michael
  */
 public class AlgoRandomFixed extends AlgoElement {
@@ -44,14 +48,12 @@ public class AlgoRandomFixed extends AlgoElement {
 	 * @param b
 	 *            max
 	 */
-	public AlgoRandomFixed(Construction cons, String label, GeoNumberValue a,
-			GeoNumberValue b) {
+	public AlgoRandomFixed(Construction cons, String label, GeoNumberValue a, GeoNumberValue b) {
 		this(cons, a, b);
 		num.setLabel(label);
 	}
 
-	protected AlgoRandomFixed(Construction cons, GeoNumberValue a,
-			GeoNumberValue b) {
+	protected AlgoRandomFixed(Construction cons, GeoNumberValue a, GeoNumberValue b) {
 		super(cons);
 		this.a = a;
 		this.b = b;
@@ -92,8 +94,7 @@ public class AlgoRandomFixed extends AlgoElement {
 				// change random number only if a or b has changed
 				aLast = a.getDouble();
 				bLast = b.getDouble();
-				random = cons.getApplication()
-						.getRandomIntegerBetween(a.getDouble(), b.getDouble());
+				random = kernel.randomNumberGenerator.getRandomIntegerBetween(a.getDouble(), b.getDouble());
 				num.setValue(random);
 
 			} else {
@@ -104,5 +105,4 @@ public class AlgoRandomFixed extends AlgoElement {
 			num.setUndefined();
 		}
 	}
-
 }

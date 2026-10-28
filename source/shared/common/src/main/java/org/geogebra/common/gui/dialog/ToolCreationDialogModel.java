@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog;
 
 import java.util.ArrayList;
@@ -5,6 +21,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 import org.geogebra.common.euclidian.EuclidianConstants;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.Macro;
 import org.geogebra.common.kernel.StringTemplate;
@@ -17,7 +34,7 @@ import com.google.j2objc.annotations.Weak;
 
 /**
  * Model for the ToolCreationDialog
- * 
+ *
  * @author Christoph
  *
  */
@@ -102,8 +119,8 @@ public class ToolCreationDialogModel {
 	 */
 	public void initAddLists() {
 		if (inputAddList.size() == 0 || outputAddList.size() == 0) {
-			TreeSet<GeoElement> sortedSet = app.getKernel().getConstruction()
-					.getGeoSetNameDescriptionOrder();
+			TreeSet<GeoElement> sortedSet =
+					app.getKernel().getConstruction().getGeoSetNameDescriptionOrder();
 			Iterator<GeoElement> it = sortedSet.iterator();
 			while (it.hasNext()) {
 				GeoElement geo = it.next();
@@ -123,8 +140,7 @@ public class ToolCreationDialogModel {
 	 */
 	public void addSelectedGeosToOutput() {
 		if (outputList.size() == 0) {
-			ArrayList<GeoElement> selGeos = app.getSelectionManager()
-					.getSelectedGeos();
+			ArrayList<GeoElement> selGeos = app.getSelectionManager().getSelectedGeos();
 			for (int i = 0; i < selGeos.size(); i++) {
 				GeoElement geo = selGeos.get(i);
 				outputList.add(geo);
@@ -165,7 +181,7 @@ public class ToolCreationDialogModel {
 	/**
 	 * Tries to create a new Macro to decide whether finish button should be
 	 * shown
-	 * 
+	 *
 	 * @return false if creation of Macro fails, else true
 	 */
 	public boolean createTool() {
@@ -189,7 +205,7 @@ public class ToolCreationDialogModel {
 
 	/**
 	 * Finish creation of user defined tool
-	 * 
+	 *
 	 * @param appToSave
 	 *            application in which the macro should be saved (different from
 	 *            current if in macro editing mode)
@@ -209,8 +225,13 @@ public class ToolCreationDialogModel {
 	 *         be overwritten because the new macro was not compatible with the
 	 *         old.
 	 */
-	public boolean finish(App appToSave, String cmdName, String toolName,
-			String toolHelp, boolean showInToolBar, String iconFileName) {
+	public boolean finish(
+			App appToSave,
+			String cmdName,
+			String toolName,
+			String toolHelp,
+			boolean showInToolBar,
+			String iconFileName) {
 		if (newTool == null) {
 			return false;
 		}
@@ -235,8 +256,7 @@ public class ToolCreationDialogModel {
 		// set macro mode
 		if (newTool.isShowInToolBar()) {
 			newTool.setViewId(app.getGuiManager().getActiveEuclidianView().getViewID());
-			int mode = kernel.getMacroID(newTool)
-					+ EuclidianConstants.MACRO_MODE_ID_OFFSET;
+			int mode = kernel.getMacroID(newTool) + EuclidianConstants.MACRO_MODE_ID_OFFSET;
 			appToSave.getGuiManager().addToToolbarDefinition(mode);
 			appToSave.getGuiManager().updateToolbar();
 			appToSave.setMode(mode);
@@ -246,23 +266,22 @@ public class ToolCreationDialogModel {
 
 	/**
 	 * Overwrites an existing macro with the macro (without warning)
-	 * 
+	 *
 	 * @param macro
 	 *            the new user defined tool
 	 * @return true if the existing macro was overwritten, false if the macro
 	 *         was not compatible with the old
 	 */
 	public boolean overwriteMacro(Macro macro) {
-		boolean compatible = newTool.getNeededTypesString()
-				.equals(macro.getNeededTypesString());
+		boolean compatible = newTool.getNeededTypesString().equals(macro.getNeededTypesString());
 		for (int i = 0; compatible && i < macro.getMacroOutput().length; i++) {
-			compatible = compatible && macro.getMacroOutput()[i].getClass()
-					.equals(newTool.getMacroOutput()[i].getClass());
+			compatible = compatible
+					&& macro.getMacroOutput()[i].getClass().equals(newTool.getMacroOutput()[i].getClass());
 		}
 		Kernel kernel = macro.getKernel();
 		App appToSave = kernel.getApplication();
 		if (compatible) {
-			StringBuilder sb = new StringBuilder();
+			XMLStringBuilder sb = new XMLStringBuilder();
 			newTool.getXML(sb);
 			if (app.getEditMacro() != null) {
 				kernel.removeMacro(app.getEditMacro());
@@ -305,7 +324,7 @@ public class ToolCreationDialogModel {
 
 	/**
 	 * Add element to output.
-	 * 
+	 *
 	 * @param geo
 	 *            element
 	 */
@@ -316,7 +335,7 @@ public class ToolCreationDialogModel {
 
 	/**
 	 * Add a geo to output.
-	 * 
+	 *
 	 * @param selectedIndex
 	 *            index in output list
 	 */
@@ -328,7 +347,7 @@ public class ToolCreationDialogModel {
 
 	/**
 	 * Add element to input.
-	 * 
+	 *
 	 * @param geo
 	 *            element
 	 */
@@ -339,7 +358,7 @@ public class ToolCreationDialogModel {
 
 	/**
 	 * Add a geo to input.
-	 * 
+	 *
 	 * @param selectedIndex
 	 *            index in input list
 	 */
@@ -351,7 +370,7 @@ public class ToolCreationDialogModel {
 
 	/**
 	 * Remove elements from a list
-	 * 
+	 *
 	 * @param selIndices
 	 *            indices in input/output list
 	 * @param output whether this is for input or output
@@ -371,7 +390,7 @@ public class ToolCreationDialogModel {
 
 	/**
 	 * Move output elements down in the list.
-	 * 
+	 *
 	 * @param selIndices
 	 *            indices in output list
 	 * @param output
@@ -395,7 +414,7 @@ public class ToolCreationDialogModel {
 
 	/**
 	 * Move input elements up in the list.
-	 * 
+	 *
 	 * @param selIndices
 	 *            indices in input list
 	 * @param output
@@ -419,26 +438,24 @@ public class ToolCreationDialogModel {
 
 	/**
 	 * Fill in the dialog from a macro.
-	 * 
+	 *
 	 * @param macro
 	 *            macro
 	 */
 	public void setFromMacro(Macro macro) {
 		for (int i = 0; i < macro.getMacroInput().length; i++) {
-			GeoElement el = app.getKernel().lookupLabel(macro.getMacroInput()[i]
-					.getLabel(StringTemplate.defaultTemplate));
+			GeoElement el = app.getKernel()
+					.lookupLabel(macro.getMacroInput()[i].getLabel(StringTemplate.defaultTemplate));
 			if (el != null) {
 				this.inputList.add(0, el);
 			}
 		}
 		for (int i = 0; i < macro.getMacroOutput().length; i++) {
 			GeoElement el = app.getKernel()
-					.lookupLabel(macro.getMacroOutput()[i]
-							.getLabel(StringTemplate.defaultTemplate));
+					.lookupLabel(macro.getMacroOutput()[i].getLabel(StringTemplate.defaultTemplate));
 			if (el != null) {
 				this.outputList.add(0, el);
 			}
 		}
 	}
-
 }

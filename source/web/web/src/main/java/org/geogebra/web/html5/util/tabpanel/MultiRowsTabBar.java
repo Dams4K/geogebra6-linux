@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.util.tabpanel;
 
 import org.gwtproject.event.logical.shared.HasSelectionHandlers;
@@ -14,8 +30,7 @@ import org.gwtproject.user.client.ui.Widget;
 /**
  * Top bar of a tab panel.
  */
-public class MultiRowsTabBar extends FlowPanel implements
-		HasSelectionHandlers<Integer> {
+public final class MultiRowsTabBar extends FlowPanel implements HasSelectionHandlers<Integer> {
 
 	private int selectedTab;
 	private MultiRowsTabPanel tabPanel;
@@ -29,8 +44,7 @@ public class MultiRowsTabBar extends FlowPanel implements
 	}
 
 	@Override
-	public HandlerRegistration addSelectionHandler(
-			SelectionHandler<Integer> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<Integer> handler) {
 		return addHandler(handler, SelectionEvent.getType());
 	}
 
@@ -58,7 +72,7 @@ public class MultiRowsTabBar extends FlowPanel implements
 
 	/**
 	 * Select given tab.
-	 * 
+	 *
 	 * @param index
 	 *            tab index
 	 */
@@ -79,12 +93,12 @@ public class MultiRowsTabBar extends FlowPanel implements
 		if (item != null) {
 			if (selected) {
 				item.addStyleName("gwt-TabBarItem-selected");
-				UIObject.setStyleName(DOM.getParent(item.getElement()),
-						"gwt-TabBarItem-wrapper-selected", true);
+				UIObject.setStyleName(
+						DOM.getParent(item.getElement()), "gwt-TabBarItem-wrapper-selected", true);
 			} else {
 				item.removeStyleName("gwt-TabBarItem-selected");
-				UIObject.setStyleName(DOM.getParent(item.getElement()),
-						"gwt-TabBarItem-wrapper-selected", false);
+				UIObject.setStyleName(
+						DOM.getParent(item.getElement()), "gwt-TabBarItem-wrapper-selected", false);
 			}
 		}
 	}
@@ -146,10 +160,10 @@ public class MultiRowsTabBar extends FlowPanel implements
 	 */
 	public void setTabEnabled(int index, boolean enabled) {
 		assert (index >= 0) && (index < getTabCount()) : "Tab index out of bounds";
-		UIObject.setStyleName(getWidget(index).getElement(), "gwt-TabBarItem-disabled",
+		UIObject.setStyleName(getWidget(index).getElement(), "gwt-TabBarItem-disabled", !enabled);
+		UIObject.setStyleName(
+				getWidget(index).getElement().getParentElement(),
+				"gwt-TabBarItem-wrapper-disabled",
 				!enabled);
-		UIObject.setStyleName(getWidget(index).getElement().getParentElement(),
-				"gwt-TabBarItem-wrapper-disabled", !enabled);
 	}
-
 }

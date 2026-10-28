@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbarpanel;
 
 import org.geogebra.common.euclidian.EuclidianView;
@@ -9,7 +25,7 @@ import org.gwtproject.dom.style.shared.Overflow;
 /**
  * Callback for tool panel opening/closing in portrait mode
  */
-public class PortraitAnimationCallback extends NavRailAnimationCallback {
+public final class PortraitAnimationCallback extends NavRailAnimationCallback {
 
 	private final DockSplitPaneW dockParent;
 	private final AppW app;
@@ -20,8 +36,7 @@ public class PortraitAnimationCallback extends NavRailAnimationCallback {
 	 * @param app application
 	 * @param dockParent parent split pane
 	 */
-	public PortraitAnimationCallback(NavigationRail header, AppW app,
-			DockSplitPaneW dockParent) {
+	public PortraitAnimationCallback(NavigationRail header, AppW app, DockSplitPaneW dockParent) {
 		super(header);
 		this.app = app;
 		this.dockParent = dockParent;
@@ -44,9 +59,7 @@ public class PortraitAnimationCallback extends NavRailAnimationCallback {
 		}
 		int d = navRail.isOpen() ? -1 : 1;
 
-		ev.translateCoordSystemForAnimation(
-				d * navRail.toolbarPanel.getOpenHeightInPortrait() / 2);
+		ev.translateCoordSystemForAnimation(d * navRail.toolbarPanel.getOpenHeightInPortrait() / 2);
 		dockParent.forceLayout();
 	}
-
 }

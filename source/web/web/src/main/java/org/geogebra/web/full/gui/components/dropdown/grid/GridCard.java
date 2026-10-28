@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.components.dropdown.grid;
 
 import org.geogebra.common.gui.SetLabels;
@@ -11,7 +27,7 @@ import org.gwtproject.user.client.ui.Image;
 import org.gwtproject.user.client.ui.Label;
 import org.gwtproject.user.client.ui.SimplePanel;
 
-public class GridCard extends FlowPanel implements SetLabels {
+public final class GridCard extends FlowPanel implements SetLabels {
 	private final AppW appW;
 	private final ImageResource imageResource;
 	private final String titleTransKey;
@@ -42,8 +58,9 @@ public class GridCard extends FlowPanel implements SetLabels {
 		FlowPanel checkMarkPanel = new FlowPanel();
 		checkMarkPanel.addStyleName("checkMarkPanel");
 		SimplePanel checkMark = new SimplePanel();
-		checkMark.getElement().setInnerHTML(MaterialDesignResources
-				.INSTANCE.check_white().getSVG());
+		checkMark
+				.getElement()
+				.setInnerHTML(MaterialDesignResources.INSTANCE.check_white().getSVG());
 		checkMark.addStyleName("checkmark");
 		checkMarkPanel.add(checkMark);
 		imagePanel.add(checkMarkPanel);
@@ -62,6 +79,9 @@ public class GridCard extends FlowPanel implements SetLabels {
 		Dom.toggleClass(this, "selected", selected);
 	}
 
+	/**
+	 * @return whether this card is currently selected
+	 */
 	public boolean isSelected() {
 		return getStyleName().contains("selected");
 	}

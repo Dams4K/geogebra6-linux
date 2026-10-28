@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package com.github.quickhull3d;
 
 /*
@@ -8,13 +24,13 @@ package com.github.quickhull3d;
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,7 +52,7 @@ import java.util.Random;
  * Vector3d class contained in the author's matlib package (which was partly
  * inspired by javax.vecmath). Only a minimal number of methods which are
  * relevant to convex hull generation are supplied here.
- * 
+ *
  * @author John E. Lloyd, Fall 2004
  */
 public class Vector3d {
@@ -44,7 +60,7 @@ public class Vector3d {
 	/**
 	 * Precision of a double.
 	 */
-	static private final double DOUBLE_PREC = 2.2204460492503131e-16;
+	private static final double DOUBLE_PREC = 2.2204460492503131e-16;
 
 	/**
 	 * First element
@@ -64,12 +80,11 @@ public class Vector3d {
 	/**
 	 * Creates a 3-vector and initializes its elements to 0.
 	 */
-	public Vector3d() {
-	}
+	public Vector3d() {}
 
 	/**
 	 * Creates a 3-vector by copying an existing one.
-	 * 
+	 *
 	 * @param v
 	 *            vector to be copied
 	 */
@@ -79,7 +94,7 @@ public class Vector3d {
 
 	/**
 	 * Creates a 3-vector with the supplied element values.
-	 * 
+	 *
 	 * @param x
 	 *            first element
 	 * @param y
@@ -94,7 +109,7 @@ public class Vector3d {
 	/**
 	 * Gets a single element of this vector. Elements 0, 1, and 2 correspond to
 	 * x, y, and z.
-	 * 
+	 *
 	 * @param i
 	 *            element index
 	 * @return element value throws ArrayIndexOutOfBoundsException if i is not
@@ -102,25 +117,25 @@ public class Vector3d {
 	 */
 	public double get(int i) {
 		switch (i) {
-		case 0: {
-			return x;
-		}
-		case 1: {
-			return y;
-		}
-		case 2: {
-			return z;
-		}
-		default: {
-			throw new ArrayIndexOutOfBoundsException(i);
-		}
+			case 0: {
+				return x;
+			}
+			case 1: {
+				return y;
+			}
+			case 2: {
+				return z;
+			}
+			default: {
+				throw new ArrayIndexOutOfBoundsException(i);
+			}
 		}
 	}
 
 	/**
 	 * Sets a single element of this vector. Elements 0, 1, and 2 correspond to
 	 * x, y, and z.
-	 * 
+	 *
 	 * @param i
 	 *            element index
 	 * @param value
@@ -128,27 +143,27 @@ public class Vector3d {
 	 */
 	public void set(int i, double value) {
 		switch (i) {
-		case 0: {
-			x = value;
-			break;
-		}
-		case 1: {
-			y = value;
-			break;
-		}
-		case 2: {
-			z = value;
-			break;
-		}
-		default: {
-			throw new ArrayIndexOutOfBoundsException(i);
-		}
+			case 0: {
+				x = value;
+				break;
+			}
+			case 1: {
+				y = value;
+				break;
+			}
+			case 2: {
+				z = value;
+				break;
+			}
+			default: {
+				throw new ArrayIndexOutOfBoundsException(i);
+			}
 		}
 	}
 
 	/**
 	 * Sets the values of this vector to those of v1.
-	 * 
+	 *
 	 * @param v1
 	 *            vector whose values are copied
 	 */
@@ -160,7 +175,7 @@ public class Vector3d {
 
 	/**
 	 * Adds vector v1 to v2 and places the result in this vector.
-	 * 
+	 *
 	 * @param v1
 	 *            left-hand vector
 	 * @param v2
@@ -174,7 +189,7 @@ public class Vector3d {
 
 	/**
 	 * Adds this vector to v1 and places the result in this vector.
-	 * 
+	 *
 	 * @param v1
 	 *            right-hand vector
 	 */
@@ -186,7 +201,7 @@ public class Vector3d {
 
 	/**
 	 * Subtracts vector v1 from v2 and places the result in this vector.
-	 * 
+	 *
 	 * @param v1
 	 *            left-hand vector
 	 * @param v2
@@ -200,7 +215,7 @@ public class Vector3d {
 
 	/**
 	 * Subtracts v1 from this vector and places the result in this vector.
-	 * 
+	 *
 	 * @param v1
 	 *            right-hand vector
 	 */
@@ -212,7 +227,7 @@ public class Vector3d {
 
 	/**
 	 * Scales the elements of this vector by <code>s</code>.
-	 * 
+	 *
 	 * @param s
 	 *            scaling factor
 	 */
@@ -225,7 +240,7 @@ public class Vector3d {
 	/**
 	 * Scales the elements of vector v1 by <code>s</code> and places the results
 	 * in this vector.
-	 * 
+	 *
 	 * @param s
 	 *            scaling factor
 	 * @param v1
@@ -240,7 +255,7 @@ public class Vector3d {
 	/**
 	 * Returns the 2 norm of this vector. This is the square root of the sum of
 	 * the squares of the elements.
-	 * 
+	 *
 	 * @return vector 2 norm
 	 */
 	public double norm() {
@@ -250,7 +265,7 @@ public class Vector3d {
 	/**
 	 * Returns the square of the 2 norm of this vector. This is the sum of the
 	 * squares of the elements.
-	 * 
+	 *
 	 * @return square of the 2 norm
 	 */
 	public double normSquared() {
@@ -259,7 +274,7 @@ public class Vector3d {
 
 	/**
 	 * Returns the Euclidean distance between this vector and vector v.
-	 * 
+	 *
 	 * @return distance between this vector and v
 	 */
 	public double distance(Vector3d v) {
@@ -273,7 +288,7 @@ public class Vector3d {
 	/**
 	 * Returns the squared of the Euclidean distance between this vector and
 	 * vector v.
-	 * 
+	 *
 	 * @return squared distance between this vector and v
 	 */
 	public double distanceSquared(Vector3d v) {
@@ -286,7 +301,7 @@ public class Vector3d {
 
 	/**
 	 * Returns the dot product of this vector and v1.
-	 * 
+	 *
 	 * @param v1
 	 *            right-hand vector
 	 * @return dot product
@@ -320,7 +335,7 @@ public class Vector3d {
 
 	/**
 	 * Sets the elements of this vector to the prescribed values.
-	 * 
+	 *
 	 * @param x
 	 *            value for first element
 	 * @param y
@@ -337,7 +352,7 @@ public class Vector3d {
 	/**
 	 * Computes the cross product of v1 and v2 and places the result in this
 	 * vector.
-	 * 
+	 *
 	 * @param v1
 	 *            left-hand vector
 	 * @param v2
@@ -356,7 +371,7 @@ public class Vector3d {
 	/**
 	 * Sets the elements of this vector to uniformly distributed random values
 	 * in a specified range, using a supplied random number generator.
-	 * 
+	 *
 	 * @param lower
 	 *            lower random value (inclusive)
 	 * @param upper
@@ -375,7 +390,7 @@ public class Vector3d {
 	/**
 	 * Returns a string representation of this vector, consisting of the x, y,
 	 * and z coordinates.
-	 * 
+	 *
 	 * @return string representation
 	 */
 	@Override

@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDiameterLine.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -45,7 +43,7 @@ public class AlgoDiameterLine3D extends AlgoDiameterLineND {
 
 	/**
 	 * Creates new 3D algo for Diameter
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -55,8 +53,7 @@ public class AlgoDiameterLine3D extends AlgoDiameterLineND {
 	 * @param g
 	 *            parallel line
 	 */
-	public AlgoDiameterLine3D(Construction cons, String label, GeoConicND c,
-			GeoLineND g) {
+	public AlgoDiameterLine3D(Construction cons, String label, GeoConicND c, GeoLineND g) {
 		super(cons, label, c, g);
 	}
 
@@ -84,18 +81,13 @@ public class AlgoDiameterLine3D extends AlgoDiameterLineND {
 
 		// update diameter line (3D)
 		diameter2D.getCoords(diameterCoords);
-		diameterDirection = c.getCoordSys().getVector(-diameterCoords[1],
-				diameterCoords[0]);
+		diameterDirection = c.getCoordSys().getVector(-diameterCoords[1], diameterCoords[0]);
 		if (DoubleUtil.isZero(diameterCoords[0])) {
-			diameterOrigin = c.getCoordSys().getPoint(0,
-					-diameterCoords[2] / diameterCoords[1]);
+			diameterOrigin = c.getCoordSys().getPoint(0, -diameterCoords[2] / diameterCoords[1]);
 		} else {
-			diameterOrigin = c.getCoordSys()
-					.getPoint(-diameterCoords[2] / diameterCoords[0], 0);
+			diameterOrigin = c.getCoordSys().getPoint(-diameterCoords[2] / diameterCoords[0], 0);
 		}
 
 		((GeoLine3D) diameter).setCoord(diameterOrigin, diameterDirection);
-
 	}
-
 }

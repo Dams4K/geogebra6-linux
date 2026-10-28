@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.advanced;
 
 import org.geogebra.common.kernel.Construction;
@@ -12,10 +28,9 @@ import org.geogebra.common.util.DoubleUtil;
 /**
  * @author Victor Franco Espino, Markus Hohenwarter
  * @version 11-02-2007
- * 
+ *
  *          Calculate Curvature for function:
  */
-
 public class AlgoCurvature extends AlgoElement {
 
 	private GeoPointND A; // input
@@ -32,8 +47,7 @@ public class AlgoCurvature extends AlgoElement {
 	 * @param f
 	 *            function
 	 */
-	public AlgoCurvature(Construction cons, String label, GeoPointND A,
-			GeoFunction f) {
+	public AlgoCurvature(Construction cons, String label, GeoPointND A, GeoFunction f) {
 		this(cons, A, f);
 
 		if (label != null) {
@@ -101,5 +115,4 @@ public class AlgoCurvature extends AlgoElement {
 		}
 		super.remove();
 	}
-
 }

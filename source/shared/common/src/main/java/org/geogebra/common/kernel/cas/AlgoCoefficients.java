@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.cas;
@@ -27,13 +31,14 @@ import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoFunction;
 import org.geogebra.common.kernel.geos.GeoList;
 import org.geogebra.common.kernel.geos.GeoNumeric;
+import org.geogebra.common.kernel.statistics.AlgoFitPoly;
 import org.geogebra.common.kernel.statistics.FitAlgo;
 
 /**
  * returns coefficients of a Polynomial as a list
- * 
+ *
  * Uses CAS sometimes, eg Coefficients[x^n] so needs "implements UsesCAS"
- * 
+ *
  * @author Michael Borcherds
  */
 public class AlgoCoefficients extends AlgoElement implements UsesCAS {
@@ -107,8 +112,11 @@ public class AlgoCoefficients extends AlgoElement implements UsesCAS {
 		}
 
 		// check if it's a polynomial & get coefficients
-		PolyFunction poly = inFun.expandToPolyFunction(expression,
-				false, false);
+		// Polynomial fits retain normalized expressions for stable evaluation. Use their
+		// original-coordinate coefficients rather than expanding the expression again.
+		PolyFunction poly = f.getParentAlgorithm() instanceof AlgoFitPoly
+				? null
+				: inFun.expandToPolyFunction(expression, false, false);
 		g.clear();
 		g.setDefined(true);
 		if (poly != null) {
@@ -119,12 +127,22 @@ public class AlgoCoefficients extends AlgoElement implements UsesCAS {
 		} else if (f.getParentAlgorithm() instanceof FitAlgo) {
 			FitAlgo fitAlgo = (FitAlgo) f.getParentAlgorithm();
 			double[] coeffs = fitAlgo.getCoeffs();
-			for (int i = coeffs.length - 1; i >= 0; i--) {
+			if (coeffs == null) {
+				g.setUndefined();
+				return;
+			}
+			int highestPower = coeffs.length - 1;
+			if (fitAlgo instanceof AlgoFitPoly) {
+				while (highestPower > 0 && coeffs[highestPower] == 0) {
+					highestPower--;
+				}
+			}
+			for (int i = highestPower; i >= 0; i--) {
 				g.add(new GeoNumeric(cons, coeffs[i]));
 			}
 		} else {
 			ArrayList<Double> constants = extractConstants(expression);
-			for (Double coeff: constants) {
+			for (Double coeff : constants) {
 				g.add(new GeoNumeric(cons, coeff));
 			}
 		}
@@ -143,5 +161,4 @@ public class AlgoCoefficients extends AlgoElement implements UsesCAS {
 		});
 		return constants;
 	}
-
 }

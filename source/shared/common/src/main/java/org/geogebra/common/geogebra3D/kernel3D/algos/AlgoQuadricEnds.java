@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -46,7 +50,7 @@ public class AlgoQuadricEnds extends AlgoElement3D {
 	private Coords vn2 = new Coords(3);
 
 	/**
-	 * 
+	 *
 	 * @param labels
 	 *            labels
 	 * @param cons
@@ -54,8 +58,7 @@ public class AlgoQuadricEnds extends AlgoElement3D {
 	 * @param quadric
 	 *            quadric
 	 */
-	public AlgoQuadricEnds(Construction cons, String[] labels,
-			GeoQuadricND quadric) {
+	public AlgoQuadricEnds(Construction cons, String[] labels, GeoQuadricND quadric) {
 
 		this(cons, quadric);
 
@@ -70,7 +73,7 @@ public class AlgoQuadricEnds extends AlgoElement3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param quadric
@@ -81,7 +84,7 @@ public class AlgoQuadricEnds extends AlgoElement3D {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param quadric
@@ -89,8 +92,7 @@ public class AlgoQuadricEnds extends AlgoElement3D {
 	 * @param helper
 	 *            whether this is just a helper
 	 */
-	public AlgoQuadricEnds(Construction cons, GeoQuadricND quadric,
-			boolean helper) {
+	public AlgoQuadricEnds(Construction cons, GeoQuadricND quadric, boolean helper) {
 		super(cons, !helper);
 
 		// set origin w coord
@@ -111,16 +113,22 @@ public class AlgoQuadricEnds extends AlgoElement3D {
 
 		// if helper, will be updated by caller
 		if (!helper) {
-			setInputOutput(new GeoElement[] { quadric }, sections);
+			setInputOutput(new GeoElement[] {quadric}, sections);
 		}
 
 		compute();
 	}
 
+	/**
+	 * @return the first end section of the quadric.
+	 */
 	public GeoConic3D getSection1() {
 		return sections[0];
 	}
 
+	/**
+	 * @return the second end section of the quadric.
+	 */
 	public GeoConic3D getSection2() {
 		return sections[1];
 	}
@@ -141,16 +149,19 @@ public class AlgoQuadricEnds extends AlgoElement3D {
 		sections[0].setDefined();
 		sections[1].setDefined();
 
-		o1.setAdd3(quadric.getMidpoint3D(), o1.setMul3(quadric.getEigenvec3D(2),
-				((GeoQuadric3DLimitedOrPart) quadric).getBottomParameter()));
-		o2.setAdd3(quadric.getMidpoint3D(), o2.setMul3(quadric.getEigenvec3D(2),
-				((GeoQuadric3DLimitedOrPart) quadric).getTopParameter()));
+		o1.setAdd3(
+				quadric.getMidpoint3D(),
+				o1.setMul3(
+						quadric.getEigenvec3D(2), ((GeoQuadric3DLimitedOrPart) quadric).getBottomParameter()));
+		o2.setAdd3(
+				quadric.getMidpoint3D(),
+				o2.setMul3(
+						quadric.getEigenvec3D(2), ((GeoQuadric3DLimitedOrPart) quadric).getTopParameter()));
 
 		if (quadric.getType() == GeoQuadricNDConstants.QUADRIC_CYLINDER
 				|| quadric.getType() == GeoQuadricNDConstants.QUADRIC_CONE) {
 			if (DoubleUtil.isZero(quadric.getHalfAxis(0))
-					&& (Double.isNaN(quadric.getHalfAxis(1))
-							|| DoubleUtil.isZero(quadric.getHalfAxis(1)))) {
+					&& (Double.isNaN(quadric.getHalfAxis(1)) || DoubleUtil.isZero(quadric.getHalfAxis(1)))) {
 				// cylinder or cone equal to a segment
 				sections[0].setSinglePointAtCoords(o1);
 				sections[1].setSinglePointAtCoords(o2);
@@ -176,7 +187,7 @@ public class AlgoQuadricEnds extends AlgoElement3D {
 		coordsys1.addPoint(o1);
 		coordsys1.addVector(vn1);
 		coordsys1.addVector(v.setMul3(vn2, -1)); // orientation out of the
-													// quadric
+		// quadric
 		coordsys1.makeOrthoMatrix(false, false);
 
 		sections[0].setMatrix(cm);
@@ -194,7 +205,6 @@ public class AlgoQuadricEnds extends AlgoElement3D {
 		coordsys2.makeOrthoMatrix(false, false);
 
 		sections[1].setMatrix(cm);
-
 	}
 
 	@Override

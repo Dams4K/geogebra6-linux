@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.layout.panels;
 
 import org.geogebra.common.euclidian.EuclidianStyleBar;
@@ -10,7 +26,7 @@ import org.gwtproject.canvas.client.Canvas;
 import org.gwtproject.resources.client.ResourcePrototype;
 import org.gwtproject.user.client.ui.Widget;
 
-public class EuclidianDockPanelW extends EuclidianDockPanelWAbstract
+public final class EuclidianDockPanelW extends EuclidianDockPanelWAbstract
 		implements EuclidianPanelWAbstract {
 
 	EuclidianStyleBar espanel;
@@ -20,7 +36,7 @@ public class EuclidianDockPanelW extends EuclidianDockPanelWAbstract
 
 	/**
 	 * This constructor is used by the applet
-	 * 
+	 *
 	 * @param application
 	 *            application
 	 * @param stylebar
@@ -41,8 +57,7 @@ public class EuclidianDockPanelW extends EuclidianDockPanelWAbstract
 	private void initNavigationBar() {
 		// GuiManager can be null at the startup of the application,
 		// but then the addNavigationBar method will be called explicitly.
-		if (app.getGuiManager() != null
-				&& app.showConsProtNavigation(App.VIEW_EUCLIDIAN)) {
+		if (app.getGuiManager() != null && app.showConsProtNavigation(App.VIEW_EUCLIDIAN)) {
 			addNavigationBar();
 		}
 	}

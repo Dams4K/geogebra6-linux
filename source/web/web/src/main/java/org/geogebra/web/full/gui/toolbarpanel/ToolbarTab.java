@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbarpanel;
 
 import org.geogebra.common.gui.SetLabels;
@@ -17,8 +33,8 @@ import elemental2.dom.EventListener;
  * Base class for Toolbar Tabs.
  * @author Laszlo
  */
-public abstract class ToolbarTab extends ScrollPanel implements ShowableTab, SetLabels,
-		PaintToCanvas {
+public abstract class ToolbarTab extends ScrollPanel
+		implements ShowableTab, SetLabels, PaintToCanvas {
 
 	public static final int TAB_HEIGHT = 100;
 	public static final String TAB_HEIGHT_PCT = TAB_HEIGHT + "%";
@@ -29,8 +45,7 @@ public abstract class ToolbarTab extends ScrollPanel implements ShowableTab, Set
 		setAlwaysShowScrollBars(false);
 
 		EventListener onTransitionEnd = evt -> parent.setFadeTabs(false);
-		Dom.addEventListener(this.getElement(), "transitionend",
-				onTransitionEnd);
+		Dom.addEventListener(this.getElement(), "transitionend", onTransitionEnd);
 	}
 
 	@Override
@@ -63,6 +78,9 @@ public abstract class ToolbarTab extends ScrollPanel implements ShowableTab, Set
 	 */
 	protected abstract void onActive();
 
+	/**
+	 * @return whether this tab is currently active
+	 */
 	public boolean isActive() {
 		return getElement().hasClassName("tab");
 	}
@@ -80,8 +98,8 @@ public abstract class ToolbarTab extends ScrollPanel implements ShowableTab, Set
 	}
 
 	@Override
-	public void paintToCanvas(CanvasRenderingContext2D context2d,
-			ViewCounter counter, int left, int top) {
+	public void paintToCanvas(
+			CanvasRenderingContext2D context2d, ViewCounter counter, int left, int top) {
 		getElement().addClassName("ggbScreenshot");
 		Domvas.get().toImage(getElement(), (image) -> {
 			context2d.drawImage(image, left, top);

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.util;
 
 import java.util.List;
@@ -13,6 +29,7 @@ import org.gwtproject.user.cellview.client.CellTable;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Panel;
 import org.gwtproject.user.client.ui.ScrollPanel;
+import org.gwtproject.user.client.ui.SimplePanel;
 import org.gwtproject.view.client.ListDataProvider;
 
 import elemental2.dom.EventListener;
@@ -26,6 +43,7 @@ import jsinterop.base.Js;
  *
  */
 public abstract class StickyTable<T> extends FlowPanel {
+	private final SimplePanel buttonHolder;
 	private final CellTableWithBody cellTable;
 	private ListDataProvider<T> dataProvider;
 	private final ScrollPanel scroller;
@@ -45,6 +63,9 @@ public abstract class StickyTable<T> extends FlowPanel {
 		FlowPanel wrapper = new FlowPanel();
 		wrapper.add(cellTable);
 		scroller.setWidget(wrapper);
+		buttonHolder = new SimplePanel();
+		buttonHolder.addStyleName("btnRow");
+		add(buttonHolder);
 		add(scroller);
 		addStyleName("mainScrollPanel");
 		cellTable.setVisible(true);
@@ -52,23 +73,28 @@ public abstract class StickyTable<T> extends FlowPanel {
 	}
 
 	protected void addBodyPointerDownHandler(CellClickHandler clickHandler) {
-		Dom.addEventListener(cellTable.getTableBodyElement(), "pointerdown",
-				getDomEventHandler(clickHandler));
+		Dom.addEventListener(
+				cellTable.getTableBodyElement(), "pointerdown", getDomEventHandler(clickHandler));
+	}
+
+	protected void addBodyKeyDownHandler(CellClickHandler keyHandler) {
+		Dom.addEventListener(
+				cellTable.getTableBodyElement(), "keydown", getDomEventHandler(keyHandler));
 	}
 
 	protected void addHeadClickHandler(CellClickHandler clickHandler) {
-		Dom.addEventListener(cellTable.getTableHeadElement(), "click",
-				getDomEventHandler(clickHandler));
+		Dom.addEventListener(
+				cellTable.getTableHeadElement(), "click", getDomEventHandler(clickHandler));
 	}
 
 	protected void addMouseOverHandler(CellClickHandler clickHandler) {
-		Dom.addEventListener(cellTable.getTableBodyElement(), "mouseover",
-				getDomEventHandler(clickHandler));
+		Dom.addEventListener(
+				cellTable.getTableBodyElement(), "mouseover", getDomEventHandler(clickHandler));
 	}
 
 	protected void addMouseOutHandler(CellClickHandler clickHandler) {
-		Dom.addEventListener(cellTable.getTableBodyElement(), "mouseout",
-				getDomEventHandler(clickHandler));
+		Dom.addEventListener(
+				cellTable.getTableBodyElement(), "mouseout", getDomEventHandler(clickHandler));
 	}
 
 	private EventListener getDomEventHandler(CellClickHandler eventHandler) {
@@ -130,8 +156,8 @@ public abstract class StickyTable<T> extends FlowPanel {
 	 * @return the header element.
 	 */
 	public Element getHeaderElement(int column) {
-		return Dom.querySelectorForElement(cellTable.getTableHeadElement(),
-				".values tr th:nth-child(" + (column + 1) + ") .content");
+		return Dom.querySelectorForElement(
+				cellTable.getTableHeadElement(), ".values tr th:nth-child(" + (column + 1) + ") .content");
 	}
 
 	/**
@@ -179,6 +205,10 @@ public abstract class StickyTable<T> extends FlowPanel {
 	 */
 	public CellTable<T> getTable() {
 		return cellTable;
+	}
+
+	public SimplePanel getButtonHolder() {
+		return buttonHolder;
 	}
 
 	/**
@@ -231,6 +261,9 @@ public abstract class StickyTable<T> extends FlowPanel {
 		refreshVisibleRange();
 	}
 
+	/**
+	 * @return the panel wrapping the table
+	 */
 	public Panel getTableWrapper() {
 		return (Panel) scroller.getWidget();
 	}
@@ -258,19 +291,21 @@ public abstract class StickyTable<T> extends FlowPanel {
 	 * @return whether a cell at given coordinates exists and is not hidden by shadow
 	 */
 	public boolean hasCell(int col, int row) {
-		return col >= 0 && col < cellTable.getColumnCount() - 1
-				&& row >= 0 && row < cellTable.getRowCount() - 1;
+		return col >= 0
+				&& col < cellTable.getColumnCount() - 1
+				&& row >= 0
+				&& row < cellTable.getRowCount() - 1;
 	}
 
-	private class CellTableWithBody extends CellTable<T> {
+	private final class CellTableWithBody extends CellTable<T> {
 
 		@Override
-		public TableSectionElement getTableBodyElement() {
+		protected TableSectionElement getTableBodyElement() {
 			return super.getTableBodyElement();
 		}
 
 		@Override
-		public TableSectionElement getTableHeadElement() {
+		protected TableSectionElement getTableHeadElement() {
 			return super.getTableHeadElement();
 		}
 	}
@@ -288,6 +323,13 @@ public abstract class StickyTable<T> extends FlowPanel {
 	 * TODO move out of this widget
 	 */
 	public void openDefineFunctions() {
+		// nothing to do here
+	}
+
+	/**
+	 * selects first cell
+	 */
+	public void selectFirstCell() {
 		// nothing to do here
 	}
 }

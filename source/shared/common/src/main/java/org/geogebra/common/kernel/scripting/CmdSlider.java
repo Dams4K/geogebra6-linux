@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.scripting;
 
 import org.geogebra.common.kernel.Kernel;
@@ -21,7 +37,7 @@ public class CmdSlider extends CommandProcessor {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -30,7 +46,7 @@ public class CmdSlider extends CommandProcessor {
 	}
 
 	@Override
-	final public GeoElement[] process(Command c, EvalInfo info) throws MyError {
+	public final GeoElement[] process(Command c, EvalInfo info) throws MyError {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
 		arg = resArgs(c, info);
@@ -59,7 +75,8 @@ public class CmdSlider extends CommandProcessor {
 
 		// Slider[0,360deg] should be angle
 		if ((n > 5 && ((BooleanValue) arg[5]).getBoolean())
-				|| arg[0] instanceof GeoAngle || arg[1] instanceof GeoAngle) {
+				|| arg[0] instanceof GeoAngle
+				|| arg[1] instanceof GeoAngle) {
 
 			if (slider == null || !slider.isAngle()) {
 				slider = new GeoAngle(kernel.getConstruction());
@@ -97,9 +114,9 @@ public class CmdSlider extends CommandProcessor {
 		slider.setAVSliderOrCheckboxVisible(true);
 		slider.setEuclidianVisible(true);
 		slider.setLineThickness(GeoNumeric.DEFAULT_SLIDER_THICKNESS);
+		slider.setLineOpacity(GeoNumeric.DEFAULT_SLIDER_LINE_OPACITY);
 		slider.setDrawable(true);
 		slider.setLabel(c.getLabel());
-		return new GeoElement[] { slider };
-
+		return new GeoElement[] {slider};
 	}
 }

@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDependentConic.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 29. October 2001
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -33,8 +31,7 @@ import org.geogebra.common.kernel.geos.GeoConic;
  *
  * @author Markus
  */
-public class AlgoDependentConic extends AlgoElement
-		implements DependentAlgo {
+public class AlgoDependentConic extends AlgoElement implements DependentAlgo {
 
 	private Equation equation;
 	private ExpressionValue[] ev = new ExpressionValue[6]; // input
@@ -42,7 +39,7 @@ public class AlgoDependentConic extends AlgoElement
 
 	/**
 	 * Creates new AlgoDependentConic
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param equ
@@ -67,8 +64,7 @@ public class AlgoDependentConic extends AlgoElement
 				ev[i] = ev[i].evaluate(StringTemplate.defaultTemplate);
 			}
 			// check that coefficient is a number: this may throw an exception
-			ExpressionValue eval = ev[i]
-					.evaluate(StringTemplate.defaultTemplate);
+			ExpressionValue eval = ev[i].evaluate(StringTemplate.defaultTemplate);
 			((NumberValue) eval).getDouble();
 		}
 
@@ -91,8 +87,7 @@ public class AlgoDependentConic extends AlgoElement
 	// for AlgoElement
 	@Override
 	protected void setInputOutput() {
-		input = equation.getGeoElementVariables(
-				SymbolicMode.NONE);
+		input = equation.getGeoElementVariables(SymbolicMode.NONE);
 
 		setOnlyOutput(conic);
 		setDependencies(); // done by AlgoElement
@@ -110,9 +105,13 @@ public class AlgoDependentConic extends AlgoElement
 	public final void compute() {
 		try {
 			ExpressionNode def = conic.getDefinition();
-			conic.setCoeffs(ev[0].evaluateDouble(), ev[1].evaluateDouble(),
-					ev[2].evaluateDouble(), ev[3].evaluateDouble(),
-					ev[4].evaluateDouble(), ev[5].evaluateDouble());
+			conic.setCoeffs(
+					ev[0].evaluateDouble(),
+					ev[1].evaluateDouble(),
+					ev[2].evaluateDouble(),
+					ev[3].evaluateDouble(),
+					ev[4].evaluateDouble(),
+					ev[5].evaluateDouble());
 			conic.setDefinition(def);
 		} catch (Throwable e) {
 			conic.setUndefined();

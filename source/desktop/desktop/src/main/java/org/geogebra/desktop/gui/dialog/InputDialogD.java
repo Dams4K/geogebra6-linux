@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.desktop.gui.dialog;
@@ -48,12 +52,14 @@ import org.geogebra.desktop.gui.view.algebra.InputPanelD;
 import org.geogebra.desktop.gui.virtualkeyboard.VirtualKeyboardD;
 import org.geogebra.desktop.main.AppD;
 import org.geogebra.desktop.main.LocalizationD;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 public class InputDialogD extends InputDialog
-		implements ActionListener, WindowFocusListener, VirtualKeyboardListener,
-		UpdateFonts, WindowListener {
+		implements ActionListener,
+				WindowFocusListener,
+				VirtualKeyboardListener,
+				UpdateFonts,
+				WindowListener {
 
 	protected AppD app;
 	protected final LocalizationD loc;
@@ -81,6 +87,7 @@ public class InputDialogD extends InputDialog
 
 	protected JDialog wrappedDialog;
 	private JPanel errorPanel;
+	private boolean showingError = false;
 
 	/**
 	 * @param app application
@@ -90,10 +97,14 @@ public class InputDialogD extends InputDialog
 	 * @param autoComplete whether to allow autocomplete
 	 * @param handler input handler
 	 */
-	public InputDialogD(AppD app, String message, String title,
-			String initString, boolean autoComplete, InputHandler handler) {
-		this(app, message, title, initString, autoComplete, handler, false,
-				false, null);
+	public InputDialogD(
+			AppD app,
+			String message,
+			String title,
+			String initString,
+			boolean autoComplete,
+			InputHandler handler) {
+		this(app, message, title, initString, autoComplete, handler, false, false, null);
 	}
 
 	/**
@@ -105,11 +116,15 @@ public class InputDialogD extends InputDialog
 	 * @param handler input handler
 	 * @param selectInitText select text?
 	 */
-	public InputDialogD(AppD app, String message, String title,
-			String initString, boolean autoComplete, InputHandler handler,
+	public InputDialogD(
+			AppD app,
+			String message,
+			String title,
+			String initString,
+			boolean autoComplete,
+			InputHandler handler,
 			boolean selectInitText) {
-		this(app, message, title, initString, autoComplete, handler, false,
-				selectInitText, null);
+		this(app, message, title, initString, autoComplete, handler, false, selectInitText, null);
 	}
 
 	/**
@@ -123,11 +138,15 @@ public class InputDialogD extends InputDialog
 	 * @param handler input handler
 	 * @param geo for properties button
 	 */
-	public InputDialogD(AppD app, String message, String title,
-			String initString, boolean autoComplete, InputHandler handler,
+	public InputDialogD(
+			AppD app,
+			String message,
+			String title,
+			String initString,
+			boolean autoComplete,
+			InputHandler handler,
 			GeoElement geo) {
-		this(app, message, title, initString, autoComplete, handler, false,
-				false, geo);
+		this(app, message, title, initString, autoComplete, handler, false, false, geo);
 	}
 
 	/**
@@ -141,11 +160,28 @@ public class InputDialogD extends InputDialog
 	 * @param selectInitText select text?
 	 * @param geo for properties button
 	 */
-	public InputDialogD(AppD app, String message, String title,
-			String initString, boolean autoComplete, InputHandler handler,
-			boolean modal, boolean selectInitText, GeoElement geo) {
-		this(app, message, title, initString, autoComplete, handler, modal,
-				selectInitText, geo, null, DialogType.GeoGebraEditor);
+	public InputDialogD(
+			AppD app,
+			String message,
+			String title,
+			String initString,
+			boolean autoComplete,
+			InputHandler handler,
+			boolean modal,
+			boolean selectInitText,
+			GeoElement geo) {
+		this(
+				app,
+				message,
+				title,
+				initString,
+				autoComplete,
+				handler,
+				modal,
+				selectInitText,
+				geo,
+				null,
+				DialogType.GeoGebraEditor);
 	}
 
 	/**
@@ -161,10 +197,18 @@ public class InputDialogD extends InputDialog
 	 * @param checkBox checkbox
 	 * @param type type
 	 */
-	public InputDialogD(AppD app, String message, String title,
-			String initString, boolean autoComplete, InputHandler handler,
-			boolean modal, boolean selectInitText, GeoElement geo,
-			JCheckBox checkBox, DialogType type) {
+	public InputDialogD(
+			AppD app,
+			String message,
+			String title,
+			String initString,
+			boolean autoComplete,
+			InputHandler handler,
+			boolean modal,
+			boolean selectInitText,
+			GeoElement geo,
+			JCheckBox checkBox,
+			DialogType type) {
 
 		this(app.getFrame(), modal, app.getLocalization());
 		this.app = app;
@@ -178,8 +222,17 @@ public class InputDialogD extends InputDialog
 		// An InputPanel is also created for the center panel, but this is added
 		// later to allow customizing dialogs.
 
-		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, true,
-				selectInitText, geo != null, geo != null, type);
+		createGUI(
+				title,
+				message,
+				autoComplete,
+				DEFAULT_COLUMNS,
+				1,
+				true,
+				selectInitText,
+				geo != null,
+				geo != null,
+				type);
 
 		// wrap inputPanel in a BorderLayout.NORTH component so it keeps a
 		// single row height when resizing the dialog
@@ -203,7 +256,7 @@ public class InputDialogD extends InputDialog
 
 	/**
 	 * Creates a bare-bones input dialog for highly customized dialogs.
-	 * 
+	 *
 	 * @param frame parent frame
 	 * @param modal modal?
 	 */
@@ -227,15 +280,21 @@ public class InputDialogD extends InputDialog
 	// GUI
 	// ===================================================
 
-	protected void createGUI(String title, String message, boolean autoComplete,
-			int columns, int rows, boolean showSymbolPopupIcon,
-			boolean selectInitText, boolean showProperties, boolean showApply,
+	protected void createGUI(
+			String title,
+			String message,
+			boolean autoComplete,
+			int columns,
+			int rows,
+			boolean showSymbolPopupIcon,
+			boolean selectInitText,
+			boolean showProperties,
+			boolean showApply,
 			DialogType type) {
 		wrappedDialog.setResizable(true);
 
 		// Create components to be displayed
-		inputPanel = new InputPanelD(getInitString(), app, rows, columns,
-				showSymbolPopupIcon, type);
+		inputPanel = new InputPanelD(getInitString(), app, rows, columns, showSymbolPopupIcon, type);
 
 		sl = (geo1, addToSelection) -> {
 			insertGeoElement(geo1);
@@ -316,7 +375,7 @@ public class InputDialogD extends InputDialog
 	/**
 	 * Update the labels of this component (applied if the language was
 	 * changed).
-	 * 
+	 *
 	 * @param title
 	 *            The title of the dialog which is customized for every dialog
 	 */
@@ -339,8 +398,7 @@ public class InputDialogD extends InputDialog
 	 */
 	public void insertGeoElement(GeoElement geo1) {
 		if (geo1 != null) {
-			insertString(
-					" " + geo1.getLabel(StringTemplate.defaultTemplate) + " ");
+			insertString(" " + geo1.getLabel(StringTemplate.defaultTemplate) + " ");
 		}
 	}
 
@@ -368,6 +426,9 @@ public class InputDialogD extends InputDialog
 		}
 	}
 
+	/**
+	 * @return current text of the input panel
+	 */
 	public String getText() {
 		return inputPanel.getText();
 	}
@@ -404,7 +465,6 @@ public class InputDialogD extends InputDialog
 			} else if (source == btProperties && geo != null) {
 				setVisible(false);
 				openProperties(app, geo);
-
 			}
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue
@@ -463,8 +523,8 @@ public class InputDialogD extends InputDialog
 
 	@Override
 	public void windowLostFocus(WindowEvent arg0) {
-		((GuiManagerD) app.getGuiManager()).setCurrentTextfield(null,
-				!(arg0.getOppositeWindow() instanceof VirtualKeyboardD));
+		((GuiManagerD) app.getGuiManager())
+				.setCurrentTextfield(null, !(arg0.getOppositeWindow() instanceof VirtualKeyboardD));
 	}
 
 	public JDialog getWrappedDialog() {
@@ -484,7 +544,6 @@ public class InputDialogD extends InputDialog
 		btCancel.setFont(font);
 		btApply.setFont(font);
 		btProperties.setFont(font);
-
 	}
 
 	@Override
@@ -533,8 +592,6 @@ public class InputDialogD extends InputDialog
 		}
 	}
 
-	private boolean showingError = false;
-
 	@Override
 	public void showError(String msg) {
 		if (msg == null) {
@@ -549,13 +606,11 @@ public class InputDialogD extends InputDialog
 			errorPanel.add(errorLabel);
 		}
 		SwingUtilities.updateComponentTreeUI(wrappedDialog);
-
 	}
 
 	@Override
 	public void showCommandError(String command, String message) {
 		app.getDefaultErrorHandler().showCommandError(command, message);
-
 	}
 
 	@Override
@@ -565,8 +620,7 @@ public class InputDialogD extends InputDialog
 	}
 
 	@Override
-	public boolean onUndefinedVariables(String string,
-			AsyncOperation<String[]> callback) {
+	public boolean onUndefinedVariables(String string, AsyncOperation<String[]> callback) {
 		return app.getGuiManager().checkAutoCreateSliders(string, callback);
 	}
 
@@ -574,5 +628,4 @@ public class InputDialogD extends InputDialog
 	public void resetError() {
 		showError(null);
 	}
-
 }

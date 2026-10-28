@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.textbox;
 
 import org.geogebra.common.util.TextObject;
@@ -14,11 +30,10 @@ import org.gwtproject.user.client.ui.TextBox;
 
 /**
  * This class is created so that the bluetooth keyboard works in Safari iOS.
- * 
+ *
  * @author Balazs
  */
-public class GTextBox extends TextBox
-		implements NativePreviewHandler, TextObject {
+public class GTextBox extends TextBox implements NativePreviewHandler, TextObject {
 	// On iOS when using a bluetooth keyboard, the onkeyup event reports
 	// the charcode to be 0. To solve this, we save the character code
 	// in the onkeydown event, and we use that for the onkeyup
@@ -28,15 +43,14 @@ public class GTextBox extends TextBox
 	protected boolean isAltKeyDown;
 	protected boolean isShiftKeyDown;
 	protected boolean isMetaKeyDown;
-	private  boolean isFocused = false;
+	private boolean isFocused = false;
 
 	public GTextBox() {
 		this(false, null);
 	}
 
 	/**
-	 * @param autocomplete
-	 *            allow browser autocomplete ?
+	 * @param autocomplete allow browser autocomplete ?
 	 */
 	public GTextBox(boolean autocomplete, GlobalHandlerRegistry globalHandlers) {
 		HandlerRegistration handler = Event.addNativePreviewHandler(this);
@@ -59,11 +73,10 @@ public class GTextBox extends TextBox
 		final KeyUpHandler finalHandler = handler;
 		return super.addKeyUpHandler(event -> {
 			if (event.getNativeKeyCode() == 0) {
-				NativeEvent nativeEvent = Document.get().createKeyUpEvent(
-						isControlKeyDown, isAltKeyDown, isShiftKeyDown,
-						isMetaKeyDown, keyCode);
+				NativeEvent nativeEvent = Document.get()
+						.createKeyUpEvent(
+								isControlKeyDown, isAltKeyDown, isShiftKeyDown, isMetaKeyDown, keyCode);
 				event.setNativeEvent(nativeEvent);
-
 			}
 			finalHandler.onKeyUp(event);
 		});
@@ -102,4 +115,8 @@ public class GTextBox extends TextBox
 		this.setReadOnly(!editable);
 	}
 
+	@Override
+	public void updateLabel(String labelTextKey) {
+		// not needed
+	}
 }

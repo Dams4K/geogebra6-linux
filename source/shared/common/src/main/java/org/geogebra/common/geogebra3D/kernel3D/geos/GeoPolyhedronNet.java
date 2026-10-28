@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.geos;
 
 import org.geogebra.common.kernel.Construction;
@@ -9,7 +25,7 @@ import org.geogebra.common.plugin.GeoClass;
 
 /**
  * Net for a polyhedron
- * 
+ *
  * @author Vincent
  *
  */
@@ -39,7 +55,7 @@ public class GeoPolyhedronNet extends GeoPolyhedron {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(" = ");
@@ -48,7 +64,7 @@ public class GeoPolyhedronNet extends GeoPolyhedron {
 	}
 
 	@Override
-	final public String toValueString(StringTemplate tpl) {
+	public final String toValueString(StringTemplate tpl) {
 		return kernel.format(getArea(), tpl);
 	}
 
@@ -75,7 +91,6 @@ public class GeoPolyhedronNet extends GeoPolyhedron {
 		}
 
 		super.createFaces();
-
 	}
 
 	/**
@@ -104,8 +119,8 @@ public class GeoPolyhedronNet extends GeoPolyhedron {
 	}
 
 	@Override
-	public GeoSegmentND createNewSegment(GeoPointND startPoint,
-			GeoPointND endPoint, ConstructionElementCycle key) {
+	public GeoSegmentND createNewSegment(
+			GeoPointND startPoint, GeoPointND endPoint, ConstructionElementCycle key) {
 
 		if (oldSegments != null && segmentsIndexMax < oldSegments.length) {
 			GeoSegment3D segment = oldSegments[(int) segmentsIndexMax];

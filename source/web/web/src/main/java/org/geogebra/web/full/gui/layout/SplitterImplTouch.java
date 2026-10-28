@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.layout;
 
 import org.gwtproject.dom.client.Document;
@@ -14,7 +30,7 @@ import org.gwtproject.user.client.Event;
  * Override splitter behavior on touch devices: add glass dragging zone
  *
  */
-public class SplitterImplTouch extends SplitterImpl {
+public final class SplitterImplTouch extends SplitterImpl {
 
 	private Element mainDivElement;
 	private Element glassDivElement;
@@ -42,14 +58,14 @@ public class SplitterImplTouch extends SplitterImpl {
 			return true;
 		}
 		switch (DOM.eventGetType(event)) {
-		case Event.ONMOUSEDOWN:
-		case Event.ONMOUSEMOVE:
-		case Event.ONMOUSEUP:
-			EventTarget tg = event.getEventTarget();
-			if (Element.is(tg) && (Element.as(tg) == glassDivElement)) {
-				return false;
-			}
-			break;
+			case Event.ONMOUSEDOWN:
+			case Event.ONMOUSEMOVE:
+			case Event.ONMOUSEUP:
+				EventTarget tg = event.getEventTarget();
+				if (Element.is(tg) && (Element.as(tg) == glassDivElement)) {
+					return false;
+				}
+				break;
 		}
 		return true;
 	}
@@ -94,7 +110,7 @@ public class SplitterImplTouch extends SplitterImpl {
 	public void splitterInsertedIntoLayer(Layer layer) {
 		layer.getContainerElement().getStyle().setOverflow(Overflow.VISIBLE);
 	}
-	
+
 	@Override
 	public Element getSplitterElement() {
 		return mainDivElement;

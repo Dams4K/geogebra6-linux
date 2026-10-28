@@ -1,9 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import java.util.Set;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 
 import org.geogebra.common.euclidian.event.PointerEventType;
 import org.geogebra.common.gui.view.algebra.AlgebraItem;
@@ -14,7 +27,9 @@ import org.geogebra.common.kernel.geos.DescriptionMode;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.util.IndexHTMLBuilder;
+import org.geogebra.editor.share.util.Unicode;
 import org.geogebra.web.full.css.MaterialDesignResources;
+import org.geogebra.web.html5.gui.util.AriaHelper;
 import org.geogebra.web.html5.gui.util.ClickStartHandler;
 import org.geogebra.web.html5.gui.util.NoDragImage;
 import org.geogebra.web.html5.gui.util.ToggleButton;
@@ -24,16 +39,16 @@ import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.HTML;
 import org.gwtproject.user.client.ui.Image;
 import org.gwtproject.user.client.ui.Label;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Output part of AV item
  */
-public class AlgebraOutputPanel extends FlowPanel {
-	private final @Nonnull FlowPanel valuePanel;
-	private @CheckForNull Canvas valCanvas;
-	private @CheckForNull Label valueLabel;
+public final class AlgebraOutputPanel extends FlowPanel {
+	private final @NonNull FlowPanel valuePanel;
+	private @Nullable Canvas valCanvas;
+	private @Nullable Label valueLabel;
 
 	/**
 	 * Create new output panel
@@ -41,6 +56,8 @@ public class AlgebraOutputPanel extends FlowPanel {
 	public AlgebraOutputPanel() {
 		valuePanel = new FlowPanel();
 		valuePanel.addStyleName("avValue");
+		valuePanel.addStyleName("customScrollbar");
+		valuePanel.getElement().setTabIndex(0);
 	}
 
 	public Canvas getValCanvas() {
@@ -68,8 +85,7 @@ public class AlgebraOutputPanel extends FlowPanel {
 	 * add arrow prefix for av output
 	 */
 	void addEqualSignPrefix() {
-		final Image arrow = new NoDragImage(
-				MaterialDesignResources.INSTANCE.equal_sign_black(), 24);
+		final Image arrow = new NoDragImage(MaterialDesignResources.INSTANCE.equal_sign_black(), 24);
 		arrow.setStyleName("arrowOutputImg");
 		add(arrow);
 	}
@@ -89,23 +105,33 @@ public class AlgebraOutputPanel extends FlowPanel {
 	 * @return The multi-state toggle button (symbolic, engineering mode)
 	 */
 	public static AlgebraOutputFormatButton createOutputFormatButton(
-			GeoElement geo, boolean engineeringNotation,
+			GeoElement geo,
+			boolean engineeringNotation,
 			Set<AlgebraOutputFormatFilter> algebraOutputFormatFilters) {
 		final AlgebraOutputFormatButton button = new AlgebraOutputFormatButton();
 
 		ClickStartHandler.init(button, new ClickStartHandler(true, true) {
 			@Override
 			public void onClickStart(int x, int y, PointerEventType type) {
-				AlgebraOutputFormat nextFormat = AlgebraOutputFormat.getNextFormat(
-						geo, engineeringNotation, algebraOutputFormatFilters);
-				AlgebraOutputFormat.switchToNextFormat(
-						geo, engineeringNotation, algebraOutputFormatFilters);
-				if (nextFormat != null) {
-					button.select(nextFormat);
-				}
+				applyNextFormat(geo, engineeringNotation, algebraOutputFormatFilters, button);
 			}
 		});
+		button.addKeyActivateHandler(
+				() -> applyNextFormat(geo, engineeringNotation, algebraOutputFormatFilters, button));
 		return button;
+	}
+
+	private static void applyNextFormat(
+			GeoElement geo,
+			boolean engineeringNotation,
+			Set<AlgebraOutputFormatFilter> algebraOutputFormatFilters,
+			AlgebraOutputFormatButton button) {
+		AlgebraOutputFormat nextFormat =
+				AlgebraOutputFormat.getNextFormat(geo, engineeringNotation, algebraOutputFormatFilters);
+		AlgebraOutputFormat.switchToNextFormat(geo, engineeringNotation, algebraOutputFormatFilters);
+		if (nextFormat != null) {
+			button.select(nextFormat);
+		}
 	}
 
 	/**
@@ -114,13 +140,18 @@ public class AlgebraOutputPanel extends FlowPanel {
 	 * @param parent Parent panel
 	 * @param geo GeoElement
 	 */
-	public static void updateOutputPanelButton(AlgebraOutputFormatButton button, FlowPanel parent,
-			GeoElement geo, boolean engineering,
+	public static void updateOutputPanelButton(
+			AlgebraOutputFormatButton button,
+			FlowPanel parent,
+			GeoElement geo,
+			boolean engineering,
 			Set<AlgebraOutputFormatFilter> algebraOutputFormatFilters) {
-		AlgebraOutputFormat nextFormat = AlgebraOutputFormat.getNextFormat(
-				geo, engineering, algebraOutputFormatFilters);
+		AlgebraOutputFormat nextFormat =
+				AlgebraOutputFormat.getNextFormat(geo, engineering, algebraOutputFormatFilters);
 		if (nextFormat != null) {
 			button.select(nextFormat);
+			AriaHelper.setLabel(
+					button, geo.getApp().getLocalization().getMenu(nextFormat.getScreenReaderLabel()));
 		}
 		parent.add(button);
 	}
@@ -153,10 +184,8 @@ public class AlgebraOutputPanel extends FlowPanel {
 	 * @param fontSize size in pixels
 	 * @return whether update was successful (AV has value panel)
 	 */
-	boolean updateValuePanel(GeoElement geo1, String text,
-			boolean latex, int fontSize) {
-		if (geo1 == null || geo1
-				.getDescriptionMode() != DescriptionMode.DEFINITION_VALUE) {
+	boolean updateValuePanel(GeoElement geo1, String text, boolean latex, int fontSize) {
+		if (geo1 == null || geo1.getDescriptionMode() != DescriptionMode.DEFINITION_VALUE) {
 			return false;
 		}
 		clear();
@@ -170,14 +199,13 @@ public class AlgebraOutputPanel extends FlowPanel {
 
 		if (latex
 				&& (geo1.isLaTeXDrawableGeo()
-				|| AlgebraItem.evaluatesToFraction(geo1)
-				|| AlgebraItem.isRationalizableFraction(geo1)
-				|| AlgebraItem.isGeoSurd(geo1))) {
+						|| AlgebraItem.evaluatesToFraction(geo1)
+						|| AlgebraItem.isRationalizableFraction(geo1)
+						|| AlgebraItem.isGeoSurd(geo1))) {
 			showLaTeXValue(text, geo1, fontSize);
 		} else {
 			HTML html = new HTML();
-			IndexHTMLBuilder sb = new DOMIndexHTMLBuilder(html,
-					geo1.getKernel().getApplication());
+			IndexHTMLBuilder sb = new DOMIndexHTMLBuilder(html, geo1.getKernel().getApplication());
 			if (AlgebraItem.needsPacking(geo1)) {
 				geo1.getAlgebraDescriptionTextOrHTMLDefault(sb);
 			} else {
@@ -197,11 +225,9 @@ public class AlgebraOutputPanel extends FlowPanel {
 	 * @param fontSize
 	 *            size in pixels
 	 */
-	public void showLaTeXValue(String text, GeoElementND geo,
-			int fontSize) {
+	public void showLaTeXValue(String text, GeoElementND geo, int fontSize) {
 		// LaTeX
-		Canvas canvas = DrawEquationW.paintOnCanvas(geo, text, valCanvas,
-				fontSize);
+		Canvas canvas = DrawEquationW.paintOnCanvas(geo, text, valCanvas, fontSize);
 		canvas.addStyleName("canvasVal");
 		valuePanel.clear();
 		valuePanel.add(canvas);

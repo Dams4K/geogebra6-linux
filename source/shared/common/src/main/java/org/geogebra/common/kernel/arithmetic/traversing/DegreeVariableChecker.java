@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.arithmetic.traversing;
 
 import org.geogebra.common.kernel.arithmetic.ExpressionNode;
@@ -46,31 +62,34 @@ public final class DegreeVariableChecker implements Inspecting {
 	 */
 	private int getHighestTermKind(ExpressionNode en) {
 		switch (en.getOperation()) {
-		case NO_OPERATION:
-			if (en.getLeft() instanceof MySpecialDouble
-					&& ((MySpecialDouble) en.getLeft()).isAngleUnit()) {
-				return ANGLE_UNIT;
-			}
-			return en.getLeft() instanceof FunctionVariable ? VARIABLE : 0;
-		case MULTIPLY:
-			int leftDeg = getHighestTermKind(en.getLeftTree());
-			int rightDeg = getHighestTermKind(en.getRightTree());
-			return (leftDeg & rightDeg) > 0 ? NONLINEAR : (leftDeg | rightDeg);
-		case PLUS:
-		case MINUS:
-			return Math.max(getHighestTermKind(en.getLeftTree()),
-					getHighestTermKind(en.getRightTree()));
-		case DIVIDE:
-			return getHighestTermKind(en.getRightTree()) == 0
-					? getHighestTermKind(en.getLeftTree()) : NONLINEAR;
-		case ABS:
-			return getHighestTermKind(en.getLeftTree());
-		default:
-			if (en.getRightTree() == null) {
-				return getHighestTermKind(en.getLeftTree()) == 0 ? 0 : NONLINEAR;
-			}
-			return getHighestTermKind(en.getLeftTree()) == 0
-					&& getHighestTermKind(en.getRightTree()) == 0 ? 0 : NONLINEAR;
+			case NO_OPERATION:
+				if (en.getLeft() instanceof MySpecialDouble
+						&& ((MySpecialDouble) en.getLeft()).isAngleUnit()) {
+					return ANGLE_UNIT;
+				}
+				return en.getLeft() instanceof FunctionVariable ? VARIABLE : 0;
+			case MULTIPLY:
+				int leftDeg = getHighestTermKind(en.getLeftTree());
+				int rightDeg = getHighestTermKind(en.getRightTree());
+				return (leftDeg & rightDeg) > 0 ? NONLINEAR : (leftDeg | rightDeg);
+			case PLUS:
+			case MINUS:
+				return Math.max(
+						getHighestTermKind(en.getLeftTree()), getHighestTermKind(en.getRightTree()));
+			case DIVIDE:
+				return getHighestTermKind(en.getRightTree()) == 0
+						? getHighestTermKind(en.getLeftTree())
+						: NONLINEAR;
+			case ABS:
+				return getHighestTermKind(en.getLeftTree());
+			default:
+				if (en.getRightTree() == null) {
+					return getHighestTermKind(en.getLeftTree()) == 0 ? 0 : NONLINEAR;
+				}
+				return getHighestTermKind(en.getLeftTree()) == 0
+								&& getHighestTermKind(en.getRightTree()) == 0
+						? 0
+						: NONLINEAR;
 		}
 	}
 

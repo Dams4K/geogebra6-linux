@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.prover.adapters;
 
 import java.math.BigDecimal;
@@ -37,6 +53,10 @@ public class DependentNumberAdapter extends ProverAdapter {
 	private ArrayList<Entry<GeoElement, PVariable>> segVarPairs = new ArrayList<>();
 	private int nrOfMaxDecimals = 0;
 
+	/**
+	 * @return Botana polynomials
+	 * @throws NoSymbolicParametersException if suitable polynomials cannot be obtained
+	 */
 	public PPolynomial[] getBotanaPolynomials(AlgoDependentNumber algoDepNumber, GeoElementND geo)
 			throws NoSymbolicParametersException {
 		if (botanaPolynomials != null) {
@@ -70,8 +90,8 @@ public class DependentNumberAdapter extends ProverAdapter {
 
 		// expand(lcm(denom(coeff(gg)))*gg);
 		// see also CASgiac.createEliminateScript()
-		String gg = definition.toString(StringTemplate.giacTemplate) + "-"
-				+ Kernel.TMP_VARIABLE_PREFIX + botanaVars[0];
+		String gg = definition.toString(StringTemplate.giacTemplate) + "-" + Kernel.TMP_VARIABLE_PREFIX
+				+ botanaVars[0];
 		String exprGiacStr = "expand(lcm(denom(coeff(" + gg + ")))*(" + gg + "))";
 
 		nrOfMaxDecimals = 0;
@@ -81,11 +101,15 @@ public class DependentNumberAdapter extends ProverAdapter {
 		try {
 			String giacOutput = cas.getCurrentCAS().evaluateRaw(strForGiac);
 
-			giacOutput = giacOutput.substring(1, giacOutput.length() - 1)
+			giacOutput = giacOutput
+					.substring(1, giacOutput.length() - 1)
 					.replaceAll(Kernel.TMP_VARIABLE_PREFIX2, "");
 			// also decrypting variable names
 
-			ValidExpression resultVE = (algoDepNumber.getKernel().getGeoGebraCAS()).getCASparser()
+			ValidExpression resultVE = algoDepNumber
+					.getKernel()
+					.getGeoGebraCAS()
+					.getCASparser()
 					.parseGeoGebraCASInputAndResolveDummyVars(giacOutput, algoDepNumber.getKernel(), null);
 
 			polyNode = new PolynomialNode();
@@ -106,8 +130,9 @@ public class DependentNumberAdapter extends ProverAdapter {
 					Entry<GeoElement, PVariable> curr = it.next();
 					PVariable[] currBotVars = ((GeoSegment) curr.getKey()).getBotanaVars(geo);
 					PPolynomial seg = new PPolynomial(curr.getValue());
-					botanaPolynomials[k] = seg.multiply(seg).subtract(PPolynomial.sqrDistance(
-							currBotVars[0], currBotVars[1], currBotVars[2], currBotVars[3]));
+					botanaPolynomials[k] = seg.multiply(seg)
+							.subtract(PPolynomial.sqrDistance(
+									currBotVars[0], currBotVars[1], currBotVars[2], currBotVars[3]));
 					k++;
 				}
 			}
@@ -154,21 +179,6 @@ public class DependentNumberAdapter extends ProverAdapter {
 		if (node.getRight() != null && node.getRight().isExpressionNode()) {
 			traverseExpression((ExpressionNode) node.getRight(), kernel);
 		}
-
-		if (node.getLeft() != null && node.getLeft().isExpressionNode() && node.getRight() != null
-				&& node.getRight().isExpressionNode()) {
-			return;
-		}
-		// case number with segment, eg. 2*a^2
-		if (node.getLeft() instanceof MyDouble && node.getRight().isExpressionNode()
-				&& (node.getOperation() == Operation.DIVIDE
-						|| node.getOperation() == Operation.MULTIPLY)) {
-			return;
-		}
-		// case segment with number, eg. a^2*1,5
-		if (node.getRight() instanceof MyDouble && node.getLeft().isExpressionNode()) {
-			return;
-		}
 	}
 
 	private void processNode(ExpressionValue ev, Kernel kernel) {
@@ -198,8 +208,7 @@ public class DependentNumberAdapter extends ProverAdapter {
 				s.update();
 			}
 			cons.setSuppressLabelCreation(suppress);
-			Entry<GeoElement, PVariable> pair = new AbstractMap.SimpleEntry<>(
-					s, currentVar);
+			Entry<GeoElement, PVariable> pair = new AbstractMap.SimpleEntry<>(s, currentVar);
 			searchSegVarPair(pair);
 			allSegmentsFromExpression.add(s);
 		}
@@ -211,8 +220,7 @@ public class DependentNumberAdapter extends ProverAdapter {
 			int k = 0;
 			while (it.hasNext()) {
 				Entry<GeoElement, PVariable> curr = it.next();
-				if (curr.getKey().equals(pair.getKey())
-						&& curr.getValue().equals(pair.getValue())) {
+				if (curr.getKey().equals(pair.getKey()) && curr.getValue().equals(pair.getValue())) {
 					break;
 				}
 				k++;
@@ -227,7 +235,7 @@ public class DependentNumberAdapter extends ProverAdapter {
 
 	/**
 	 * Creates a PolynomialNode from an ExpressionNode.
-	 * 
+	 *
 	 * @param expNode
 	 *            ExpressionNode presentation of the polynomial
 	 * @param polyNode
@@ -235,12 +243,13 @@ public class DependentNumberAdapter extends ProverAdapter {
 	 * @throws NoSymbolicParametersException
 	 *             if the conversion is not possible for some reason (maybe
 	 *             because of unhandled cases)
-	 * 
+	 *
 	 * @author Csilla Solyom-Gecse
 	 * @author Zoltan Kovacs
-	 * 
+	 *
 	 *         TODO: Find a more elegant way to do that.
 	 */
+	@SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
 	public void buildPolynomialTree(ExpressionNode expNode, PolynomialNode polyNode)
 			throws NoSymbolicParametersException {
 		// Log.debug(expNode.toString());
@@ -253,27 +262,27 @@ public class DependentNumberAdapter extends ProverAdapter {
 			double d2 = expNode.getRight().evaluateDouble();
 			Double d;
 			switch (expNode.getOperation()) {
-			case PLUS:
-				d = d1 + d2;
-				break;
-			case MINUS:
-				d = d1 - d2;
-				break;
-			case MULTIPLY:
-				d = d1 * d2;
-				break;
-			case POWER:
-				d = Math.pow(d1, d2);
-				break;
-			case DIVIDE:
-				d = d1 / d2;
-				String[] splitter = d.toString().split("\\.");
-				if (nrOfMaxDecimals < splitter[1].length()) {
-					nrOfMaxDecimals = splitter[1].length();
-				}
-				break;
-			default:
-				throw new NoSymbolicParametersException();
+				case PLUS:
+					d = d1 + d2;
+					break;
+				case MINUS:
+					d = d1 - d2;
+					break;
+				case MULTIPLY:
+					d = d1 * d2;
+					break;
+				case POWER:
+					d = Math.pow(d1, d2);
+					break;
+				case DIVIDE:
+					d = d1 / d2;
+					String[] splitter = d.toString().split("\\.");
+					if (nrOfMaxDecimals < splitter[1].length()) {
+						nrOfMaxDecimals = splitter[1].length();
+					}
+					break;
+				default:
+					throw new NoSymbolicParametersException();
 			}
 			BigInteger i;
 			// if in the expression exists rational number with n decimals
@@ -297,10 +306,10 @@ public class DependentNumberAdapter extends ProverAdapter {
 				buildPolynomialTree((ExpressionNode) expNode.getLeft(), polyNode.getLeft());
 			} else {
 				if (expNode.getLeft() instanceof GeoDummyVariable) {
-					polyNode.getLeft()
+					polyNode
+							.getLeft()
 							.setPoly(new PPolynomial(
-									getVarOfGeoDummy(expNode.getLeft()
-											.toString(StringTemplate.defaultTemplate))));
+									getVarOfGeoDummy(expNode.getLeft().toString(StringTemplate.defaultTemplate))));
 				}
 				if (expNode.getLeft() instanceof MySpecialDouble) {
 					Double d = expNode.getLeft().evaluateDouble();
@@ -329,10 +338,10 @@ public class DependentNumberAdapter extends ProverAdapter {
 			} else {
 				if (expNode.getRight() instanceof GeoDummyVariable) {
 					try {
-						polyNode.getRight()
+						polyNode
+								.getRight()
 								.setPoly(new PPolynomial(
-										getVarOfGeoDummy(expNode.getRight()
-												.toString(StringTemplate.defaultTemplate))));
+										getVarOfGeoDummy(expNode.getRight().toString(StringTemplate.defaultTemplate))));
 					} catch (Exception e) {
 						throw new NoSymbolicParametersException(e);
 					}
@@ -346,15 +355,18 @@ public class DependentNumberAdapter extends ProverAdapter {
 					if (polyNode.getLeft().getPoly() != null
 							&& polyNode.getLeft().getPoly().isConstant()) {
 						switch (polyNode.getOperation()) {
-						case MULTIPLY:
-							i = polyNode.getLeft().getPoly().getConstant()
-									.multiply(new BigInteger(Long.toString((long) d)));
-							break;
-						case DIVIDE:
-							i = BigInteger.ONE;
-							break;
-						default:
-							throw new NoSymbolicParametersException();
+							case MULTIPLY:
+								i = polyNode
+										.getLeft()
+										.getPoly()
+										.getConstant()
+										.multiply(new BigInteger(Long.toString((long) d)));
+								break;
+							case DIVIDE:
+								i = BigInteger.ONE;
+								break;
+							default:
+								throw new NoSymbolicParametersException();
 						}
 						polyNode.setPoly(new PPolynomial(i));
 						return;
@@ -365,10 +377,9 @@ public class DependentNumberAdapter extends ProverAdapter {
 					// max of decimal numbers)
 					// than multiply the coefficient with 10^n
 					if (nrOfMaxDecimals != 0 && expNode.getOperation() != Operation.POWER) {
-						i = new BigInteger(
-								Long.toString(((long) (d * Math.pow(10, nrOfMaxDecimals)))));
+						i = new BigInteger(Long.toString((long) (d * Math.pow(10, nrOfMaxDecimals))));
 					} else {
-						i = new BigInteger(Long.toString(((long) d)));
+						i = new BigInteger(Long.toString((long) d));
 					}
 					polyNode.getRight().setPoly(new PPolynomial(i));
 				}
@@ -394,7 +405,6 @@ public class DependentNumberAdapter extends ProverAdapter {
 		// This will cause a NPE (should not happen):
 		Log.error("Internal error in AlgoDependentNumber");
 		return null;
-
 	}
 
 	/**
@@ -405,7 +415,7 @@ public class DependentNumberAdapter extends ProverAdapter {
 	 * polyNode) first. It is possible that the process will not be successful
 	 * for the first run. In such cases multiple runs should be performed until
 	 * polyNode.poly is not null.
-	 * 
+	 *
 	 * @param expNode
 	 *            ExpressionNode presentation of the polynomial
 	 * @param polyNode
@@ -413,10 +423,10 @@ public class DependentNumberAdapter extends ProverAdapter {
 	 * @throws NoSymbolicParametersException
 	 *             if the conversion is not possible for some reason (maybe
 	 *             because of unhandled cases)
-	 * 
+	 *
 	 * @author Csilla Solyom-Gecse
 	 * @author Zoltan Kovacs
-	 * 
+	 *
 	 *         TODO: Find a more elegant way to do that.
 	 */
 	public void expressionNodeToPolynomial(ExpressionNode expNode, PolynomialNode polyNode)
@@ -424,44 +434,48 @@ public class DependentNumberAdapter extends ProverAdapter {
 		if (polyNode.getPoly() != null) {
 			return;
 		}
-		if (polyNode.getLeft() != null && polyNode.getRight() == null
+		if (polyNode.getLeft() != null
+				&& polyNode.getRight() == null
 				&& polyNode.getOperation() == Operation.NO_OPERATION) {
 			PPolynomial leftPoly = polyNode.getLeft().getPoly();
 			polyNode.setPoly(leftPoly);
 		}
-		if (polyNode.getLeft() != null && polyNode.getLeft().getPoly() != null
-				&& polyNode.getRight() != null && polyNode.getRight().getPoly() != null) {
+		if (polyNode.getLeft() != null
+				&& polyNode.getLeft().getPoly() != null
+				&& polyNode.getRight() != null
+				&& polyNode.getRight().getPoly() != null) {
 			PPolynomial leftPoly = polyNode.getLeft().getPoly();
 			PPolynomial rightPoly = polyNode.getRight().getPoly();
 			switch (polyNode.getOperation()) {
-			case PLUS:
-				polyNode.setPoly(leftPoly.add(rightPoly));
-				break;
-			case MINUS:
-				polyNode.setPoly(leftPoly.subtract(rightPoly));
-				break;
-			case MULTIPLY:
-				polyNode.setPoly(leftPoly.multiply(rightPoly));
-				break;
-			case POWER:
-				/* It must fit in Long. If not, it will take forever. */
-				Long pow = polyNode.getRight().evaluateLong();
-				if (pow != null) {
-					PPolynomial poly = leftPoly;
-					for (Integer i = 1; i < pow; i++) {
-						poly = poly.multiply(leftPoly);
+				case PLUS:
+					polyNode.setPoly(leftPoly.add(rightPoly));
+					break;
+				case MINUS:
+					polyNode.setPoly(leftPoly.subtract(rightPoly));
+					break;
+				case MULTIPLY:
+					polyNode.setPoly(leftPoly.multiply(rightPoly));
+					break;
+				case POWER:
+					/* It must fit in Long. If not, it will take forever. */
+					Long pow = polyNode.getRight().evaluateLong();
+					if (pow != null) {
+						PPolynomial poly = leftPoly;
+						for (Integer i = 1; i < pow; i++) {
+							poly = poly.multiply(leftPoly);
+						}
+						polyNode.setPoly(poly);
 					}
-					polyNode.setPoly(poly);
-				}
-				break;
-			default:
-				throw new NoSymbolicParametersException();
+					break;
+				default:
+					throw new NoSymbolicParametersException();
 			}
 		}
 		if (expNode.getLeft().isExpressionNode() && polyNode.getLeft().getPoly() == null) {
 			expressionNodeToPolynomial((ExpressionNode) expNode.getLeft(), polyNode.getLeft());
 		}
-		if (expNode.getRight() != null && expNode.getRight().isExpressionNode()
+		if (expNode.getRight() != null
+				&& expNode.getRight().isExpressionNode()
 				&& polyNode.getRight().getPoly() == null) {
 			expressionNodeToPolynomial((ExpressionNode) expNode.getRight(), polyNode.getRight());
 		}
@@ -473,15 +487,12 @@ public class DependentNumberAdapter extends ProverAdapter {
 			BigInteger coeff = new BigDecimal(expNode.getRight().evaluateDouble()).toBigInteger();
 			polyNode.getRight().setPoly(new PPolynomial(coeff));
 		}
-		if (expNode.getLeft() instanceof MyDouble
-				&& expNode.getRight() instanceof GeoDummyVariable) {
+		if (expNode.getLeft() instanceof MyDouble && expNode.getRight() instanceof GeoDummyVariable) {
 			BigInteger coeff = new BigDecimal(expNode.getLeft().evaluateDouble()).toBigInteger();
-			PVariable v = getVarOfGeoDummy(
-					expNode.getRight().toString(StringTemplate.defaultTemplate));
+			PVariable v = getVarOfGeoDummy(expNode.getRight().toString(StringTemplate.defaultTemplate));
 			if (v != null) {
 				PTerm t = new PTerm(v);
 				polyNode.setPoly(new PPolynomial(coeff, t));
-				return;
 			}
 		}
 	}
@@ -526,12 +537,11 @@ public class DependentNumberAdapter extends ProverAdapter {
 	/**
 	 * Add Botana variables manually in case of building an AlgoDependentNumber
 	 * externally.
-	 * 
+	 *
 	 * @param vars
 	 *            the used Botana variables in the expression to be built
 	 */
 	public void setBotanaVars(PVariable[] vars) {
 		botanaVars = vars;
 	}
-
 }

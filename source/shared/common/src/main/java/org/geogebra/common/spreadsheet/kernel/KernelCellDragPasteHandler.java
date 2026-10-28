@@ -1,6 +1,20 @@
-package org.geogebra.common.spreadsheet.kernel;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
+package org.geogebra.common.spreadsheet.kernel;
 
 import org.geogebra.common.gui.view.spreadsheet.RelativeCopy;
 import org.geogebra.common.io.XMLParseException;
@@ -8,10 +22,12 @@ import org.geogebra.common.kernel.CircularDefinitionException;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.parser.ParseException;
+import org.geogebra.common.main.SpreadsheetTableModel;
 import org.geogebra.common.spreadsheet.core.CellDragPasteHandler;
 import org.geogebra.common.spreadsheet.core.TabularData;
 import org.geogebra.common.spreadsheet.core.TabularRange;
 import org.geogebra.common.util.debug.Log;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Utility class designed to handle dragging a selection in order to copy its content to adjacent
@@ -19,7 +35,12 @@ import org.geogebra.common.util.debug.Log;
  */
 final class KernelCellDragPasteHandler implements CellDragPasteHandler {
 
-	private enum PasteDirection { UP, RIGHT, DOWN, LEFT }
+	private enum PasteDirection {
+		UP,
+		RIGHT,
+		DOWN,
+		LEFT
+	}
 
 	private TabularRange rangeToCopy;
 	private final TabularData<GeoElement> tabularData;
@@ -51,9 +72,10 @@ final class KernelCellDragPasteHandler implements CellDragPasteHandler {
 	}
 
 	@Override
-	public @CheckForNull TabularRange getDragPasteDestinationRange() {
-		if (rangeToCopy == null || (destinationRowIsWithinOriginalSelection()
-				&& destinationColumnIsWithinOriginalSelection())) {
+	public @Nullable TabularRange getDragPasteDestinationRange() {
+		if (rangeToCopy == null
+				|| (destinationRowIsWithinOriginalSelection()
+						&& destinationColumnIsWithinOriginalSelection())) {
 			return null;
 		}
 		return TabularRange.range(fromRow, toRow, fromColumn, toColumn);
@@ -94,9 +116,9 @@ final class KernelCellDragPasteHandler implements CellDragPasteHandler {
 	}
 
 	private boolean isEmptyCells() {
-		TabularRange tr = rangeToCopy.restrictTo(tabularData.numberOfRows(),
-				tabularData.numberOfColumns());
-		for (int row = tr.getMinRow(); row <= tr.getMaxRow() ; row++) {
+		TabularRange tr = rangeToCopy.restrictInfiniteRangeTo(
+				tabularData.numberOfRows(), tabularData.numberOfColumns());
+		for (int row = tr.getMinRow(); row <= tr.getMaxRow(); row++) {
 			for (int column = tr.getMinColumn(); column <= tr.getMaxColumn(); column++) {
 				if (tabularData.contentAt(row, column) != null) {
 					return false;
@@ -139,17 +161,24 @@ final class KernelCellDragPasteHandler implements CellDragPasteHandler {
 		}
 		unfixDestinationRange(destinationRange);
 		switch (pasteDirection) {
-		case UP:
-		case DOWN:
-			pasteVertical(destinationRange, getMinRowIndexFromOrigin(), getMaxRowIndexFromOrigin(),
-					getMinColumnIndexFromOrigin(), getMaxColumnIndexFromOrigin());
-			break;
-		case RIGHT:
-		case LEFT:
-			pasteHorizontal(destinationRange, getMinRowIndexFromOrigin(),
-					getMaxRowIndexFromOrigin(), getMinColumnIndexFromOrigin(),
-					getMaxColumnIndexFromOrigin());
-			break;
+			case UP:
+			case DOWN:
+				pasteVertical(
+						destinationRange,
+						getMinRowIndexFromOrigin(),
+						getMaxRowIndexFromOrigin(),
+						getMinColumnIndexFromOrigin(),
+						getMaxColumnIndexFromOrigin());
+				break;
+			case RIGHT:
+			case LEFT:
+				pasteHorizontal(
+						destinationRange,
+						getMinRowIndexFromOrigin(),
+						getMaxRowIndexFromOrigin(),
+						getMinColumnIndexFromOrigin(),
+						getMaxColumnIndexFromOrigin());
+				break;
 		}
 		setDestinationRangeToNonEmptySpreadsheetCells(destinationRange);
 	}
@@ -163,24 +192,31 @@ final class KernelCellDragPasteHandler implements CellDragPasteHandler {
 		});
 	}
 
-	private void pasteVertical(TabularRange destinationRange, int minOriginRow, int maxOriginRow,
-			int minOriginColumn, int maxOriginColumn)
+	private void pasteVertical(
+			TabularRange destinationRange,
+			int minOriginRow,
+			int maxOriginRow,
+			int minOriginColumn,
+			int maxOriginColumn)
 			throws CircularDefinitionException, ParseException {
 
 		if (shouldCopySingleRowOnly()) {
-			pasteSingleRow(minOriginColumn, maxOriginColumn,
+			pasteSingleRow(
+					minOriginColumn,
+					maxOriginColumn,
 					pasteDirection == PasteDirection.UP ? maxOriginRow : minOriginRow,
-					fromRow, toRow);
+					fromRow,
+					toRow);
 			return;
 		}
 
 		if (shouldPasteLinearPattern()) {
 			if (pasteDirection == PasteDirection.UP) {
-				relativeCopy.pasteLinearPatternUpwards(minOriginRow, maxOriginRow,
-						minOriginColumn, maxOriginColumn, fromRow, toRow);
+				relativeCopy.pasteLinearPatternUpwards(
+						minOriginRow, maxOriginRow, minOriginColumn, maxOriginColumn, fromRow, toRow);
 			} else {
-				relativeCopy.pasteLinearPatternDownwards(minOriginRow, maxOriginRow,
-						minOriginColumn, maxOriginColumn, fromRow, toRow);
+				relativeCopy.pasteLinearPatternDownwards(
+						minOriginRow, maxOriginRow, minOriginColumn, maxOriginColumn, fromRow, toRow);
 			}
 			return;
 		}
@@ -189,35 +225,42 @@ final class KernelCellDragPasteHandler implements CellDragPasteHandler {
 		do {
 			for (int row = 0; row < destinationRange.getHeight(); row++) {
 				if (pasteDirection == PasteDirection.UP) {
-					pasteRowOrColumn(maxOriginRow - row, toRow - row,
-							maxOriginColumn - column, toColumn - column);
+					pasteRowOrColumn(
+							maxOriginRow - row, toRow - row, maxOriginColumn - column, toColumn - column);
 				} else {
-					pasteRowOrColumn(minOriginRow + row, fromRow + row,
-							minOriginColumn + column, fromColumn + column);
+					pasteRowOrColumn(
+							minOriginRow + row, fromRow + row, minOriginColumn + column, fromColumn + column);
 				}
 			}
 			column++;
 		} while (column < destinationRange.getWidth());
 	}
 
-	private void pasteHorizontal(TabularRange destinationRange, int minOriginRow, int maxOriginRow,
-			int minOriginColumn, int maxOriginColumn)
+	private void pasteHorizontal(
+			TabularRange destinationRange,
+			int minOriginRow,
+			int maxOriginRow,
+			int minOriginColumn,
+			int maxOriginColumn)
 			throws CircularDefinitionException, ParseException {
 
 		if (shouldCopySingleColumnOnly()) {
-			pasteSingleColumn(minOriginRow, maxOriginRow,
+			pasteSingleColumn(
+					minOriginRow,
+					maxOriginRow,
 					pasteDirection == PasteDirection.RIGHT ? minOriginColumn : maxOriginColumn,
-					fromColumn, toColumn);
+					fromColumn,
+					toColumn);
 			return;
 		}
 
 		if (shouldPasteLinearPattern()) {
 			if (pasteDirection == PasteDirection.RIGHT) {
-				relativeCopy.pasteLinearPatternRightwards(minOriginRow, maxOriginRow,
-						minOriginColumn, maxOriginColumn, fromColumn, toColumn);
+				relativeCopy.pasteLinearPatternRightwards(
+						minOriginRow, maxOriginRow, minOriginColumn, maxOriginColumn, fromColumn, toColumn);
 			} else {
-				relativeCopy.pasteLinearPatternLeftwards(minOriginRow, maxOriginRow,
-						minOriginColumn, maxOriginColumn, fromColumn, toColumn);
+				relativeCopy.pasteLinearPatternLeftwards(
+						minOriginRow, maxOriginRow, minOriginColumn, maxOriginColumn, fromColumn, toColumn);
 			}
 			return;
 		}
@@ -226,11 +269,11 @@ final class KernelCellDragPasteHandler implements CellDragPasteHandler {
 		do {
 			for (int column = 0; column < destinationRange.getWidth(); column++) {
 				if (pasteDirection == PasteDirection.RIGHT) {
-					pasteRowOrColumn(minOriginRow + row, fromRow + row,
-							minOriginColumn + column, fromColumn + column);
+					pasteRowOrColumn(
+							minOriginRow + row, fromRow + row, minOriginColumn + column, fromColumn + column);
 				} else {
-					pasteRowOrColumn(maxOriginRow - row, toRow - row,
-							maxOriginColumn - column, toColumn - column);
+					pasteRowOrColumn(
+							maxOriginRow - row, toRow - row, maxOriginColumn - column, toColumn - column);
 				}
 			}
 			row++;
@@ -238,9 +281,7 @@ final class KernelCellDragPasteHandler implements CellDragPasteHandler {
 	}
 
 	private void setDestinationRangeToNonEmptySpreadsheetCells(TabularRange destinationRange) {
-		destinationRange.forEach((row, column) -> {
-			tabularData.markNonEmpty(row, column);
-		});
+		destinationRange.forEach(tabularData::markNonEmpty);
 	}
 
 	private boolean shouldCopySingleRowOnly() {
@@ -251,39 +292,46 @@ final class KernelCellDragPasteHandler implements CellDragPasteHandler {
 		return rangeToCopy.getWidth() == 1;
 	}
 
-	private void pasteSingleRow(int sourceMinColumn, int sourceMaxColumn, int sourceRow,
-			int destinationMinRow, int destinationMaxRow)
+	private void pasteSingleRow(
+			int sourceMinColumn,
+			int sourceMaxColumn,
+			int sourceRow,
+			int destinationMinRow,
+			int destinationMaxRow)
 			throws CircularDefinitionException, ParseException {
-		relativeCopy.doCopyVerticalNoStoringUndoInfo1(sourceMinColumn, sourceMaxColumn,
-				sourceRow, destinationMinRow, destinationMaxRow);
+		relativeCopy.doCopyVerticalNoStoringUndoInfo1(
+				sourceMinColumn, sourceMaxColumn, sourceRow, destinationMinRow, destinationMaxRow);
 	}
 
-	private void pasteSingleColumn(int sourceMinRow, int sourceMaxRow, int sourceColumn,
-			int destinationMinColumn, int destinationMaxColumn)
+	private void pasteSingleColumn(
+			int sourceMinRow,
+			int sourceMaxRow,
+			int sourceColumn,
+			int destinationMinColumn,
+			int destinationMaxColumn)
 			throws CircularDefinitionException, ParseException {
-		relativeCopy.doCopyHorizontalNoStoringUndoInfo1(sourceMinRow, sourceMaxRow,
-				sourceColumn, destinationMinColumn, destinationMaxColumn);
+		relativeCopy.doCopyHorizontalNoStoringUndoInfo1(
+				sourceMinRow, sourceMaxRow, sourceColumn, destinationMinColumn, destinationMaxColumn);
 	}
 
-	private void pasteRowOrColumn(int sourceRow, int destinationRow,
-			int sourceColumn, int destinationColumn)
+	private void pasteRowOrColumn(
+			int sourceRow, int destinationRow, int sourceColumn, int destinationColumn)
 			throws CircularDefinitionException, ParseException {
 		if (isVerticalPasteDirection()) {
-			relativeCopy.doCopyVerticalNoStoringUndoInfo1(sourceColumn, sourceColumn,
-					sourceRow, destinationRow, destinationRow);
+			relativeCopy.doCopyVerticalNoStoringUndoInfo1(
+					sourceColumn, sourceColumn, sourceRow, destinationRow, destinationRow);
 		} else {
-			relativeCopy.doCopyHorizontalNoStoringUndoInfo1(sourceRow, sourceRow,
-					sourceColumn, destinationColumn, destinationColumn);
+			relativeCopy.doCopyHorizontalNoStoringUndoInfo1(
+					sourceRow, sourceRow, sourceColumn, destinationColumn, destinationColumn);
 		}
 	}
 
 	private boolean shouldPasteLinearPattern() {
+		SpreadsheetTableModel tableModel = kernel.getApplication().getSpreadsheetTableModel();
 		if (isVerticalPasteDirection()) {
-			return rangeToCopy.getHeight() == 2
-					&& RelativeCopy.isPatternSource(rangeToCopy, kernel.getApplication());
+			return rangeToCopy.getHeight() == 2 && RelativeCopy.isPatternSource(rangeToCopy, tableModel);
 		} else {
-			return rangeToCopy.getWidth() == 2
-					&& RelativeCopy.isPatternSource(rangeToCopy, kernel.getApplication());
+			return rangeToCopy.getWidth() == 2 && RelativeCopy.isPatternSource(rangeToCopy, tableModel);
 		}
 	}
 

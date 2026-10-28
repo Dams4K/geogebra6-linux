@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.io;
 
 import static org.junit.Assert.fail;
@@ -30,7 +46,14 @@ public class XmlTestUtil {
 	 *            app
 	 */
 	public static void checkCurrentXML(AppCommon application) {
-		String xml = application.getXML();
+		checkXML(application.getXML());
+	}
+
+	/**
+	 * Validate XML against GGB schema.
+	 * @param xml XML content
+	 */
+	public static void checkXML(String xml) {
 		try {
 			Validator validator = getValidator();
 			if (validator == null) {
@@ -57,12 +80,11 @@ public class XmlTestUtil {
 		}
 		URL schemaFile = new URL(GEOGEBRA_XSD_URL);
 		try {
-			SchemaFactory schemaFactory = SchemaFactory
-					.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			Schema schema = schemaFactory.newSchema(schemaFile);
 			VALIDATOR = schema.newValidator();
-		} catch (IllegalArgumentException exception) {
-			// Ignore
+		} catch (IllegalArgumentException ignored) {
+			// Ignore, code shared with Android where this is not supported
 		}
 		return VALIDATOR;
 	}

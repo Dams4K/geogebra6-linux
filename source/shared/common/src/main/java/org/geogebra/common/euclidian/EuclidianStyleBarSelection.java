@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
 import java.util.ArrayList;
@@ -33,8 +49,7 @@ public class EuclidianStyleBarSelection {
 	 */
 	public void restoreDefaultGeoFromConstruction() {
 		if (oldDefaultGeo != null) {
-			oldDefaultGeo = getDefaults()
-					.getDefaultGeo(oldDefaultMode);
+			oldDefaultGeo = getDefaults().getDefaultGeo(oldDefaultMode);
 		}
 	}
 
@@ -45,8 +60,7 @@ public class EuclidianStyleBarSelection {
 		if (oldDefaultGeo != null) {
 			// add oldDefaultGeo to the default map so that the old default
 			// is restored
-			getDefaults().addDefaultGeo(oldDefaultMode,
-					oldDefaultGeo);
+			getDefaults().addDefaultGeo(oldDefaultMode, oldDefaultGeo);
 			oldDefaultGeo = null;
 			oldDefaultMode = null;
 		}
@@ -95,17 +109,12 @@ public class EuclidianStyleBarSelection {
 			return;
 		}
 		Integer type = getDefaultType(mode);
-		if (type.equals(
-				ConstructionDefaults.DEFAULT_POINT_ALL_BUT_COMPLEX)) {
+		if (type.equals(ConstructionDefaults.DEFAULT_POINT_ALL_BUT_COMPLEX)) {
 			// add all non-complex default points
-			defaultGeos.add(getDefaults().getDefaultGeo(
-					ConstructionDefaults.DEFAULT_POINT_FREE));
-			defaultGeos.add(getDefaults().getDefaultGeo(
-					ConstructionDefaults.DEFAULT_POINT_ON_PATH));
-			defaultGeos.add(getDefaults().getDefaultGeo(
-					ConstructionDefaults.DEFAULT_POINT_IN_REGION));
-			defaultGeos.add(getDefaults().getDefaultGeo(
-					ConstructionDefaults.DEFAULT_POINT_DEPENDENT));
+			defaultGeos.add(getDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_POINT_FREE));
+			defaultGeos.add(getDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_POINT_ON_PATH));
+			defaultGeos.add(getDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_POINT_IN_REGION));
+			defaultGeos.add(getDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_POINT_DEPENDENT));
 		} else {
 			GeoElement geo = getDefaults().getDefaultGeo(type);
 			if (geo != null) {

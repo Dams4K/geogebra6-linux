@@ -1,8 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui;
 
 import java.util.List;
-
-import javax.annotation.CheckForNull;
 
 import org.geogebra.common.euclidian.draw.HasTextFormat;
 import org.geogebra.common.main.App;
@@ -12,9 +26,11 @@ import org.geogebra.web.full.javax.swing.GPopupMenuW;
 import org.geogebra.web.full.javax.swing.InlineTextToolbar;
 import org.geogebra.web.html5.gui.menu.AriaMenuBar;
 import org.geogebra.web.html5.gui.menu.AriaMenuItem;
+import org.geogebra.web.html5.gui.view.IconSpec;
 import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.core.client.Scheduler.ScheduledCommand;
 import org.gwtproject.resources.client.ResourcePrototype;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Factory to create popup menus.
@@ -44,14 +60,25 @@ public class ContextMenuItemFactory {
 	}
 
 	/**
+	 * @param icon icon
+	 * @param text text
+	 * @param cmd command to run when clicked
+	 * @return a new AriaMenuItem instance.
+	 *
+	 */
+	public AriaMenuItem newAriaMenuItem(IconSpec icon, String text, ScheduledCommand cmd) {
+		return MainMenu.getMenuBarItem(icon, text, cmd);
+	}
+
+	/**
 	 *
 	 * @param text menu text
 	 * @param icon icon
 	 * @param submenu Submenu if any.
 	 * @return a new AriaMenuItem instance.
 	 */
-	public AriaMenuItem newAriaMenuItem(String text,
-			@CheckForNull ResourcePrototype icon, AriaMenuBar submenu) {
+	public AriaMenuItem newAriaMenuItem(
+			String text, @Nullable ResourcePrototype icon, AriaMenuBar submenu) {
 		return new AriaMenuItem(text, icon, submenu);
 	}
 
@@ -69,13 +96,14 @@ public class ContextMenuItemFactory {
 	}
 
 	/**
-	 *
+	 * @param icon icon
 	 * @param title the title of the item.
 	 * @param checked if the item should be checked by default
+	 * @param command command
 	 * @return the new checkmark capable item.
 	 */
-	public GCheckmarkMenuItem newCheckmarkMenuItem(ResourcePrototype icon,
-			String title, boolean checked, ScheduledCommand command) {
+	public GCheckmarkMenuItem newCheckmarkMenuItem(
+			IconSpec icon, String title, boolean checked, ScheduledCommand command) {
 		return new GCheckmarkMenuItem(icon, title, checked, command);
 	}
 }

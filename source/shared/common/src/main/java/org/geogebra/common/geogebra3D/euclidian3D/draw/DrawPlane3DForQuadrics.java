@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
@@ -7,7 +23,7 @@ import org.geogebra.common.kernel.geos.GeoElement;
 
 /**
  * Helper for drawing planes, for quadrics
- * 
+ *
  * @author Proprietaire
  *
  */
@@ -23,8 +39,8 @@ public class DrawPlane3DForQuadrics extends DrawPlane3D {
 	 * @param quadric
 	 *            quadric
 	 */
-	public DrawPlane3DForQuadrics(EuclidianView3D a_view3D,
-			GeoPlane3D a_plane3D, GeoQuadric3D quadric) {
+	public DrawPlane3DForQuadrics(
+			EuclidianView3D a_view3D, GeoPlane3D a_plane3D, GeoQuadric3D quadric) {
 		super(a_view3D, a_plane3D, quadric);
 	}
 
@@ -48,5 +64,4 @@ public class DrawPlane3DForQuadrics extends DrawPlane3D {
 	protected int getGridThickness() {
 		return 0;
 	}
-
 }

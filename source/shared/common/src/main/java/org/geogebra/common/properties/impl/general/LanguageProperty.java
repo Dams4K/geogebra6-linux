@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.properties.impl.general;
 
 import static java.util.Map.entry;
@@ -22,42 +38,41 @@ import com.google.j2objc.annotations.Weak;
  */
 public class LanguageProperty extends AbstractNamedEnumeratedProperty<String> {
 
-    @Weak
-    private final App app;
+	@Weak
+	private final App app;
 
-    /**
-     * Constructs a language property.
-     *
-     * @param app          app
-     * @param localization localization
-     */
-    public LanguageProperty(App app, Localization localization) {
-        super(localization, "Language");
-        this.app = app;
-        setupValues(localization);
-    }
+	/**
+	 * Constructs a language property.
+	 *
+	 * @param app          app
+	 * @param localization localization
+	 */
+	public LanguageProperty(App app, Localization localization) {
+		super(localization, "Language");
+		this.app = app;
+		setupValues(localization);
+	}
 
-    private void setupValues(Localization localization) {
-        Language[] languages = localization.getSupportedLanguages(
-                PreviewFeature.isAvailable(ALL_LANGUAGES));
-        setNamedValues(Arrays.stream(languages)
-                .map(language -> entry(language.toLanguageTag(), language.name))
-                .collect(Collectors.toList()));
-    }
+	private void setupValues(Localization localization) {
+		Language[] languages =
+				localization.getSupportedLanguages(PreviewFeature.isAvailable(ALL_LANGUAGES));
+		setNamedValues(Arrays.stream(languages)
+				.map(language -> entry(language.toLanguageTag(), language.name))
+				.collect(Collectors.toList()));
+	}
 
-    @Override
-    protected void doSetValue(String value) {
-        app.setLanguage(value);
-    }
+	@Override
+	protected void doSetValue(String value) {
+		app.setLanguage(value);
+	}
 
-    @Override
-    public String getValue() {
-        return getLocalization().getPreferredLanguageTag();
-    }
+	@Override
+	public String getValue() {
+		return getLocalization().getPreferredLanguageTag();
+	}
 
-    @Override
-    public boolean isEnabled() {
-        // TODO register a PropertyRestriction with the ExamController instead
-        return !GlobalScope.examController.isExamActive();
-    }
+	@Override
+	public boolean isAvailable() {
+		return !GlobalScope.isExamActive(app);
+	}
 }

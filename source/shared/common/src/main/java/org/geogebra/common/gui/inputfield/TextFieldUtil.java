@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.inputfield;
 
 import org.geogebra.common.util.StringUtil;
@@ -11,7 +27,7 @@ public final class TextFieldUtil {
 
 	/**
 	 * Locates bracket positions in a given string with given caret position.
-	 * 
+	 *
 	 * @param inputText
 	 *            input
 	 * @param caret
@@ -40,49 +56,48 @@ public final class TextFieldUtil {
 			// check if we have a bracket next to the caret
 			// and set the search parameters if we do
 			switch (c) {
-			case '(':
-				searchDirection = +1;
-				searchEnd = text.length();
-				oppositeBracketToMatch = '(';
-				bracketToMatch = ')';
-				break;
-			case '{':
-				searchDirection = +1;
-				searchEnd = text.length();
-				oppositeBracketToMatch = '{';
-				bracketToMatch = '}';
-				break;
-			case '[':
-				searchDirection = +1;
-				searchEnd = text.length();
-				oppositeBracketToMatch = '[';
-				bracketToMatch = ']';
-				break;
-			case ')':
-				searchDirection = -1;
-				searchEnd = -1;
-				oppositeBracketToMatch = ')';
-				bracketToMatch = '(';
-				break;
-			case '}':
-				searchDirection = -1;
-				searchEnd = -1;
-				oppositeBracketToMatch = '}';
-				bracketToMatch = '{';
-				break;
-			case ']':
-				searchDirection = -1;
-				searchEnd = -1;
-				oppositeBracketToMatch = ']';
-				bracketToMatch = '[';
-				break;
-			default:
-				searchDirection = 0;
-				bracketPos0 = -1;
-				bracketPos1 = -1;
-				break;
+				case '(':
+					searchDirection = +1;
+					searchEnd = text.length();
+					oppositeBracketToMatch = '(';
+					bracketToMatch = ')';
+					break;
+				case '{':
+					searchDirection = +1;
+					searchEnd = text.length();
+					oppositeBracketToMatch = '{';
+					bracketToMatch = '}';
+					break;
+				case '[':
+					searchDirection = +1;
+					searchEnd = text.length();
+					oppositeBracketToMatch = '[';
+					bracketToMatch = ']';
+					break;
+				case ')':
+					searchDirection = -1;
+					searchEnd = -1;
+					oppositeBracketToMatch = ')';
+					bracketToMatch = '(';
+					break;
+				case '}':
+					searchDirection = -1;
+					searchEnd = -1;
+					oppositeBracketToMatch = '}';
+					bracketToMatch = '{';
+					break;
+				case ']':
+					searchDirection = -1;
+					searchEnd = -1;
+					oppositeBracketToMatch = ']';
+					bracketToMatch = '[';
+					break;
+				default:
+					searchDirection = 0;
+					bracketPos0 = -1;
+					bracketPos1 = -1;
+					break;
 			}
-
 		}
 
 		// search the text for a matching bracket
@@ -96,8 +111,7 @@ public final class TextFieldUtil {
 				}
 				if (!textMode && text.charAt(i) == bracketToMatch) {
 					count++;
-				} else if (!textMode
-						&& text.charAt(i) == oppositeBracketToMatch) {
+				} else if (!textMode && text.charAt(i) == oppositeBracketToMatch) {
 					count--;
 				}
 
@@ -108,10 +122,9 @@ public final class TextFieldUtil {
 			}
 		}
 
-		int[] result = { bracketPos0, bracketPos1 };
+		int[] result = {bracketPos0, bracketPos1};
 
 		return result;
-
 	}
 
 	/**
@@ -126,8 +139,7 @@ public final class TextFieldUtil {
 	public static String getWordAtPos(String text, int pos) {
 		// search to the left
 		int wordStart = pos - 1;
-		while (wordStart >= 0 && StringUtil
-				.isLetterOrDigitOrUnderscore(text.charAt(wordStart))) {
+		while (wordStart >= 0 && StringUtil.isLetterOrDigitOrUnderscore(text.charAt(wordStart))) {
 			--wordStart;
 		}
 		wordStart++;
@@ -135,8 +147,7 @@ public final class TextFieldUtil {
 		// search to the right
 		int wordEnd = pos;
 		int length = text.length();
-		while (wordEnd < length
-				&& StringUtil.isLetterOrDigitOrUnderscore(text.charAt(wordEnd))) {
+		while (wordEnd < length && StringUtil.isLetterOrDigitOrUnderscore(text.charAt(wordEnd))) {
 			++wordEnd;
 		}
 
@@ -154,5 +165,4 @@ public final class TextFieldUtil {
 	public static boolean isCloseBracketOrWhitespace(char c) {
 		return Character.isWhitespace(c) || c == ')' || c == ']' || c == '}';
 	}
-
 }

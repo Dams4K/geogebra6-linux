@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * GeoVec2D.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 31. August 2001, 11:34
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.geos;
@@ -40,16 +38,16 @@ import org.geogebra.common.kernel.kernelND.Geo3DVecInterface;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.kernel.kernelND.GeoVecInterface;
 import org.geogebra.common.kernel.matrix.Coords;
+import org.geogebra.common.main.Localization;
 import org.geogebra.common.util.DoubleUtil;
 
 import com.google.j2objc.annotations.Weak;
 
 /**
- * 
+ *
  * @author Michael adapted from GeoVec2D
  */
-final public class Geo3DVec extends ValidExpression
-		implements Vector3DValue, Geo3DVecInterface {
+public final class Geo3DVec extends ValidExpression implements Vector3DValue, Geo3DVecInterface {
 
 	private double x = Double.NaN;
 	private double y = Double.NaN;
@@ -62,7 +60,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * Creates new GeoVec2D
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -72,7 +70,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * Creates new GeoVec3D with coordinates (x,y)
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 * @param x
@@ -91,7 +89,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * Copy constructor
-	 * 
+	 *
 	 * @param v
 	 *            original
 	 */
@@ -115,7 +113,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * Creates new GeoVec3D as vector between Points P and Q
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 * @param p
@@ -180,7 +178,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * Copy coords from source to this
-	 * 
+	 *
 	 * @param v
 	 *            source vector
 	 */
@@ -207,7 +205,8 @@ final public class Geo3DVec extends ValidExpression
 
 	@Override
 	public boolean isEqual(GeoVecInterface v) {
-		return DoubleUtil.isEqual(x, v.getX()) && DoubleUtil.isEqual(y, v.getY())
+		return DoubleUtil.isEqual(x, v.getX())
+				&& DoubleUtil.isEqual(y, v.getY())
 				&& DoubleUtil.isEqual(z, v.getZ());
 	}
 
@@ -239,7 +238,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * c = a + b
-	 * 
+	 *
 	 * @param a
 	 *            addend
 	 * @param b
@@ -255,7 +254,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * c = a + b
-	 * 
+	 *
 	 * @param a
 	 *            addend
 	 * @param b
@@ -271,7 +270,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * c = Vector (Cross) Product of a and b
-	 * 
+	 *
 	 * @param a
 	 *            vector
 	 * @param b
@@ -279,8 +278,7 @@ final public class Geo3DVec extends ValidExpression
 	 * @param c
 	 *            product
 	 */
-	public static void vectorProduct(GeoVecInterface a, GeoVecInterface b,
-			Geo3DVec c) {
+	public static void vectorProduct(GeoVecInterface a, GeoVecInterface b, Geo3DVec c) {
 		// tempX/Y needed because a and c can be the same variable
 		double tempX = a.getY() * b.getZ() - a.getZ() * b.getY();
 		double tempY = -a.getX() * b.getZ() + a.getZ() * b.getX();
@@ -291,7 +289,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * c = a - b
-	 * 
+	 *
 	 * @param a
 	 *            vector
 	 * @param b
@@ -307,10 +305,10 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * c = a - b
-	 * 
+	 *
 	 * @param a
 	 *            vector
-	 * 
+	 *
 	 * @param b
 	 *            vector
 	 * @param c
@@ -324,7 +322,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * c = a - b
-	 * 
+	 *
 	 * @param a
 	 *            vector
 	 * @param b
@@ -340,7 +338,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * c = a * b
-	 * 
+	 *
 	 * @param a
 	 *            factor
 	 * @param b
@@ -356,7 +354,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * Store inner product of two vectors in a number
-	 * 
+	 *
 	 * @param a
 	 *            1st vector
 	 * @param b
@@ -364,15 +362,14 @@ final public class Geo3DVec extends ValidExpression
 	 * @param c
 	 *            output number
 	 */
-	public static void inner(GeoVecInterface a, GeoVecInterface b,
-			MyDouble c) {
+	public static void inner(GeoVecInterface a, GeoVecInterface b, MyDouble c) {
 		c.set(a.getX() * b.getX() + a.getY() * b.getY() + a.getZ() * b.getZ());
 	}
 
 	/**
 	 * Multiplies two vectors as complex numbers. Returns undefined if they are
 	 * not 2D (z=0)
-	 * 
+	 *
 	 * @param a
 	 *            factor
 	 * @param b
@@ -380,8 +377,7 @@ final public class Geo3DVec extends ValidExpression
 	 * @param c
 	 *            product
 	 */
-	public static void complexMultiply(GeoVecInterface a,
-			GeoVecInterface b, GeoVec2D c) {
+	public static void complexMultiply(GeoVecInterface a, GeoVecInterface b, GeoVec2D c) {
 
 		if (!DoubleUtil.isZero(a.getZ()) || !DoubleUtil.isZero(b.getZ())) {
 			c.setCoords(Double.NaN, Double.NaN);
@@ -398,7 +394,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * c = a / b
-	 * 
+	 *
 	 * @param a
 	 *            dividend
 	 * @param b
@@ -470,7 +466,7 @@ final public class Geo3DVec extends ValidExpression
 
 	@Override
 	public double[] getPointAsDouble() {
-		return new double[] { getX(), getY(), getZ() };
+		return new double[] {getX(), getY(), getZ()};
 	}
 
 	@Override
@@ -481,13 +477,12 @@ final public class Geo3DVec extends ValidExpression
 	@Override
 	public boolean isEqual(Geo3DVecInterface vec) {
 		Geo3DVec v = (Geo3DVec) vec;
-		return DoubleUtil.isEqual(x, v.x) && DoubleUtil.isEqual(y, v.y)
-				&& DoubleUtil.isEqual(z, v.z);
+		return DoubleUtil.isEqual(x, v.x) && DoubleUtil.isEqual(y, v.y) && DoubleUtil.isEqual(z, v.z);
 	}
 
 	/**
 	 * multiplies 3D vector/point by a 3x3 matrix a b c d e f g h i
-	 * 
+	 *
 	 * @param list
 	 *            3x3 matrix
 	 * @param rt
@@ -495,9 +490,9 @@ final public class Geo3DVec extends ValidExpression
 	 */
 	public void multiplyMatrix3x3(MyList list, VectorNDValue rt) {
 		GeoVecInterface v = rt.getVector();
-		double xx = v.getX();
-		double yy = v.getY();
-		double zz = v.getZ();
+		final double xx = v.getX();
+		final double yy = v.getY();
+		final double zz = v.getZ();
 
 		double a = MyList.getCellAsDouble(list, 0, 0);
 		double b = MyList.getCellAsDouble(list, 1, 0);
@@ -516,7 +511,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * multiplies 3D vector/point by a 4x4 matrix a b c d e f g h i
-	 * 
+	 *
 	 * @param list
 	 *            4x4 matrix
 	 * @param rt
@@ -527,8 +522,7 @@ final public class Geo3DVec extends ValidExpression
 		double m, n, o, p, xx, yy, zz, ww;
 
 		boolean vector = false;
-		if (rt instanceof GeoPointND) { // 3D point
-			GeoPointND point = (GeoPointND) rt;
+		if (rt instanceof GeoPointND point) { // 3D point
 			// use homogeneous coordinates
 			Coords coords = point.getCoordsInD3();
 			xx = coords.getX();
@@ -582,12 +576,11 @@ final public class Geo3DVec extends ValidExpression
 			y = y / w;
 			z = z / w;
 		}
-
 	}
 
 	/**
 	 * multiplies 3D vector/point by a 2x3 matrix a b d e g h
-	 * 
+	 *
 	 * @param list
 	 *            2x3 matrix
 	 * @param rt
@@ -595,8 +588,8 @@ final public class Geo3DVec extends ValidExpression
 	 */
 	public void multiplyMatrix3x2(MyList list, VectorNDValue rt) {
 		GeoVecInterface v = rt.getVector();
-		double xx = v.getX();
-		double yy = v.getY();
+		final double xx = v.getX();
+		final double yy = v.getY();
 
 		double a = MyList.getCellAsDouble(list, 0, 0);
 		double b = MyList.getCellAsDouble(list, 1, 0);
@@ -612,7 +605,7 @@ final public class Geo3DVec extends ValidExpression
 
 	/**
 	 * multiplies 3D vector/point by a 2x3 matrix a b c d e f
-	 * 
+	 *
 	 * @param list
 	 *            2x3 matrix
 	 * @param rt
@@ -620,13 +613,12 @@ final public class Geo3DVec extends ValidExpression
 	 * @param ret
 	 *            2D vector / point with computed coords
 	 */
-	static public void multiplyMatrix(MyList list, VectorNDValue rt,
-			GeoVec2D ret) {
+	public static void multiplyMatrix(MyList list, VectorNDValue rt, GeoVec2D ret) {
 
 		GeoVecInterface v = rt.getVector();
-		double xx = v.getX();
-		double yy = v.getY();
-		double zz = v.getZ();
+		final double xx = v.getX();
+		final double yy = v.getY();
+		final double zz = v.getZ();
 
 		double a = MyList.getCellAsDouble(list, 0, 0);
 		double b = MyList.getCellAsDouble(list, 1, 0);
@@ -645,14 +637,12 @@ final public class Geo3DVec extends ValidExpression
 
 	@Override
 	public Geo3DVec round() {
-		return new Geo3DVec(kernel, Math.round(x), Math.round(y),
-				Math.round(z));
+		return new Geo3DVec(kernel, Math.round(x), Math.round(y), Math.round(z));
 	}
 
 	@Override
 	public Geo3DVec floor() {
-		return new Geo3DVec(kernel, Math.floor(x), Math.floor(y),
-				Math.floor(z));
+		return new Geo3DVec(kernel, Math.floor(x), Math.floor(y), Math.floor(z));
 	}
 
 	@Override
@@ -690,13 +680,11 @@ final public class Geo3DVec extends ValidExpression
 	@Override
 	public void setMode(int mode) {
 		this.mode = mode;
-
 	}
 
 	@Override
 	public ExpressionValue getUndefinedCopy(Kernel kernel1) {
-		return kernel1.getManager3D().newGeo3DVec(Double.NaN, Double.NaN,
-				Double.NaN);
+		return kernel1.getManager3D().newGeo3DVec(Double.NaN, Double.NaN, Double.NaN);
 	}
 
 	/**
@@ -706,4 +694,8 @@ final public class Geo3DVec extends ValidExpression
 		return kernel;
 	}
 
+	@Override
+	public Localization getLocalization() {
+		return kernel.getLocalization();
+	}
 }

@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDependentPoint.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -43,9 +41,13 @@ public class AlgoDependentConic3D extends AlgoElement3D {
 	private boolean trig;
 
 	/** Creates new dependent conic */
-	public AlgoDependentConic3D(Construction cons, ExpressionNode root,
-			ExpressionValue[] coeffX, ExpressionValue[] coeffY,
-			ExpressionValue[] coeffZ, boolean trig) {
+	public AlgoDependentConic3D(
+			Construction cons,
+			ExpressionNode root,
+			ExpressionValue[] coeffX,
+			ExpressionValue[] coeffY,
+			ExpressionValue[] coeffZ,
+			boolean trig) {
 		super(cons);
 		conic = new GeoConic3D(cons);
 		conic.setDefinition(root);
@@ -58,7 +60,6 @@ public class AlgoDependentConic3D extends AlgoElement3D {
 
 		// compute value of dependent number
 		compute();
-
 	}
 
 	@Override
@@ -79,6 +80,9 @@ public class AlgoDependentConic3D extends AlgoElement3D {
 		return conic;
 	}
 
+	/**
+	 * @return the expression node defining the conic.
+	 */
 	public ExpressionNode getExpressionNode() {
 		return conic.getDefinition();
 	}
@@ -89,11 +93,9 @@ public class AlgoDependentConic3D extends AlgoElement3D {
 		try {
 			ExpressionNode def = conic.getDefinition();
 			if (trig) {
-				ParametricProcessor3D.updateTrigConic(conic, coeffX, coeffY,
-						coeffZ);
+				ParametricProcessor3D.updateTrigConic(conic, coeffX, coeffY, coeffZ);
 			} else {
-				ParametricProcessor3D.updateParabola(conic, coeffX, coeffY,
-						coeffZ);
+				ParametricProcessor3D.updateParabola(conic, coeffX, coeffY, coeffZ);
 			}
 			conic.setDefinition(def);
 			// P.setMode(temp.getMode());
@@ -105,8 +107,7 @@ public class AlgoDependentConic3D extends AlgoElement3D {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		return conic.getDefinition().toString(tpl);
 	}
-
 }

@@ -1,23 +1,37 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.spreadsheet;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import org.geogebra.common.spreadsheet.core.CellDragPasteHandler;
-import org.geogebra.common.spreadsheet.core.Spreadsheet;
 import org.geogebra.common.spreadsheet.core.SpreadsheetCellProcessor;
 import org.geogebra.common.spreadsheet.core.TabularData;
 import org.geogebra.common.spreadsheet.core.TabularDataChangeListener;
 import org.geogebra.common.spreadsheet.core.TabularDataPasteInterface;
 import org.geogebra.common.spreadsheet.core.TabularDataPasteText;
+import org.jspecify.annotations.NonNull;
 
 public class TestTabularData implements TabularData<String> {
 
 	private final SpreadsheetCellProcessor cellProcessor = new SpreadsheetCellProcessor() {
 		@Override
-		public void process(@Nonnull String input, int row, int column) {
+		public void process(@NonNull String input, int row, int column) {
 			setContent(row, column, input.isEmpty() ? null : input);
 		}
 
@@ -32,14 +46,23 @@ public class TestTabularData implements TabularData<String> {
 	 * Simple tabular data (initial size 100 x 100).
 	 */
 	public TestTabularData() {
-		for (int i = 0; i < 100; i++) {
-			data.add(buildRow(100));
+		this(100, 100);
+	}
+
+	/**
+	 * Simple tabular data.
+	 * @param rows number of rows
+	 * @param columns number of columns
+	 */
+	public TestTabularData(int rows, int columns) {
+		for (int i = 0; i < rows; i++) {
+			data.add(buildRow(columns));
 		}
 	}
 
-	private List<String> buildRow(int i) {
-		ArrayList<String> row = new ArrayList<>(100);
-		for (int j = 0; j < i; j++) {
+	private List<String> buildRow(int size) {
+		ArrayList<String> row = new ArrayList<>(size);
+		for (int j = 0; j < size; j++) {
 			row.add(null);
 		}
 		return row;
@@ -67,21 +90,21 @@ public class TestTabularData implements TabularData<String> {
 
 	@Override
 	public void insertColumnAt(int column) {
-		for (List<String> row: data) {
+		for (List<String> row : data) {
 			row.add(column, null);
 		}
 	}
 
 	@Override
 	public void deleteColumnAt(int column) {
-		for (List<String> row: data) {
+		for (List<String> row : data) {
 			row.remove(column);
 		}
 	}
 
 	@Override
-	public void setContent(int row, int column, Object content) {
-		data.get(row).set(column, (String) content);
+	public void setContent(int row, int column, String content) {
+		data.get(row).set(column, content);
 	}
 
 	@Override
@@ -100,17 +123,23 @@ public class TestTabularData implements TabularData<String> {
 	}
 
 	@Override
-	public @Nonnull String serializeContentAt(int row, int column) {
+	public @NonNull String serializeContentAt(int row, int column, SerializationFormat format) {
 		return data.get(row).get(column);
 	}
 
 	@Override
-	public void addChangeListener(@Nonnull TabularDataChangeListener listener) {
+	public boolean hasFormulaAt(int row, int column) {
+		// Currently not tested
+		return false;
+	}
+
+	@Override
+	public void addChangeListener(@NonNull TabularDataChangeListener listener) {
 		// not needed in test
 	}
 
 	@Override
-	public @Nonnull TabularDataPasteInterface<String> getPaste() {
+	public @NonNull TabularDataPasteInterface<String> getPaste() {
 		return new TabularDataPasteText();
 	}
 
@@ -130,7 +159,7 @@ public class TestTabularData implements TabularData<String> {
 	}
 
 	@Override
-	public @Nonnull SpreadsheetCellProcessor getCellProcessor() {
+	public @NonNull SpreadsheetCellProcessor getCellProcessor() {
 		return cellProcessor;
 	}
 }

@@ -1,10 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.editor;
 
+import org.geogebra.editor.web.MathFieldW;
 import org.geogebra.web.html5.bridge.AttributeProvider;
 
-import com.himamis.retex.editor.web.MathFieldW;
-
-public class EditorParams {
+public final class EditorParams {
 	private final AttributeProvider element;
 	private final MathFieldW mathField;
 
@@ -47,7 +62,7 @@ public class EditorParams {
 		return element.getAttribute("editorforegroundcolor");
 	}
 
-	private String getBackgroundColor() {
+	String getBackgroundColor() {
 		return element.getAttribute("editorbackgroundcolor");
 	}
 
@@ -59,13 +74,16 @@ public class EditorParams {
 		if (!"".equals(attribute)) {
 			try {
 				return Double.parseDouble(attribute);
-			} catch (NumberFormatException ex) {
+			} catch (NumberFormatException expected) {
 				// fallback
 			}
 		}
 		return fallback;
 	}
 
+	/**
+	 * @return whether the editor should prevent focus on initialization.
+	 */
 	public boolean isPreventFocus() {
 		return isTrue("preventfocus");
 	}

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.table.regression;
 
 import org.geogebra.common.kernel.Kernel;
@@ -14,8 +30,8 @@ public final class StandardRegressionSpecification implements RegressionSpecific
 	private final String formula;
 	private final String coeffOrdering;
 
-	StandardRegressionSpecification(Regression regression, int polynomialDegree, String formula,
-			String coefficientOrdering) {
+	StandardRegressionSpecification(
+			Regression regression, int polynomialDegree, String formula, String coefficientOrdering) {
 		this.regression = regression;
 		this.degree = polynomialDegree;
 		this.label = polynomialDegree > 1 ? getPolynomialLabel(degree) : regression.getLabel();
@@ -25,9 +41,12 @@ public final class StandardRegressionSpecification implements RegressionSpecific
 
 	private static String getPolynomialLabel(int degree) {
 		switch (degree) {
-		case 2: return "Quadratic";
-		case 3: return "Cubic";
-		default: return "Quartic";
+			case 2:
+				return "Quadratic";
+			case 3:
+				return "Cubic";
+			default:
+				return "Quartic";
 		}
 	}
 
@@ -38,8 +57,7 @@ public final class StandardRegressionSpecification implements RegressionSpecific
 
 	@Override
 	public Command buildCommand(Kernel kernel, MyVecNode points) {
-		Command cleanData = new Command(kernel, Commands.RemoveUndefined.getCommand(),
-				false);
+		Command cleanData = new Command(kernel, Commands.RemoveUndefined.getCommand(), false);
 		cleanData.addArgument(points.wrap());
 		return regression.buildCommand(kernel, degree, cleanData);
 	}

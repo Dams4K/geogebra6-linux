@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoCirclePointRadius.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 15. November 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -35,11 +33,11 @@ import org.geogebra.common.kernel.prover.polynomial.PPolynomial;
 import org.geogebra.common.kernel.prover.polynomial.PVariable;
 
 /**
- * 
+ *
  * @author Markus added TYPE_SEGMENT Michael Borcherds 2008-03-14
  */
-public class AlgoCirclePointRadius extends AlgoSphereNDPointRadius implements
-		AlgoCirclePointRadiusInterface, SymbolicParametersBotanaAlgo {
+public class AlgoCirclePointRadius extends AlgoSphereNDPointRadius
+		implements AlgoCirclePointRadiusInterface, SymbolicParametersBotanaAlgo {
 
 	private PVariable[] botanaVars;
 	private PPolynomial[] botanaPolynomials;
@@ -72,12 +70,10 @@ public class AlgoCirclePointRadius extends AlgoSphereNDPointRadius implements
 
 	@Override
 	public int getRelatedModeID() {
-		switch (super.getType()) {
-		case AlgoSphereNDPointRadius.TYPE_RADIUS:
+		if (super.getType() == AlgoSphereNDPointRadius.TYPE_RADIUS) {
 			return EuclidianConstants.MODE_CIRCLE_POINT_RADIUS;
-		default:
-			return EuclidianConstants.MODE_COMPASSES;
 		}
+		return EuclidianConstants.MODE_COMPASSES;
 	}
 
 	/**
@@ -88,12 +84,15 @@ public class AlgoCirclePointRadius extends AlgoSphereNDPointRadius implements
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("CircleWithCenterAandRadiusB",
-				"Circle with center %0 and radius %1",
-				getM().getLabel(tpl), getRGeo().getLabel(tpl));
+		return getLoc()
+				.getPlainDefault(
+						"CircleWithCenterAandRadiusB",
+						"Circle with center %0 and radius %1",
+						getM().getLabel(tpl),
+						getRGeo().getLabel(tpl));
 	}
 
 	@Override
@@ -102,8 +101,7 @@ public class AlgoCirclePointRadius extends AlgoSphereNDPointRadius implements
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 		if (botanaPolynomials != null) {
 			return botanaPolynomials;
 		}
@@ -195,11 +193,11 @@ public class AlgoCirclePointRadius extends AlgoSphereNDPointRadius implements
 		}
 
 		// define circle
-		botanaPolynomials[k] = PPolynomial.sqrDistance(botanaVars[0],
-				botanaVars[1], botanaVars[2], botanaVars[3]).subtract(sqrR);
+		botanaPolynomials[k] = PPolynomial.sqrDistance(
+						botanaVars[0], botanaVars[1], botanaVars[2], botanaVars[3])
+				.subtract(sqrR);
 
 		return botanaPolynomials;
-
 	}
 
 	@Override

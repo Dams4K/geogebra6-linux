@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -23,7 +27,7 @@ import org.geogebra.common.util.DoubleUtil;
 
 /**
  * Find Numerator
- * 
+ *
  * @author Michael Borcherds
  */
 public class AlgoNumeratorDenominator extends AlgoElement {
@@ -42,8 +46,7 @@ public class AlgoNumeratorDenominator extends AlgoElement {
 	 * @param type
 	 *            numerator or denominator
 	 */
-	public AlgoNumeratorDenominator(Construction cons, GeoNumeric f,
-			Commands type) {
+	public AlgoNumeratorDenominator(Construction cons, GeoNumeric f, Commands type) {
 		super(cons);
 		this.f = f;
 		this.type = type;
@@ -61,7 +64,7 @@ public class AlgoNumeratorDenominator extends AlgoElement {
 	// for AlgoElement
 	@Override
 	protected void setInputOutput() {
-		input = new GeoElement[] { f };
+		input = new GeoElement[] {f};
 
 		super.setOnlyOutput(g);
 		setDependencies(); // done by AlgoElement
@@ -103,7 +106,9 @@ public class AlgoNumeratorDenominator extends AlgoElement {
 				}
 			}
 
-			if (top != null && bottom != null && DoubleUtil.isInteger(top.evaluateDouble())
+			if (top != null
+					&& bottom != null
+					&& DoubleUtil.isInteger(top.evaluateDouble())
 					&& DoubleUtil.isInteger(bottom.evaluateDouble())) {
 				// cancel down to lowest terms
 				long num = (long) top.evaluateDouble();
@@ -123,18 +128,14 @@ public class AlgoNumeratorDenominator extends AlgoElement {
 				g.setValue(val);
 				return;
 			}
-
 		}
 
 		// regular decimal -> find approximate fraction
-		double[] frac = AlgoFractionText.decimalToFraction(f.getDouble(),
-				Kernel.STANDARD_PRECISION);
+		double[] frac = AlgoFractionText.decimalToFraction(f.getDouble(), Kernel.STANDARD_PRECISION);
 		if (frac.length < 2) {
 			g.setUndefined();
 			return;
 		}
 		g.setValue(frac[type == Commands.Numerator ? 0 : 1]);
-
 	}
-
 }

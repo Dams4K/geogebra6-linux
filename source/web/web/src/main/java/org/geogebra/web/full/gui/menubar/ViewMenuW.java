@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.menubar;
 
 import java.util.HashMap;
@@ -20,7 +36,7 @@ import org.gwtproject.timer.client.Timer;
  * The "View" menu for the applet. For application use ViewMenuApplicationW
  * class
  */
-public class ViewMenuW extends Submenu {
+public final class ViewMenuW extends Submenu {
 
 	/**
 	 * Menuitem with checkbox for show algebra view
@@ -52,29 +68,28 @@ public class ViewMenuW extends Submenu {
 	 * @param loc
 	 *            localization
 	 */
-	protected void initRefreshActions(Localization loc) {
-		addItem(MainMenu.getMenuBarHtmlEmptyIcon(loc.getMenu("Refresh"),
-				new MenuCommand(app) {
-
-					@Override
-					public void doExecute() {
-						app.refreshViews();
-					}
-				}));
-		addItem(MainMenu.getMenuBarHtmlEmptyIcon(loc.getMenu("RecomputeAllViews"),
-				new MenuCommand(app) {
+	private void initRefreshActions(Localization loc) {
+		addItem(MainMenu.getMenuBarHtmlEmptyIcon(loc.getMenu("Refresh"), new MenuCommand(app) {
 
 			@Override
-			public void doExecute() {
-						app.getKernel().updateConstruction(true);
+			void doExecute() {
+				app.refreshViews();
 			}
 		}));
+		addItem(
+				MainMenu.getMenuBarHtmlEmptyIcon(loc.getMenu("RecomputeAllViews"), new MenuCommand(app) {
+
+					@Override
+					void doExecute() {
+						app.getKernel().updateConstruction(true);
+					}
+				}));
 	}
 
 	/**
 	 * Initialize menu items
 	 */
-	protected void initActions() {
+	private void initActions() {
 		for (final ViewType e : Views.getViews()) {
 			if (!app.supportsView(e.getID())) {
 				continue;
@@ -89,15 +104,15 @@ public class ViewMenuW extends Submenu {
 			addToMenu(e);
 		}
 		Localization loc = app.getLocalization();
-		inputBarItem = new GCheckBoxMenuItem(AppResources.INSTANCE.empty(),
+		inputBarItem = new GCheckBoxMenuItem(
+				AppResources.INSTANCE.empty(),
 				"InputField",
 				new MenuCommand(app) {
 
 					@Override
-					public void doExecute() {
+					void doExecute() {
 						app.persistWidthAndHeight();
-						app.getAppletParameters()
-								.setAttribute("showAlgebraInput", "true");
+						app.getAppletParameters().setAttribute("showAlgebraInput", "true");
 
 						app.setShowAlgebraInput(true, false);
 						app.setInputPosition(
@@ -108,13 +123,10 @@ public class ViewMenuW extends Submenu {
 						app.updateSplitPanelHeight();
 
 						app.updateCenterPanelAndViews();
-						if (app.getGuiManager() != null
-								&& app.getGuiManager().getLayout() != null) {
-							app.getGuiManager().getLayout().getDockManager()
-									.resizePanels();
+						if (app.getGuiManager() != null && app.getGuiManager().getLayout() != null) {
+							app.getGuiManager().getLayout().getDockManager().resizePanels();
 						}
-						inputBarItem.setSelected(app
-								.getInputPosition() != InputPosition.algebraView);
+						inputBarItem.setSelected(app.getInputPosition() != InputPosition.algebraView);
 
 						Timer timer = new Timer() {
 							@Override
@@ -125,24 +137,26 @@ public class ViewMenuW extends Submenu {
 						};
 						timer.schedule(0);
 					}
-				}, app);
+				},
+				app);
 		addItem(inputBarItem.getMenuItem());
-		consProtNav = new GCheckBoxMenuItem(AppResources.INSTANCE.empty(), "NavigationBar",
+		consProtNav = new GCheckBoxMenuItem(
+				AppResources.INSTANCE.empty(),
+				"NavigationBar",
 				new MenuCommand(app) {
 
-			@Override
-			public void doExecute() {
-				if (consProtNav.isSelected()) {
-					app.setShowConstructionProtocolNavigation(false);
-				} else {
-					int id = app.getActiveEuclidianView().getViewID();
-					app.setShowConstructionProtocolNavigation(true, id);
-					app.getGuiManager()
-							.updateCheckBoxesForShowConstructionProtocolNavigation(
-									id);
-				}
-			}
-				}, app);
+					@Override
+					void doExecute() {
+						if (consProtNav.isSelected()) {
+							app.setShowConstructionProtocolNavigation(false);
+						} else {
+							int id = app.getActiveEuclidianView().getViewID();
+							app.setShowConstructionProtocolNavigation(true, id);
+							app.getGuiManager().updateCheckBoxesForShowConstructionProtocolNavigation(id);
+						}
+					}
+				},
+				app);
 		addItem(consProtNav.getMenuItem());
 
 		addSeparator();
@@ -180,11 +194,10 @@ public class ViewMenuW extends Submenu {
 	public void update() {
 		for (Entry<Integer, GCheckBoxMenuItem> entry : this.items.entrySet()) {
 			int viewID = entry.getKey();
-			entry.getValue().setSelected(
-					app.getGuiManager().showView(viewID));
+			entry.getValue().setSelected(app.getGuiManager().showView(viewID));
 		}
-		boolean linearInput = app.showAlgebraInput()
-				&& app.getInputPosition() != InputPosition.algebraView;
+		boolean linearInput =
+				app.showAlgebraInput() && app.getInputPosition() != InputPosition.algebraView;
 		inputBarItem.setSelected(linearInput);
 		consProtNav.setSelected(app.showConsProtNavigation());
 	}

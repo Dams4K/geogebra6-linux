@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.inputfield;
 
 import org.geogebra.common.awt.GPoint2D;
@@ -11,8 +27,7 @@ import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.debug.Log;
 import org.geogebra.common.util.lang.Language;
-
-import com.himamis.retex.editor.share.model.Korean;
+import org.geogebra.editor.share.tree.Korean;
 
 /**
  * Helper methods used by plain text and latex editors
@@ -26,16 +41,16 @@ public class InputHelper {
 	 *            kernel
 	 * @return whether autocomplete should open
 	 */
-	public static boolean needsAutocomplete(CharSequence curWord,
-			Kernel kernel) {
+	public static boolean needsAutocomplete(CharSequence curWord, Kernel kernel) {
 		if (kernel.getLocalization().languageIs("ko")) {
 			if (Korean.flattenKorean(curWord.toString()).length() < 2) {
 				return false;
 			}
 		} else if (curWord.length() < 2) {
 			return false;
-		} else if (needsThreeLetters(kernel) && curWord.length() == 2 && kernel.getApplication()
-						.getReverseCommand(curWord.toString()) == null) {
+		} else if (needsThreeLetters(kernel)
+				&& curWord.length() == 2
+				&& kernel.getApplication().getReverseCommand(curWord.toString()) == null) {
 			return false;
 		}
 		return kernel.lookupLabel(curWord.toString()) == null;
@@ -54,14 +69,14 @@ public class InputHelper {
 	 * @param oldStep
 	 *            cons step before update
 	 */
-	public static void updateProperties(GeoElementND[] geos,
-			EuclidianView ev, int oldStep) {
+	public static void updateProperties(GeoElementND[] geos, EuclidianView ev, int oldStep) {
 		// create texts in the middle of the visible view
 		// we must check that size of geos is not 0 (ZoomIn, ZoomOut, ...)
 		if (geos == null) {
 			return;
 		}
-		if (geos.length > 0 && geos[0] != null
+		if (geos.length > 0
+				&& geos[0] != null
 				&& geos[0].getKernel().getConstructionStep() <= oldStep) {
 			return;
 		}
@@ -85,13 +100,11 @@ public class InputHelper {
 
 		if (!text.isTextCommand() && text.getStartPoint() == null) {
 			try {
-				boolean oldSuppressLabelsStatus = cons
-						.isSuppressLabelsActive();
+				boolean oldSuppressLabelsStatus = cons.isSuppressLabelsActive();
 				cons.setSuppressLabelCreation(true);
 
 				GPoint2D center = ev.getVisibleRectCenter();
-				GeoPoint p = new GeoPoint(text.getConstruction(), null,
-						center.getX(), center.getY(), 1.0);
+				GeoPoint p = new GeoPoint(text.getConstruction(), null, center.getX(), center.getY(), 1.0);
 
 				cons.setSuppressLabelCreation(oldSuppressLabelsStatus);
 				text.setStartPoint(p);
@@ -124,8 +137,11 @@ public class InputHelper {
 	 *            needed?
 	 * @return word start position
 	 */
-	public static int updateCurrentWord(boolean searchRight,
-			StringBuilder curWord, String text, int caretPos0,
+	public static int updateCurrentWord(
+			boolean searchRight,
+			StringBuilder curWord,
+			String text,
+			int caretPos0,
 			boolean onlySquareBrackets) {
 		int caretPos = caretPos0;
 		int curWordStart;
@@ -151,8 +167,7 @@ public class InputHelper {
 
 			// found [, so go back until we get a ]
 			if (insideBrackets) {
-				while (caretPos > 0 && !isOpenBracket(text.charAt(caretPos),
-						onlySquareBrackets)) {
+				while (caretPos > 0 && !isOpenBracket(text.charAt(caretPos), onlySquareBrackets)) {
 					caretPos--;
 				}
 			}
@@ -160,16 +175,16 @@ public class InputHelper {
 
 		// search to the left
 		curWordStart = caretPos - 1;
-		while (curWordStart >= 0 && (curWordStart >= text.length() || StringUtil
-				.isLetterOrDigitOrUnderscore(text.charAt(curWordStart)))) {
+		while (curWordStart >= 0
+				&& (curWordStart >= text.length()
+						|| StringUtil.isLetterOrDigitOrUnderscore(text.charAt(curWordStart)))) {
 			--curWordStart;
 		}
 		curWordStart++;
 		// search to the right
 		int curWordEnd = caretPos;
 		int length = text.length();
-		while (curWordEnd < length && StringUtil
-				.isLetterOrDigitOrUnderscore(text.charAt(curWordEnd))) {
+		while (curWordEnd < length && StringUtil.isLetterOrDigitOrUnderscore(text.charAt(curWordEnd))) {
 			++curWordEnd;
 		}
 
@@ -181,8 +196,8 @@ public class InputHelper {
 		}
 
 		// remove '[' at end
-		if (curWord.length() > 0 && isOpenBracket(
-				curWord.charAt(curWord.length() - 1), onlySquareBrackets)) {
+		if (curWord.length() > 0
+				&& isOpenBracket(curWord.charAt(curWord.length() - 1), onlySquareBrackets)) {
 			curWord.setLength(curWord.length() - 1);
 		}
 		return curWordStart;

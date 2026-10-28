@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.geos;
 
 import java.util.ArrayList;
@@ -31,16 +47,16 @@ import org.geogebra.common.util.ExtendedBoolean;
 
 /**
  * Class extending {@link GeoPolygon} in 3D world.
- * 
+ *
  * This is based on adding a coordsys where to plot 2D points. 2D points are
  * always defined and are used for all computations. 3D points are only used as
  * a link to created vertices.
- * 
+ *
  * @author ggb3D
- * 
+ *
  */
-public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
-		ViewCreator, RotatableND, MirrorableAtPlane {
+public class GeoPolygon3D extends GeoPolygon
+		implements GeoPolygon3DInterface, ViewCreator, RotatableND, MirrorableAtPlane {
 
 	/** 2D coord sys where the polygon exists */
 	private CoordSys coordSys = new CoordSys(2);
@@ -63,7 +79,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 
 	/**
 	 * default constructor
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param points
@@ -73,17 +89,15 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	 * @param createSegments
 	 *            says if the polygon has to creates its edges
 	 */
-	public GeoPolygon3D(Construction c, GeoPointND[] points, CoordSys cs2D,
-			boolean createSegments) {
+	public GeoPolygon3D(Construction c, GeoPointND[] points, CoordSys cs2D, boolean createSegments) {
 		super(c, points, cs2D, createSegments);
 
 		this.createSegments = createSegments;
-
 	}
 
 	/**
 	 * common constructor for 3D.
-	 * 
+	 *
 	 * @param c
 	 *            the construction
 	 * @param points
@@ -103,7 +117,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 
 	/**
 	 * For intersection algos
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param isIntersection
@@ -114,7 +128,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if is an intersection curve
 	 */
 	public boolean isIntersection() {
@@ -130,7 +144,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 
 	/**
 	 * it's a 3D GeoElement.
-	 * 
+	 *
 	 * @return true
 	 */
 	@Override
@@ -148,7 +162,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 
 	/**
 	 * return a segment joining startPoint and endPoint
-	 * 
+	 *
 	 * @param startPoint
 	 *            the start point
 	 * @param endPoint
@@ -156,31 +170,29 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	 * @return the segment
 	 */
 	@Override
-	public GeoSegmentND createSegment(Construction cons1, GeoPointND startPoint,
-			GeoPointND endPoint, boolean euclidianVisible) {
+	public GeoSegmentND createSegment(
+			Construction cons1, GeoPointND startPoint, GeoPointND endPoint, boolean euclidianVisible) {
 
 		// if start and end points are both 2D, then use super method
 		if (!startPoint.isGeoElement3D() && !endPoint.isGeoElement3D()) {
-			return super.createSegmentOwnDimension(cons1, startPoint, endPoint,
-					euclidianVisible);
+			return super.createSegmentOwnDimension(cons1, startPoint, endPoint, euclidianVisible);
 		}
 		return createSegmentOwnDimension(cons1, startPoint, endPoint, euclidianVisible);
 	}
 
 	@Override
-	public GeoSegmentND createSegmentOwnDimension(Construction cons1, GeoPointND startPoint,
-			GeoPointND endPoint, boolean euclidianVisible) {
-		AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, startPoint,
-				endPoint, this, GeoClass.SEGMENT3D);
+	public GeoSegmentND createSegmentOwnDimension(
+			Construction cons1, GeoPointND startPoint, GeoPointND endPoint, boolean euclidianVisible) {
+		AlgoJoinPoints3D algoSegment =
+				new AlgoJoinPoints3D(cons, startPoint, endPoint, this, GeoClass.SEGMENT3D);
 		cons.removeFromConstructionList(algoSegment);
 
-		return createSegment((GeoSegmentND) algoSegment.getCS(),
-				euclidianVisible);
+		return createSegment((GeoSegmentND) algoSegment.getCS(), euclidianVisible);
 	}
 
 	/**
 	 * Returns the i-th 2D point of this polygon.
-	 * 
+	 *
 	 * @param i
 	 *            number of point
 	 * @return the i-th point
@@ -192,7 +204,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 
 	/**
 	 * Returns the i-th 3D point of this polygon.
-	 * 
+	 *
 	 * @param i
 	 *            number of point
 	 * @return the i-th point
@@ -205,7 +217,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 
 	/**
 	 * return the normal of the polygon's plane
-	 * 
+	 *
 	 * @return the normal of the polygon's plane
 	 */
 	@Override
@@ -215,7 +227,6 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 		}
 
 		return coordSys.getNormal();
-
 	}
 
 	/**
@@ -235,7 +246,6 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	@Override
 	public void setEuclidianVisible(boolean visible) {
 		setEuclidianVisible(visible, createSegments);
-
 	}
 
 	// ///////////////////////////////////////
@@ -243,7 +253,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 
 	/**
 	 * set the 2D coordinate system
-	 * 
+	 *
 	 * @param cs
 	 *            the 2D coordinate system
 	 */
@@ -293,7 +303,6 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 		for (int i = points2D.length; i < points3DArray.size(); i++) {
 			points3DArray.get(i).setUndefined();
 		}
-
 	}
 
 	/**
@@ -316,7 +325,6 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 		for (int i = 0; i < points2D.length; i++) {
 			points[i] = points3DArray.get(i);
 		}
-
 	}
 
 	@Override
@@ -334,14 +342,13 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	 *
 	 * @return true if all points lie on coord sys
 	 */
-	public boolean  checkPointsAreOnCoordSys(double precision) {
-		return checkPointsAreOnCoordSys(coordSys, points, points2D,
-				new double[4], precision);
+	public boolean checkPointsAreOnCoordSys(double precision) {
+		return checkPointsAreOnCoordSys(coordSys, points, points2D, new double[4], precision);
 	}
 
 	/**
 	 * check that all points are on coord sys, and calc their 2D coords
-	 * 
+	 *
 	 * @param coordSys
 	 *            coordinate system
 	 * @param points
@@ -352,11 +359,15 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	 *            temporary coords, must have length 4
 	 * @param precision
 	 *            precision
-	 * 
+	 *
 	 * @return true if all points lie on coord system
 	 */
-	static final public boolean checkPointsAreOnCoordSys(CoordSys coordSys,
-			GeoPointND[] points, GeoPoint[] points2D, double[] tmpCoords, double precision) {
+	public static boolean checkPointsAreOnCoordSys(
+			CoordSys coordSys,
+			GeoPointND[] points,
+			GeoPoint[] points2D,
+			double[] tmpCoords,
+			double precision) {
 
 		Coords o = coordSys.getOrigin();
 		Coords vn = coordSys.getVz();
@@ -383,9 +394,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 			}
 
 			// set the 2D points
-			points2D[i].setCoords(matrix.getVx().dotproduct3(d2),
-					matrix.getVy().dotproduct3(d2), 1);
-
+			points2D[i].setCoords(matrix.getVx().dotproduct3(d2), matrix.getVy().dotproduct3(d2), 1);
 		}
 
 		return true;
@@ -407,7 +416,6 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 				getPointND(i).setDefinition(oldDef);
 			}
 		}
-
 	}
 
 	@Override
@@ -415,19 +423,17 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 		updatePointsND(geos);
 		updateCoordSys();
 		updateSegments(cons);
-
 	}
 
 	/**
 	 * @return true if it has worked
 	 */
 	public boolean updateCoordSys() {
-		return updateCoordSys(coordSys, points, points2D,
-				new double[4], kernel.getStandardPrecision());
+		return updateCoordSys(coordSys, points, points2D, new double[4], kernel.getStandardPrecision());
 	}
 
 	/**
-	 * 
+	 *
 	 * @param coordSys
 	 *            coord sys to update
 	 * @param points
@@ -441,11 +447,14 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	 *
 	 * @return true if it has worked
 	 */
-	static final public boolean updateCoordSys(CoordSys coordSys,
-			GeoPointND[] points, GeoPoint[] points2D, double[] tmpCoords, double precision) {
+	public static boolean updateCoordSys(
+			CoordSys coordSys,
+			GeoPointND[] points,
+			GeoPoint[] points2D,
+			double[] tmpCoords,
+			double precision) {
 		coordSys.resetCoordSys();
-		for (int i = 0; !coordSys.isMadeCoordSys()
-				&& (i < points.length); i++) {
+		for (int i = 0; !coordSys.isMadeCoordSys() && (i < points.length); i++) {
 
 			// check if the vertex is defined and finite
 			if (!points[i].isDefined() || !points[i].isFinite()) {
@@ -461,8 +470,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 		}
 
 		if (coordSys.makeOrthoMatrix(false, false)) {
-			return checkPointsAreOnCoordSys(coordSys, points, points2D,
-					tmpCoords, precision);
+			return checkPointsAreOnCoordSys(coordSys, points, points2D, tmpCoords, precision);
 		}
 
 		return true;
@@ -471,14 +479,14 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	/**
 	 * set cs for region as simplest orthonormal coord sys
 	 */
-	final public void setOrthoNormalRegionCS() {
-		updateRegionCS(new GeoPoint(cons, 0, 0, 1), new GeoPoint(cons, 1, 0, 1),
-				new GeoPoint(cons, 0, 1, 1));
+	public final void setOrthoNormalRegionCS() {
+		updateRegionCS(
+				new GeoPoint(cons, 0, 0, 1), new GeoPoint(cons, 1, 0, 1), new GeoPoint(cons, 0, 1, 1));
 	}
 
 	/**
 	 * return the 2D coordinate system
-	 * 
+	 *
 	 * @return the 2D coordinate system
 	 */
 	@Override
@@ -500,7 +508,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 
 	/**
 	 * set if this is a part of a closed surface
-	 * 
+	 *
 	 * @param v
 	 *            flag value
 	 */
@@ -543,8 +551,8 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 		GeoSegmentND seg;
 		if (segments == null) {
 			seg = new GeoSegment3D(cons);
-			((GeoSegment3D) seg).setCoordFromPoints(getPoint3D(index),
-					getPoint3D((index + 1) % getPointsLength()));
+			((GeoSegment3D) seg)
+					.setCoordFromPoints(getPoint3D(index), getPoint3D((index + 1) % getPointsLength()));
 		} else {
 			seg = segments[index % segments.length];
 		}
@@ -603,9 +611,8 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 
 	@Override
 	public void createView2D() {
-		euclidianViewForPlane = kernel
-				.getApplication().getCompanion()
-				.createEuclidianViewForPlane(this, true);
+		euclidianViewForPlane =
+				kernel.getApplication().getCompanion().createEuclidianViewForPlane(this, true);
 		euclidianViewForPlane.setTransformRegardingView();
 	}
 
@@ -615,15 +622,14 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	}
 
 	@Override
-	public void setEuclidianViewForPlane(
-			EuclidianViewForPlaneCompanionInterface view) {
+	public void setEuclidianViewForPlane(EuclidianViewForPlaneCompanionInterface view) {
 		euclidianViewForPlane = view;
 	}
 
 	@Override
 	public boolean hasView2DVisible() {
-		return euclidianViewForPlane != null && kernel.getApplication()
-				.getGuiManager().showView(euclidianViewForPlane.getId());
+		return euclidianViewForPlane != null
+				&& kernel.getApplication().getGuiManager().showView(euclidianViewForPlane.getId());
 	}
 
 	@Override
@@ -635,9 +641,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 			return;
 		}
 
-		kernel.getApplication().getGuiManager().setShowView(flag,
-				euclidianViewForPlane.getId());
-
+		kernel.getApplication().getGuiManager().setShowView(flag, euclidianViewForPlane.getId());
 	}
 
 	@Override
@@ -657,8 +661,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	}
 
 	@Override
-	public void matrixTransform(double a00, double a01, double a10,
-			double a11) {
+	public void matrixTransform(double a00, double a01, double a10, double a11) {
 
 		if (tmpMatrix4x4 == null) {
 			tmpMatrix4x4 = CoordMatrix4x4.identity();
@@ -692,8 +695,16 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	}
 
 	@Override
-	public void matrixTransform(double a00, double a01, double a02, double a10,
-			double a11, double a12, double a20, double a21, double a22) {
+	public void matrixTransform(
+			double a00,
+			double a01,
+			double a02,
+			double a10,
+			double a11,
+			double a12,
+			double a20,
+			double a21,
+			double a22) {
 
 		if (tmpMatrix4x4 == null) {
 			tmpMatrix4x4 = CoordMatrix4x4.identity();
@@ -716,7 +727,6 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 		double[] ret = getCoordSys().matrixTransform(tmpMatrix4x4);
 
 		super.matrixTransform(ret[0], ret[1], 0, ret[2]);
-
 	}
 
 	// ////////////////////////////////////////////
@@ -756,8 +766,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	}
 
 	@Override
-	public void rotate(NumberValue phiVal, Coords Q,
-			GeoDirectionND orientation) {
+	public void rotate(NumberValue phiVal, Coords Q, GeoDirectionND orientation) {
 
 		rotate(phiVal, Q, orientation.getDirectionInD3());
 
@@ -771,13 +780,10 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 				((GeoSegment3D) seg).rotate(phiVal, Q, orientation);
 			}
 		}
-
 	}
 
-	final private void rotate(NumberValue phiVal, Coords center,
-			Coords direction) {
-		getCoordSys().rotate(phiVal.getDouble(), center,
-				direction.normalized());
+	private void rotate(NumberValue phiVal, Coords center, Coords direction) {
+		getCoordSys().rotate(phiVal.getDouble(), center, direction.normalized());
 	}
 
 	// ////////////////////////////////////////////
@@ -798,7 +804,6 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 				((GeoSegment3D) seg).translate(v);
 			}
 		}
-
 	}
 
 	// //////////////////////
@@ -900,7 +905,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 
 	/**
 	 * set that normal should be reversed
-	 * 
+	 *
 	 * @param flag
 	 *            flag
 	 */
@@ -934,7 +939,7 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 	 * polygon p.
 	 */
 	@Override
-	final public ExtendedBoolean isEqualExtended(GeoElementND geo) {
+	public final ExtendedBoolean isEqualExtended(GeoElementND geo) {
 		// Log.debug("Entree 3D");
 		// return false if it's a different type
 		if (geo.isGeoPolygon()) {
@@ -943,59 +948,62 @@ public class GeoPolygon3D extends GeoPolygon implements GeoPolygon3DInterface,
 
 			int gLength = g.getPointsLength();
 			if (gLength == this.getPointsLength()) {
-				// search for a first common point
-				Coords firstPoint = this.getPoint3D(0);
-				boolean fPointFound = false;
-				int iFirstPoint = 0;
-				while (!fPointFound && (iFirstPoint < gLength)) {
-					if (firstPoint.equalsForKernel(g.getPoint3D(iFirstPoint))) {
-						fPointFound = true;
-					} else {
-						iFirstPoint++;
-					}
-				}
+				return areAllPointsEqual(g);
+			}
+		}
+		return ExtendedBoolean.FALSE;
+	}
 
-				// next point
-				if (fPointFound) {
-					boolean sPointFound = false;
-					int step = 1;
-					if (this.getPoint3D(1).equalsForKernel(
-							g.getPoint3D((iFirstPoint + step) % gLength))) {
-						sPointFound = true;
-					} else {
-						step = -1;
-						int j = iFirstPoint + step;
-						if (j < 0) {
-							j = gLength - 1;
-						}
-						if (this.getPoint3D(1)
-								.equalsForKernel(g.getPoint3D(j))) {
-							sPointFound = true;
-						}
-					}
+	private ExtendedBoolean areAllPointsEqual(GeoPolygon g) {
+		int gLength = g.getPointsLength();
+		// search for a first common point
+		Coords firstPoint = this.getPoint3D(0);
+		boolean fPointFound = false;
+		int iFirstPoint = 0;
+		while (!fPointFound && (iFirstPoint < gLength)) {
+			if (firstPoint.equalsForKernel(g.getPoint3D(iFirstPoint))) {
+				fPointFound = true;
+			} else {
+				iFirstPoint++;
+			}
+		}
 
-					// other points
-					if (sPointFound) {
-						int i = 2;
-						int j = iFirstPoint + step + step;
-						if (j < 0) {
-							j = j + gLength;
-						}
-						j = j % gLength;
-						boolean pointOK = true;
-						while (pointOK && (i < gLength)) {
-							pointOK = this.getPoint3D(i)
-									.equalsForKernel(g.getPoint3D(j));
-							j = j + step;
-							if (j < 0) {
-								j = gLength - 1;
-							}
-							j = j % gLength;
-							i++;
-						}
-						return ExtendedBoolean.newExtendedBoolean(pointOK);
-					}
+		// next point
+		if (fPointFound) {
+			boolean sPointFound = false;
+			int step = 1;
+			if (this.getPoint3D(1).equalsForKernel(g.getPoint3D((iFirstPoint + step) % gLength))) {
+				sPointFound = true;
+			} else {
+				step = -1;
+				int j = iFirstPoint + step;
+				if (j < 0) {
+					j = gLength - 1;
 				}
+				if (this.getPoint3D(1).equalsForKernel(g.getPoint3D(j))) {
+					sPointFound = true;
+				}
+			}
+
+			// other points
+			if (sPointFound) {
+				int i = 2;
+				int j = iFirstPoint + step + step;
+				if (j < 0) {
+					j = j + gLength;
+				}
+				j = j % gLength;
+				boolean pointOK = true;
+				while (pointOK && (i < gLength)) {
+					pointOK = this.getPoint3D(i).equalsForKernel(g.getPoint3D(j));
+					j = j + step;
+					if (j < 0) {
+						j = gLength - 1;
+					}
+					j = j % gLength;
+					i++;
+				}
+				return ExtendedBoolean.newExtendedBoolean(pointOK);
 			}
 		}
 		return ExtendedBoolean.FALSE;

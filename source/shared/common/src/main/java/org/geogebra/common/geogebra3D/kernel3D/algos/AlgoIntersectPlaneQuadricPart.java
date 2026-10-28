@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoPlane3D;
@@ -7,16 +23,14 @@ import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.kernelND.GeoConicND;
 import org.geogebra.common.kernel.kernelND.GeoQuadricND;
 
-public class AlgoIntersectPlaneQuadricPart
-		extends AlgoIntersectPlaneQuadricLimited {
+public class AlgoIntersectPlaneQuadricPart extends AlgoIntersectPlaneQuadricLimited {
 
 	private GeoConicND bottom;
 	private GeoConicND top;
 
 	private AlgoQuadricEnds algoEnds = null;
 
-	public AlgoIntersectPlaneQuadricPart(Construction cons, GeoPlane3D plane,
-			GeoQuadricND quadric) {
+	public AlgoIntersectPlaneQuadricPart(Construction cons, GeoPlane3D plane, GeoQuadricND quadric) {
 		super(cons, plane, quadric);
 	}
 
@@ -25,8 +39,8 @@ public class AlgoIntersectPlaneQuadricPart
 
 		if (quadric.getParentAlgorithm() instanceof AlgoQuadricSide) {
 			// use quadric limited parent ends
-			GeoQuadric3DLimited parent = ((AlgoQuadricSide) quadric
-					.getParentAlgorithm()).getInputQuadric();
+			GeoQuadric3DLimited parent =
+					((AlgoQuadricSide) quadric.getParentAlgorithm()).getInputQuadric();
 			bottom = parent.getBottom();
 			top = parent.getTop();
 		} else {
@@ -34,7 +48,6 @@ public class AlgoIntersectPlaneQuadricPart
 			cons.removeFromConstructionList(algoEnds);
 			bottom = algoEnds.getSection1();
 			top = algoEnds.getSection2();
-
 		}
 
 		super.end();
@@ -74,5 +87,4 @@ public class AlgoIntersectPlaneQuadricPart
 	protected double getTopParameter() {
 		return ((GeoQuadric3DPart) quadric).getTopParameter();
 	}
-
 }

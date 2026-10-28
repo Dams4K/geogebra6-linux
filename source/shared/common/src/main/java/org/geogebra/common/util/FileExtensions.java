@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
 /**
@@ -22,8 +38,6 @@ public enum FileExtensions {
 	TIFF("tiff", false, true),
 
 	TIF("tif", false, true),
-
-	EPS("eps", false, false),
 
 	PDF("pdf", false, false),
 
@@ -57,19 +71,18 @@ public enum FileExtensions {
 
 	GEOGEBRA_TOOL("ggt", false, false);
 
-	final private boolean allowedImage;
-	final private boolean isImage;
-	final private String ext;
+	private final boolean allowedImage;
+	private final boolean isImage;
+	private final String ext;
 
-	private FileExtensions(String extension, boolean allowedImage,
-			boolean isImage) {
+	FileExtensions(String extension, boolean allowedImage, boolean isImage) {
 		this.allowedImage = allowedImage;
 		this.isImage = isImage;
 		this.ext = extension;
 	}
 
 	@Override
-	final public String toString() {
+	public String toString() {
 		return ext;
 	}
 
@@ -91,14 +104,14 @@ public enum FileExtensions {
 	/**
 	 * @return whether file may be saved in GGB without renaming or converting
 	 */
-	final public boolean isAllowedImage() {
+	public boolean isAllowedImage() {
 		return allowedImage;
 	}
 
 	/**
-	 * @return is image that can be plotted in EV (ie not EPS, PDF)
+	 * @return is image that can be plotted in EV (ie not PDF)
 	 */
-	final public boolean isImage() {
+	public boolean isImage() {
 		return isImage;
 	}
 

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D;
 
 import org.geogebra.common.awt.GColor;
@@ -67,7 +83,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final int DEFAULT_PLANE3D_GRID_THICKNESS = 0;
 	/** default fading for 3D planes */
 	public static final float DEFAULT_PLANE3D_FADING = 0.10f;
-	
+
 	/** default grid thickness for surfaces */
 	public static final int DEFAULT_SURFACE_GRID_THICKNESS = 1;
 
@@ -89,7 +105,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 
 	/**
 	 * default constructor
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 */
@@ -98,7 +114,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	}
 
 	/** default color for polyhedrons */
-	private final GColor colPolyhedron() {
+	private GColor colPolyhedron() {
 		return getColPolygon();
 	}
 
@@ -142,8 +158,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		defaultGeoElements.put(DEFAULT_PLANE3D, plane);
 
 		// polyhedron
-		GeoPolyhedron polyhedron = new GeoPolyhedron(cons,
-				GeoPolyhedron.Type.UNKNOWN);
+		GeoPolyhedron polyhedron = new GeoPolyhedron(cons, GeoPolyhedron.Type.UNKNOWN);
 		polyhedron.setLocalVariableLabel("Polyhedron");
 		polyhedron.setObjColor(colPolyhedron());
 		polyhedron.setAlphaValue(DEFAULT_POLYHEDRON_ALPHA);
@@ -151,8 +166,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		defaultGeoElements.put(DEFAULT_POLYHEDRON, polyhedron);
 
 		// archimedean solids (other than tetrahedron and cube)
-		GeoPolyhedron archimedean = new GeoPolyhedron(cons,
-				GeoPolyhedron.Type.UNKNOWN);
+		GeoPolyhedron archimedean = new GeoPolyhedron(cons, GeoPolyhedron.Type.UNKNOWN);
 		archimedean.setLocalVariableLabel("Archimedean");
 		archimedean.setObjColor(colQuadricAndArchimedeanSolid);
 		archimedean.setAlphaValue(DEFAULT_POLYHEDRON_ALPHA);
@@ -160,8 +174,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		defaultGeoElements.put(DEFAULT_ARCHIMDEAN_SOLID, archimedean);
 
 		// pyramid and cone
-		GeoPolyhedron pyramid = new GeoPolyhedron(cons,
-				GeoPolyhedron.Type.PYRAMID);
+		GeoPolyhedron pyramid = new GeoPolyhedron(cons, GeoPolyhedron.Type.PYRAMID);
 		pyramid.setLocalVariableLabel("Pyramid");
 		pyramid.setObjColor(colPyramidAndCone);
 		pyramid.setAlphaValue(DEFAULT_POLYHEDRON_ALPHA);
@@ -208,93 +221,91 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public int getDefaultType(GeoElement geo) {
 
 		switch (geo.getGeoClassType()) {
-		case POINT3D:
-			return getDefaultType(geo, GeoClass.POINT);
+			case POINT3D:
+				return getDefaultType(geo, GeoClass.POINT);
 
-		case ANGLE3D:
-			return getDefaultType(geo, GeoClass.ANGLE);
+			case ANGLE3D:
+				return getDefaultType(geo, GeoClass.ANGLE);
 
-		case LINE3D:
-			if (((GeoLine3D) geo).isIntersection()) {
-				return DEFAULT_INTERSECTION_CURVE;
-			}
-			return getDefaultType(geo, GeoClass.LINE);
+			case LINE3D:
+				if (((GeoLine3D) geo).isIntersection()) {
+					return DEFAULT_INTERSECTION_CURVE;
+				}
+				return getDefaultType(geo, GeoClass.LINE);
 
-		case SEGMENT3D:
-			if (((GeoSegment3D) geo).isIntersection()) {
-				return DEFAULT_INTERSECTION_CURVE;
-			}
-			return getDefaultType(geo, GeoClass.SEGMENT);
+			case SEGMENT3D:
+				if (((GeoSegment3D) geo).isIntersection()) {
+					return DEFAULT_INTERSECTION_CURVE;
+				}
+				return getDefaultType(geo, GeoClass.SEGMENT);
 
-		case RAY3D:
-			if (((GeoRay3D) geo).isIntersection()) {
-				return DEFAULT_INTERSECTION_CURVE;
-			}
-			return getDefaultType(geo, GeoClass.RAY);
+			case RAY3D:
+				if (((GeoRay3D) geo).isIntersection()) {
+					return DEFAULT_INTERSECTION_CURVE;
+				}
+				return getDefaultType(geo, GeoClass.RAY);
 
-		case AXIS3D:
-			return DEFAULT_AXIS3D;
+			case AXIS3D:
+				return DEFAULT_AXIS3D;
 
-		case VECTOR3D:
-			return getDefaultType(geo, GeoClass.VECTOR);
+			case VECTOR3D:
+				return getDefaultType(geo, GeoClass.VECTOR);
 
-		case CONIC3D:
-		case CONICSECTION:
-			if (((GeoConic3D) geo).isIntersection()) {
-				return DEFAULT_INTERSECTION_CURVE;
-			}
-			return getDefaultType(geo, GeoClass.CONIC);
+			case CONIC3D:
+			case CONICSECTION:
+				if (((GeoConic3D) geo).isIntersection()) {
+					return DEFAULT_INTERSECTION_CURVE;
+				}
+				return getDefaultType(geo, GeoClass.CONIC);
 
-		case CURVE_CARTESIAN3D:
-			return DEFAULT_CURVECARTESIAN3D;
+			case CURVE_CARTESIAN3D:
+				return DEFAULT_CURVECARTESIAN3D;
 
-		case PLANE3D:
-			return DEFAULT_PLANE3D;
+			case PLANE3D:
+				return DEFAULT_PLANE3D;
 
-		case POLYGON3D:
-			if (((GeoPolygon3D) geo).isIntersection()) {
-				return DEFAULT_INTERSECTION_CURVE;
-			}
-			return getDefaultType(geo, GeoClass.POLYGON);
+			case POLYGON3D:
+				if (((GeoPolygon3D) geo).isIntersection()) {
+					return DEFAULT_INTERSECTION_CURVE;
+				}
+				return getDefaultType(geo, GeoClass.POLYGON);
 
-		case POLYHEDRON:
-			switch (((GeoPolyhedron) geo).getPolyhedronType()) {
-			case PYRAMID:
-			case TETRAHEDRON:
-				return DEFAULT_PYRAMID_AND_CONE;
-			case PRISM:
-			case CUBE:
-				return DEFAULT_PRISM_AND_CYLINDER;
-			case OCTAHEDRON:
-			case DODECAHEDRON:
-			case ICOSAHEDRON:
-				return DEFAULT_ARCHIMDEAN_SOLID;
-			default:
-				return DEFAULT_POLYHEDRON;
-			}
-		case QUADRIC_LIMITED:
-			switch (((GeoQuadricND) geo).getType()) {
-			case GeoQuadricNDConstants.QUADRIC_CONE:
-				return DEFAULT_PYRAMID_AND_CONE;
-			case GeoQuadricNDConstants.QUADRIC_CYLINDER:
-				return DEFAULT_PRISM_AND_CYLINDER;
-			default:
-				return DEFAULT_POLYHEDRON;
-			}
-		case NET:
-			return DEFAULT_NET;
+			case POLYHEDRON:
+				switch (((GeoPolyhedron) geo).getPolyhedronType()) {
+					case PYRAMID:
+					case TETRAHEDRON:
+						return DEFAULT_PYRAMID_AND_CONE;
+					case PRISM:
+					case CUBE:
+						return DEFAULT_PRISM_AND_CYLINDER;
+					case OCTAHEDRON:
+					case DODECAHEDRON:
+					case ICOSAHEDRON:
+						return DEFAULT_ARCHIMDEAN_SOLID;
+					default:
+						return DEFAULT_POLYHEDRON;
+				}
+			case QUADRIC_LIMITED:
+				switch (((GeoQuadricND) geo).getType()) {
+					case GeoQuadricNDConstants.QUADRIC_CONE:
+						return DEFAULT_PYRAMID_AND_CONE;
+					case GeoQuadricNDConstants.QUADRIC_CYLINDER:
+						return DEFAULT_PRISM_AND_CYLINDER;
+					default:
+						return DEFAULT_POLYHEDRON;
+				}
+			case NET:
+				return DEFAULT_NET;
 
-		case QUADRIC:
-		case QUADRIC_PART:
-			return DEFAULT_QUADRIC;
-		case SURFACECARTESIAN:
-		case SURFACECARTESIAN3D:
-			return DEFAULT_SURFACECARTESIAN3D;
-
+			case QUADRIC:
+			case QUADRIC_PART:
+				return DEFAULT_QUADRIC;
+			case SURFACECARTESIAN:
+			case SURFACECARTESIAN3D:
+				return DEFAULT_SURFACECARTESIAN3D;
 		}
 
 		return super.getDefaultType(geo);
-
 	}
 
 	@Override
@@ -304,5 +315,4 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		}
 		return super.getDefaultTypeForFunctionNVar(geo);
 	}
-
 }

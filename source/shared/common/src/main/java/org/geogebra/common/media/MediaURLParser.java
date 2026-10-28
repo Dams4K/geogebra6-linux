@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.media;
 
 import java.util.HashMap;
@@ -31,6 +47,7 @@ public class MediaURLParser {
 	 * embed start of YouTube ID
 	 */
 	public static final String EMBED = "embed/";
+
 	private static final String MEBIS_PARAM_DOC = "doc";
 	private static final String MEBIS_DOC_RECORD = "record";
 	private static final String MEBIS_DOC_PROVIDE_VIDEO = "provideVideo";
@@ -50,7 +67,7 @@ public class MediaURLParser {
 	/**
 	 * Gets the ID of the YouTube video ie from
 	 * https://www.youtube.com/watch?v=E4uvbaTR7mw gets 'E4uvbaTR7mw'.
-	 * 
+	 *
 	 * @param url
 	 *            the URL of the video.
 	 * @return the short ID of video, or null if URL is not from YouTube.
@@ -62,8 +79,8 @@ public class MediaURLParser {
 
 		if (url.contains(YOUTUBE)) {
 			if (url.contains(ID_PARAM_1) || url.contains(ID_PARAM_2)) {
-				startIdx = url.indexOf(ID_PARAM_1) != -1 ? url.indexOf(ID_PARAM_1)
-						: url.indexOf(ID_PARAM_2);
+				startIdx =
+						url.indexOf(ID_PARAM_1) != -1 ? url.indexOf(ID_PARAM_1) : url.indexOf(ID_PARAM_2);
 				subString = url.substring(startIdx + ID_PARAM_1.length());
 			} else if (url.contains(EMBED)) {
 				startIdx = url.indexOf(EMBED);
@@ -75,10 +92,11 @@ public class MediaURLParser {
 		}
 
 		if (subString != null) {
-			int endIdx = subString.contains("?") ? subString.indexOf("?")
-					: subString.contains("&") ? subString.indexOf("&")
-					: subString.contains("\"") ? subString.indexOf("\"")
-					: -1;
+			int endIdx = subString.contains("?")
+					? subString.indexOf("?")
+					: subString.contains("&")
+							? subString.indexOf("&")
+							: subString.contains("\"") ? subString.indexOf("\"") : -1;
 			if (endIdx != -1) {
 				id = subString.substring(0, endIdx);
 			} else {
@@ -89,7 +107,7 @@ public class MediaURLParser {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param url
 	 *            to check if it is a valid Video file.
 	 * @return parsed URL type
@@ -141,7 +159,7 @@ public class MediaURLParser {
 
 	/**
 	 * Gets the ID of the Mebis video
-	 * 
+	 *
 	 * @param url
 	 *            the URL of the video.
 	 * @return the short ID of video, or null
@@ -171,7 +189,7 @@ public class MediaURLParser {
 	 * Transforms possible Mebis URL to a packed, standardized one. Result
 	 * contains an error code if original url is not a Mebis URL. format is:
 	 * https://mediathek.mebis.bayern.de/?doc=provideVideo&amp;identifier=BY-00072140&amp;type=video&amp;#t=60,120
-	 * 
+	 *
 	 * @param url
 	 *            to transform.
 	 * @return the packed URL with error if any.
@@ -184,15 +202,17 @@ public class MediaURLParser {
 		Map<String, String> params = extractParams(substring);
 		String doc = params.get(MEBIS_PARAM_DOC);
 		boolean docValid = MEBIS_DOC_EMBEDDED_OBJECT.equals(doc)
-				|| MEBIS_DOC_PROVIDE_VIDEO.equals(doc) || MEBIS_DOC_RECORD.equals(doc);
+				|| MEBIS_DOC_PROVIDE_VIDEO.equals(doc)
+				|| MEBIS_DOC_RECORD.equals(doc);
 		if (!docValid) {
 			return new MebisURL(null, MebisError.DOC);
 		}
 
 		boolean typeRequired = !MEBIS_DOC_RECORD.equals(doc);
 
-		if (typeRequired && (!params.containsKey(MEBIS_PARAM_TYPE)
-				|| !MEBIS_TYPE_VIDEO.equals(params.get(MEBIS_PARAM_TYPE)))) {
+		if (typeRequired
+				&& (!params.containsKey(MEBIS_PARAM_TYPE)
+						|| !MEBIS_TYPE_VIDEO.equals(params.get(MEBIS_PARAM_TYPE)))) {
 			return new MebisURL(null, MebisError.TYPE);
 		}
 
@@ -246,8 +266,7 @@ public class MediaURLParser {
 		Map<String, String> params = new HashMap<>();
 		for (String item : query.split("&")) {
 			if (item.contains("=")) {
-				params.put(item.substring(0, item.indexOf("=")),
-						item.substring(item.indexOf("=") + 1));
+				params.put(item.substring(0, item.indexOf("=")), item.substring(item.indexOf("=") + 1));
 			}
 		}
 		return params;

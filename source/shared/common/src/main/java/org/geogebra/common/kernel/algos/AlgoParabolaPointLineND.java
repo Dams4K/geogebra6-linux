@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoParabolaPointLine.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 15. November 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -49,8 +47,7 @@ public abstract class AlgoParabolaPointLineND extends AlgoElement {
 	 * @param l
 	 *            directrix
 	 */
-	public AlgoParabolaPointLineND(Construction cons, String label,
-			GeoPointND F, GeoLineND l) {
+	public AlgoParabolaPointLineND(Construction cons, String label, GeoPointND F, GeoLineND l) {
 		this(cons, F, l);
 		parabola.setLabel(label);
 	}
@@ -63,8 +60,7 @@ public abstract class AlgoParabolaPointLineND extends AlgoElement {
 	 * @param l
 	 *            directrix
 	 */
-	public AlgoParabolaPointLineND(Construction cons, GeoPointND F,
-			GeoLineND l) {
+	public AlgoParabolaPointLineND(Construction cons, GeoPointND F, GeoLineND l) {
 		super(cons);
 		this.F = F;
 		this.line = l;
@@ -80,7 +76,7 @@ public abstract class AlgoParabolaPointLineND extends AlgoElement {
 		}
 	}
 
-	abstract protected GeoConicND newGeoConic(Construction cons1);
+	protected abstract GeoConicND newGeoConic(Construction cons1);
 
 	@Override
 	public Commands getClassName() {
@@ -125,11 +121,12 @@ public abstract class AlgoParabolaPointLineND extends AlgoElement {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
-		return getLoc().getPlainDefault("ParabolaWithFocusAandDirectrixB",
-				"Parabola with focus %0 and directrix %1",
-				F.getLabel(tpl), line.getLabel(tpl));
-
+	public final String toString(StringTemplate tpl) {
+		return getLoc()
+				.getPlainDefault(
+						"ParabolaWithFocusAandDirectrixB",
+						"Parabola with focus %0 and directrix %1",
+						F.getLabel(tpl),
+						line.getLabel(tpl));
 	}
-
 }

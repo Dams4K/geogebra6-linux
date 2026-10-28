@@ -1,8 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.io;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.geogebra.common.util.StringUtil;
 
@@ -16,7 +32,7 @@ public class ObjectLabelHandler implements DocHandler {
 	}
 
 	@Override
-	public void startElement(String tag, LinkedHashMap<String, String> h) {
+	public void startElement(String tag, Map<String, String> h) {
 		if ("element".equals(tag) && h.containsKey("label")) {
 			labels.add(h.get("label"));
 		}
@@ -37,6 +53,9 @@ public class ObjectLabelHandler implements DocHandler {
 		// really do not care
 	}
 
+	/**
+	 * @return labels of all elements collected while parsing
+	 */
 	public String[] getObjectNames() {
 		return labels.toArray(new String[0]);
 	}

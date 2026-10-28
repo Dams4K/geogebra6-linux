@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDependentNumber.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -33,8 +31,7 @@ import org.geogebra.common.kernel.implicit.GeoImplicitCurve;
  * List expression, e.g. with L1 = {3, 2, 1}, L2 = {5, 1, 7} such an expression
  * could be L1 + L2
  */
-public class AlgoDependentEquationList extends AlgoElement
-		implements DependentAlgo {
+public class AlgoDependentEquationList extends AlgoElement implements DependentAlgo {
 
 	private GeoList list; // output
 	private ExpressionNode lhs;
@@ -43,13 +40,12 @@ public class AlgoDependentEquationList extends AlgoElement
 
 	/**
 	 * Creates new dependent list algo.
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param root
 	 *            expression deining the list
 	 */
-
 	public AlgoDependentEquationList(Construction cons, Equation root) {
 		super(cons);
 
@@ -78,7 +74,7 @@ public class AlgoDependentEquationList extends AlgoElement
 
 	/**
 	 * Returns the resulting list
-	 * 
+	 *
 	 * @return resulting list
 	 */
 	public GeoList getList() {
@@ -87,7 +83,7 @@ public class AlgoDependentEquationList extends AlgoElement
 
 	/**
 	 * Returns the input expression
-	 * 
+	 *
 	 * @return input expression
 	 */
 	@Override
@@ -114,20 +110,17 @@ public class AlgoDependentEquationList extends AlgoElement
 		}
 	}
 
-	private void computeAndCheckTypes(ExpressionValue leftList,
-			ExpressionValue rightList, int max) {
+	private void computeAndCheckTypes(ExpressionValue leftList, ExpressionValue rightList, int max) {
 		list.clear();
 		boolean oldFlag = kernel.getConstruction().isSuppressLabelsActive();
 		kernel.getConstruction().setSuppressLabelCreation(true);
 		for (int i = 0; i < max; i++) {
-			Equation eq = new Equation(kernel, get(leftList, i),
-					get(rightList, i));
-			eq.setLHS(AlgoDependentFunction
-					.expandFunctionDerivativeNodes(eq.getLHS(), true).wrap());
+			Equation eq = new Equation(kernel, get(leftList, i), get(rightList, i));
+			eq.setLHS(
+					AlgoDependentFunction.expandFunctionDerivativeNodes(eq.getLHS(), true).wrap());
 
-			GeoElement element = kernel.getAlgebraProcessor()
-					.processEquation(eq, eq.wrap(), true,
-							new EvalInfo(false))[0];
+			GeoElement element =
+					kernel.getAlgebraProcessor().processEquation(eq, eq.wrap(), true, new EvalInfo(false))[0];
 			if (element != null) {
 				list.add(element);
 				if (element.isGeoImplicitCurve()) {
@@ -143,17 +136,15 @@ public class AlgoDependentEquationList extends AlgoElement
 		if (evlist instanceof MyList) {
 			return evlist;
 		}
-		return (evlist instanceof GeoList)
-				? ((GeoList) evlist).getMyList() : lhs2.unwrap();
+		return (evlist instanceof GeoList) ? ((GeoList) evlist).getMyList() : lhs2.unwrap();
 	}
 
 	private ExpressionValue get(ExpressionValue leftList, int i) {
-		return leftList instanceof MyList ? ((MyList) leftList).getItem(i)
-				: leftList.deepCopy(kernel);
+		return leftList instanceof MyList ? ((MyList) leftList).getItem(i) : leftList.deepCopy(kernel);
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// was defined as e.g. L = 3 * {a, b, c}
 		return list.getDefinition().toString(tpl);
 	}

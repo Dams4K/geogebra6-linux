@@ -1,19 +1,22 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
-
-//
 
 package org.geogebra.common.kernel.algos;
 
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -30,12 +33,12 @@ import org.geogebra.common.util.clipper.Paths;
 import org.geogebra.common.util.clipper.Point.DoublePoint;
 
 /**
- * 
+ *
  * Input: Two polygons
- * 
+ *
  * Output: Polygon that is the result of an intersection, union or difference
  * operation on the input polygons.
- * 
+ *
  * @author G.Sturr 2010-3-14, Modified by Thilina 20-05-2015 using clipper
  *         library
  *
@@ -81,7 +84,7 @@ public abstract class AlgoPolygonOperation extends AlgoElement {
 
 	/**
 	 * common constructor with outputsizes
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param labels
@@ -93,8 +96,12 @@ public abstract class AlgoPolygonOperation extends AlgoElement {
 	 * @param operationType
 	 *            the enum type of operation INTERSECTION, UNION, DIFFERENCE,XOR
 	 */
-	public AlgoPolygonOperation(Construction cons, String[] labels,
-			GeoPolygon inPoly0, GeoPolygon inPoly1, PolyOperation operationType) {
+	public AlgoPolygonOperation(
+			Construction cons,
+			String[] labels,
+			GeoPolygon inPoly0,
+			GeoPolygon inPoly1,
+			PolyOperation operationType) {
 
 		super(cons);
 
@@ -110,7 +117,6 @@ public abstract class AlgoPolygonOperation extends AlgoElement {
 		silent = cons.isSuppressLabelsActive();
 
 		createOutput();
-
 	}
 
 	/**
@@ -170,87 +176,61 @@ public abstract class AlgoPolygonOperation extends AlgoElement {
 					outputSegments.setLabels(null);
 					outputPoints.setLabels(null);
 				}
-			} else if (labels.length == 1 && labels[0] != null
-					&& !labels[0].equals("")) {
+			} else if (labels.length == 1 && labels[0] != null && !labels[0].equals("")) {
 				outputPolygons.setIndexLabels(labels[0]);
 			}
 		}
 
 		update();
-
 	}
 
 	@Override
-	protected void getCmdOutputXML(StringBuilder sb, StringTemplate tpl) {
-
-		sb.append("\t<outputSizes val=\"");
-		sb.append(outputPolygons.size());
-		sb.append(",");
-		sb.append(outputPoints.size());
-		sb.append(",");
-		sb.append(outputSegments.size());
-		sb.append("\"");
-		sb.append("/>\n");
-
+	protected void getCmdOutputXML(XMLStringBuilder sb, StringTemplate tpl) {
+		String sizes = outputPolygons.size() + "," + outputPoints.size() + "," + outputSegments.size();
+		sb.startTag("outputSizes").attr("val", sizes).endTag();
 		// common method
 		super.getCmdOutputXML(sb, tpl);
-
 	}
 
 	/**
 	 * create outputHandlers for output polygons, points, and segments and
 	 * initiate them
 	 */
-	private final void createOutput() {
+	private void createOutput() {
 
-		outputPolygons = new OutputHandler<>(
-				new ElementFactory<GeoPolygon>() {
-					@Override
-					public GeoPolygon newElement() {
-						GeoPolygon p = new GeoPolygon(cons, true);
-						p.setParentAlgorithm(AlgoPolygonOperation.this);
-						if (outputPolygons.size() > 0) {
-							p.setAllVisualProperties(
-									outputPolygons.getElement(0), false);
-						}
-						p.setViewFlags(inPoly0.getViewSet());
-						p.setNotFixedPointsLength(true);
-						return p;
-					}
-				});
+		outputPolygons = new OutputHandler<>(() -> {
+			GeoPolygon p = new GeoPolygon(cons, true);
+			p.setParentAlgorithm(this);
+			if (outputPolygons.size() > 0) {
+				p.setAllVisualProperties(outputPolygons.getElement(0), false);
+			}
+			p.setViewFlags(inPoly0.getViewSet());
+			p.setNotFixedPointsLength(true);
+			return p;
+		});
 
 		outputPolygons.adjustOutputSize(1, false);
 
-		outputPoints = new OutputHandler<>(
-				new ElementFactory<GeoPoint>() {
-					@Override
-					public GeoPoint newElement() {
-						GeoPoint newPoint = new GeoPoint(cons);
-						newPoint.setCoords(0, 0, 1);
-						newPoint.setParentAlgorithm(AlgoPolygonOperation.this);
-						newPoint.setAuxiliaryObject(true);
-						newPoint.setViewFlags(inPoly0.getViewSet());
+		outputPoints = new OutputHandler<>(() -> {
+			GeoPoint newPoint = new GeoPoint(cons);
+			newPoint.setCoords(0, 0, 1);
+			newPoint.setParentAlgorithm(this);
+			newPoint.setAuxiliaryObject(true);
+			newPoint.setViewFlags(inPoly0.getViewSet());
 
-						return newPoint;
-					}
-				});
+			return newPoint;
+		});
 
 		outputPoints.adjustOutputSize(1, false);
 
-		outputSegments = new OutputHandler<>(
-				new ElementFactory<GeoSegment>() {
-					@Override
-					public GeoSegment newElement() {
-						GeoSegment segment = (GeoSegment) outputPolygons
-								.getElement(0)
-								.createSegment(cons, outputPoints.getElement(0),
-										outputPoints.getElement(0), true);
-						segment.setAuxiliaryObject(true);
-						segment.setViewFlags(inPoly0.getViewSet());
-						return segment;
-					}
-				});
-
+		outputSegments = new OutputHandler<>(() -> {
+			GeoSegment segment = (GeoSegment) outputPolygons
+					.getElement(0)
+					.createSegment(cons, outputPoints.getElement(0), outputPoints.getElement(0), true);
+			segment.setAuxiliaryObject(true);
+			segment.setViewFlags(inPoly0.getViewSet());
+			return segment;
+		});
 	}
 
 	@Override
@@ -300,24 +280,23 @@ public abstract class AlgoPolygonOperation extends AlgoElement {
 
 		// calculating output polygons
 		switch (operationType) {
-		default:
-		case INTERSECTION:
-			solutionValid = clipper.execute(ClipType.INTERSECTION, solution,
-					PolyFillType.EVEN_ODD, PolyFillType.EVEN_ODD);
-			break;
-		case UNION:
-			solutionValid = clipper.execute(ClipType.UNION, solution,
-					PolyFillType.EVEN_ODD, PolyFillType.EVEN_ODD);
-			break;
-		case DIFFERENCE:
-			solutionValid = clipper.execute(ClipType.DIFFERENCE, solution,
-					PolyFillType.EVEN_ODD, PolyFillType.EVEN_ODD);
-			break;
-		case XOR:
-			solutionValid = clipper.execute(ClipType.XOR, solution,
-					PolyFillType.EVEN_ODD, PolyFillType.EVEN_ODD);
-			break;
-
+			default:
+			case INTERSECTION:
+				solutionValid = clipper.execute(
+						ClipType.INTERSECTION, solution, PolyFillType.EVEN_ODD, PolyFillType.EVEN_ODD);
+				break;
+			case UNION:
+				solutionValid =
+						clipper.execute(ClipType.UNION, solution, PolyFillType.EVEN_ODD, PolyFillType.EVEN_ODD);
+				break;
+			case DIFFERENCE:
+				solutionValid = clipper.execute(
+						ClipType.DIFFERENCE, solution, PolyFillType.EVEN_ODD, PolyFillType.EVEN_ODD);
+				break;
+			case XOR:
+				solutionValid =
+						clipper.execute(ClipType.XOR, solution, PolyFillType.EVEN_ODD, PolyFillType.EVEN_ODD);
+				break;
 		}
 
 		// assign output calculated using clipper library to appropriately
@@ -366,14 +345,12 @@ public abstract class AlgoPolygonOperation extends AlgoElement {
 				GeoSegment[] polySegments = new GeoSegment[path.size()];
 
 				for (int i = 0; i < path.size(); i++) {
-					GeoSegment segment = outputSegments
-							.getElement(segmentIndex);
+					GeoSegment segment = outputSegments.getElement(segmentIndex);
 					GeoPoint A = points[pointIndex + i];
 					GeoPoint B = points[pointIndex + (i + 1) % path.size()];
 					segment.setStartPoint(A);
 					segment.setEndPoint(B);
-					((AlgoJoinPointsSegmentInterface) segment
-							.getParentAlgorithm()).modifyInputPoints(A, B);
+					((AlgoJoinPointsSegmentInterface) segment.getParentAlgorithm()).modifyInputPoints(A, B);
 					segment.update();
 					segment.calcLength();
 					polyPoints[i] = points[pointIndex + i];
@@ -394,17 +371,13 @@ public abstract class AlgoPolygonOperation extends AlgoElement {
 				outputSegments.updateLabels();
 				outputPolygons.updateLabels();
 			}
-
 		}
 		for (int i = 0; i < outputPolygons.size(); i++) {
 			outputPolygons.getElement(i).updateRegionCS();
 		}
-
 	}
 
 	private static DoublePoint convert(GeoPoint point) {
-		return new DoublePoint(point.getX() / point.getZ(),
-				point.getY() / point.getZ());
+		return new DoublePoint(point.getX() / point.getZ(), point.getY() / point.getZ());
 	}
-
 }

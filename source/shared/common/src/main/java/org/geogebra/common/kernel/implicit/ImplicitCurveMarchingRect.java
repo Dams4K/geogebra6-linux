@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.implicit;
 
 import java.util.Arrays;
@@ -11,6 +27,7 @@ class ImplicitCurveMarchingRect implements MarchingRect {
 	 * {top, right, bottom, left}
 	 */
 	final double[] evals = new double[4];
+
 	int x;
 	int y;
 	int shares;
@@ -20,7 +37,7 @@ class ImplicitCurveMarchingRect implements MarchingRect {
 	boolean singular;
 	Coords coords = new Coords(3);
 
-	public ImplicitCurveMarchingRect(int x, int y, double fx, double fy, boolean singular) {
+	ImplicitCurveMarchingRect(int x, int y, double fx, double fy, boolean singular) {
 		this.x = x;
 		this.y = y;
 		this.fx = fx;
@@ -29,7 +46,7 @@ class ImplicitCurveMarchingRect implements MarchingRect {
 		this.shares = 0;
 	}
 
-	public ImplicitCurveMarchingRect[] split(GeoImplicitCurve geoImplicitCurve, int factor) {
+	ImplicitCurveMarchingRect[] split(GeoImplicitCurve geoImplicitCurve, int factor) {
 		double fx2 = fx * 0.5;
 		double fy2 = fy * 0.5;
 		double x1 = this.coords.val[0];
@@ -47,14 +64,11 @@ class ImplicitCurveMarchingRect implements MarchingRect {
 		rect[2].coords.val[0] += fx2;
 		rect[2].coords.val[1] += fy2;
 		rect[3].coords.val[1] += fy2;
-		rect[1].evals[0] = geoImplicitCurve.evaluate(rect[1].coords.val,
-				factor);
-		rect[2].evals[0] = geoImplicitCurve.evaluate(rect[2].coords.val,
-				factor);
+		rect[1].evals[0] = geoImplicitCurve.evaluate(rect[1].coords.val, factor);
+		rect[2].evals[0] = geoImplicitCurve.evaluate(rect[2].coords.val, factor);
 		rect[2].evals[1] = geoImplicitCurve.evaluate(x1 + fx, y1 + fy2, factor);
 		rect[2].evals[3] = geoImplicitCurve.evaluate(x1 + fx2, y1 + fy, factor);
-		rect[3].evals[0] = geoImplicitCurve.evaluate(rect[3].coords.val,
-				factor);
+		rect[3].evals[0] = geoImplicitCurve.evaluate(rect[3].coords.val, factor);
 		rect[3].evals[1] = rect[0].evals[2] = rect[1].evals[3] = rect[2].evals[0];
 		rect[0].evals[1] = rect[1].evals[0];
 		rect[0].evals[3] = rect[3].evals[0];
@@ -94,11 +108,15 @@ class ImplicitCurveMarchingRect implements MarchingRect {
 		}
 
 		ImplicitCurveMarchingRect rect = (ImplicitCurveMarchingRect) o;
-		return x == rect.x && y == rect.y && shares == rect.shares && status == rect.status
+		return x == rect.x
+				&& y == rect.y
+				&& shares == rect.shares
+				&& status == rect.status
 				&& Double.compare(fx, rect.fx) == 0
-				&& Double.compare(fy, rect.fy) == 0 && singular == rect.singular
-				&& Objects.deepEquals(evals, rect.evals) && Objects.equals(coords,
-				rect.coords);
+				&& Double.compare(fy, rect.fy) == 0
+				&& singular == rect.singular
+				&& Objects.deepEquals(evals, rect.evals)
+				&& Objects.equals(coords, rect.coords);
 	}
 
 	@Override

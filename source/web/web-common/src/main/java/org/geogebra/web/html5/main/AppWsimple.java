@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.main;
 
 import org.geogebra.common.GeoGebraConstants;
@@ -25,17 +41,20 @@ public class AppWsimple extends AppW {
 
 	/******************************************************
 	 * Constructs AppW for applets
-	 * 
+	 *
 	 * @param ae
 	 *            article element
 	 * @param gf
 	 *            frame
-	 * 
+	 *
 	 * @param undoActive
 	 *            if true you can undo by CTRL+Z and redo by CTRL+Y
 	 */
-	public AppWsimple(GeoGebraElement ae, AppletParameters parameters,
-			GeoGebraFrameSimple gf, final boolean undoActive) {
+	public AppWsimple(
+			GeoGebraElement ae,
+			AppletParameters parameters,
+			GeoGebraFrameSimple gf,
+			final boolean undoActive) {
 		super(ae, parameters, 2, null);
 		this.frame = gf;
 		setAppletHeight(frame.getComputedHeight());
@@ -43,8 +62,7 @@ public class AppWsimple extends AppW {
 
 		this.useFullGui = false;
 
-		Log.info("GeoGebra " + GeoGebraConstants.VERSION_STRING + " "
-				+ GeoGebraConstants.BUILD_DATE);
+		Log.info("GeoGebra " + GeoGebraConstants.VERSION_STRING + " " + GeoGebraConstants.BUILD_DATE);
 		initCommonObjects();
 		initing = true;
 
@@ -77,9 +95,7 @@ public class AppWsimple extends AppW {
 			if (getZoomPanel() != null) {
 				frame.add(getZoomPanel());
 			}
-			getEuclidianViewpanel().setPixelSize(
-					getInnerAppletWidth(),
-					getInnerAppletHeight());
+			getEuclidianViewpanel().setPixelSize(getInnerAppletWidth(), getInnerAppletHeight());
 			updateVoiceover();
 		}
 	}
@@ -90,9 +106,9 @@ public class AppWsimple extends AppW {
 
 		buildApplicationPanel();
 		getScriptManager().ggbOnInit(); // put this here from Application
-										// constructor because we have to delay
-										// scripts until the EuclidianView is
-										// shown
+		// constructor because we have to delay
+		// scripts until the EuclidianView is
+		// shown
 		if (needsSpreadsheetTableModel()) {
 			getSpreadsheetTableModel(); // spreadsheet trace useful even without UI
 		}
@@ -142,7 +158,7 @@ public class AppWsimple extends AppW {
 	}
 
 	@Override
-	final public String getReverseCommand(String command) {
+	public final String getReverseCommand(String command) {
 		// translations not available in webSimple
 		return command;
 	}

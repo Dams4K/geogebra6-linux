@@ -1,6 +1,20 @@
-package org.geogebra.common.euclidian;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
+package org.geogebra.common.euclidian;
 
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.euclidian.draw.DrawEmbed;
@@ -11,16 +25,17 @@ import org.geogebra.common.kernel.geos.GeoEmbed;
 import org.geogebra.common.main.App;
 import org.geogebra.common.move.ggtapi.models.Material;
 import org.geogebra.common.plugin.ActionType;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Updates, adds and removes embedded applets.
- * 
+ *
  * @author Zbynek
  */
 public interface EmbedManager {
 	/**
 	 * Add new applet.
-	 * 
+	 *
 	 * @param drawEmbed
 	 *            embedded applet
 	 */
@@ -28,7 +43,7 @@ public interface EmbedManager {
 
 	/**
 	 * Update an embedded applet.
-	 * 
+	 *
 	 * @param drawEmbed
 	 *            embedded applet
 	 */
@@ -46,10 +61,10 @@ public interface EmbedManager {
 
 	/**
 	 * Add base64 of embedded files into an archive
-	 * 
+	 *
 	 * @param construction
 	 *            construction
-	 * 
+	 *
 	 * @param f
 	 *            archive
 	 */
@@ -57,7 +72,7 @@ public interface EmbedManager {
 
 	/**
 	 * Load all embeds for a slide
-	 * 
+	 *
 	 * @param archive
 	 *            slide
 	 */
@@ -75,7 +90,7 @@ public interface EmbedManager {
 
 	/**
 	 * Activates embedded applet
-	 * 
+	 *
 	 * @param embed
 	 *            active embed
 	 */
@@ -83,7 +98,7 @@ public interface EmbedManager {
 
 	/**
 	 * Removes embedded applet
-	 * 
+	 *
 	 * @param drawEmbed
 	 *            drawable
 	 */
@@ -91,7 +106,7 @@ public interface EmbedManager {
 
 	/**
 	 * Add new embedded applet and store undo info.
-	 * 
+	 *
 	 * @param material
 	 *            online material
 	 */
@@ -177,7 +192,7 @@ public interface EmbedManager {
 	 * @param embed calculator
 	 * @return application for embedded calculator, null during slide switch
 	 */
-	@CheckForNull App getEmbedApp(GeoEmbed embed);
+	@Nullable App getEmbedApp(GeoEmbed embed);
 
 	/**
 	 * Add embedded suite calc

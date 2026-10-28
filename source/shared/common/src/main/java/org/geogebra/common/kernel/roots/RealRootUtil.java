@@ -1,18 +1,17 @@
-/**
- *   Class RealRootUtil
- *   Contains util methods for finding a real root
- *  
- *   @author Markus Hohenwarter
- *   @date   25 Sept 2006
- *   
- *   GeoGebra - Dynamic Mathematics for Everyone
- *   http://www.geogebra.org
- *   This file is part of GeoGebra.
- *   
- *   This program is free software; you can redistribute it and/or modify it
- *   under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2 of the License, or
- *   
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.roots;
@@ -30,7 +29,7 @@ public class RealRootUtil {
 
 	/**
 	 * Returns an interval within [a, b] where f(x) is defined.
-	 * 
+	 *
 	 * @param f
 	 *            function
 	 * @param a
@@ -38,11 +37,10 @@ public class RealRootUtil {
 	 * @param b
 	 *            interval max
 	 * @return [defined interval min, defined interval max]
-	 * 
+	 *
 	 * @see #getDefinitionBorder(UnivariateFunction, double, double)
 	 */
-	public static double[] getDefinedInterval(UnivariateFunction f, double a,
-			double b) {
+	public static double[] getDefinedInterval(UnivariateFunction f, double a, double b) {
 		double[] bounds = new double[2];
 
 		// calculate the function value at the estimate of the higher bound to x
@@ -89,7 +87,7 @@ public class RealRootUtil {
 	 * undefined on (x0, b]. If f(a) is undefined and f(b) is defined, f(x) is
 	 * (likely to be) undefined on [a, x0) and defined on [x0, b]. If both f(a)
 	 * and f(b) are defined resp. undefined Double.NaN is returned.
-	 * 
+	 *
 	 * @param f
 	 *            function
 	 * @param a
@@ -98,8 +96,7 @@ public class RealRootUtil {
 	 *            interval max
 	 * @return border between defined an undefined
 	 */
-	static double getDefinitionBorder(UnivariateFunction f, double a,
-			double b) {
+	static double getDefinitionBorder(UnivariateFunction f, double a, double b) {
 		double left = a, right = b;
 		boolean leftDef = false, rightDef;
 
@@ -136,7 +133,7 @@ public class RealRootUtil {
 
 	/**
 	 * updates the interval within [a, b] where f(x) is defined.
-	 * 
+	 *
 	 * @param f
 	 *            function
 	 * @param a
@@ -145,11 +142,11 @@ public class RealRootUtil {
 	 *            max
 	 * @param interval
 	 *            old interval
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public static void updateDefinedIntervalIntersecting(UnivariateFunction f,
-			double a, double b, double[] interval) {
+	public static void updateDefinedIntervalIntersecting(
+			UnivariateFunction f, double a, double b, double[] interval) {
 
 		double[] interval2 = getDefinedInterval(f, a, b);
 
@@ -160,7 +157,5 @@ public class RealRootUtil {
 		if (interval[1] > interval2[1]) {
 			interval[1] = interval2[1];
 		}
-
 	}
-
 }

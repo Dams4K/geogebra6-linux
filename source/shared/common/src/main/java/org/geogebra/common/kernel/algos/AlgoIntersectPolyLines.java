@@ -1,16 +1,17 @@
-/* 
- * GeoGebra - Dynamic Mathematics for Everyone
- * http://www.geogebra.org
- * This file is part of GeoGebra.
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by 
- * the Free Software Foundation.
- */
-
 /*
- * AlgoIntersectLines.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 11. March 2015, 19:14
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -31,9 +32,9 @@ import org.geogebra.common.util.DoubleUtil;
 
 /**
  * Algorithm for intersection of two PolyLines
- * 
+ *
  * @author thilina
- * 
+ *
  */
 public class AlgoIntersectPolyLines extends AlgoElement {
 
@@ -62,7 +63,7 @@ public class AlgoIntersectPolyLines extends AlgoElement {
 
 	/**
 	 * Common Constructor
-	 * 
+	 *
 	 * @param construction
 	 *            construction
 	 * @param labels
@@ -76,8 +77,12 @@ public class AlgoIntersectPolyLines extends AlgoElement {
 	 * @param polyBClosed
 	 *            whether B is polygon
 	 */
-	public AlgoIntersectPolyLines(Construction construction, String[] labels,
-			GeoPoly polyA, GeoPoly polyB, boolean polyAClosed,
+	public AlgoIntersectPolyLines(
+			Construction construction,
+			String[] labels,
+			GeoPoly polyA,
+			GeoPoly polyB,
+			boolean polyAClosed,
 			boolean polyBClosed) {
 
 		super(construction);
@@ -131,8 +136,8 @@ public class AlgoIntersectPolyLines extends AlgoElement {
 		intersectionCoords(this.polyA, this.polyB, this.intersectingCoords);
 
 		// update and/or create points
-		this.outputPoints.adjustOutputSize(this.intersectingCoords.size() > 0
-				? this.intersectingCoords.size() : 1);
+		this.outputPoints.adjustOutputSize(
+				this.intersectingCoords.size() > 0 ? this.intersectingCoords.size() : 1);
 
 		// affect new computed points
 		int index = 0;
@@ -147,7 +152,6 @@ public class AlgoIntersectPolyLines extends AlgoElement {
 		for (; index < this.outputPoints.size(); index++) {
 			this.outputPoints.getElement(index).setUndefined();
 		}
-
 	}
 
 	@Override
@@ -161,25 +165,22 @@ public class AlgoIntersectPolyLines extends AlgoElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return handler for output points
 	 */
 	protected OutputHandler<GeoElement> createOutputPoints() {
 
-		return new OutputHandler<>(new ElementFactory<GeoElement>() {
-			@Override
-			public GeoPoint newElement() {
-				GeoPoint p = new GeoPoint(cons);
-				p.setCoords(0, 0, 1);
-				p.setParentAlgorithm(AlgoIntersectPolyLines.this);
-				return p;
-			}
+		return new OutputHandler<>(() -> {
+			GeoPoint p = new GeoPoint(cons);
+			p.setCoords(0, 0, 1);
+			p.setParentAlgorithm(this);
+			return p;
 		});
 	}
 
 	/**
 	 * calculates the intersecting points of two polyLines
-	 * 
+	 *
 	 * @param poly1
 	 *            input polyLine 1
 	 * @param poly2
@@ -187,16 +188,13 @@ public class AlgoIntersectPolyLines extends AlgoElement {
 	 * @param newCoords
 	 *            list to add calculated intersecting Coords
 	 */
-	protected void intersectionCoords(GeoPoly poly1, GeoPoly poly2,
-			ArrayList<Coords> newCoords) {
+	protected void intersectionCoords(GeoPoly poly1, GeoPoly poly2, ArrayList<Coords> newCoords) {
 
 		GeoPointND[] pointsA = poly1.getPoints();
 		GeoPointND[] pointsB = poly2.getPoints();
 
-		int noOfSegmentsA = isPolyAClosed() ? pointsA.length
-				: pointsA.length - 1;
-		int noOfSegmentsB = isPolyBClosed() ? pointsB.length
-				: pointsB.length - 1;
+		int noOfSegmentsA = isPolyAClosed() ? pointsA.length : pointsA.length - 1;
+		int noOfSegmentsB = isPolyBClosed() ? pointsB.length : pointsB.length - 1;
 
 		for (int i = 0; i < noOfSegmentsA; i++) {
 
@@ -206,8 +204,7 @@ public class AlgoIntersectPolyLines extends AlgoElement {
 			} else {
 				this.dummyPoint[1].setCoords(poly1.getPoint(i + 1));
 			}
-			GeoVec3D.lineThroughPoints(this.dummyPoint[0], this.dummyPoint[1],
-					this.dummySegment[0]);
+			GeoVec3D.lineThroughPoints(this.dummyPoint[0], this.dummyPoint[1], this.dummySegment[0]);
 
 			for (int k = 0; k < noOfSegmentsB; k++) {
 
@@ -217,20 +214,15 @@ public class AlgoIntersectPolyLines extends AlgoElement {
 				} else {
 					this.dummyPoint[3].setCoords(poly2.getPoint(k + 1));
 				}
-				GeoVec3D.lineThroughPoints(this.dummyPoint[2],
-						this.dummyPoint[3], this.dummySegment[1]);
+				GeoVec3D.lineThroughPoints(this.dummyPoint[2], this.dummyPoint[3], this.dummySegment[1]);
 
-				GeoVec3D.cross(this.dummySegment[0], this.dummySegment[1],
-						this.dummyPoint[4]);
+				GeoVec3D.cross(this.dummySegment[0], this.dummySegment[1], this.dummyPoint[4]);
 
 				// checks whether the cross product(this.dummyPoint[4]) actually
 				// an intersection point
 				if (this.dummyPoint[4].isDefined()) {
-					if (!(DoubleUtil
-							.isZero(this.dummySegment[0]
-									.distance(this.dummyPoint[4]))
-							&& DoubleUtil.isZero(this.dummySegment[1]
-									.distance(this.dummyPoint[4])))) {
+					if (!(DoubleUtil.isZero(this.dummySegment[0].distance(this.dummyPoint[4]))
+							&& DoubleUtil.isZero(this.dummySegment[1].distance(this.dummyPoint[4])))) {
 						this.dummyPoint[4].setUndefined();
 					}
 				}

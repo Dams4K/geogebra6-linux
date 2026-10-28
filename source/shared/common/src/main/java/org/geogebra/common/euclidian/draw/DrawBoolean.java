@@ -1,17 +1,22 @@
-/* 
- GeoGebra - Dynamic Mathematics for Everyone
- http://www.geogebra.org
-
- This file is part of GeoGebra.
-
- This program is free software; you can redistribute it and/or modify it 
- under the terms of the GNU General Public License as published by 
- the Free Software Foundation.
- 
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.euclidian.draw;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GBasicStroke;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GDimension;
@@ -24,7 +29,6 @@ import org.geogebra.common.euclidian.Drawable;
 import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.euclidian.EuclidianStatic;
 import org.geogebra.common.euclidian.EuclidianView;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.geos.GeoBoolean;
 import org.geogebra.common.main.App;
@@ -33,7 +37,7 @@ import org.geogebra.common.util.StringUtil;
 
 /**
  * Checkbox for free GeoBoolean object.
- * 
+ *
  * @author Markus Hohenwarter
  */
 public final class DrawBoolean extends Drawable {
@@ -60,7 +64,7 @@ public final class DrawBoolean extends Drawable {
 
 	/**
 	 * Creates new DrawBoolean
-	 * 
+	 *
 	 * @param view
 	 *            view
 	 * @param geoBool
@@ -112,8 +116,7 @@ public final class DrawBoolean extends Drawable {
 		xLabel = geoBool.getAbsoluteScreenLocX();
 		yLabel = geoBool.getAbsoluteScreenLocY();
 		int prefSize = CHECKBOX_SIZE + 12;
-		labelRectangle.setBounds(xLabel, yLabel,
-				prefSize + textWidth, prefSize);
+		labelRectangle.setBounds(xLabel, yLabel, prefSize + textWidth, prefSize);
 	}
 
 	@Override
@@ -122,8 +125,8 @@ public final class DrawBoolean extends Drawable {
 			g2.setFont(view.getFontPoint());
 			int checkboxX = geoBool.getAbsoluteScreenLocX() + LEGACY_OFFSET;
 			int checkboxY = geoBool.getAbsoluteScreenLocY() + LEGACY_OFFSET;
-			CheckBoxIcon.paintIcon(geoBool.getBoolean(),
-					!geoBool.isSelectionAllowed(view), g2, checkboxX, checkboxY);
+			CheckBoxIcon.paintIcon(
+					geoBool.getBoolean(), !geoBool.isSelectionAllowed(view), g2, checkboxX, checkboxY);
 			if (isHighlighted()) {
 				CheckBoxIcon.highlightIcon(g2, checkboxX, checkboxY);
 			}
@@ -139,15 +142,13 @@ public final class DrawBoolean extends Drawable {
 			getDynamicCaption().measure();
 			textWidth = getDynamicCaption().getWidth();
 		} else if (isLatexLabel()) {
-			GDimension d = CanvasDrawable.measureLatex(
-					view.getApplication(), view.getFontPoint(),
-					labelDesc);
+			GDimension d =
+					CanvasDrawable.measureLatex(view.getApplication(), view.getFontPoint(), labelDesc);
 
 			textWidth = d.getWidth();
 			textHeight = d.getHeight();
 		} else {
-			GTextLayout layout = getTextLayout(labelDesc,
-					view.getFontPoint());
+			GTextLayout layout = getTextLayout(labelDesc, view.getFontPoint());
 
 			// ie labelDesc != ""
 			if (layout != null) {
@@ -158,6 +159,8 @@ public final class DrawBoolean extends Drawable {
 	}
 
 	private void drawLabel(GGraphics2D g2, int checkboxX) {
+		GColor textColor =
+				geoBool.usesDisabledStyle(null) ? GeoGebraColorConstants.NEUTRAL_500 : geo.getObjectColor();
 		if (getDynamicCaption() != null && getDynamicCaption().isEnabled()) {
 			getDynamicCaption().draw(g2);
 		} else if (isLatexLabel()) {
@@ -165,32 +168,40 @@ public final class DrawBoolean extends Drawable {
 			int captionY = getCaptionY(true, textHeight);
 
 			App app = view.getApplication();
-			g2.setPaint(geo.getObjectColor());
+			g2.setPaint(textColor);
 
-			app.getDrawEquation().drawEquation(app, geoBool, g2, captionX, captionY,
-					labelDesc, g2.getFont(),
-					StringUtil.startsWithFormattingCommand(labelDesc),
-					geoBool.getObjectColor(), geoBool.getBackgroundColor(),
-					false, false,
-					view.getCallBack(geo, firstCall));
+			app.getDrawEquation()
+					.drawEquation(
+							app,
+							geoBool,
+							g2,
+							captionX,
+							captionY,
+							labelDesc,
+							g2.getFont(),
+							StringUtil.startsWithFormattingCommand(labelDesc),
+							textColor,
+							geoBool.getBackgroundColor(),
+							false,
+							false,
+							view.getCallBack(geo, firstCall));
 			firstCall = false;
 		} else {
-			g2.setPaint(geo.getObjectColor());
+			g2.setPaint(textColor);
 			if (!StringUtil.empty(labelDesc)) {
 				int captionX = checkboxX + CHECKBOX_SIZE + LABEL_MARGIN_TEXT;
 				int captionY = getCaptionY(false, textHeight);
-				EuclidianStatic.drawIndexedString(view.getApplication(), g2,
-						labelDesc, captionX, captionY, false);
+				EuclidianStatic.drawIndexedString(
+						view.getApplication(), g2, labelDesc, captionX, captionY, false);
 			}
 		}
 	}
 
 	@Override
 	public int getCaptionY(boolean latex, int height) {
-		return latex ? geoBool.getAbsoluteScreenLocY()
-				+ (CHECKBOX_SIZE - height) / 2 + LEGACY_OFFSET
-				: geoBool.getAbsoluteScreenLocY()
-				+ (CHECKBOX_SIZE + height) / 2 + LEGACY_OFFSET;
+		return latex
+				? geoBool.getAbsoluteScreenLocY() + (CHECKBOX_SIZE - height) / 2 + LEGACY_OFFSET
+				: geoBool.getAbsoluteScreenLocY() + (CHECKBOX_SIZE + height) / 2 + LEGACY_OFFSET;
 	}
 
 	/**
@@ -235,13 +246,13 @@ public final class DrawBoolean extends Drawable {
 		 * @param y y-coordinate of the icon
 		 */
 		public static void highlightIcon(GGraphics2D g2, int x, int y) {
-			Drawable.drawHighlightRectangle(g2, x + 1, y + 1,
-					CHECKBOX_SIZE - 2, CHECKBOX_SIZE - 2, BORDER_DIAMETER);
+			Drawable.drawHighlightRectangle(
+					g2, x + 1, y + 1, CHECKBOX_SIZE - 2, CHECKBOX_SIZE - 2, BORDER_DIAMETER);
 		}
 
 		/**
 		 * Draws the checkbox on graphics.
-		 * 
+		 *
 		 * @param checked
 		 *            true if checked
 		 * @param disabled
@@ -253,24 +264,20 @@ public final class DrawBoolean extends Drawable {
 		 * @param y
 		 *            y coordinate (upper edge)
 		 */
-		static public void paintIcon(boolean checked, boolean disabled,
-				GGraphics2D g, int x, int y) {
+		public static void paintIcon(boolean checked, boolean disabled, GGraphics2D g, int x, int y) {
 			g.setStroke(AwtFactory.getPrototype().newBasicStroke(2.0));
 			GColor bg = GColor.WHITE;
 			if (checked) {
-				bg = disabled ? GeoGebraColorConstants.NEUTRAL_500
-						: GeoGebraColorConstants.PURPLE_600;
+				bg = disabled ? GeoGebraColorConstants.NEUTRAL_500 : GeoGebraColorConstants.PURPLE_600;
 			}
 			g.setColor(bg);
-			g.fillRoundRect(x, y, CHECKBOX_SIZE, CHECKBOX_SIZE, BORDER_DIAMETER,
-					BORDER_DIAMETER);
+			g.fillRoundRect(x, y, CHECKBOX_SIZE, CHECKBOX_SIZE, BORDER_DIAMETER, BORDER_DIAMETER);
 			// Draw rounded border
 			if (!checked) {
-				g.setColor(disabled
-						? GeoGebraColorConstants.NEUTRAL_500
-						: GeoGebraColorConstants.NEUTRAL_700);
-				g.drawRoundRect(x + 1, y + 1, CHECKBOX_SIZE - 2,
-						CHECKBOX_SIZE - 2, BORDER_DIAMETER, BORDER_DIAMETER);
+				g.setColor(
+						disabled ? GeoGebraColorConstants.NEUTRAL_500 : GeoGebraColorConstants.NEUTRAL_700);
+				g.drawRoundRect(
+						x + 1, y + 1, CHECKBOX_SIZE - 2, CHECKBOX_SIZE - 2, BORDER_DIAMETER, BORDER_DIAMETER);
 			}
 			// paint check
 			if (checked) {
@@ -287,22 +294,19 @@ public final class DrawBoolean extends Drawable {
 
 		private static void initPathAndStroke() {
 			// based on ic_check_white24px.svg, scaled to 20px and offset by 3px
-			//{1.73,12.91,8.1,19.28,22.79,4.59}*20/24 + 3
-			//gives {4.44,13.76,9.75,19.07,21.99,6.83}
-			stroke26 = AwtFactory.getPrototype().newBasicStroke(2.6,
-					GBasicStroke.CAP_SQUARE,
-					GBasicStroke.JOIN_MITER);
+			// {1.73,12.91,8.1,19.28,22.79,4.59}*20/24 + 3
+			// gives {4.44,13.76,9.75,19.07,21.99,6.83}
+			stroke26 = AwtFactory.getPrototype()
+					.newBasicStroke(2.6, GBasicStroke.CAP_SQUARE, GBasicStroke.JOIN_MITER);
 			gp = AwtFactory.getPrototype().newGeneralPath();
 			gp.moveTo(4.44, 13.76);
 			gp.lineTo(9.75, 19.07);
 			gp.lineTo(21.99, 6.83);
 		}
-
 	}
 
 	@Override
 	public GRectangle2D getBoundsForCorner() {
 		return labelRectangle;
 	}
-
 }

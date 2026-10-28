@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.geos.inputbox;
 
 import org.geogebra.common.kernel.Kernel;
@@ -25,9 +41,8 @@ import org.geogebra.common.main.MyError;
 import org.geogebra.common.main.error.ErrorHandler;
 import org.geogebra.common.plugin.GeoClass;
 import org.geogebra.common.util.debug.Log;
-
-import com.himamis.retex.editor.share.serializer.TeXSerializer;
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.serializer.TeXSerializer;
+import org.geogebra.editor.share.util.Unicode;
 
 /**
  * Updates linked element for an input box from user input
@@ -73,7 +88,8 @@ public class InputBoxProcessor {
 			if (content.isEmpty(inputBox.isListEditor())) {
 				inputBox.setTempUserInput("", "");
 			} else {
-				inputBox.setTempUserInput(processPlaceholders(content.getEditorInput()),
+				inputBox.setTempUserInput(
+						processPlaceholders(content.getEditorInput()),
 						processLatexPlaceholders(content.getLaTeX()));
 			}
 
@@ -88,16 +104,14 @@ public class InputBoxProcessor {
 		if (content == null) {
 			return null;
 		}
-		return content.replaceAll("\\{\\?}",
-				"{}");
+		return content.replaceAll("\\{\\?}", "{}");
 	}
 
 	private String processLatexPlaceholders(String contentLaTeX) {
 		if (contentLaTeX == null) {
 			return null;
 		}
-		return contentLaTeX.replace("?",
-				TeXSerializer.PLACEHOLDER);
+		return contentLaTeX.replace("?", TeXSerializer.PLACEHOLDER);
 	}
 
 	private String maybeClampInputForNumeric(String inputText, StringTemplate tpl) {
@@ -129,8 +143,7 @@ public class InputBoxProcessor {
 		try {
 			if (!linkedGeo.isIndependent()) {
 				GeoElement newGeo = linkedGeo.copy().toGeoElement();
-				kernel.getConstruction().replace(linkedGeo.toGeoElement(),
-						newGeo);
+				kernel.getConstruction().replace(linkedGeo.toGeoElement(), newGeo);
 				linkedGeo = newGeo;
 			}
 		} catch (Throwable e) {
@@ -151,6 +164,8 @@ public class InputBoxProcessor {
 		}
 
 		String defineText = prependLabel(preprocess(content, tpl), tpl);
+		// Make sure single spaces between digits are removed, so no multiplication is inserted
+		defineText = defineText.replaceAll("(?<=\\d) (?=\\d)", "");
 		if (linkedGeo.isPointOnPath() || linkedGeo.isPointInRegion()) {
 			GeoPointND val = algebraProcessor.evaluateToPoint(defineText, errorHandler, true);
 			if (val != null) {
@@ -161,17 +176,19 @@ public class InputBoxProcessor {
 		}
 		EvalInfo info = buildEvalInfo();
 
-		algebraProcessor.changeGeoElementNoExceptionHandling(linkedGeo,
-				defineText, info, false,
-				new InputBoxCallback(inputBox), errorHandler);
+		algebraProcessor.changeGeoElementNoExceptionHandling(
+				linkedGeo, defineText, info, false, new InputBoxCallback(inputBox), errorHandler);
 	}
 
 	private EvalInfo buildEvalInfo() {
-		return new EvalInfo(!kernel.getConstruction().isSuppressLabelsActive(),
-				false, false).withSliders(false)
-				.withNoRedefinitionAllowed().withPreventingTypeChange()
+		return new EvalInfo(!kernel.getConstruction().isSuppressLabelsActive(), false, false)
+				.withSliders(false)
+				.withNoRedefinitionAllowed()
+				.withPreventingTypeChange()
 				.withRedefinitionRule(createRedefinitionRule())
-				.withMultipleUnassignedAllowed().withPreventVariable().withAutocreate(false);
+				.withMultipleUnassignedAllowed()
+				.withPreventVariable()
+				.withAutocreate(false);
 	}
 
 	private String prependLabel(String text, StringTemplate tpl) {
@@ -186,8 +203,8 @@ public class InputBoxProcessor {
 		} else if (linkedGeo instanceof FunctionalNVar || isComplexFunction()) {
 			// string like f(x,y)=x^2
 			// or f(\theta) = \theta
-			defineText = linkedGeo.getLabelSimple() + "("
-					+ ((VarString) linkedGeo).getVarString(tpl) + ")=" + defineText;
+			defineText = linkedGeo.getLabelSimple() + "(" + ((VarString) linkedGeo).getVarString(tpl)
+					+ ")=" + defineText;
 		}
 		return defineText;
 	}
@@ -254,12 +271,9 @@ public class InputBoxProcessor {
 
 	private RuleCollection createRedefinitionRule() {
 		RedefinitionRule same = RedefinitionRules.sameClassRule();
-		RedefinitionRule point = RedefinitionRules.oneWayRule(
-				GeoClass.POINT3D, GeoClass.POINT);
-		RedefinitionRule vector = RedefinitionRules.oneWayRule(
-				GeoClass.VECTOR3D, GeoClass.VECTOR);
-		RedefinitionRule numericAngle = RedefinitionRules.oneWayRule(
-				GeoClass.NUMERIC, GeoClass.ANGLE);
+		RedefinitionRule point = RedefinitionRules.oneWayRule(GeoClass.POINT3D, GeoClass.POINT);
+		RedefinitionRule vector = RedefinitionRules.oneWayRule(GeoClass.VECTOR3D, GeoClass.VECTOR);
+		RedefinitionRule numericAngle = RedefinitionRules.oneWayRule(GeoClass.NUMERIC, GeoClass.ANGLE);
 		if (inputBox.isSymbolicMode()) {
 			return new RuleCollectionSymbolic(same, point, vector, numericAngle);
 		} else {
@@ -275,8 +289,7 @@ public class InputBoxProcessor {
 	public boolean validate(EditorContent editorState, StringBuilder sb) {
 		String toCheck = preprocess(editorState, StringTemplate.defaultTemplate);
 		EvalInfo evalInfo = buildEvalInfo();
-		GeoElementND el = algebraProcessor.evaluateToGeoElement(toCheck, false,
-				evalInfo, linkedGeo);
+		GeoElementND el = algebraProcessor.evaluateToGeoElement(toCheck, false, evalInfo, linkedGeo);
 		sb.append(toCheck);
 		return el != null && evalInfo.getRedefinitionRule().allowed(linkedGeo, el);
 	}

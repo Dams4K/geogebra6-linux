@@ -1,46 +1,69 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.geos;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.geogebra.common.BaseUnitTest;
+import org.geogebra.common.SuiteSubApp;
 import org.geogebra.common.gui.view.algebra.EvalInfoFactory;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.arithmetic.ExpressionNode;
 import org.geogebra.common.kernel.arithmetic.ExpressionNodeConstants.StringType;
-import org.geogebra.common.kernel.arithmetic.RecurringDecimal;
 import org.geogebra.common.kernel.commands.EvalInfo;
+import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.main.settings.config.AppConfigCas;
 import org.geogebra.common.util.StringUtil;
+import org.geogebra.editor.share.util.Unicode;
+import org.geogebra.test.BaseAppTestSetup;
+import org.geogebra.test.TestErrorHandler;
 import org.geogebra.test.annotation.Issue;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import com.himamis.retex.editor.share.util.Unicode;
-
-public class GeoNumericTest extends BaseUnitTest {
+class GeoNumericTest extends BaseAppTestSetup {
 
 	private StringTemplate scientificTemplate;
 	private StringTemplate engineeringNotationTemplate;
 
-	@Before
-	public void setupTemplate() {
+	@BeforeEach
+	void setup() {
+		setupClassicApp();
 		scientificTemplate = StringTemplate.printFigures(StringType.GEOGEBRA, 3, false);
-		engineeringNotationTemplate = StringTemplate.defaultTemplate
-				.deriveWithEngineeringNotation();
+		engineeringNotationTemplate = StringTemplate.defaultTemplate.deriveWithEngineeringNotation();
 	}
 
 	@Test
-	public void euclidianShowabilityOfOperationResult() {
+	void euclidianShowabilityOfOperationResult() {
 		GeoNumeric numeric = addAvInput("4+6");
 		assertThat(numeric.isEuclidianShowable(), is(false));
 	}
 
 	@Test
-	public void testFractionRounding() {
+	void testFractionRounding() {
 		GeoNumeric numeric = addAvInput("6048 * (1/3)");
 		assertThat(numeric.toValueString(StringTemplate.maxDecimals), is("2016"));
 		GeoNumeric nearFraction = addAvInput("(0.99999999/2)+1");
@@ -48,51 +71,43 @@ public class GeoNumericTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testNumericIsNotDrawableInCas() {
+	void testNumericIsNotDrawableInCas() {
 		getApp().setConfig(new AppConfigCas());
 		GeoNumeric numeric = addAvInput("2");
 		assertThat(numeric.isEuclidianShowable(), is(false));
 	}
 
 	@Test
-	public void testSliderIsVisibleInEv() {
-		GeoNumeric numeric = new GeoNumeric(getConstruction());
+	void testSliderIsVisibleInEv() {
+		GeoNumeric numeric = new GeoNumeric(getKernel().getConstruction());
 		GeoNumeric.setSliderFromDefault(numeric, false);
 		assertThat(numeric.isEuclidianShowable(), is(true));
 	}
 
 	@Test
-	public void getLaTeXDescriptionRHS() {
+	void getLaTeXDescriptionRHS() {
 		GeoNumeric numeric = addAvInput("1/2");
 
-		String descriptionRHS =
-				numeric.getLaTeXDescriptionRHS(
-						true, StringTemplate.latexTemplate);
+		String descriptionRHS = numeric.getLaTeXDescriptionRHS(true, StringTemplate.latexTemplate);
 		assertThat(descriptionRHS, equalTo("0.5"));
 
-		descriptionRHS =
-				numeric.getLaTeXDescriptionRHS(
-						false, StringTemplate.latexTemplate);
+		descriptionRHS = numeric.getLaTeXDescriptionRHS(false, StringTemplate.latexTemplate);
 		assertThat(descriptionRHS, equalTo("\\frac{1}{2}"));
 	}
 
 	@Test
-	public void getLaTeXAlgebraDescription() {
+	void getLaTeXAlgebraDescription() {
 		GeoNumeric numeric = addAvInput("a = 1/2");
 
-		String description =
-				numeric.getLaTeXAlgebraDescription(
-						true, StringTemplate.latexTemplate);
+		String description = numeric.getLaTeXAlgebraDescription(true, StringTemplate.latexTemplate);
 		assertThat(description, equalTo("a\\, = \\,0.5"));
 
-		description =
-				numeric.getLaTeXAlgebraDescription(
-						false, StringTemplate.latexTemplate);
+		description = numeric.getLaTeXAlgebraDescription(false, StringTemplate.latexTemplate);
 		assertThat(description, equalTo("a\\, = \\,\\frac{1}{2}"));
 	}
 
 	@Test
-	public void testCopy() {
+	void testCopy() {
 		GeoNumeric numeric = addAvInput("1");
 		numeric.setDrawable(true, false);
 		GeoNumeric copy = numeric.copy();
@@ -100,10 +115,10 @@ public class GeoNumericTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void sliderTagShouldStayInXmlAfterSetUndefined() {
-		GeoNumeric slider = add("sl=Slider(0,1,.1)");
+	void sliderTagShouldStayInXmlAfterSetUndefined() {
+		GeoNumeric slider = evaluateGeoElement("sl=Slider(0,1,.1)");
 		assertThat(slider.isEuclidianVisible(), is(true));
-		add("SetValue(sl,?)");
+		evaluate("SetValue(sl,?)");
 		slider.setDefinition(new ExpressionNode(getKernel(), Double.NaN));
 		assertThat(slider.isEuclidianVisible(), is(false));
 		String xml = slider.getXML();
@@ -111,58 +126,55 @@ public class GeoNumericTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void undefinedSliderShouldBeSliderableAfterReload() {
-		GeoNumeric slider = add("sl=Slider(0,1,.1)");
-		add("SetValue(sl,?)");
+	void undefinedSliderShouldBeSliderableAfterReload() {
+		GeoNumeric slider = evaluateGeoElement("sl=Slider(0,1,.1)");
+		evaluate("SetValue(sl,?)");
 		slider.setDefinition(new ExpressionNode(getKernel(), Double.NaN));
-		reload();
+		getApp().setXML(getApp().getXML(), true);
 		GeoElement reloaded = lookup("sl");
-		add("SetValue(sl,.5)");
+		evaluate("SetValue(sl,.5)");
 		assertThat(slider.isEuclidianVisible(), is(false));
 		assertThat(((GeoNumeric) reloaded).isSliderable(), is(true));
 	}
 
 	@Test
-	public void testRecurringSwitchSymbolic() {
+	void testRecurringSwitchSymbolic() {
 		GeoNumeric recurring = addAvInput("1.2\u03053\u0305");
 		assertThat(recurring.getDefinition().unwrap().isRecurringDecimal(), is(true));
 		recurring.setSymbolicMode(false, true);
-		assertThat(recurring.toValueString(StringTemplate.maxDecimals),
-				is("1.232323232323232"));
+		assertThat(recurring.toValueString(StringTemplate.maxDecimals), is("1.232323232323232"));
 		recurring.setSymbolicMode(true, true);
-		assertThat(recurring.toValueString(StringTemplate.maxDecimals),
-				is("122 / 99"));
+		assertThat(recurring.toValueString(StringTemplate.maxDecimals), is("122 / 99"));
 	}
 
 	@Test
-	public void testIsRecurringDecimal() {
-		assertThat(this.<GeoNumeric>add("1.2\u03053\u0305").isRecurringDecimal(), is(true));
-		assertThat(this.<GeoNumeric>add("1.234").isRecurringDecimal(), is(false));
-		assertThat(this.<GeoNumeric>add("12 / 34").isRecurringDecimal(), is(false));
+	void testIsRecurringDecimal() {
+		assertThat(evaluateGeoElement("1.2\u03053\u0305").isRecurringDecimal(), is(true));
+		assertThat(evaluateGeoElement("1.234").isRecurringDecimal(), is(false));
+		assertThat(evaluateGeoElement("12 / 34").isRecurringDecimal(), is(false));
 	}
 
 	@Test
-	public void testAsRecurringDecimal() {
-		assertThat(this.<GeoNumeric>add("1.02\u03053\u0305").asRecurringDecimal(),
-				is(RecurringDecimal.parse(getKernel(), "1.0", "23")));
-		assertThat(this.<GeoNumeric>add("1.234").asRecurringDecimal(), nullValue());
-		assertThat(this.<GeoNumeric>add("12 / 34").asRecurringDecimal(), nullValue());
+	void testAsRecurringDecimal() {
+		assertNotNull(evaluateGeoElement("1.02\u03053\u0305", GeoNumeric.class).asRecurringDecimal());
+		assertNull(evaluateGeoElement("1.234", GeoNumeric.class).asRecurringDecimal());
+		assertNull(evaluateGeoElement("12 / 34", GeoNumeric.class).asRecurringDecimal());
 	}
 
 	@Test
-	public void testFormulaString() {
-		GeoNumeric recurring = add("1 + 0.3\u0305");
+	void testFormulaString() {
+		GeoNumeric recurring = evaluateGeoElement("1 + 0.3\u0305");
 		StringTemplate tpl = StringTemplate.defaultTemplate;
-		assertThat(recurring.getFormulaString(tpl, true), is("1.33"));
-		assertThat(recurring.getFormulaString(tpl, false), is("1 + 0.3\u0305"));
-		recurring.setSymbolicMode(true, true);
 		assertThat(recurring.getFormulaString(tpl, true), is("4 / 3"));
+		assertThat(recurring.getFormulaString(tpl, false), is("1 + 0.3\u0305"));
+		recurring.setSymbolicMode(false, true);
+		assertThat(recurring.getFormulaString(tpl, true), is("1.33"));
 		assertThat(recurring.getFormulaString(tpl, false), is("1 + 0.3\u0305"));
 	}
 
 	@Test
 	@Issue("APPS-5531")
-	public void shouldKeepTrailingZeros() {
+	void shouldKeepTrailingZeros() {
 		GeoNumeric withTrailing = addAvInput("1.20");
 		assertThat(withTrailing.getXML(), containsString("1.20"));
 		withTrailing.setEuclidianVisible(true);
@@ -171,23 +183,23 @@ public class GeoNumericTest extends BaseUnitTest {
 
 	@Test
 	@Issue("APPS-5699")
-	public void shouldKeepTrailingZerosForIntegers() {
+	void shouldKeepTrailingZerosForIntegers() {
 		GeoNumeric withTrailing = addAvInput("1.00");
 		assertThat(withTrailing.getXML(), containsString("1.00"));
 	}
 
 	@Test
 	@Issue("APPS-5531")
-	public void shouldKeepENotation() {
+	void shouldKeepENotation() {
 		GeoNumeric withTrailing = addAvInput("1.20E3");
 		assertThat(withTrailing.getXML(), containsString("1.20E3"));
 	}
 
 	@Test
 	@Issue("APPS-1889")
-	public void shouldNotStoreStyleIfNotInitialized() {
+	void shouldNotStoreStyleIfNotInitialized() {
 		addAvInput("a=3");
-		reload();
+		getApp().setXML(getApp().getXML(), true);
 		GeoElement slider = lookup("a");
 		slider.setEuclidianVisible(true);
 		slider.updateRepaint();
@@ -195,50 +207,246 @@ public class GeoNumericTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testAutoCreatedSliderAlgebraVisibility() {
-		EvalInfo info = EvalInfoFactory.getEvalInfoForAV(getApp(), true);
-		assertThat(((GeoNumeric) add("a", info)).isAVSliderOrCheckboxVisible(), equalTo(true));
-		assertThat(((GeoNumeric) add("3", info)).isAVSliderOrCheckboxVisible(), equalTo(false));
+	void testAutoCreatedSliderAlgebraVisibility() {
+		assertThat(
+				((GeoNumeric) evaluateWithSliders("a")).isAVSliderOrCheckboxVisible(), equalTo(true));
+		assertThat(
+				((GeoNumeric) evaluateWithSliders("3")).isAVSliderOrCheckboxVisible(), equalTo(false));
 	}
 
 	@Test
-	public void shouldPrintUnicodePowerOf10() {
+	void shouldPrintUnicodePowerOf10() {
 		GeoNumeric a = addAvInput("a=1E30+1E30");
-		assertThat(a.toValueString(scientificTemplate),
+		assertThat(
+				a.toValueString(scientificTemplate),
 				is("2.00 " + Unicode.CENTER_DOT + " 10" + StringUtil.numberToIndex(30)));
 	}
 
 	@Test
-	public void shouldPrintUnicodeNegativePowerOf10() {
+	void shouldPrintUnicodeNegativePowerOf10() {
 		GeoNumeric a = addAvInput("a=1E-30+1E-30");
-		assertThat(a.toValueString(scientificTemplate),
+		assertThat(
+				a.toValueString(scientificTemplate),
 				is("2.00 " + Unicode.CENTER_DOT + " 10" + StringUtil.numberToIndex(-30)));
 	}
 
 	@Test
-	public void geoNumericShouldDisplayCorrectEngineeringNotation1() {
+	void geoNumericShouldDisplayCorrectEngineeringNotation1() {
 		GeoNumeric a = addAvInput("7344000");
-		assertThat(a.toValueString(engineeringNotationTemplate),
+		assertThat(
+				a.toValueString(engineeringNotationTemplate),
 				is("7.34 " + Unicode.CENTER_DOT + " 10" + Unicode.SUPERSCRIPT_6));
 	}
 
 	@Test
-	public void geoNumericShouldDisplayCorrectEngineeringNotation2() {
+	void geoNumericShouldDisplayCorrectEngineeringNotation2() {
 		GeoNumeric a = addAvInput("7 / 2");
-		assertThat(a.toValueString(engineeringNotationTemplate),
+		assertThat(
+				a.toValueString(engineeringNotationTemplate),
 				is("3.5 " + Unicode.CENTER_DOT + " 10" + Unicode.SUPERSCRIPT_0));
 	}
 
 	@Test
-	public void geoNumericShouldDisplayCorrectEngineeringNotation3() {
+	void geoNumericShouldDisplayCorrectEngineeringNotation3() {
 		GeoNumeric a = addAvInput("?");
 		assertThat(a.toValueString(engineeringNotationTemplate), is("?"));
 	}
 
 	@Test
-	public void shouldNotLoadValueFromXML() {
-		getApp().getGgbApi().evalXML("<expression exp=\"2+2\" label=\"a\"/>"
-				+ "<element label=\"a\" type=\"numeric\"><value val=\"5\"/></element>");
-		assertThat(lookup("a"), hasValue("4"));
+	void shouldNotLoadValueFromXML() {
+		getApp()
+				.getGgbApi()
+				.evalXML("<expression exp=\"2+2\" label=\"a\"/>"
+						+ "<element label=\"a\" type=\"numeric\"><value val=\"5\"/></element>");
+		assertEquals("4", lookup("a").toValueString(StringTemplate.testTemplate));
+	}
+
+	@Test
+	void legacySliderShouldGetDefaultLineOpacity() {
+		getApp().getGgbApi().evalXML("""
+				<element type="numeric" label="a">
+					<value val="1"/>
+					<slider min="-5" max="5" absoluteScreenLocation="true"
+						width="200" x="203" y="273" fixed="false"
+						horizontal="true" showAlgebra="true"/>
+					<lineStyle thickness="10" type="0" typeHidden="1"/>
+					<show object="true" label="true"/>
+					<objColor r="0" g="0" b="0" alpha="0.10000000149011612"/>
+					<layer val="0"/>
+					<labelMode val="1"/>
+					<animation type="0" playing="false"/>
+				</element>""");
+		GeoNumeric slider = (GeoNumeric) lookup("a");
+		assertThat(slider.getLineOpacity(), is(GeoNumeric.DEFAULT_SLIDER_LINE_OPACITY));
+	}
+
+	@Test
+	void sliderShouldLoadLineOpacity() {
+		getApp().getGgbApi().evalXML("""
+				<element type="numeric" label="a">
+					<value val="1"/>
+					<slider min="-5" max="5" absoluteScreenLocation="true"
+						width="200" x="160" y="252" fixed="false"
+						horizontal="true" showAlgebra="true"/>
+					<lineStyle thickness="10" type="0" typeHidden="1" opacity="77"/>
+					<show object="true" label="true"/>
+					<objColor r="0" g="0" b="0" alpha="0.10000000149011612"/>
+					<layer val="0"/>
+					<labelMode val="1"/>
+					<animation type="0" playing="false"/>
+				</element>""");
+		GeoNumeric slider = (GeoNumeric) lookup("a");
+		assertThat(slider.getLineOpacity(), is(77));
+	}
+
+	@Test
+	void legacySliderWithBgColorShouldLoadLineOpacity() {
+		getApp().getGgbApi().evalXML("""
+				<element type="numeric" label="n">
+					<value val="1"/>
+					<slider min="1" max="30" absoluteScreenLocation="true"
+						width="575" x="114" y="300" fixed="true"
+						horizontal="true" showAlgebra="true"/>
+					<lineStyle thickness="10" type="0" typeHidden="1"/>
+					<show object="true" label="false"/>
+					<objColor r="101" g="87" b="210" alpha="0.10000000149011612"/>
+					<bgColor r="101" g="87" b="210" alpha="123"/>
+				</element>""");
+		GeoNumeric slider = (GeoNumeric) lookup("n");
+		assertThat(slider.getLineOpacity(), is(123));
+		assertNotNull(slider.getBackgroundColor());
+		assertThat(slider.getBackgroundColor().getRed(), is(101));
+		assertThat(slider.getBackgroundColor().getGreen(), is(87));
+		assertThat(slider.getBackgroundColor().getBlue(), is(210));
+		assertThat(slider.getBackgroundColor().getAlpha(), is(255));
+	}
+
+	@Test
+	void sliderShouldSaveVariableToXMLWhenMinIsGreaterOrEqualToMax() {
+		addAvInput("a = Slider(1, 10)");
+		addAvInput("b = Slider(2, a)");
+		assertThat(getApp().getXML(), containsString("<slider min=\"2\" max=\"a\""));
+
+		addAvInput("a = 2");
+		assertThat(getApp().getXML(), containsString("<slider min=\"2\" max=\"a\""));
+
+		addAvInput("a = 1");
+		assertThat(getApp().getXML(), containsString("<slider min=\"2\" max=\"a\""));
+	}
+
+	@Test
+	@Issue("APPS-7343")
+	void sliderShouldStoreVisualInfoInXML() {
+		addAvInput("a = Slider(1, 10)");
+		String xml = getApp().getGgbApi().getXML("a");
+		assertEquals("""
+		<element type="numeric" label="a">
+			<value val="1"/>
+			<lineStyle thickness="10" type="0" typeHidden="1" opacity="100"/>
+			<show object="true" label="true"/>
+			<objColor r="28" g="28" b="31" alpha="0.10000000149011612"/>
+			<layer val="0"/>
+			<labelMode val="1"/>
+			<animation type="0" playing="false"/>
+		</element>
+		""".stripIndent(), xml.replaceAll("\t<slider.*\n", ""));
+	}
+
+	@Test
+	@Issue("APPS-7343")
+	void plainNumberShouldHaveMinimalXML() {
+		addAvInput("a = 3 + 4");
+		String xml = getApp().getGgbApi().getXML("a");
+		assertEquals("""
+		<expression label="a" exp="3 + 4"/>
+		<element type="numeric" label="a">
+			<value val="7"/>
+		</element>
+		""".stripIndent(), xml);
+		addAvInput("b = 8");
+		String xmlB = getApp().getGgbApi().getXML("b");
+		assertEquals("""
+		<expression label="b" exp="8"/>
+		<element type="numeric" label="b">
+			<value val="8"/>
+			<show object="false" label="true"/>
+		</element>
+		""".stripIndent(), xmlB);
+	}
+
+	@Test
+	void sliderShouldBeUndefinedWhenMinIsGreaterOrEqualToMax() {
+		addAvInput("a = Slider(1, 10)");
+		GeoNumeric slider = addAvInput("b = Slider(2, a)");
+		assertFalse(slider.isDefined(), "slider should not be defined");
+
+		addAvInput("a = 2");
+		assertTrue(slider.isDefined(), "slider should be defined");
+		assertFalse(slider.isEuclidianVisible(), "slider should not be visible");
+
+		addAvInput("a = 3");
+		assertTrue(slider.isDefined(), "slider should be defined again");
+	}
+
+	@ParameterizedTest
+	@ValueSource(
+			strings = {
+				"BoxPlot(0, 1, {1, 2, 3, 4})",
+				"Integral(x^2, 0, 1)",
+				"IntegralBetween(x^2, x, 0, 1)",
+				"Histogram({0, 1, 2}, {1, 2})",
+				"HistogramRight({0, 1, 2}, {1, 2})",
+				"LeftSum(x^2, 0, 1, 4)",
+				"RectangleSum(x^2, 0, 1, 4, 1)",
+				"UpperSum(x^2, 0, 1, 4)",
+				"LowerSum(x^2, 0, 1, 4)",
+				"TrapezoidalSum(x^2, 0, 1, 4)",
+				"Bernoulli(0.5, false)",
+				"BarChart({1, 2}, {3, 4})",
+				"BinomialDist(5, 0.5)",
+				"Poisson(2)",
+				"HyperGeometric(10, 5, 3)",
+				"Pascal(5, 0.5)",
+				"Zipf(10, 1)",
+				"StepGraph({(1, 1), (2, 2)})",
+				"Slope(y = 2x)"
+			})
+	@Issue("APPS-8055")
+	void chartsShouldHaveDefaultLineStyleInGraphing(String command) {
+		setupApp(SuiteSubApp.GRAPHING);
+		GeoNumeric chart = addAvInput(command);
+		assertEquals(GeoNumeric.DEFAULT_THICKNESS, chart.getLineThickness());
+		assertEquals(GeoNumeric.DEFAULT_LINE_OPACITY, chart.getLineOpacity());
+	}
+
+	@Test
+	@Issue("APPS-8055")
+	void sliderShouldKeepSliderLineStyleInGraphing() {
+		setupApp(SuiteSubApp.GRAPHING);
+		GeoNumeric slider = addAvInput("Slider(1, 10)");
+		assertEquals(GeoNumeric.DEFAULT_SLIDER_THICKNESS, slider.getLineThickness());
+		assertEquals(GeoNumeric.DEFAULT_SLIDER_LINE_OPACITY, slider.getLineOpacity());
+	}
+
+	@Test
+	@Issue("APPS-8055")
+	void numberShownInGraphicsViewShouldGetSliderLineStyle() {
+		GeoNumeric number = addAvInput("a = 1");
+		number.setEuclidianVisible(true);
+		number.updateRepaint();
+		assertEquals(GeoNumeric.DEFAULT_SLIDER_THICKNESS, number.getLineThickness());
+		assertEquals(GeoNumeric.DEFAULT_SLIDER_LINE_OPACITY, number.getLineOpacity());
+	}
+
+	private GeoNumeric addAvInput(String s) {
+		return evaluateGeoElement(s);
+	}
+
+	private GeoElementND evaluateWithSliders(String expression) {
+		EvalInfo evalInfo = EvalInfoFactory.getEvalInfoForAV(getApp(), true);
+		return getKernel()
+				.getAlgebraProcessor()
+				.processAlgebraCommandNoExceptionHandling(
+						expression, false, TestErrorHandler.WITH_SLIDERS, evalInfo, null)[0];
 	}
 }

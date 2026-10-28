@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.advanced;
@@ -23,9 +27,9 @@ import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.kernel.geos.GeoText;
 
 /**
- * 
+ *
  * writes numbers in the forum 1.23 * 10 ^ -3 (in LaTeX)
- * 
+ *
  * @author michael
  *
  */
@@ -45,8 +49,7 @@ public class AlgoScientificText extends AlgoElement {
 	 * @param precision
 	 *            precision
 	 */
-	public AlgoScientificText(Construction cons, GeoNumeric num,
-			GeoNumeric precision) {
+	public AlgoScientificText(Construction cons, GeoNumeric num, GeoNumeric precision) {
 		super(cons);
 		this.num = num;
 		this.precision = precision;
@@ -78,7 +81,7 @@ public class AlgoScientificText extends AlgoElement {
 
 	/**
 	 * Returns resulting text
-	 * 
+	 *
 	 * @return resulting text
 	 */
 	public GeoText getResult() {
@@ -103,8 +106,7 @@ public class AlgoScientificText extends AlgoElement {
 				return;
 			}
 
-			StringTemplate stl = StringTemplate
-					.printScientific(StringType.GEOGEBRA, prec, false);
+			StringTemplate stl = StringTemplate.printScientific(StringType.GEOGEBRA, prec, false);
 
 			// returns string like 3456E-7
 			String str = kernel.format(decimal, stl);
@@ -159,5 +161,4 @@ public class AlgoScientificText extends AlgoElement {
 	public boolean isLaTeXTextCommand() {
 		return true;
 	}
-
 }

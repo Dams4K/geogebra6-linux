@@ -1,5 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.jre.headless;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GDimension;
 import org.geogebra.common.awt.GFont;
@@ -13,7 +30,6 @@ import org.geogebra.common.euclidian.EuclidianViewCompanion;
 import org.geogebra.common.euclidian.ScreenReaderAdapter;
 import org.geogebra.common.euclidian.ScreenReaderSilent;
 import org.geogebra.common.euclidian.SymbolicEditor;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.geogebra3D.euclidianFor3D.EuclidianViewFor3DCompanion;
 import org.geogebra.common.main.settings.EuclidianSettings;
 
@@ -37,8 +53,8 @@ public class EuclidianViewNoGui extends EuclidianView {
 	 * @param g2
 	 *            graphics
 	 */
-	public EuclidianViewNoGui(EuclidianController ec, int viewNo,
-			EuclidianSettings settings, GGraphics2D g2) {
+	public EuclidianViewNoGui(
+			EuclidianController ec, int viewNo, EuclidianSettings settings, GGraphics2D g2) {
 		super(ec, viewNo, settings);
 		setAxesColor(GColor.BLACK);
 		setGridColor(GColor.GRAY);
@@ -47,8 +63,7 @@ public class EuclidianViewNoGui extends EuclidianView {
 		dim = AwtFactory.getPrototype().newDimension(800, 600);
 		font = AwtFactory.getPrototype().newFont("serif", GFont.PLAIN, 12);
 		this.g2 = g2;
-		g2Dtemp = AwtFactory.getPrototype().newBufferedImage(5, 5, 1)
-				.createGraphics();
+		g2Dtemp = AwtFactory.getPrototype().newBufferedImage(5, 5, 1).createGraphics();
 		ec.getApplication().getKernel().attach(this);
 		updateFonts();
 		settingsChanged(settings);
@@ -68,8 +83,8 @@ public class EuclidianViewNoGui extends EuclidianView {
 	@Override
 	public final void setBackground(GColor bgColor) {
 		if (bgColor != null) {
-			backgroundColor = GColor.newColor(bgColor.getRed(),
-					bgColor.getGreen(), bgColor.getBlue(), bgColor.getAlpha());
+			backgroundColor = GColor.newColor(
+					bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), bgColor.getAlpha());
 		}
 	}
 
@@ -205,7 +220,6 @@ public class EuclidianViewNoGui extends EuclidianView {
 				while (running) {
 					step();
 				}
-
 			}
 
 			@Override
@@ -247,6 +261,9 @@ public class EuclidianViewNoGui extends EuclidianView {
 		return new EuclidianViewFor3DCompanion(this);
 	}
 
+	/**
+	 * @param editor symbolic editor
+	 */
 	public void setSymbolicEditor(SymbolicEditor editor) {
 		this.symbolicEditor = editor;
 	}

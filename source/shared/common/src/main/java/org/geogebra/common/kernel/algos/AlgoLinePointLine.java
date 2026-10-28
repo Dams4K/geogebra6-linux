@@ -1,21 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoLinePointLine.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * line through P parallel to l
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * Created on 30. August 2001, 21:37
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -55,8 +51,7 @@ public class AlgoLinePointLine extends AlgoElement
 	private PVariable[] botanaVars;
 
 	/** Creates new AlgoLinePointLine */
-	public AlgoLinePointLine(Construction cons, String label, GeoPoint P,
-			Lineable2D l) {
+	public AlgoLinePointLine(Construction cons, String label, GeoPoint P, Lineable2D l) {
 		super(cons);
 		this.P = P;
 		this.l = l;
@@ -80,7 +75,7 @@ public class AlgoLinePointLine extends AlgoElement
 
 	/**
 	 * @author Tam
-	 * 
+	 *
 	 *         for special cases of e.g. AlgoIntersectLineConic
 	 */
 	private void addIncidence() {
@@ -125,13 +120,15 @@ public class AlgoLinePointLine extends AlgoElement
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("LineThroughAParallelToB",
-				"Line through %0 parallel to %1", P.getLabel(tpl),
-				((GeoElement) l).getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault(
+						"LineThroughAParallelToB",
+						"Line through %0 parallel to %1",
+						P.getLabel(tpl),
+						((GeoElement) l).getLabel(tpl));
 	}
 
 	// Simon Weitzhofer 2012-05-07
@@ -142,8 +139,7 @@ public class AlgoLinePointLine extends AlgoElement
 	}
 
 	@Override
-	public void getFreeVariables(HashSet<PVariable> variables)
-			throws NoSymbolicParametersException {
+	public void getFreeVariables(HashSet<PVariable> variables) throws NoSymbolicParametersException {
 
 		if (P != null && l instanceof GeoLine) {
 			P.getFreeVariables(variables);
@@ -155,8 +151,7 @@ public class AlgoLinePointLine extends AlgoElement
 	}
 
 	@Override
-	public int[] getDegrees(AbstractProverReciosMethod a)
-			throws NoSymbolicParametersException {
+	public int[] getDegrees(AbstractProverReciosMethod a) throws NoSymbolicParametersException {
 
 		if (P != null && l instanceof GeoLine) {
 			int[] degreeP = P.getDegrees(a);
@@ -164,8 +159,7 @@ public class AlgoLinePointLine extends AlgoElement
 			int[] degrees = new int[3];
 			degrees[0] = degreeL[0] + degreeP[2];
 			degrees[1] = degreeL[1] + degreeP[2];
-			degrees[2] = Math.max(degreeL[0] + degreeP[0],
-					degreeL[1] + degreeP[1]);
+			degrees[2] = Math.max(degreeL[0] + degreeP[0], degreeL[1] + degreeP[1]);
 			return degrees;
 		}
 
@@ -173,8 +167,7 @@ public class AlgoLinePointLine extends AlgoElement
 	}
 
 	@Override
-	public BigInteger[] getExactCoordinates(
-			HashMap<PVariable, BigInteger> values)
+	public BigInteger[] getExactCoordinates(HashMap<PVariable, BigInteger> values)
 			throws NoSymbolicParametersException {
 
 		if (P != null && l instanceof GeoLine) {
@@ -183,8 +176,8 @@ public class AlgoLinePointLine extends AlgoElement
 			BigInteger[] coords = new BigInteger[3];
 			coords[0] = coordsL[0].multiply(coordsP[2]);
 			coords[1] = coordsL[1].multiply(coordsP[2]);
-			coords[2] = coordsL[0].multiply(coordsP[0])
-					.add(coordsL[1].multiply(coordsP[1])).negate();
+			coords[2] =
+					coordsL[0].multiply(coordsP[0]).add(coordsL[1].multiply(coordsP[1])).negate();
 			return coords;
 		}
 
@@ -204,8 +197,8 @@ public class AlgoLinePointLine extends AlgoElement
 			polynomials = new PPolynomial[3];
 			polynomials[0] = coordsl[0].multiply(coordsP[2]);
 			polynomials[1] = coordsl[1].multiply(coordsP[2]);
-			polynomials[2] = coordsl[0].multiply(coordsP[0])
-					.add(coordsl[1].multiply(coordsP[1])).negate();
+			polynomials[2] =
+					coordsl[0].multiply(coordsP[0]).add(coordsl[1].multiply(coordsP[1])).negate();
 			return polynomials;
 		}
 
@@ -218,8 +211,7 @@ public class AlgoLinePointLine extends AlgoElement
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 
 		if (botanaPolynomials != null) {
 			return botanaPolynomials;
@@ -236,7 +228,7 @@ public class AlgoLinePointLine extends AlgoElement
 
 			if (botanaVars == null) {
 				botanaVars = new PVariable[4]; // storing 2 new variables, plus
-												// the coordinates of P
+				// the coordinates of P
 				botanaVars[0] = new PVariable(kernel); // d1
 				botanaVars[1] = new PVariable(kernel); // d2
 				botanaVars[2] = vP[0];
@@ -254,5 +246,4 @@ public class AlgoLinePointLine extends AlgoElement
 		}
 		throw new NoSymbolicParametersException();
 	}
-
 }

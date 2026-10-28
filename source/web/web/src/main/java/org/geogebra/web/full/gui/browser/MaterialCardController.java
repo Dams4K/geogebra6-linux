@@ -1,10 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.browser;
 
 import java.util.List;
 
 import org.geogebra.common.main.MyError.Errors;
 import org.geogebra.common.main.OpenFileListener;
-import org.geogebra.common.move.ggtapi.models.GeoGebraTubeUser;
 import org.geogebra.common.move.ggtapi.models.Material;
 import org.geogebra.common.move.ggtapi.models.Material.MaterialType;
 import org.geogebra.common.move.ggtapi.models.MaterialRestAPI;
@@ -12,7 +27,6 @@ import org.geogebra.common.move.ggtapi.models.Pagination;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.debug.Log;
 import org.geogebra.web.full.gui.SaveControllerW;
-import org.geogebra.web.full.gui.applet.GeoGebraFrameFull;
 import org.geogebra.web.full.gui.openfileview.MaterialCard;
 import org.geogebra.web.full.gui.openfileview.MaterialCardI;
 import org.geogebra.web.full.gui.openfileview.RemoveDialog;
@@ -25,16 +39,13 @@ import org.geogebra.web.shared.ggtapi.models.MaterialCallback;
 /**
  * Controller for material cards, common for new and old UI.
  */
-public class MaterialCardController implements OpenFileListener {
+public final class MaterialCardController implements OpenFileListener {
 	/** application */
-	protected AppW app;
+	private final AppW app;
+
 	private Material material;
 	/** callback for deleting materials */
-	Runnable deleteCallback = () -> {
-		Log.debug("DELETE finished");
-		app.getGuiManager().getBrowseView()
-				.setMaterialsDefaultStyle();
-	};
+	private final Runnable deleteCallback;
 
 	/**
 	 * @param app
@@ -42,6 +53,10 @@ public class MaterialCardController implements OpenFileListener {
 	 */
 	public MaterialCardController(AppW app) {
 		this.app = app;
+		deleteCallback = () -> {
+			Log.debug("DELETE finished");
+			app.getGuiManager().getBrowseView().setMaterialsDefaultStyle();
+		};
 	}
 
 	/**
@@ -51,8 +66,6 @@ public class MaterialCardController implements OpenFileListener {
 		app.getArchiveLoader().processFileName(material.getFileName());
 		updateActiveMaterial();
 		app.getGuiManager().getBrowseView().close();
-		((GeoGebraFrameFull) app.getAppletFrame())
-				.updateUndoRedoButtonVisibility(!material.isMultiuser());
 	}
 
 	private void updateActiveMaterial() {
@@ -60,8 +73,6 @@ public class MaterialCardController implements OpenFileListener {
 		app.getSaveController().ensureTypeOtherThan(Material.MaterialType.ggsTemplate);
 		if (material.getType() == MaterialType.ggsTemplate) {
 			app.registerOpenFileListener(this);
-		} else {
-			app.registerOpenFileListener(this::checkMultiuser);
 		}
 	}
 
@@ -97,8 +108,7 @@ public class MaterialCardController implements OpenFileListener {
 
 		api.getItem(getMaterial().getSharingKeySafe(), new MaterialCallback() {
 			@Override
-			public void onLoaded(final List<Material> parseResponse,
-								 Pagination meta) {
+			public void onLoaded(final List<Material> parseResponse, Pagination meta) {
 				if (parseResponse.size() == 1) {
 					setMaterial(parseResponse.get(0));
 					getMaterial().setSyncStamp(synced);
@@ -130,7 +140,7 @@ public class MaterialCardController implements OpenFileListener {
 
 	/**
 	 * Remove file from the cloud and card from the UI.
-	 * 
+	 *
 	 * @param card
 	 *            card to be deleted
 	 */
@@ -140,37 +150,34 @@ public class MaterialCardController implements OpenFileListener {
 		final Material toDelete = this.getMaterial();
 
 		if (app.getNetworkOperation().isOnline() && onlineFile(toDelete)) {
-			app.getLoginOperation().getResourcesAPI()
-					.deleteMaterial(toDelete, new MaterialCallback() {
+			app.getLoginOperation().getResourcesAPI().deleteMaterial(toDelete, new MaterialCallback() {
 
-						@Override
-						public void onLoaded(List<Material> parseResponse,
-								Pagination meta) {
-							card.remove();
-							MaterialCardController.this.app.getFileManager()
-									.delete(toDelete, true,
-											MaterialCardController.this.deleteCallback);
-							showSnackbar(app.getLocalization().getPlain(
-									"ContextMenu.ConfirmDeleteA", toDelete.getTitle()));
-							if (toDelete.isMultiuser()) {
-								app.getShareController()
-										.terminateMultiuser(toDelete, null);
-							}
-						}
+				@Override
+				public void onLoaded(List<Material> parseResponse, Pagination meta) {
+					card.remove();
+					MaterialCardController.this
+							.app
+							.getFileManager()
+							.delete(toDelete, true, MaterialCardController.this.deleteCallback);
+					showSnackbar(
+							app.getLocalization().getPlain("ContextMenu.ConfirmDeleteA", toDelete.getTitle()));
+				}
 
-						@Override
-						public void onError(Throwable exception) {
-							MaterialCardController.this.app.getFileManager()
-									.delete(toDelete, false,
-											MaterialCardController.this.deleteCallback);
-							card.setVisible(true);
-							showSnackbar(app.getLocalization().getMenu("ContextMenu.DeleteError"));
-						}
-					});
+				@Override
+				public void onError(Throwable exception) {
+					MaterialCardController.this
+							.app
+							.getFileManager()
+							.delete(toDelete, false, MaterialCardController.this.deleteCallback);
+					card.setVisible(true);
+					showSnackbar(app.getLocalization().getMenu("ContextMenu.DeleteError"));
+				}
+			});
 		} else {
 			Log.debug("DELETE permanent");
-			this.app.getFileManager().delete(toDelete, toDelete.getSharingKey() == null,
-					this.deleteCallback);
+			this.app
+					.getFileManager()
+					.delete(toDelete, toDelete.getSharingKey() == null, this.deleteCallback);
 		}
 	}
 
@@ -179,8 +186,7 @@ public class MaterialCardController implements OpenFileListener {
 	}
 
 	private static boolean onlineFile(Material toDelete) {
-		return toDelete.getSharingKey() != null
-				|| !StringUtil.empty(toDelete.getSharingKey());
+		return toDelete.getSharingKey() != null || !StringUtil.empty(toDelete.getSharingKey());
 	}
 
 	private void setAllMaterialsDefault() {
@@ -202,44 +208,36 @@ public class MaterialCardController implements OpenFileListener {
 	 * @param oldTitle
 	 *            old title
 	 */
-	public void rename(final String text, final MaterialCard card,
-			final String oldTitle) {
-		if (app.getNetworkOperation().isOnline()
-				&& onlineFile(getMaterial())) {
+	public void rename(final String text, final MaterialCard card, final String oldTitle) {
+		if (app.getNetworkOperation().isOnline() && onlineFile(getMaterial())) {
 
 			this.getMaterial().setTitle(text);
-			app.getLoginOperation().getResourcesAPI()
-					.uploadRenameMaterial(this.getMaterial(),
-							new MaterialCallback() {
+			app.getLoginOperation()
+					.getResourcesAPI()
+					.uploadRenameMaterial(this.getMaterial(), new MaterialCallback() {
 
-								@Override
-								public void onLoaded(
-										List<Material> parseResponse,
-										Pagination meta) {
-									if (parseResponse.size() != 1) {
-										app.showError(Errors.RenameFailed);
-										card.rename(oldTitle);
-									} else {
-										Log.debug("RENAME local");
-										getMaterial().setModified(parseResponse
-												.get(0).getModified());
-										getMaterial().setSyncStamp(parseResponse
-												.get(0).getModified());
-										if (getMaterial().getLocalID() <= 0) {
-											return;
-										}
-										Log.debug("RENAME CALLBACK" + oldTitle
-												+ "->" + text);
-										getMaterial().setTitle(oldTitle);
-										app.getFileManager().rename(
-												text, getMaterial());
-									}
+						@Override
+						public void onLoaded(List<Material> parseResponse, Pagination meta) {
+							if (parseResponse.size() != 1) {
+								app.showError(Errors.RenameFailed);
+								card.rename(oldTitle);
+							} else {
+								Log.debug("RENAME local");
+								getMaterial().setModified(parseResponse.get(0).getModified());
+								getMaterial().setSyncStamp(parseResponse.get(0).getModified());
+								if (getMaterial().getLocalID() <= 0) {
+									return;
 								}
-							});
+								Log.debug("RENAME CALLBACK" + oldTitle + "->" + text);
+								getMaterial().setTitle(oldTitle);
+								app.getFileManager().rename(text, getMaterial());
+							}
+						}
+					});
 		} else {
 			this.getMaterial()
-					.setModified(Math.max(SaveControllerW.getCurrentTimestamp(app),
-							getMaterial().getSyncStamp() + 1));
+					.setModified(
+							Math.max(SaveControllerW.getCurrentTimestamp(app), getMaterial().getSyncStamp() + 1));
 			this.app.getFileManager().rename(text, this.getMaterial());
 		}
 	}
@@ -248,22 +246,21 @@ public class MaterialCardController implements OpenFileListener {
 	 * Copy this material.
 	 */
 	public void copy() {
-		if (app.getNetworkOperation().isOnline()
-				&& onlineFile(getMaterial())) {
+		if (app.getNetworkOperation().isOnline() && onlineFile(getMaterial())) {
 
-			app.getLoginOperation().getResourcesAPI().copy(getMaterial(),
-					MaterialRestAPI.getCopyTitle(app.getLocalization(),
-							material.getTitle()),
-					new MaterialCallback() {
-						@Override
-						public void onLoaded(List<Material> parseResponse,
-								Pagination meta) {
-							if (parseResponse.size() == 1) {
-								app.getGuiManager().getBrowseView()
-									.addMaterial(parseResponse.get(0));
-							}
-						}
-					});
+			app.getLoginOperation()
+					.getResourcesAPI()
+					.copy(
+							getMaterial(),
+							MaterialRestAPI.getCopyTitle(app.getLocalization(), material.getTitle()),
+							new MaterialCallback() {
+								@Override
+								public void onLoaded(List<Material> parseResponse, Pagination meta) {
+									if (parseResponse.size() == 1) {
+										app.getGuiManager().getBrowseView().addMaterial(parseResponse.get(0));
+									}
+								}
+							});
 		}
 	}
 
@@ -271,17 +268,6 @@ public class MaterialCardController implements OpenFileListener {
 	public boolean onOpenFile() {
 		app.getKernel().getConstruction().setTitle(null);
 		app.setActiveMaterial(material);
-		return true; // one time only
-	}
-
-	private boolean checkMultiuser() {
-		String paramMultiplayerUrl = app.getAppletParameters().getParamMultiplayerUrl();
-		GeoGebraTubeUser loggedInUser =
-				app.getLoginOperation().getModel().getLoggedInUser();
-		if (material.isMultiuser() && !StringUtil.empty(paramMultiplayerUrl)
-				&& loggedInUser != null) {
-			app.getShareController().startMultiuser(material.getSharingKeySafe());
-		}
 		return true; // one time only
 	}
 
@@ -295,5 +281,4 @@ public class MaterialCardController implements OpenFileListener {
 		removeDialog.show();
 		removeDialog.setOnPositiveAction(() -> onConfirmDelete(card));
 	}
-
 }

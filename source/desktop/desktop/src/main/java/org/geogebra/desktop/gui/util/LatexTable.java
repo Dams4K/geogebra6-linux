@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.gui.util;
 
 import java.awt.Component;
@@ -29,16 +45,21 @@ public class LatexTable extends SelectionTableD implements MenuElement {
 
 	/**
 	 * @param app application
-	 * @param textInputDialog text diaog
+	 * @param textInputDialog text dialog
 	 * @param popupButton popup button
 	 * @param latexArray latex formulas
 	 * @param rows rows
 	 * @param columns columns
 	 * @param mode selection table mode
 	 */
-	public LatexTable(AppD app, TextInputDialogD textInputDialog,
-			PopupMenuButtonD popupButton, String[] latexArray, int rows,
-			int columns, SelectionTable mode) {
+	public LatexTable(
+			AppD app,
+			TextInputDialogD textInputDialog,
+			PopupMenuButtonD popupButton,
+			String[] latexArray,
+			int rows,
+			int columns,
+			SelectionTable mode) {
 
 		super(app, latexArray, rows, columns, new Dimension(24, 24), mode);
 		this.inputDialog = textInputDialog;
@@ -50,10 +71,8 @@ public class LatexTable extends SelectionTableD implements MenuElement {
 		setSelectedIndex(0);
 		// this.setUseColorSwatchBorder(true);
 		this.setShowGrid(true);
-		this.setGridColor(
-				GColorD.getAwtColor(GeoGebraColorConstants.TABLE_GRID_COLOR));
-		this.setBorder(
-				BorderFactory.createLineBorder(MyTableD.TABLE_GRID_COLOR));
+		this.setGridColor(GColorD.getAwtColor(GeoGebraColorConstants.TABLE_GRID_COLOR));
+		this.setBorder(BorderFactory.createLineBorder(MyTableD.TABLE_GRID_COLOR));
 		// this.setBorder(BorderFactory.createEmptyBorder());
 		this.setShowSelection(false);
 	}
@@ -76,14 +95,12 @@ public class LatexTable extends SelectionTableD implements MenuElement {
 	}
 
 	@Override
-	public void processKeyEvent(KeyEvent arg0, MenuElement[] arg1,
-			MenuSelectionManager arg2) {
+	public void processKeyEvent(KeyEvent arg0, MenuElement[] arg1, MenuSelectionManager arg2) {
 		// nothing to do
 	}
 
 	@Override
-	public void processMouseEvent(MouseEvent arg0, MenuElement[] arg1,
-			MenuSelectionManager arg2) {
+	public void processMouseEvent(MouseEvent arg0, MenuElement[] arg1, MenuSelectionManager arg2) {
 
 		if (this.getSelectedIndex() >= latexArray.length) {
 			return;
@@ -92,14 +109,12 @@ public class LatexTable extends SelectionTableD implements MenuElement {
 		if (arg0.getID() == MouseEvent.MOUSE_RELEASED) {
 
 			// get the selected string
-			StringBuilder sb = new StringBuilder(
-					latexArray[this.getSelectedIndex()]);
+			StringBuilder sb = new StringBuilder(latexArray[this.getSelectedIndex()]);
 			// if LaTeX string, adjust the string to include selected text
 			// within braces
 			if (mode == SelectionTable.MODE_LATEX) {
 
-				String selText = ((InputPanelD) inputDialog.getInputPanel())
-						.getSelectedText();
+				String selText = ((InputPanelD) inputDialog.getInputPanel()).getSelectedText();
 				if (selText != null) {
 					sb.deleteCharAt(sb.indexOf("{") + 1);
 					sb.insert(sb.indexOf("{") + 1, selText);
@@ -118,5 +133,4 @@ public class LatexTable extends SelectionTableD implements MenuElement {
 			popupButton.handlePopupActionEvent();
 		}
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.popup.autocompletion;
 
 import org.geogebra.common.util.shape.Rectangle;
@@ -24,10 +40,10 @@ public class AutocompletionPopupPositioner {
 	 * @param verticalPosition the vertical position of the popup
 	 * @return the frame of the popup
 	 */
-	public Rectangle calculatePopupFrame(Rectangle inputBounds, Size popupSize, Rectangle frame,
-			VerticalPosition verticalPosition) {
+	public Rectangle calculatePopupFrame(
+			Rectangle inputBounds, Size popupSize, Rectangle frame, VerticalPosition verticalPosition) {
 		// Position
-		double x, y;
+		double x;
 
 		// Restrict popup size to max values
 		double width = MAX_WIDTH;
@@ -57,9 +73,10 @@ public class AutocompletionPopupPositioner {
 		double spaceBelow = frame.getMaxY() - inputBounds.getMaxY();
 		double spaceAbove = inputBounds.getMinY() - frame.getMinY();
 		double requiredHeight = Math.max(height, MIN_SPACE);
+		double y;
 		if (verticalPosition == VerticalPosition.BELOW
 				|| (verticalPosition != VerticalPosition.ABOVE
-				&& (requiredHeight <= spaceBelow || spaceBelow > spaceAbove))) {
+						&& (requiredHeight <= spaceBelow || spaceBelow > spaceAbove))) {
 			// Popup below input bar
 			y = inputBounds.getMaxY();
 			// Restrict height to remaining space

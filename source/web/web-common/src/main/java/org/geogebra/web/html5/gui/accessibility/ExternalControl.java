@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.accessibility;
 
 import static elemental2.dom.DomGlobal.document;
@@ -6,14 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.geogebra.common.gui.AccessibilityGroup;
-import org.geogebra.common.gui.MayHaveFocus;
+import org.geogebra.common.gui.FocusableComponent;
 import org.geogebra.web.html5.util.GlobalHandlerRegistry;
 
 import elemental2.dom.Element;
 import elemental2.dom.KeyboardEvent;
 import jsinterop.base.Js;
 
-public class ExternalControl implements MayHaveFocus {
+public class ExternalControl implements FocusableComponent {
 	private final ArrayList<Element> controls = new ArrayList<>();
 	private final List<String> selectors;
 	private final AccessibilityManagerW manager;
@@ -24,8 +40,8 @@ public class ExternalControl implements MayHaveFocus {
 	 * @param manager accessibility manager
 	 * @param registry handler registry
 	 */
-	public ExternalControl(List<String> selectors, AccessibilityManagerW manager,
-			GlobalHandlerRegistry registry) {
+	public ExternalControl(
+			List<String> selectors, AccessibilityManagerW manager, GlobalHandlerRegistry registry) {
 		this.selectors = selectors;
 		this.manager = manager;
 		this.registry = registry;
@@ -75,8 +91,11 @@ public class ExternalControl implements MayHaveFocus {
 		if (!controls.isEmpty()) {
 			return;
 		}
-		for (String selector: selectors) {
+		for (String selector : selectors) {
 			Element control = document.querySelector(selector);
+			if (control == null) {
+				continue;
+			}
 			registry.addEventListener(control, "keydown", evt -> {
 				KeyboardEvent kbd = Js.uncheckedCast(evt);
 				if ("Tab".equals(kbd.code)) {

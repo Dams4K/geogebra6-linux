@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.probcalculator;
 
 import org.geogebra.common.gui.view.probcalculator.ProbabilityCalculatorView;
@@ -16,7 +32,7 @@ import org.gwtproject.user.client.ui.FlowPanel;
  * @author gabor
  *
  */
-public class ProbabilityTableW extends ProbabilityTable implements ClickHandler {
+public final class ProbabilityTableW extends ProbabilityTable implements ClickHandler {
 
 	private final FlowPanel wrappedPanel;
 	private final StatTableW statTable;
@@ -35,17 +51,17 @@ public class ProbabilityTableW extends ProbabilityTable implements ClickHandler 
 		statTable.getTable().addClickHandler(this);
 		wrappedPanel.add(statTable);
 
-		//blank table
+		// blank table
 		setTable(null, null, 0, 10);
 	}
-	
+
 	@Override
 	public void setTable(Dist distType, GeoNumberValue[] params, int xMin, int xMax) {
 
 		setIniting(true);
 
 		setTableModel(distType, params, xMin, xMax);
-		
+
 		statTable.setStatTable(xMax - xMin + 1, null, 2, getColumnNames());
 
 		// set the table model with the prob. values for this distribution
@@ -89,28 +105,27 @@ public class ProbabilityTableW extends ProbabilityTable implements ClickHandler 
 			statTable.getTable().changeSelection(highIndex, false, false);
 		} else {
 			statTable.getTable().setTailSelection(lowIndex, highIndex);
-
 		}
 	}
-	
+
 	/**
 	 * @return UI component
 	 */
 	public FlowPanel getWrappedPanel() {
 		return wrappedPanel;
 	}
-	
+
 	/**
 	 * @return stats table
 	 */
 	public StatTableW getStatTable() {
 		return statTable;
 	}
-	
+
 	@Override
 	public void onClick(ClickEvent event) {
 		StatDataTable table = statTable.getTable();
-		
+
 		table.handleSelection(event);
 
 		int[] selRow = table.getSelectedRows();
@@ -120,18 +135,15 @@ public class ProbabilityTableW extends ProbabilityTable implements ClickHandler 
 			return;
 		}
 
-		if (getProbCalc()
-				.getProbMode() == ProbabilityCalculatorView.PROB_INTERVAL) {
+		if (getProbCalc().getProbMode() == ProbabilityCalculatorView.PROB_INTERVAL) {
 			String lowStr = table.getText(selRow[0], 0);
 			String highStr = table.getText(selRow[selRow.length - 1], 0);
 			int low = Integer.parseInt(lowStr);
 			int high = Integer.parseInt(highStr);
 			getProbCalc().setInterval(low, high);
-		} else if (getProbCalc()
-				.getProbMode() == ProbabilityCalculatorView.PROB_LEFT) {
+		} else if (getProbCalc().getProbMode() == ProbabilityCalculatorView.PROB_LEFT) {
 			String lowStr = statTable.getTable().getText(1, 0);
-			String highStr = statTable.getTable()
-					.getText(selRow[selRow.length - 1], 0);
+			String highStr = statTable.getTable().getText(selRow[selRow.length - 1], 0);
 			int low = Integer.parseInt(lowStr);
 			int high = Integer.parseInt(highStr);
 			getProbCalc().setInterval(low, high);
@@ -147,8 +159,7 @@ public class ProbabilityTableW extends ProbabilityTable implements ClickHandler 
 				table.changeSelection(selRow[selRow.length - 1], false, true);
 			}
 			// table.getSelectionModel().addListSelectionListener(this);
-		} else if (getProbCalc()
-				.getProbMode() == ProbabilityCalculatorView.PROB_RIGHT) {
+		} else if (getProbCalc().getProbMode() == ProbabilityCalculatorView.PROB_RIGHT) {
 			String lowStr = statTable.getTable().getText(selRow[0], 0);
 			int maxRow = statTable.getTable().getRowCount() - 1;
 			String highStr = statTable.getTable().getText(maxRow, 0);

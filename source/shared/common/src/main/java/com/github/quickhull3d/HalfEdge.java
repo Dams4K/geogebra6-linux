@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package com.github.quickhull3d;
 
 /*
@@ -8,13 +24,13 @@ package com.github.quickhull3d;
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,7 +48,7 @@ package com.github.quickhull3d;
 /**
  * Represents the half-edges that surround each face in a counter-clockwise
  * direction.
- * 
+ *
  * @author John E. Lloyd, Fall 2004
  */
 class HalfEdge {
@@ -65,7 +81,7 @@ class HalfEdge {
 	/**
 	 * Constructs a HalfEdge with head vertex <code>v</code> and left-hand
 	 * triangular face <code>f</code>.
-	 * 
+	 *
 	 * @param v
 	 *            head vertex
 	 * @param f
@@ -76,13 +92,12 @@ class HalfEdge {
 		face = f;
 	}
 
-	public HalfEdge() {
-	}
+	public HalfEdge() {}
 
 	/**
 	 * Sets the value of the next edge adjacent (counter-clockwise) to this one
 	 * within the triangle.
-	 * 
+	 *
 	 * @param edge
 	 *            next adjacent edge
 	 */
@@ -93,7 +108,7 @@ class HalfEdge {
 	/**
 	 * Gets the value of the next edge adjacent (counter-clockwise) to this one
 	 * within the triangle.
-	 * 
+	 *
 	 * @return next adjacent edge
 	 */
 	public HalfEdge getNext() {
@@ -103,7 +118,7 @@ class HalfEdge {
 	/**
 	 * Sets the value of the previous edge adjacent (clockwise) to this one
 	 * within the triangle.
-	 * 
+	 *
 	 * @param edge
 	 *            previous adjacent edge
 	 */
@@ -114,7 +129,7 @@ class HalfEdge {
 	/**
 	 * Gets the value of the previous edge adjacent (clockwise) to this one
 	 * within the triangle.
-	 * 
+	 *
 	 * @return previous adjacent edge
 	 */
 	public HalfEdge getPrev() {
@@ -123,7 +138,7 @@ class HalfEdge {
 
 	/**
 	 * Returns the triangular face located to the left of this half-edge.
-	 * 
+	 *
 	 * @return left-hand triangular face
 	 */
 	public Face getFace() {
@@ -132,7 +147,7 @@ class HalfEdge {
 
 	/**
 	 * Returns the half-edge opposite to this half-edge.
-	 * 
+	 *
 	 * @return opposite half-edge
 	 */
 	public HalfEdge getOpposite() {
@@ -141,7 +156,7 @@ class HalfEdge {
 
 	/**
 	 * Sets the half-edge opposite to this half-edge.
-	 * 
+	 *
 	 * @param edge
 	 *            opposite half-edge
 	 */
@@ -152,7 +167,7 @@ class HalfEdge {
 
 	/**
 	 * Returns the head vertex associated with this half-edge.
-	 * 
+	 *
 	 * @return head vertex
 	 */
 	public Vertex head() {
@@ -161,7 +176,7 @@ class HalfEdge {
 
 	/**
 	 * Returns the tail vertex associated with this half-edge.
-	 * 
+	 *
 	 * @return tail vertex
 	 */
 	public Vertex tail() {
@@ -170,7 +185,7 @@ class HalfEdge {
 
 	/**
 	 * Returns the opposite triangular face associated with this half-edge.
-	 * 
+	 *
 	 * @return opposite triangular face
 	 */
 	public Face oppositeFace() {
@@ -180,7 +195,7 @@ class HalfEdge {
 	/**
 	 * Produces a string identifying this half-edge by the point index values of
 	 * its tail and head vertices.
-	 * 
+	 *
 	 * @return identifying string
 	 */
 	public String getVertexString() {
@@ -192,7 +207,7 @@ class HalfEdge {
 
 	/**
 	 * Returns the length of this half-edge.
-	 * 
+	 *
 	 * @return half-edge length
 	 */
 	public double length() {
@@ -204,7 +219,7 @@ class HalfEdge {
 
 	/**
 	 * Returns the length squared of this half-edge.
-	 * 
+	 *
 	 * @return half-edge length squared
 	 */
 	public double lengthSquared() {

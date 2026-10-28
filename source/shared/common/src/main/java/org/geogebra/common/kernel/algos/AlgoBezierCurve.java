@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.algos;
 
 import org.geogebra.common.kernel.Construction;
@@ -23,8 +39,8 @@ public class AlgoBezierCurve extends AlgoElement {
 	 * @param control2 second control point
 	 * @param end end point
 	 */
-	public AlgoBezierCurve(Construction c, GeoPointND start, GeoPointND control1,
-			GeoPointND control2, GeoPointND end) {
+	public AlgoBezierCurve(
+			Construction c, GeoPointND start, GeoPointND control1, GeoPointND control2, GeoPointND end) {
 		super(c);
 		this.points = new GeoPointND[] {start, control1, control2, end};
 		FunctionVariable fvar = new FunctionVariable(kernel, "t");
@@ -43,7 +59,9 @@ public class AlgoBezierCurve extends AlgoElement {
 	private Function buildFunction(MyDouble[] coords, FunctionVariable fvar) {
 		ExpressionNode oneMinusT = new ExpressionNode(kernel, 1).subtract(fvar);
 		return new Function(
-				fvar.wrap().power(3).multiply(coords[0])
+				fvar.wrap()
+						.power(3)
+						.multiply(coords[0])
 						.plus(fvar.wrap().power(2).multiply(oneMinusT).multiply(coords[1]))
 						.plus(fvar.wrap().multiply(oneMinusT.power(2)).multiply(coords[2]))
 						.plus(oneMinusT.power(3).multiply(coords[3])),

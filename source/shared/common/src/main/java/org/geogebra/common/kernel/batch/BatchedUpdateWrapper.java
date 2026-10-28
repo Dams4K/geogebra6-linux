@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.batch;
 
 import java.util.Iterator;
@@ -18,8 +34,7 @@ import org.geogebra.common.util.debug.Log;
  * This class can wrap a view, and post the notifications
  * in a batch every DELAY seconds.
  */
-public class BatchedUpdateWrapper
-		implements CheckBeforeUpdateView, GTimerListener {
+public class BatchedUpdateWrapper implements CheckBeforeUpdateView, GTimerListener {
 
 	private static final int DELAY = 80;
 
@@ -34,8 +49,7 @@ public class BatchedUpdateWrapper
 	 * @param wrappedView view to wrap
 	 * @param factory factory
 	 */
-	public BatchedUpdateWrapper(WrappableView wrappedView,
-			UtilFactory factory) {
+	public BatchedUpdateWrapper(WrappableView wrappedView, UtilFactory factory) {
 		this.wrappedView = wrappedView;
 		wrappedView.setIsWrapped(true);
 		this.reflection = factory.newReflection(View.class);
@@ -45,12 +59,12 @@ public class BatchedUpdateWrapper
 	}
 
 	private void addEvent(String name) {
-		addEvent(name, new Object[] {});
+		addEvent(name, new Object[0]);
 	}
 
 	private void addEvent(String name, GeoElement parameter) {
 		if (show(parameter)) {
-			Event event = new Event(name, new Object[] { parameter });
+			Event event = new Event(name, new Object[] {parameter});
 			addEvent(event);
 		}
 	}
@@ -90,7 +104,7 @@ public class BatchedUpdateWrapper
 	@Override
 	public void updateVisualStyle(GeoElement geo, GProperty prop) {
 		if (needsUpdateVisualstyle(prop) && show(geo)) {
-			addEvent("updateVisualStyle", new Object[] { geo, prop });
+			addEvent("updateVisualStyle", new Object[] {geo, prop});
 		}
 	}
 
@@ -152,7 +166,7 @@ public class BatchedUpdateWrapper
 
 	@Override
 	public void updatePreviewFromInputBar(GeoElement[] geos) {
-		addEvent("updatePreviewFromInputBar", new Object[] { geos });
+		addEvent("updatePreviewFromInputBar", new Object[] {geos});
 	}
 
 	@Override

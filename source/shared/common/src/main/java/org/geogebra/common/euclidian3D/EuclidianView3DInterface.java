@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian3D;
 
 import org.geogebra.common.euclidian.EuclidianViewInterfaceCommon;
@@ -7,36 +23,54 @@ import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.matrix.CoordMatrix4x4;
 import org.geogebra.common.kernel.matrix.Coords;
 import org.geogebra.common.main.settings.EuclidianSettings3D;
+import org.jspecify.annotations.NonNull;
 
 /**
- * 
+ * Interface for 3D view.
  * @author mathieu
- *
- *         Interface for 3D view
  */
 public interface EuclidianView3DInterface extends EuclidianViewInterfaceCommon {
 	/** default scene x-coord of origin */
-	public static final double XZERO_SCENE_STANDARD = 0;
+	double XZERO_SCENE_STANDARD = 0;
 	/** default scene y-coord of origin */
-	public static final double YZERO_SCENE_STANDARD = 0;
+	double YZERO_SCENE_STANDARD = 0;
 	/** default scene z-coord of origin */
-	public static final double ZZERO_SCENE_STANDARD = -1.5;
-	public final static double ANGLE_ROT_OZ = -60;
-	public final static double ANGLE_ROT_XOY = 20;
+	double ZZERO_SCENE_STANDARD = -1.5;
 
-    final static public int PROJECTION_ORTHOGRAPHIC = 0;
-    final static public int PROJECTION_PERSPECTIVE = 1;
-    final static public int PROJECTION_GLASSES = 2;
-    final static public int PROJECTION_OBLIQUE = 3;
+	double ANGLE_ROT_OZ = -60;
+	double ANGLE_ROT_XOY = 20;
+
+	int PROJECTION_ORTHOGRAPHIC = 0;
+	int PROJECTION_PERSPECTIVE = 1;
+	int PROJECTION_GLASSES = 2;
+	int PROJECTION_OBLIQUE = 3;
+
+	/** Listener notified when the 3D view state changes in a way that may affect settings views. */
+	interface Listener {
+		/** Called after the AR ratio visibility has changed. */
+		void arRatioVisibilityUpdated();
+	}
+
+	/**
+	 * Registers a listener for 3D view state changes.
+	 * @param listener listener to add
+	 */
+	void addListener(@NonNull Listener listener);
+
+	/**
+	 * Unregisters a 3D view state listener.
+	 * @param listener listener to remove
+	 */
+	void removeListener(@NonNull Listener listener);
 
 	/**
 	 * rotate to default
 	 */
-	public void setDefaultRotAnimation();
+	void setDefaultRotAnimation();
 
 	/**
 	 * start a rotation animation to be in the vector direction
-	 * 
+	 *
 	 * @param vn
 	 *            vector direction
 	 * @param checkSameValues
@@ -44,12 +78,11 @@ public interface EuclidianView3DInterface extends EuclidianViewInterfaceCommon {
 	 * @param animated
 	 *            say if rotation will be animated
 	 */
-	public void setRotAnimation(Coords vn, boolean checkSameValues,
-			boolean animated);
+	void setRotAnimation(Coords vn, boolean checkSameValues, boolean animated);
 
 	/**
 	 * start a rotation animation to set angle around Oz axis
-	 * 
+	 *
 	 * @param rotOz
 	 *            angle around Oz
 	 * @param checkSameValues
@@ -57,98 +90,97 @@ public interface EuclidianView3DInterface extends EuclidianViewInterfaceCommon {
 	 * @param animated
 	 *            say if rotation will be animated
 	 */
-	public void setRotAnimation(double rotOz, boolean checkSameValues,
-			boolean animated);
+	void setRotAnimation(double rotOz, boolean checkSameValues, boolean animated);
 
 	/**
 	 * start a rotation animation to be in the vector direction, shortest way
-	 * 
+	 *
 	 * @param v
 	 *            vector direction
 	 * @param animated
 	 *            say if rotation will be animated
 	 */
-	public void setClosestRotAnimation(Coords v, boolean animated);
+	void setClosestRotAnimation(Coords v, boolean animated);
 
 	/**
 	 * @return Returns the zmin.
 	 */
-	public double getZmin();
+	double getZmin();
 
 	/**
 	 * @return Returns the zmax.
 	 */
-	public double getZmax();
+	double getZmax();
 
 	/**
 	 * sets the use of the clipping cube
-	 * 
+	 *
 	 * @param flag
 	 *            flag
 	 */
-	public void setUseClippingCube(boolean flag);
+	void setUseClippingCube(boolean flag);
 
 	/**
 	 * sets if the clipping cube is shown
-	 * 
+	 *
 	 * @param flag
 	 *            flag
 	 */
-	public void setShowClippingCube(boolean flag);
+	void setShowClippingCube(boolean flag);
 
 	/**
 	 * sets the reduction of the clipping box
-	 * 
+	 *
 	 * @param value
 	 *            reduction
 	 */
-	public void setClippingReduction(int value);
+	void setClippingReduction(int value);
 
 	/**
-	 * 
+	 *
 	 * @param projection
 	 *            projection type
 	 */
-	public void setProjection(int projection);
+	void setProjection(int projection);
 
 	/**
 	 * sets the visibility of xOy plane grid
-	 * 
+	 *
 	 * @param flag
 	 *            flag
 	 * @return whether it changed
 	 */
-	public boolean setShowGrid(boolean flag);
+	boolean setShowGrid(boolean flag);
 
 	/**
 	 * sets the visibility of xOy plane
-	 * 
+	 *
 	 * @param flag
 	 *            flag
 	 */
-	public void setShowPlane(boolean flag);
+	void setShowPlane(boolean flag);
 
 	/**
 	 * sets the visibility of xOy plane plate
-	 * 
+	 *
 	 * @param flag
 	 *            flag
 	 */
-	public void setShowPlate(boolean flag);
+	void setShowPlate(boolean flag);
 
 	/**
 	 * sets the rotation matrix
-	 * 
+	 *
 	 * @param theta
 	 *            argument
 	 * @param phi
 	 *            alt angle
 	 */
-	public void setRotXYinDegrees(double theta, double phi);
+	void setRotXYinDegrees(double theta, double phi);
 
 	/**
 	 * sets the origin
-	 * 
+	 *
 	 * @param x
 	 *            x coord
 	 * @param y
@@ -156,47 +188,47 @@ public interface EuclidianView3DInterface extends EuclidianViewInterfaceCommon {
 	 * @param z
 	 *            z coord
 	 */
-	public void setZeroFromXML(double x, double y, double z);
+	void setZeroFromXML(double x, double y, double z);
 
 	/**
 	 * set Matrix for view3D
 	 */
-	public void updateMatrix();
+	void updateMatrix();
 
 	/**
 	 * tells the view it has changed
 	 */
-	public void setViewChanged();
+	void setViewChanged();
 
 	/**
 	 * tell the view that it has to be updated
-	 * 
+	 *
 	 */
-	public void setWaitForUpdate();
+	void setWaitForUpdate();
 
 	/**
 	 * set if y axis is up (and not z axis)
-	 * 
+	 *
 	 * @param flag
 	 *            flag
 	 */
-	public void setYAxisVertical(boolean flag);
+	void setYAxisVertical(boolean flag);
 
 	/**
 	 * @return screen z-coord of origin
 	 */
-	public double getZZero();
+	double getZZero();
 
 	/**
 	 * update all drawables
 	 */
-	public void updateAllDrawables();
+	void updateAllDrawables();
 
 	/**
-	 * 
+	 *
 	 * @return eye position
 	 */
-	public Coords getEyePosition();
+	Coords getEyePosition();
 
 	/**
 	 * @param boundsMin2
@@ -204,42 +236,42 @@ public interface EuclidianView3DInterface extends EuclidianViewInterfaceCommon {
 	 * @param boundsMax2
 	 *            real world view max
 	 */
-	public void zoomRW(Coords boundsMin2, Coords boundsMax2);
-	
+	void zoomRW(Coords boundsMin2, Coords boundsMax2);
+
 	/**
 	 * set export will be done on next 3D frame
-	 * 
+	 *
 	 * @param format - export format
 	 * @param showDialog - true if export dialog should be shown, export directly otherwise
 	 */
 	void setExport3D(Format format, boolean showDialog);
-	
+
 	/**
 	 * zoom y &amp; z axes ratio regarding x axis
-	 * 
+	 *
 	 * @param zoomFactorY
 	 *            y:x ratio
 	 * @param zoomFactorZ
 	 *            z:x ratio
 	 */
-	public void zoomAxesRatio(double zoomFactorY, double zoomFactorZ);
+	void zoomAxesRatio(double zoomFactorY, double zoomFactorZ);
 
 	/**
 	 * Keeps the zoom, but makes sure the bound objects are free. This is necessary
 	 * in File &gt; New because there might have been dynamic xmin bounds
 	 */
-	public void resetXYMinMaxObjects();
+	void resetXYMinMaxObjects();
 
 	/**
 	 * set the settings to standard view position, orientation, scaling
 	 */
-	public void setSettingsToStandardView();
+	void setSettingsToStandardView();
 
 	/**
-	 * 
+	 *
 	 * @return renderer
 	 */
-	public Renderer getRenderer();
+	Renderer getRenderer();
 
 	/**
 	 * @param xZero x-coordinate of the origin
@@ -260,7 +292,7 @@ public interface EuclidianView3DInterface extends EuclidianViewInterfaceCommon {
 	 * @param da
 	 *            angle change
 	 */
-	public void shiftRotAboutZ(double da);
+	void shiftRotAboutZ(double da);
 
 	/**
 	 * @param db
@@ -271,7 +303,7 @@ public interface EuclidianView3DInterface extends EuclidianViewInterfaceCommon {
 	/**
 	 * @return angle around Oz
 	 */
-	public double getAngleA();
+	double getAngleA();
 
 	/**
 	 * @return xOy plane tilting
@@ -280,26 +312,26 @@ public interface EuclidianView3DInterface extends EuclidianViewInterfaceCommon {
 
 	/**
 	 * show focus on geo (if something needs to be done)
-	 * 
+	 *
 	 * @param geo
 	 *            geo
 	 */
-	public void showFocusOn(GeoElement geo);
+	void showFocusOn(GeoElement geo);
 
 	/**
 	 * set 3D cursor visibility
-	 * 
+	 *
 	 * @param flag
 	 *            flag
 	 */
-	public void setCursor3DVisible(boolean flag);
+	void setCursor3DVisible(boolean flag);
 
 	/**
 	 * return the matrix : screen coords -&gt; scene coords.
 	 *
 	 * @return the matrix : screen coords -&gt; scene coords.
 	 */
-	public CoordMatrix4x4 getToSceneMatrix();
+	CoordMatrix4x4 getToSceneMatrix();
 
 	/**
 	 * @return screen : real world z-coord ratio

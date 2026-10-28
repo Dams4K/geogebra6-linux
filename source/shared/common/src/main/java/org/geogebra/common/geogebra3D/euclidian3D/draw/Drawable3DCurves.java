@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
@@ -9,15 +25,14 @@ import org.geogebra.common.kernel.geos.GeoElement;
 /**
  * for "solid" drawables, like lines, segments, etc. these are drawable that are
  * not to become transparent
- * 
+ *
  * @author ggb3D
  */
-
 public abstract class Drawable3DCurves extends Drawable3D {
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param a_view3d
 	 *            view
 	 * @param a_geo
@@ -30,7 +45,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 
 	/**
 	 * constructor for previewables
-	 * 
+	 *
 	 * @param a_view3d
 	 *            3D view
 	 */
@@ -46,13 +61,11 @@ public abstract class Drawable3DCurves extends Drawable3D {
 
 			setHighlightingColor();
 
-			renderer.getTextures()
-					.setDashFromLineType(getGeoElement().getLineType());
+			renderer.getTextures().setDashFromLineType(getGeoElement().getLineType());
 			drawGeometry(renderer);
 		}
 
 		drawTracesOutline(renderer, false);
-
 	}
 
 	// ///////////////////////////////////////
@@ -107,19 +120,20 @@ public abstract class Drawable3DCurves extends Drawable3D {
 	}
 
 	@Override
-    public void setWaitForUpdateVisualStyle(GProperty prop) {
-        if (prop == GProperty.COLOR || prop == GProperty.HIGHLIGHT) {
-            setWaitForUpdateColor();
-        } else if (prop == GProperty.VISIBLE) {
-            setWaitForUpdateVisibility();
-        } else {
-            setWaitForUpdateOtherStyles(prop);
-        }
-    }
+	public void setWaitForUpdateVisualStyle(GProperty prop) {
+		if (prop == GProperty.COLOR || prop == GProperty.HIGHLIGHT) {
+			setWaitForUpdateColor();
+		} else if (prop == GProperty.VISIBLE) {
+			setWaitForUpdateVisibility();
+		} else {
+			setWaitForUpdateOtherStyles(prop);
+		}
+	}
 
 	private void setWaitForUpdateOtherStyles(GProperty prop) {
 		super.setWaitForUpdateVisualStyle(prop);
-		if (prop == GProperty.ANGLE_STYLE || prop == GProperty.LINE_STYLE
+		if (prop == GProperty.ANGLE_STYLE
+				|| prop == GProperty.LINE_STYLE
 				|| prop == GProperty.COMBINED
 				|| prop == GProperty.POINT_STYLE) {
 			// also update for e.g. line width
@@ -185,17 +199,16 @@ public abstract class Drawable3DCurves extends Drawable3D {
 	}
 
 	@Override
-    protected void updateForViewNotVisible() {
-        if (getView3D().viewChangedByZoom()) {
-            // will be updated if visible again
-            setWaitForUpdate();
-        }
-        updateGeometriesVisibility();
+	protected void updateForViewNotVisible() {
+		if (getView3D().viewChangedByZoom()) {
+			// will be updated if visible again
+			setWaitForUpdate();
+		}
+		updateGeometriesVisibility();
 	}
 
 	@Override
 	public boolean shouldBePacked() {
 		return true;
 	}
-
 }

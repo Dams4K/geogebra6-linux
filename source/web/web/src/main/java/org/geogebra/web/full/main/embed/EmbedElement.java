@@ -1,9 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.main.embed;
 
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.plugin.ActionType;
+import org.geogebra.web.awt.MyImageW;
 import org.geogebra.web.full.css.ToolbarSvgResourcesSync;
-import org.geogebra.web.html5.main.MyImageW;
 import org.geogebra.web.html5.util.ImageManagerW;
 import org.geogebra.web.resources.SVGResource;
 import org.gwtproject.dom.client.Element;
@@ -40,7 +56,7 @@ public class EmbedElement {
 
 	/**
 	 * Gets the state if the embed supports it and provides synchronous API.
-	 * 
+	 *
 	 * @return JSON representation of state or null
 	 */
 	public String getContentSync() {
@@ -75,7 +91,7 @@ public class EmbedElement {
 
 	/**
 	 * Execute an action on the embedded element
-	 * 
+	 *
 	 * @param action
 	 *            action type
 	 */
@@ -114,8 +130,7 @@ public class EmbedElement {
 	 */
 	public void drawPreview(GGraphics2D g2, int width, int height, double angle) {
 		SVGResource resource = ToolbarSvgResourcesSync.INSTANCE.mode_extension();
-		MyImageW internalImage = new MyImageW(ImageManagerW.getInternalImage(
-				resource), true);
+		MyImageW internalImage = new MyImageW(ImageManagerW.getInternalImage(resource), true);
 		double s = Math.min(width, height);
 		int iconLeft = (int) Math.max((width - s) / 2, 0);
 		int iconTop = (int) Math.max((height - s) / 2, 0);

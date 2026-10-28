@@ -1,19 +1,17 @@
-/* 
- GeoGebra - Dynamic Mathematics for Everyone
- http://www.geogebra.org
-
- This file is part of GeoGebra.
-
- This program is free software; you can redistribute it and/or modify it 
- under the terms of the GNU General Public License as published by 
- the Free Software Foundation.
-
- */
-
-/**
- * GeoGebra Application
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * @author Markus Hohenwarter
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.desktop.gui.app;
@@ -82,14 +80,20 @@ import org.geogebra.desktop.util.FrameCollector;
 import org.geogebra.desktop.util.HttpRequestD;
 import org.geogebra.desktop.util.LoggerD;
 import org.geogebra.desktop.util.UtilD;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 /**
  * GeoGebra's main window.
  */
 public class GeoGebraFrame extends JFrame
 		implements WindowFocusListener, Printable, ComponentListener {
+	public static final String JARS_UPDATE_DIR =
+			"\\GeoGebra " + GeoGebraConstants.SHORT_VERSION_STRING + "\\jars\\update";
+	/** URL of GeoGebra jars */
+	public static final String ONLINE_ARCHIVE_BASE =
+			"https://jars.geogebra.org/webstart/" + GeoGebraConstants.SHORT_VERSION_STRING + "/";
+	/** URL of GeoGebra jars, zipped */
+	public static final String GEOGEBRA_ONLINE_JARS_ZIP = ONLINE_ARCHIVE_BASE + "geogebra-jars.zip";
 
 	private static final long serialVersionUID = 1L;
 
@@ -137,6 +141,9 @@ public class GeoGebraFrame extends JFrame
 		return app;
 	}
 
+	/**
+	 * @param app application
+	 */
 	public void setApplication(AppD app) {
 		this.app = app;
 	}
@@ -165,8 +172,7 @@ public class GeoGebraFrame extends JFrame
 		// fix for Mac OS bug: close open popups manually
 		Window[] w = this.getOwnedWindows();
 		for (Window win : w) {
-			if (win.getClass().getName()
-					.equals("javax.swing.Popup$HeavyWeightWindow")) {
+			if (win.getClass().getName().equals("javax.swing.Popup$HeavyWeightWindow")) {
 				win.setVisible(false);
 			}
 		}
@@ -246,7 +252,8 @@ public class GeoGebraFrame extends JFrame
 	}
 
 	String getPreferredTitle() {
-		return app.getCurrentFile() == null ? "GeoGebra Classic 5"
+		return app.getCurrentFile() == null
+				? "GeoGebra Classic 5"
 				: app.getCurrentFile().getName();
 	}
 
@@ -271,20 +278,18 @@ public class GeoGebraFrame extends JFrame
 
 	/**
 	 * Main method to create initial GeoGebra window.
-	 * 
+	 *
 	 * @param args
 	 *            command line arguments
 	 * @param wnd initial window
 	 */
-	public static synchronized void init(CommandLineArguments args,
-			GeoGebraFrame wnd) {
+	public static synchronized void init(CommandLineArguments args, GeoGebraFrame wnd) {
 		initLogger(args);
 		// Fixing #3772
 		if (AppD.WINDOWS) {
 			try {
 				AppId.setCurrentProcessExplicitAppUserModelID("geogebra.AppId");
-				Log.debug("AppID = "
-						+ AppId.getCurrentProcessExplicitAppUserModelID());
+				Log.debug("AppID = " + AppId.getCurrentProcessExplicitAppUserModelID());
 			} catch (Throwable t) {
 				Log.error("problem setting AppId: " + t.getMessage());
 			}
@@ -317,7 +322,6 @@ public class GeoGebraFrame extends JFrame
 
 		// create first window and show it
 		createNewWindow(args, wnd);
-
 	}
 
 	private static void initLogger(CommandLineArguments args) {
@@ -347,7 +351,7 @@ public class GeoGebraFrame extends JFrame
 
 	/**
 	 * Returns the active GeoGebra window.
-	 * 
+	 *
 	 * @return the active GeoGebra window.
 	 */
 	public static synchronized GeoGebraFrame getActiveInstance() {
@@ -385,14 +389,13 @@ public class GeoGebraFrame extends JFrame
 	 * @param args command line arguments
 	 * @return new window
 	 */
-	public static synchronized GeoGebraFrame createNewWindow(
-			CommandLineArguments args) {
+	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args) {
 		return createNewWindow(args, new GeoGebraFrame());
 	}
 
 	/**
 	 * return the application running geogebra
-	 * 
+	 *
 	 * @param args command line args
 	 * @param frame frame
 	 * @return the application running geogebra
@@ -407,8 +410,7 @@ public class GeoGebraFrame extends JFrame
 	 * @param macro macro
 	 * @return frame of the same type as this
 	 */
-	public synchronized GeoGebraFrame createNewWindow(CommandLineArguments args,
-			Macro macro) {
+	public synchronized GeoGebraFrame createNewWindow(CommandLineArguments args, Macro macro) {
 		return createNewWindow(args, copy());
 	}
 
@@ -418,7 +420,7 @@ public class GeoGebraFrame extends JFrame
 
 	/**
 	 * Creates new GeoGebra window
-	 * 
+	 *
 	 * @param args
 	 *            Command line arguments
 	 * @param wnd frame
@@ -439,8 +441,8 @@ public class GeoGebraFrame extends JFrame
 		wnd.app = app;
 		wnd.getContentPane().add(app.buildApplicationPanel());
 		dropTargetListener = new FileDropTargetListener(app);
-		wnd.setGlassPane(((GuiManagerD) app.getGuiManager()).getLayout()
-				.getDockManager().getGlassPane());
+		wnd.setGlassPane(
+				((GuiManagerD) app.getGuiManager()).getLayout().getDockManager().getGlassPane());
 		wnd.setDropTarget(new DropTarget(wnd, dropTargetListener));
 		wnd.addWindowFocusListener(wnd);
 		updateAllTitles();
@@ -448,24 +450,19 @@ public class GeoGebraFrame extends JFrame
 		// handle application args visible
 		if (args != null) {
 			if (args.containsArg("showAlgebraWindow")) {
-				boolean showAlgebraWindow = args
-						.getBooleanValue("showAlgebraWindow", true);
-				app.getGuiManager().setShowView(showAlgebraWindow,
-						App.VIEW_ALGEBRA);
+				boolean showAlgebraWindow = args.getBooleanValue("showAlgebraWindow", true);
+				app.getGuiManager().setShowView(showAlgebraWindow, App.VIEW_ALGEBRA);
 			}
 
 			if (args.containsArg("showSpreadsheet")) {
-				boolean showSpreadsheet = args
-						.getBooleanValue("showSpreadsheet", true);
-				app.getGuiManager().setShowView(showSpreadsheet,
-						App.VIEW_SPREADSHEET);
+				boolean showSpreadsheet = args.getBooleanValue("showSpreadsheet", true);
+				app.getGuiManager().setShowView(showSpreadsheet, App.VIEW_SPREADSHEET);
 			}
 
 			if (args.containsArg("showCAS") && app.supportsView(App.VIEW_CAS)) {
 				boolean showCAS = args.getBooleanValue("showCAS", true);
 				app.getGuiManager().setShowView(showCAS, App.VIEW_CAS);
 			}
-
 		}
 
 		app.updateMenubar();
@@ -475,7 +472,7 @@ public class GeoGebraFrame extends JFrame
 		app.getScriptManager().ggbOnInit();
 
 		// init some things in the background
-		Thread runner = GeoGebraFrame.createAppThread(app);
+		Thread runner = new Thread(GeoGebraFrame.createStartupTask(app));
 		runner.start();
 
 		checkCommandLineExport(app);
@@ -493,15 +490,15 @@ public class GeoGebraFrame extends JFrame
 		return wnd;
 	}
 
-	private static AppThread createAppThread(AppD app) {
-		return new AppThread(app);
+	private static StartupTask createStartupTask(AppD app) {
+		return new StartupTask(app);
 	}
 
-	private static class AppThread extends Thread {
+	private static final class StartupTask implements Runnable {
 
 		AppD app;
 
-		public AppThread(AppD app) {
+		private StartupTask(AppD app) {
 			this.app = app;
 		}
 
@@ -509,8 +506,7 @@ public class GeoGebraFrame extends JFrame
 		public void run() {
 
 			// init file chooser
-			((DialogManagerD) this.app.getDialogManager())
-					.initFileChooser();
+			((DialogManagerD) this.app.getDialogManager()).initFileChooser();
 			// check if newer version is available
 			// must be done last as internet may not be available
 			checkVersion();
@@ -519,45 +515,41 @@ public class GeoGebraFrame extends JFrame
 		/**
 		 * Downloads newest GeoGebra .jar files and puts them into the user's
 		 * AppData directory. Also downloads license.txt.
-		 * 
+		 *
 		 * @throws IOException for I/O errors
 		 */
 		private static void downloadGeoGebraJars() throws IOException {
-			ZipInputStream zis = null;
 			try {
 				// Creating working directory:
-				String updateDir = System.getenv("APPDATA")
-						+ GeoGebraConstants.GEOGEBRA_JARS_UPDATE_DIR;
+				String updateDir = System.getenv("APPDATA") + JARS_UPDATE_DIR;
 				Log.debug("Creating " + updateDir);
 				UtilD.mkdirs(new File(updateDir));
 
 				// Downloading newest .jar files in a .zip:
-				String filename = updateDir + File.separator
-						+ "geogebra-jars.zip";
+				String filename = updateDir + File.separator + "geogebra-jars.zip";
 				File dest = new File(filename);
-				URL url = new URL(GeoGebraConstants.GEOGEBRA_ONLINE_JARS_ZIP);
-				Log.debug("Downloading "
-						+ GeoGebraConstants.GEOGEBRA_ONLINE_JARS_ZIP);
+				URL url = new URL(GEOGEBRA_ONLINE_JARS_ZIP);
+				Log.debug("Downloading " + GEOGEBRA_ONLINE_JARS_ZIP);
 				DownloadManager.copyURLToFile(url, dest);
 
 				// Unzipping:
 				// Borrowed from
 				// http://www.concretepage.com/java/read_zip_file_java.php:
-				InputStream is = new FileInputStream(filename);
-				zis = new ZipInputStream(is);
-				ZipEntry ze;
-				byte[] buff = new byte[1024];
-				while ((ze = zis.getNextEntry()) != null) {
-					// get file name
-					String name = ze.getName();
-					try (FileOutputStream fos = new FileOutputStream(
-							updateDir + File.separator + name)) {
-						Log.debug("Extracting " + name);
+				try (InputStream is = new FileInputStream(filename);
+						ZipInputStream zis = new ZipInputStream(is)) {
+					ZipEntry ze;
+					byte[] buff = new byte[1024];
+					while ((ze = zis.getNextEntry()) != null) {
+						// get file name
+						String name = ze.getName();
+						try (FileOutputStream fos = new FileOutputStream(updateDir + File.separator + name)) {
+							Log.debug("Extracting " + name);
 
-						int l = 0;
-						// write buffer to file
-						while ((l = zis.read(buff)) > 0) {
-							fos.write(buff, 0, l);
+							int l;
+							// write buffer to file
+							while ((l = zis.read(buff)) > 0) {
+								fos.write(buff, 0, l);
+							}
 						}
 					}
 				}
@@ -565,10 +557,6 @@ public class GeoGebraFrame extends JFrame
 
 			} catch (RuntimeException e) {
 				Log.error("Unsuccessful update");
-			} finally {
-				if (zis != null) {
-					zis.close();
-				}
 			}
 		}
 
@@ -584,8 +572,7 @@ public class GeoGebraFrame extends JFrame
 			}
 
 			String lastVersionCheck = GeoGebraPreferencesD.getPref()
-					.loadPreference(GeoGebraPreferencesD.VERSION_LAST_CHECK,
-							"");
+					.loadPreference(GeoGebraPreferencesD.VERSION_LAST_CHECK, "");
 			long nowL = new Date().getTime();
 			String nowLS = Long.toString(nowL);
 
@@ -594,24 +581,21 @@ public class GeoGebraFrame extends JFrame
 			if (lastVersionCheck == null || "".equals(lastVersionCheck)) {
 				checkNeeded = true;
 				Log.debug("major version check needed: no check was done yet");
-			}
-
-			else {
+			} else {
 				long lastVersionCheckL = Long.parseLong(lastVersionCheck);
-				if (lastVersionCheckL
-						+ 1000L * 60 * 60 * 24 * VERSION_CHECK_DAYS < nowL) {
+				if (lastVersionCheckL + 1000L * 60 * 60 * 24 * VERSION_CHECK_DAYS < nowL) {
 					checkNeeded = true;
-					Log.debug("major version check needed: lastVersionCheckL="
-							+ lastVersionCheckL + " nowL=" + nowL);
+					Log.debug("major version check needed: lastVersionCheckL=" + lastVersionCheckL + " nowL="
+							+ nowL);
 				} else {
-					Log.debug("no major version check needed: lastVersionCheck="
-							+ lastVersionCheckL + " nowL=" + nowL);
+					Log.debug("no major version check needed: lastVersionCheck=" + lastVersionCheckL
+							+ " nowL=" + nowL);
 				}
 			}
 
 			String myVersion = GeoGebraConstants.VERSION_STRING;
 			HttpRequestD httpr = new HttpRequestD();
-			String newestVersion = null;
+			String newestVersion;
 			StringBuilder sb = new StringBuilder();
 			Long newestVersionL;
 			Long currentVersionL = versionToLong(myVersion);
@@ -636,8 +620,7 @@ public class GeoGebraFrame extends JFrame
 					sb.append("&java=");
 					AppD.appendJavaVersion(sb);
 
-					newestVersion = httpr
-							.sendRequestGetResponseSync(sb.toString());
+					newestVersion = httpr.sendRequestGetResponseSync(sb.toString());
 
 					if (newestVersion == null) {
 						// probably not online
@@ -647,13 +630,12 @@ public class GeoGebraFrame extends JFrame
 					newestVersion = newestVersion.replaceAll("-", ".");
 					newestVersionL = versionToLong(newestVersion);
 
-					Log.debug("current=" + currentVersionL + " newest="
-							+ newestVersionL);
+					Log.debug("current=" + currentVersionL + " newest=" + newestVersionL);
 					if (currentVersionL < newestVersionL) {
 						// store date of current check only when notification
 						// has been shown:
-						GeoGebraPreferencesD.getPref().savePreference(
-								GeoGebraPreferencesD.VERSION_LAST_CHECK, nowLS);
+						GeoGebraPreferencesD.getPref()
+								.savePreference(GeoGebraPreferencesD.VERSION_LAST_CHECK, nowLS);
 						showDownloadDialog(newestVersion);
 					}
 				} // checkneeded
@@ -695,45 +677,45 @@ public class GeoGebraFrame extends JFrame
 				if (AppD.MAC_OS) {
 					long lastShownNotificationVersion =
 							GeoGebraPreferencesD.getLastShownNotificationVersion();
-					if (currentVersionL < newestVersionL
-							&& lastShownNotificationVersion < newestVersionL) {
+					if (currentVersionL < newestVersionL && lastShownNotificationVersion < newestVersionL) {
 						showDownloadDialog(newestVersion);
 					}
 					GeoGebraPreferencesD.setLastVersionNotification(newestVersionL);
 				}
 
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				Log.debug(ex);
 			}
-
 		}
 
 		private void showDownloadDialog(String newestVersion) {
 			Localization loc = app.getLocalization();
-			String q = loc.getMenu("NewerVersionA").replaceAll("%0",
-					newestVersion);
+			String q = loc.getMenu("NewerVersionA").replaceAll("%0", newestVersion);
 			String dl = loc.getMenu("GoToDownloadPage");
-			Object[] options = { loc.getMenu("Cancel"), dl };
+			Object[] options = {loc.getMenu("Cancel"), dl};
 			Component comp = app.getMainComponent();
-			int returnVal = JOptionPane.showOptionDialog(comp, q,
-					dl, JOptionPane.DEFAULT_OPTION,
-					JOptionPane.WARNING_MESSAGE, null, options,
+			int returnVal = JOptionPane.showOptionDialog(
+					comp,
+					q,
+					dl,
+					JOptionPane.DEFAULT_OPTION,
+					JOptionPane.WARNING_MESSAGE,
+					null,
+					options,
 					options[0]);
 			if (returnVal == 1) {
-				app.getGuiManager().showURLinBrowser(
-						GeoGebraConstants.INSTALLERS_URL);
+				app.getGuiManager().showURLinBrowser(GeoGebraConstants.INSTALLERS_URL);
 			}
 		}
 	}
 
 	/**
 	 * Converts a version string to a long value (e.g. 4.1.2.3 to 4001002003)
-	 * 
+	 *
 	 * @param version
 	 *            string
 	 * @return long value
 	 */
-
 	static Long versionToLong(String version) {
 		String[] subversions = version.split("\\.");
 		Long n = 0L;
@@ -745,6 +727,9 @@ public class GeoGebraFrame extends JFrame
 		return n;
 	}
 
+	/**
+	 * @return number of open instances
+	 */
 	public static int getInstanceCount() {
 		return instances.size();
 	}
@@ -767,7 +752,7 @@ public class GeoGebraFrame extends JFrame
 	/**
 	 * Checks all opened GeoGebra instances if their current file is the given
 	 * file.
-	 * 
+	 *
 	 * @param file ggb file
 	 * @return GeoGebra instance with file open or null
 	 */
@@ -790,18 +775,21 @@ public class GeoGebraFrame extends JFrame
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.debug(e);
 		}
 		return null;
 	}
 
+	/**
+	 * @return whether the frame is in icnofied/minimized state
+	 */
 	public boolean isIconified() {
 		return getExtendedState() == Frame.ICONIFIED;
 	}
 
 	/**
 	 * Returns the dropTarget listener for this frame.
-	 * 
+	 *
 	 * @return the dropTarget listener for this frame.
 	 */
 	public FileDropTargetListener getDropTargetListener() {
@@ -809,8 +797,7 @@ public class GeoGebraFrame extends JFrame
 	}
 
 	@Override
-	public int print(Graphics g, PageFormat pf, int pageIndex)
-			throws PrinterException {
+	public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterException {
 
 		if (pageIndex > 0) {
 			return NO_SUCH_PAGE;
@@ -827,20 +814,17 @@ public class GeoGebraFrame extends JFrame
 		this.printAll(g);
 
 		return PAGE_EXISTS;
-
 	}
 
 	private static void checkCommandLineExport(final AppD app) {
 
 		final CommandLineArguments args = app.getCommandLineArgs();
 
-		if (args != null && args.containsArg("exportAnimation")
-				&& args.containsArg("slider")) {
+		if (args != null && args.containsArg("exportAnimation") && args.containsArg("slider")) {
 
 			String dpiStr = args.getStringValue("dpi");
 
-			final int dpi = Integer
-					.parseInt("".equals(dpiStr) ? "300" : dpiStr);
+			final int dpi = Integer.parseInt("".equals(dpiStr) ? "300" : dpiStr);
 
 			final EuclidianView ev = app.getActiveEuclidianView();
 			final String filename0 = args.getStringValue("exportAnimation");
@@ -849,10 +833,8 @@ public class GeoGebraFrame extends JFrame
 
 			final String filename = StringUtil.removeFileExtension(filename0);
 
-			GeoElement export1 = app.getKernel()
-					.lookupLabel(EuclidianView.EXPORT1);
-			GeoElement export2 = app.getKernel()
-					.lookupLabel(EuclidianView.EXPORT2);
+			GeoElement export1 = app.getKernel().lookupLabel(EuclidianView.EXPORT1);
+			GeoElement export2 = app.getKernel().lookupLabel(EuclidianView.EXPORT2);
 
 			if ("gif".equals(extension) && export1 != null && export2 != null) {
 				// maximize window
@@ -860,17 +842,14 @@ public class GeoGebraFrame extends JFrame
 				// needed for Animated GIF export from GeoGebraWeb
 				// which runs this server-side
 				Frame frame = app.getFrame();
-				frame.setExtendedState(
-						frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
+				frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
 			}
 
 			SwingUtilities.invokeLater(() -> {
-
 				String sliderName = args.getStringValue("slider");
 				GeoElement slider = app.getKernel().lookupLabel(sliderName);
 
-				if (slider == null || !slider.isGeoNumeric()
-						|| !((GeoNumeric) slider).isSlider()) {
+				if (slider == null || !slider.isGeoNumeric() || !((GeoNumeric) slider).isSlider()) {
 					Log.error(sliderName + " is not a slider");
 					AppD.exit(0);
 				}
@@ -888,39 +867,39 @@ public class GeoGebraFrame extends JFrame
 				int n;
 
 				switch (type) {
-				case GeoElement.ANIMATION_DECREASING:
-					step = -num.getAnimationStep();
-					n = (int) ((max - min) / -step);
-					if (DoubleUtil.isZero(((max - min) / -step) - n)) {
-						n++;
-					}
-					if (n == 0) {
-						n = 1;
-					}
-					val = max;
-					break;
-				case GeoElement.ANIMATION_OSCILLATING:
-					step = num.getAnimationStep();
-					n = (int) ((max - min) / step) * 2;
-					if (DoubleUtil.isZero(((max - min) / step * 2) - n)) {
-						n++;
-					}
-					if (n == 0) {
-						n = 1;
-					}
-					val = min;
-					break;
-				default: // GeoElement.ANIMATION_INCREASING:
-					// GeoElement.ANIMATION_INCREASING_ONCE:
-					step = num.getAnimationStep();
-					n = (int) ((max - min) / step);
-					if (DoubleUtil.isZero(((max - min) / step) - n)) {
-						n++;
-					}
-					if (n == 0) {
-						n = 1;
-					}
-					val = min;
+					case GeoElement.ANIMATION_DECREASING:
+						step = -num.getAnimationStep();
+						n = (int) ((max - min) / -step);
+						if (DoubleUtil.isZero(((max - min) / -step) - n)) {
+							n++;
+						}
+						if (n == 0) {
+							n = 1;
+						}
+						val = max;
+						break;
+					case GeoElement.ANIMATION_OSCILLATING:
+						step = num.getAnimationStep();
+						n = (int) ((max - min) / step) * 2;
+						if (DoubleUtil.isZero(((max - min) / step * 2) - n)) {
+							n++;
+						}
+						if (n == 0) {
+							n = 1;
+						}
+						val = min;
+						break;
+					default: // GeoElement.ANIMATION_INCREASING:
+						// GeoElement.ANIMATION_INCREASING_ONCE:
+						step = num.getAnimationStep();
+						n = (int) ((max - min) / step);
+						if (DoubleUtil.isZero(((max - min) / step) - n)) {
+							n++;
+						}
+						if (n == 0) {
+							n = 1;
+						}
+						val = min;
 				}
 
 				if ("gif".equals(extension)) {
@@ -931,8 +910,7 @@ public class GeoGebraFrame extends JFrame
 					// time between frames in ms
 					String delayStr = args.getStringValue("delay");
 
-					final int delay = Integer.parseInt(
-							"".equals(delayStr) ? "10" : delayStr);
+					final int delay = Integer.parseInt("".equals(delayStr) ? "10" : delayStr);
 
 					final AnimatedGifEncoder gifEncoder = new AnimatedGifEncoder();
 					gifEncoder.setQuality(1);
@@ -949,18 +927,15 @@ public class GeoGebraFrame extends JFrame
 						@Override
 						public void addFrame(BufferedImage img) {
 							gifEncoder.addFrame(img);
-
 						}
 
 						@Override
 						public void finish() {
 							gifEncoder.finish();
-
 						}
 					};
 
-					app.exportAnimatedGIF(ev, collector, num, n, val, min,
-							max, step);
+					app.exportAnimatedGIF(ev, collector, num, n, val, min, max, step);
 
 					Log.debug("animated GIF exported successfully");
 
@@ -968,16 +943,13 @@ public class GeoGebraFrame extends JFrame
 				}
 
 				double printingScale = ev.getPrintingScale();
-				double exportScale = (printingScale * dpi) / 2.54
-						/ ev.getXscale();
+				double exportScale = printingScale * dpi / 2.54 / ev.getXscale();
 				boolean textAsShapes = true;
 				boolean transparent = true;
 				boolean useEMFplus = true;
 
-				int pixelWidth = (int) Math
-						.floor(ev.getExportWidth() * exportScale);
-				int pixelHeight = (int) Math
-						.floor(ev.getExportHeight() * exportScale);
+				int pixelWidth = (int) Math.floor(ev.getExportWidth() * exportScale);
+				int pixelHeight = (int) Math.floor(ev.getExportHeight() * exportScale);
 
 				for (int i = 0; i < n; i++) {
 
@@ -991,24 +963,29 @@ public class GeoGebraFrame extends JFrame
 
 					File file = new File(filename + i + "." + extension);
 
-					GraphicExportDialog.export(extension,
-							(EuclidianViewInterfaceD) ev, file, transparent,
-							dpi, exportScale, textAsShapes, useEMFplus,
-							pixelWidth, pixelHeight, app);
+					GraphicExportDialog.export(
+							extension,
+							(EuclidianViewInterfaceD) ev,
+							file,
+							transparent,
+							dpi,
+							exportScale,
+							textAsShapes,
+							useEMFplus,
+							pixelWidth,
+							pixelHeight,
+							app);
 
 					val += step;
 
-					if (val > max + Kernel.STANDARD_PRECISION
-							|| val < min - Kernel.STANDARD_PRECISION) {
+					if (val > max + Kernel.STANDARD_PRECISION || val < min - Kernel.STANDARD_PRECISION) {
 						val -= 2 * step;
 						step *= -1;
 					}
-
 				}
 
 				AppD.exit(0);
 			});
-
 		}
 
 		if (args != null && args.containsArg("export")) {
@@ -1016,17 +993,13 @@ public class GeoGebraFrame extends JFrame
 			final String extension = StringUtil.getFileExtensionStr(filename);
 			String dpiStr = args.getStringValue("dpi");
 
-			final int dpi = Integer
-					.parseInt("".equals(dpiStr) ? "300" : dpiStr);
+			final int dpi = Integer.parseInt("".equals(dpiStr) ? "300" : dpiStr);
 
-			Log.debug("attempting to export: " + filename + " at " + dpiStr
-					+ "dpi");
+			Log.debug("attempting to export: " + filename + " at " + dpiStr + "dpi");
 
 			// wait for EuclidianView etc to initialize before export
 			SwingUtilities.invokeLater(() -> {
-
-				EuclidianViewInterfaceD ev = (EuclidianViewInterfaceD) app
-						.getActiveEuclidianView();
+				EuclidianViewInterfaceD ev = (EuclidianViewInterfaceD) app.getActiveEuclidianView();
 				try {
 
 					boolean export3D = false;
@@ -1038,23 +1011,19 @@ public class GeoGebraFrame extends JFrame
 
 						if ("png".equals(extension)) {
 							Log.debug("exporting 3D View");
-							ev = (EuclidianView3DD) app
-									.getEuclidianView3D();
+							ev = (EuclidianView3DD) app.getEuclidianView3D();
 
 							export3D = true;
 						}
 					}
 
 					double printingScale = ev.getPrintingScale();
-					double exportScale = (printingScale * dpi) / 2.54
-							/ ev.getXscale();
+					double exportScale = printingScale * dpi / 2.54 / ev.getXscale();
 					final boolean transparent = true;
 					final boolean textAsShapes = true;
 					final boolean useEMFplus = true;
-					int pixelWidth = (int) Math
-							.floor(ev.getExportWidth() * exportScale);
-					int pixelHeight = (int) Math
-							.floor(ev.getExportHeight() * exportScale);
+					int pixelWidth = (int) Math.floor(ev.getExportWidth() * exportScale);
+					int pixelHeight = (int) Math.floor(ev.getExportHeight() * exportScale);
 
 					int dpi2 = dpi;
 
@@ -1065,50 +1034,59 @@ public class GeoGebraFrame extends JFrame
 						// ************************
 						double maxSize = Integer.parseInt(maxSizeStr);
 						Log.debug("desiredSize = " + maxSize);
-						double size = Math.max(ev.getExportWidth(),
-								ev.getExportHeight());
+						double size = Math.max(ev.getExportWidth(), ev.getExportHeight());
 						Log.debug("size = " + size);
 
-						exportScale = Math.min(
-								maxSize / (double) ev.getExportWidth(),
-								maxSize / (double) ev.getExportHeight());
+						exportScale = Math.min(maxSize / ev.getExportWidth(), maxSize / ev.getExportHeight());
 						Log.debug("exportScale = " + exportScale);
-						pixelWidth = (int) Math
-								.floor(ev.getExportWidth() * exportScale);
+						pixelWidth = (int) Math.floor(ev.getExportWidth() * exportScale);
 						Log.debug("pixelWidth = " + pixelWidth);
-						pixelHeight = (int) Math
-								.floor(ev.getExportHeight() * exportScale);
+						pixelHeight = (int) Math.floor(ev.getExportHeight() * exportScale);
 						Log.debug("pixelHeight = " + pixelHeight);
 
-						dpi2 = (int) (exportScale * ev.getXscale() * 2.54
-								/ printingScale);
+						dpi2 = (int) (exportScale * ev.getXscale() * 2.54 / printingScale);
 						Log.debug("dpi2 = " + dpi2);
 					}
 
 					final File file = new File(filename);
 
-					GraphicExportDialog.export(extension, ev, file,
-							transparent, dpi2, exportScale, textAsShapes,
-							useEMFplus, pixelWidth, pixelHeight, app);
+					GraphicExportDialog.export(
+							extension,
+							ev,
+							file,
+							transparent,
+							dpi2,
+							exportScale,
+							textAsShapes,
+							useEMFplus,
+							pixelWidth,
+							pixelHeight,
+							app);
 
 					// HACK
 					// do it again for 3D, first call initializes JOGL
 					if (export3D) {
-						GraphicExportDialog.export(extension, ev, file,
-								transparent, dpi2, exportScale,
-								textAsShapes, useEMFplus, pixelWidth,
-								pixelHeight, app);
+						GraphicExportDialog.export(
+								extension,
+								ev,
+								file,
+								transparent,
+								dpi2,
+								exportScale,
+								textAsShapes,
+								useEMFplus,
+								pixelWidth,
+								pixelHeight,
+								app);
 					}
 
-					Log.debug("Graphics View exported successfully to "
-							+ file.getAbsolutePath());
+					Log.debug("Graphics View exported successfully to " + file.getAbsolutePath());
 
 				} catch (Throwable t) {
-					t.printStackTrace();
+					Log.debug(t);
 				}
 				AppD.exit(0);
 			});
-
 		}
 	}
 
@@ -1145,5 +1123,4 @@ public class GeoGebraFrame extends JFrame
 			listener.newInstance(activeInstance);
 		}
 	}
-
 }

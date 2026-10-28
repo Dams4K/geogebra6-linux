@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -9,7 +25,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * together with any if/guard statements.
  */
 public enum PreviewFeature {
-
 	ALL_LANGUAGES,
 	RESOURCES_API_BETA,
 	IMPLICIT_SURFACES,
@@ -23,14 +38,8 @@ public enum PreviewFeature {
 	LOG_AXES,
 	/** GGB-2255 */
 	GEOMETRIC_DISCOVERY,
-	/** APPS-4867 */
-	MMS_EXAM,
 	/** APPS-5641 */
-	IB_EXAM,
-	/**
-	 * APPS-6759
-	 */
-	SETTINGS_VIEW;
+	IB_EXAM;
 
 	/**
 	 * Global flag to activate preview features.
@@ -64,12 +73,18 @@ public enum PreviewFeature {
 	}
 
 	/**
-	 * Checks whether a preview feature is available.
-	 * @param previewFeature A preview feature.
+	 * Same as {@code previewFeature.isAvailable()}.
+	 */
+	public static boolean isAvailable(PreviewFeature previewFeature) {
+		return previewFeature.isAvailable();
+	}
+
+	/**
+	 * Checks whether this preview feature is available.
 	 * @return {@code true} iff the preview feature's {@code isEnabled} flag is {@code true} and
 	 * {@link #enablePreviewFeatures} is {@code true} as well; {@code false} otherwise.
 	 */
-	public static boolean isAvailable(PreviewFeature previewFeature) {
-		return enablePreviewFeatures && previewFeature.isEnabled;
+	public boolean isAvailable() {
+		return enablePreviewFeatures && isEnabled;
 	}
 }

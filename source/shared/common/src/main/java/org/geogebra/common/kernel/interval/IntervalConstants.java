@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.interval;
 
 import org.geogebra.common.kernel.Kernel;
@@ -11,6 +27,7 @@ public final class IntervalConstants {
 	public static final double PI_TWICE_LOW = PI_LOW * 2.0;
 	public static final double PI_TWICE_HIGH = PI_HIGH * 2.0;
 	public static final double PRECISION = Kernel.MAX_PRECISION;
+	public static final Interval E = new Interval(Math.E);
 
 	/**
 	 *
@@ -73,8 +90,7 @@ public final class IntervalConstants {
 	 * @return a newly created positive infinity singleton interval.
 	 */
 	public static Interval positiveInfinity() {
-		return new Interval(Double.POSITIVE_INFINITY,
-				Double.POSITIVE_INFINITY);
+		return new Interval(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 	}
 
 	/**
@@ -82,8 +98,7 @@ public final class IntervalConstants {
 	 * @return a newly created negative infinity singleton interval.
 	 */
 	public static Interval negativeInfinity() {
-		return new Interval(Double.NEGATIVE_INFINITY,
-				Double.NEGATIVE_INFINITY);
+		return new Interval(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 	}
 
 	/**

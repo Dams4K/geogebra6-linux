@@ -1,14 +1,29 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.arithmetic.simplifiers;
 
 import java.util.List;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.arithmetic.ExpressionNode;
 import org.geogebra.common.kernel.arithmetic.ExpressionValue;
 import org.geogebra.common.util.debug.Log;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Simplifier list to run on {@link ExpressionNode}
@@ -24,15 +39,13 @@ public class ExpressionSimplifiers {
 	 * @param utils {@link SimplifyUtils}
 	 * @param logEnabled pass true to enable the process log of simplifiers.
 	 */
-	public ExpressionSimplifiers(@Nonnull SimplifyUtils utils, boolean logEnabled) {
+	public ExpressionSimplifiers(@NonNull SimplifyUtils utils, boolean logEnabled) {
 		this.logEnabled = logEnabled;
 
 		// it is checked before any simplification and after all were run if they produced a
 		// trivial node.
 		CheckIfTrivial checkIfTrivial = new CheckIfTrivial(utils);
-		preItems = List.of(
-				checkIfTrivial
-		);
+		preItems = List.of(checkIfTrivial);
 
 		postItems = List.of(
 				new ReduceRoot(utils),
@@ -43,8 +56,7 @@ public class ExpressionSimplifiers {
 				new PlusTagOrder(utils),
 				new DistributeMultiplier(utils),
 				new MoveMinusInOut(utils),
-				checkIfTrivial
-		);
+				checkIfTrivial);
 	}
 
 	/**
@@ -52,7 +64,7 @@ public class ExpressionSimplifiers {
 	 * @param node to run on.
 	 * @return the simplified node.
 	 */
-	public ExpressionNode run(@CheckForNull ExpressionValue node) {
+	public @Nullable ExpressionNode run(@Nullable ExpressionValue node) {
 		if (node == null) {
 			return null;
 		}
@@ -64,11 +76,9 @@ public class ExpressionSimplifiers {
 		ExpressionNode node = inputNode;
 		for (SimplifyNode simplifier : simplifiers) {
 			if (simplifier.isAccepted(node)) {
-				String before = node == null ? ""
-						: node.toValueString(StringTemplate.defaultTemplate);
+				String before = node == null ? "" : node.toValueString(StringTemplate.defaultTemplate);
 				node = simplifier.apply(node);
 				logProgress(simplifier.name(), before, node);
-
 			}
 		}
 		return node;
@@ -86,10 +96,8 @@ public class ExpressionSimplifiers {
 		}
 		String after = node.toValueString(StringTemplate.defaultTemplate);
 		if (!after.equals(before)) {
-			Log.debug(name + ": " + after
-					+ "( =" + node.evaluateDouble() + ")");
+			Log.debug(name + ": " + after + "( =" + node.evaluateDouble() + ")");
 		}
-
 	}
 
 	/**

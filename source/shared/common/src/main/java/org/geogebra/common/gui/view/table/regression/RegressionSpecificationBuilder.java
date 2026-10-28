@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.table.regression;
 
 import java.util.ArrayList;
@@ -5,22 +21,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
-import org.geogebra.common.exam.ExamType;
-import org.geogebra.common.exam.restrictions.ExamFeatureRestriction;
-import org.geogebra.common.exam.restrictions.ExamRestrictable;
 import org.geogebra.common.kernel.statistics.Regression;
+import org.geogebra.common.restrictions.FeatureRestriction;
+import org.geogebra.common.restrictions.Restrictable;
+import org.geogebra.editor.share.util.Unicode;
+import org.jspecify.annotations.NonNull;
 
-import com.himamis.retex.editor.share.util.Unicode;
-
-public class RegressionSpecificationBuilder implements ExamRestrictable {
+public class RegressionSpecificationBuilder implements Restrictable {
 
 	private final ArrayList<RegressionSpecification> specs = new ArrayList<>();
 	private RegressionModelGroup modelGroup = RegressionModelGroup.STANDARD;
 
 	private enum RegressionModelGroup {
-		STANDARD, MMS
+		STANDARD,
+		MMS
 	}
 
 	/**
@@ -35,7 +49,8 @@ public class RegressionSpecificationBuilder implements ExamRestrictable {
 				addStandardSpecs();
 			}
 		}
-		return specs.stream().filter(spec -> spec.getCoeffOrdering().length() <= listSize)
+		return specs.stream()
+				.filter(spec -> spec.getCoeffOrdering().length() <= listSize)
 				.collect(Collectors.toList());
 	}
 
@@ -45,22 +60,22 @@ public class RegressionSpecificationBuilder implements ExamRestrictable {
 		specs.add(new CustomRegressionSpecification("a x^2 + b x + c", 2, 1, 0));
 		specs.add(new CustomRegressionSpecification("a x^2 + b x", 2, 1));
 		specs.add(new CustomRegressionSpecification("a x^2 + c", 2, 0));
-		specs.add(new CustomRegressionSpecification("a x^2", 2, 1, 0));
-		specs.add(new CustomRegressionSpecification("a * exp(b x) + c",
-				CustomRegressionSpecification.Type.EXP_PLUS_CONSTANT));
-		specs.add(new CustomRegressionSpecification("a * exp(b x)",
-				CustomRegressionSpecification.Type.EXPONENTIAL));
+		specs.add(new CustomRegressionSpecification("a x^2", 2));
+		specs.add(new CustomRegressionSpecification(
+				"a * exp(b x) + c", "acb", CustomRegressionSpecification.Type.EXP_PLUS_CONSTANT));
+		specs.add(new CustomRegressionSpecification(
+				"a * exp(b x)", "ab", CustomRegressionSpecification.Type.EXPONENTIAL));
 		specs.add(new CustomRegressionSpecification("a / x + b", -1, 0));
 		specs.add(new CustomRegressionSpecification("a / x", -1));
 		specs.add(new CustomRegressionSpecification("a / x^2 + b", -2, 0));
 		specs.add(new CustomRegressionSpecification("a / x^2", -2));
-		specs.add(new CustomRegressionSpecification("a " + Unicode.CENTER_DOT
-				+ Unicode.SQUARE_ROOT + "x", .5));
+		specs.add(new CustomRegressionSpecification(
+				"a " + Unicode.CENTER_DOT + Unicode.SQUARE_ROOT + "x", .5));
 	}
 
 	private void addStandardSpecs() {
 		addSpec(Regression.LINEAR, 1, null, "ba");
-		addSpec(Regression.LOG, 0, "y = a + b\\cdot \\log(x)", "ab");
+		addSpec(Regression.LOG, 0, "y = a + b\\cdot \\ln(x)", "ab");
 		addSpec(Regression.POW, 0, "y = a \\cdot x^b", "ab");
 		addSpec(Regression.POLY, 2, null, "cba");
 		addSpec(Regression.POLY, 3, null, "dcba");
@@ -76,24 +91,21 @@ public class RegressionSpecificationBuilder implements ExamRestrictable {
 		specs.clear();
 	}
 
-	private void addSpec(Regression regression, int polynomialDegree, String formula,
-			String coefficientOrdering) {
-		specs.add(new StandardRegressionSpecification(regression, polynomialDegree, formula,
-				coefficientOrdering));
+	private void addSpec(
+			Regression regression, int polynomialDegree, String formula, String coefficientOrdering) {
+		specs.add(new StandardRegressionSpecification(
+				regression, polynomialDegree, formula, coefficientOrdering));
 	}
 
 	@Override
-	public void applyRestrictions(@Nonnull Set<ExamFeatureRestriction> featureRestrictions,
-			@Nonnull ExamType examType) {
-		if (featureRestrictions.contains(
-				ExamFeatureRestriction.CUSTOM_MMS_REGRESSION_MODELS)) {
+	public void applyRestrictions(@NonNull Set<FeatureRestriction> featureRestrictions) {
+		if (featureRestrictions.contains(FeatureRestriction.CUSTOM_MMS_REGRESSION_MODELS)) {
 			setModelGroup(RegressionModelGroup.MMS);
 		}
 	}
 
 	@Override
-	public void removeRestrictions(@Nonnull Set<ExamFeatureRestriction> featureRestrictions,
-			@Nonnull ExamType examType) {
+	public void removeRestrictions(@NonNull Set<FeatureRestriction> featureRestrictions) {
 		setModelGroup(RegressionModelGroup.STANDARD);
 	}
 }

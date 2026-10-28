@@ -1,8 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.properties.impl.objects;
 
 import java.util.List;
-
-import javax.annotation.CheckForNull;
 
 import org.geogebra.common.euclidian.draw.HasTextFormat;
 import org.geogebra.common.kernel.geos.GProperty;
@@ -16,14 +30,17 @@ import org.geogebra.common.properties.impl.AbstractEnumeratedProperty;
 import org.geogebra.common.properties.impl.objects.delegate.GeoElementDelegate;
 import org.geogebra.common.properties.impl.objects.delegate.NotApplicablePropertyException;
 import org.geogebra.common.properties.impl.objects.delegate.TextFormatterDelegate;
+import org.jspecify.annotations.Nullable;
 
 public class VerticalAlignmentProperty extends AbstractEnumeratedProperty<VerticalAlignment>
 		implements IconsEnumeratedProperty<VerticalAlignment> {
 
 	private static final PropertyResource[] icons = {
-			PropertyResource.ICON_ALIGNMENT_TOP, PropertyResource.ICON_ALIGNMENT_MIDDLE,
-			PropertyResource.ICON_ALIGNMENT_BOTTOM
+		PropertyResource.ICON_ALIGNMENT_TOP,
+		PropertyResource.ICON_ALIGNMENT_MIDDLE,
+		PropertyResource.ICON_ALIGNMENT_BOTTOM
 	};
+	private static final String[] rawLabels = {"stylebar.Top", "stylebar.Middle", "stylebar.Bottom"};
 
 	private final GeoElementDelegate delegate;
 
@@ -35,9 +52,7 @@ public class VerticalAlignmentProperty extends AbstractEnumeratedProperty<Vertic
 			throws NotApplicablePropertyException {
 		super(localization, "stylebar.VerticalAlign");
 		delegate = new TextFormatterDelegate(element);
-		setValues(List.of(VerticalAlignment.TOP,
-				VerticalAlignment.MIDDLE,
-				VerticalAlignment.BOTTOM));
+		setValues(List.of(VerticalAlignment.TOP, VerticalAlignment.MIDDLE, VerticalAlignment.BOTTOM));
 	}
 
 	@Override
@@ -46,16 +61,17 @@ public class VerticalAlignmentProperty extends AbstractEnumeratedProperty<Vertic
 	}
 
 	@Override
-	public @CheckForNull String[] getLabels() {
-		return null;
+	public @Nullable String[] getToolTipLabels() {
+		return rawLabels;
 	}
 
 	@Override
 	protected void doSetValue(VerticalAlignment value) {
 		HasTextFormatter element = (HasTextFormatter) delegate.getElement();
 		HasTextFormat formatter = element.getFormatter();
-		if (getLocalization() != null && formatter != null && !value.equals(formatter
-				.getVerticalAlignment())) {
+		if (getLocalization() != null
+				&& formatter != null
+				&& value != formatter.getVerticalAlignment()) {
 			formatter.setVerticalAlignment(value);
 		}
 		((GeoElement) element).updateVisualStyle(GProperty.COMBINED);

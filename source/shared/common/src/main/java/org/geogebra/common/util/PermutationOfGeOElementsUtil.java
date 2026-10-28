@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -6,7 +22,7 @@ import org.geogebra.common.kernel.geos.GeoElement;
 // http://stackoverflow.com/a/2799190
 /**
  * Utility Class to permute the array of GeoElements
- * 
+ *
  * @author Eyal Schneider, http://stackoverflow.com/a/2799190
  * @author Adaption: Christoph Stadlbauer
  */
@@ -18,7 +34,7 @@ class PermutationOfGeOElementsUtil {
 	 * @param arr
 	 *            the Array with the Elements to be permuted
 	 */
-	public PermutationOfGeOElementsUtil(GeoElement[] arr) {
+	PermutationOfGeOElementsUtil(GeoElement[] arr) {
 		this(arr, arr.length);
 	}
 
@@ -28,7 +44,7 @@ class PermutationOfGeOElementsUtil {
 	 * @param permSize
 	 *            the Elements k < arr.length of the array you need to permute
 	 */
-	public PermutationOfGeOElementsUtil(GeoElement[] arr, int permSize) {
+	PermutationOfGeOElementsUtil(GeoElement[] arr, int permSize) {
 
 		// this.arr = arr.clone();
 		this.arr = new GeoElement[arr.length];
@@ -42,7 +58,7 @@ class PermutationOfGeOElementsUtil {
 	/**
 	 * @return the next permutation of the array if exists, null otherwise
 	 */
-	public GeoElement[] next() {
+	GeoElement[] next() {
 		if (arr == null) {
 			return null;
 		}
@@ -54,7 +70,7 @@ class PermutationOfGeOElementsUtil {
 		int i = permSwaps.length - 1;
 		while (i >= 0 && permSwaps[i] == arr.length - 1) {
 			swap(i, permSwaps[i]); // Undo the swap represented by
-										// permSwaps[i]
+			// permSwaps[i]
 			permSwaps[i] = i;
 			i--;
 		}
@@ -77,5 +93,4 @@ class PermutationOfGeOElementsUtil {
 		arr[i] = arr[j];
 		arr[j] = tmp;
 	}
-
 }

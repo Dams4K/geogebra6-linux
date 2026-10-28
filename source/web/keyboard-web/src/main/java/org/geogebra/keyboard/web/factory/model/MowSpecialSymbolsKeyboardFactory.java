@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.keyboard.web.factory.model;
 
 import static org.geogebra.keyboard.base.model.impl.factory.Characters.AMPERSAND;
@@ -72,26 +88,16 @@ public class MowSpecialSymbolsKeyboardFactory implements KeyboardModelFactory {
 		addInputButton(row, buttonFactory, AT);
 
 		row = mathKeyboard.nextRow();
-		addConstantInputCommandButton(row, buttonFactory, Resource.FLOOR,
-				LEFT_FLOOR + "", 1.0f);
-		addConstantInputCommandButton(row, buttonFactory, Resource.CEIL,
-				LEFT_CEILING + "", 1.0f);
-		addConstantInputCommandButton(row, buttonFactory, Resource.DEFINITE_INTEGRAL,
-				"$defint", 1.0f);
-		addConstantInputCommandButton(row, buttonFactory, Resource.SUM,
-				"$sumeq", 1.0f);
-		addConstantInputCommandButton(row, buttonFactory, Resource.PRODUCT,
-				"$prodeq", 1.0f);
-		addConstantInputCommandButton(row, buttonFactory, Resource.LIM,
-				"$limeq", 1.0f);
-		addConstantInputCommandButton(row, buttonFactory, Resource.VECTOR,
-				"$vec", 1.0f);
-		addConstantInputCommandButton(row, buttonFactory, Resource.ATOMIC_PRE,
-				"$atomicpre", 1.0f);
-		addConstantInputCommandButton(row, buttonFactory, Resource.ATOMIC_POST,
-				"$atomicpost", 1.0f);
-		addConstantCustomButton(row, buttonFactory, Resource.BACKSPACE_DELETE,
-				Action.BACKSPACE_DELETE);
+		addConstantInputCommandButton(row, buttonFactory, Resource.FLOOR, LEFT_FLOOR + "", 1.0f);
+		addConstantInputCommandButton(row, buttonFactory, Resource.CEIL, LEFT_CEILING + "", 1.0f);
+		addConstantInputCommandButton(row, buttonFactory, Resource.DEFINITE_INTEGRAL, "$defint", 1.0f);
+		addConstantInputCommandButton(row, buttonFactory, Resource.SUM, "$sumeq", 1.0f);
+		addConstantInputCommandButton(row, buttonFactory, Resource.PRODUCT, "$prodeq", 1.0f);
+		addConstantInputCommandButton(row, buttonFactory, Resource.LIM, "$limeq", 1.0f);
+		addConstantInputCommandButton(row, buttonFactory, Resource.VECTOR, "$vec", 1.0f);
+		addConstantInputCommandButton(row, buttonFactory, Resource.ATOMIC_PRE, "$atomicpre", 1.0f);
+		addConstantInputCommandButton(row, buttonFactory, Resource.ATOMIC_POST, "$atomicpost", 1.0f);
+		addConstantCustomButton(row, buttonFactory, Resource.BACKSPACE_DELETE, Action.BACKSPACE_DELETE);
 
 		row = mathKeyboard.nextRow();
 		addInputButton(row, buttonFactory, LEFT_SQUARE_BRACKET);
@@ -101,12 +107,9 @@ public class MowSpecialSymbolsKeyboardFactory implements KeyboardModelFactory {
 		addInputButton(row, buttonFactory, MINUTES);
 		addInputButton(row, buttonFactory, SECONDS);
 		addInputButton(row, buttonFactory, AMPERSAND);
-		addConstantCustomButton(row, buttonFactory, Resource.LEFT_ARROW,
-				Action.LEFT_CURSOR);
-		addConstantCustomButton(row, buttonFactory, Resource.RIGHT_ARROW,
-				Action.RIGHT_CURSOR);
-		addConstantCustomButton(row, buttonFactory, Resource.RETURN_ENTER,
-				Action.RETURN_ENTER);
+		addConstantCustomButton(row, buttonFactory, Resource.LEFT_ARROW, Action.LEFT_CURSOR);
+		addConstantCustomButton(row, buttonFactory, Resource.RIGHT_ARROW, Action.RIGHT_CURSOR);
+		addConstantCustomButton(row, buttonFactory, Resource.RETURN_ENTER, Action.RETURN_ENTER);
 
 		return mathKeyboard;
 	}

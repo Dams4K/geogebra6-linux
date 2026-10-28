@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.algos;
 
 import org.geogebra.common.kernel.Construction;
@@ -30,19 +46,16 @@ public class PointNDFold implements FoldComputer {
 		return this.result = doGetTemplate(cons, listElement);
 	}
 
-	private static GeoElement doGetTemplate(Construction cons,
-			GeoClass listElement) {
+	private static GeoElement doGetTemplate(Construction cons, GeoClass listElement) {
 		switch (listElement) {
-		case POINT:
-			return new GeoPoint(cons);
-		case POINT3D:
-			return (GeoElement) cons.getKernel().getGeoFactory().newPoint(3,
-					cons);
-		case VECTOR:
-			return new GeoVector(cons);
-		case VECTOR3D:
-			return (GeoElement) cons.getKernel().getGeoFactory().newPoint(3,
-					cons);
+			case POINT:
+				return new GeoPoint(cons);
+			case POINT3D:
+				return (GeoElement) cons.getKernel().getGeoFactory().newPoint(3, cons);
+			case VECTOR:
+				return new GeoVector(cons);
+			case VECTOR3D:
+				return (GeoElement) cons.getKernel().getGeoFactory().newPoint(3, cons);
 		}
 		return new GeoPoint(cons);
 	}
@@ -53,10 +66,8 @@ public class PointNDFold implements FoldComputer {
 			double x0 = x;
 			if (p instanceof GeoPoint) {
 				((GeoPoint) p).updateCoords();
-				x = x0 * ((GeoPoint) p).getInhomX()
-						- y * ((GeoPoint) p).getInhomY();
-				y = y * ((GeoPoint) p).getInhomX()
-						+ x0 * ((GeoPoint) p).getInhomY();
+				x = x0 * ((GeoPoint) p).getInhomX() - y * ((GeoPoint) p).getInhomY();
+				y = y * ((GeoPoint) p).getInhomX() + x0 * ((GeoPoint) p).getInhomY();
 				Log.debug(x + "," + y);
 			} else if (p instanceof GeoVector) {
 				double[] coords = ((GeoVectorND) p).getInhomCoords();
@@ -93,9 +104,7 @@ public class PointNDFold implements FoldComputer {
 			z += val;
 		} else {
 			result.setUndefined();
-			return;
 		}
-
 	}
 
 	@Override
@@ -120,7 +129,5 @@ public class PointNDFold implements FoldComputer {
 			// 3D Point / Vector
 			((GeoCoords4D) result).setCoords(x, y, z, 1.0);
 		}
-
 	}
-
 }

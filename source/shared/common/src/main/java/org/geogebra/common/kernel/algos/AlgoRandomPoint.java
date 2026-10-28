@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -23,11 +27,10 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
 
 /**
  * Random point
- * 
+ *
  * @author Rrubaa
  */
-
-public class AlgoRandomPoint extends AlgoElement implements SetRandomValue  {
+public class AlgoRandomPoint extends AlgoElement implements SetRandomValue {
 	// input
 	private GeoNumberValue a;
 	private GeoNumberValue b;
@@ -47,8 +50,8 @@ public class AlgoRandomPoint extends AlgoElement implements SetRandomValue  {
 	 * @param d
 	 *            y max
 	 */
-	public AlgoRandomPoint(Construction cons, GeoNumberValue a,
-			GeoNumberValue b, GeoNumberValue c, GeoNumberValue d) {
+	public AlgoRandomPoint(
+			Construction cons, GeoNumberValue a, GeoNumberValue b, GeoNumberValue c, GeoNumberValue d) {
 		super(cons);
 		this.a = a;
 		this.b = b;
@@ -92,17 +95,21 @@ public class AlgoRandomPoint extends AlgoElement implements SetRandomValue  {
 		double cNum = c.getDouble();
 		double dNum = d.getDouble();
 
-		if (input[0].isDefined() && input[1].isDefined() && input[2].isDefined()
-				&& input[3].isDefined() && !Double.isInfinite(aNum)
-				&& !Double.isNaN(aNum) && !Double.isInfinite(bNum)
-				&& !Double.isNaN(bNum) && !Double.isInfinite(cNum)
-				&& !Double.isNaN(cNum) && !Double.isInfinite(dNum)
+		if (input[0].isDefined()
+				&& input[1].isDefined()
+				&& input[2].isDefined()
+				&& input[3].isDefined()
+				&& !Double.isInfinite(aNum)
+				&& !Double.isNaN(aNum)
+				&& !Double.isInfinite(bNum)
+				&& !Double.isNaN(bNum)
+				&& !Double.isInfinite(cNum)
+				&& !Double.isNaN(cNum)
+				&& !Double.isInfinite(dNum)
 				&& !Double.isNaN(dNum)) {
 
-			double p = aNum
-					+ (bNum - aNum) * cons.getApplication().getRandomNumber();
-			double q = cNum
-					+ (dNum - cNum) * cons.getApplication().getRandomNumber();
+			double p = aNum + (bNum - aNum) * kernel.randomNumberGenerator.getRandomNumber();
+			double q = cNum + (dNum - cNum) * kernel.randomNumberGenerator.getRandomNumber();
 			getPoint().setCoords(p, q, 1.0);
 		} else {
 			M.setUndefined();

@@ -1,19 +1,24 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.GLine2D;
 import org.geogebra.common.awt.GPoint;
@@ -30,7 +35,6 @@ import org.geogebra.common.euclidian.plot.Gap;
 import org.geogebra.common.euclidian.plot.GeneralPathClippedForCurvePlotter;
 import org.geogebra.common.euclidian.plot.interval.IntervalPathPlotter;
 import org.geogebra.common.euclidian.plot.interval.IntervalPlotter;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.VarString;
 import org.geogebra.common.kernel.advanced.AlgoFunctionInvert;
@@ -52,7 +56,7 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * Draws graphs of parametric curves and functions
- * 
+ *
  * @author Markus Hohenwarter, with ideas from John Gillam (see below)
  */
 public class DrawParametricCurve extends Drawable implements RemoveNeeded {
@@ -77,7 +81,7 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 
 	/**
 	 * Creates graphical representation of the curve
-	 * 
+	 *
 	 * @param view
 	 *            Euclidian view in which it should be drawn
 	 * @param curve
@@ -107,7 +111,7 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 	}
 
 	@Override
-	final public void update() {
+	public final void update() {
 		isVisible = geo.isEuclidianVisible();
 		if (!isVisible) {
 			return;
@@ -139,12 +143,12 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 
 	private boolean isIntervalPlotterPreferred() {
 		return IntervalFunctionSupport.isSupported(geo)
-				&& !view.isPlotPanel() && !view.isViewForPlane();
+				&& !view.isPlotPanel()
+				&& !view.isViewForPlane();
 	}
 
 	private boolean isIntervalPlotterActive() {
-		return isIntervalPlotterPreferred()
-				&& intervalPlotter.isEnabled();
+		return isIntervalPlotterPreferred() && intervalPlotter.isEnabled();
 	}
 
 	private void updateIntervalPlot() {
@@ -187,8 +191,7 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 		dataExpression = null;
 		if (geo.getLineType() == EuclidianStyleConstants.LINE_TYPE_POINTWISE
 				&& (curve instanceof GeoFunction)) {
-			((GeoFunction) curve).getFunctionExpression()
-					.any(checkPointwise());
+			((GeoFunction) curve).getFunctionExpression().any(checkPointwise());
 		}
 		updateStrokes(geo);
 		if (dataExpression != null) {
@@ -231,13 +234,12 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 			view.toScreenCoords(eval);
 			labelPoint = new GPoint((int) eval[0], (int) eval[1]);
 		} else {
-			labelPoint = CurvePlotter.plotCurve(curve, min, max, view, gp,
-					labelVisible, fillCurve ? Gap.CORNER
-							: Gap.MOVE_TO);
+			labelPoint = CurvePlotter.plotCurve(
+					curve, min, max, view, gp, labelVisible, fillCurve ? Gap.CORNER : Gap.MOVE_TO);
 		}
 
 		// gp on screen?
-		if (!view.intersects(gp)) {
+		if (!view.intersects(gp.getGeneralPath())) {
 			isVisible = false;
 			// don't return here to make sure that getBounds() works for
 			// offscreen points too
@@ -253,8 +255,8 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 		// shape for filling
 
 		if (geo.isInverseFill()) {
-			setShape(AwtFactory.getPrototype().newArea(view.getBoundingPath()));
-			getShape().subtract(AwtFactory.getPrototype().newArea(gp));
+			setShape(view.getBoundsArea());
+			getShape().subtract(AwtFactory.getPrototype().newArea(gp.getGeneralPath()));
 		}
 		drawAndUpdateTraceIfNeeded(curve.getTrace());
 	}
@@ -263,34 +265,34 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 		xLabel = labelPoint.x;
 		yLabel = labelPoint.y;
 		switch (geo.getLabelMode()) {
-		case GeoElementND.LABEL_NAME_VALUE:
-			StringTemplate tpl = StringTemplate.latexTemplate;
-			labelSB.setLength(0);
-			labelSB.append('$');
-			if (getTopLevelGeo().isLabelSet() && getTopLevelGeo().isAlgebraLabelVisible()) {
-				labelSB.append(getTopLevelGeo().getLabel(tpl));
-				labelSB.append('(');
-				labelSB.append(((VarString) geo).getVarString(tpl));
-				labelSB.append(")\\;=\\;");
-			}
-			labelSB.append(geo.getLaTeXdescription());
-			labelSB.append('$');
+			case GeoElementND.LABEL_NAME_VALUE:
+				StringTemplate tpl = StringTemplate.latexTemplate;
+				labelSB.setLength(0);
+				labelSB.append('$');
+				if (getTopLevelGeo().isLabelSet() && getTopLevelGeo().isAlgebraLabelVisible()) {
+					labelSB.append(getTopLevelGeo().getLabel(tpl));
+					labelSB.append('(');
+					labelSB.append(((VarString) geo).getVarString(tpl));
+					labelSB.append(")\\;=\\;");
+				}
+				labelSB.append(geo.getLaTeXdescription());
+				labelSB.append('$');
 
-			labelDesc = labelSB.toString();
-			break;
+				labelDesc = labelSB.toString();
+				break;
 
-		case GeoElementND.LABEL_VALUE:
-			labelSB.setLength(0);
-			labelSB.append('$');
-			labelSB.append(geo.getLaTeXdescription());
-			labelSB.append('$');
+			case GeoElementND.LABEL_VALUE:
+				labelSB.setLength(0);
+				labelSB.append('$');
+				labelSB.append(geo.getLaTeXdescription());
+				labelSB.append('$');
 
-			labelDesc = labelSB.toString();
-			break;
+				labelDesc = labelSB.toString();
+				break;
 
-		case GeoElementND.LABEL_CAPTION:
-		default: // case LABEL_NAME:
-			labelDesc = getTopLevelGeo().getLabelDescription();
+			case GeoElementND.LABEL_CAPTION:
+			default: // case LABEL_NAME:
+				labelDesc = getTopLevelGeo().getLabelDescription();
 		}
 		addLabelOffsetEnsureOnScreen(view.getFontConic());
 	}
@@ -312,8 +314,7 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 
 		nPoints = 0;
 
-		ListValue lvX = (ListValue) ((MyNumberPair) dataExpression.getRight())
-				.getX();
+		ListValue lvX = (ListValue) ((MyNumberPair) dataExpression.getRight()).getX();
 		/*
 		 * ListValue lvY = (ListValue) ((MyNumberPair)
 		 * dataExpression.getRight()) .getY();
@@ -328,8 +329,7 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 			if (x < 0 || x > view.getWidth()) {
 				continue;
 			}
-			double y = view
-					.toScreenCoordYd(((GeoFunction) curve).value(xRW));
+			double y = view.toScreenCoordYd(((GeoFunction) curve).value(xRW));
 
 			if (y < 0 || y > view.getHeight()) {
 				continue;
@@ -342,13 +342,11 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 			}
 			nPoints++;
 		}
-
 	}
 
 	private Inspecting checkPointwise() {
 		return v -> {
-			if (v.isExpressionNode() && ((ExpressionNode) v)
-					.getOperation() == Operation.DATA) {
+			if (v.isExpressionNode() && ((ExpressionNode) v).getOperation() == Operation.DATA) {
 
 				return updateDataExpression((ExpressionNode) v);
 			}
@@ -368,8 +366,10 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 			return true;
 		}
 		invFV = new FunctionVariable(view.getApplication().getKernel());
-		invert = AlgoFunctionInvert.invert(dataExpression.getLeft().unwrap(),
-				((GeoFunction) curve).getFunctionVariables()[0], invFV,
+		invert = AlgoFunctionInvert.invert(
+				dataExpression.getLeft().unwrap(),
+				((GeoFunction) curve).getFunctionVariables()[0],
+				invFV,
 				geo.getKernel());
 		if (invert == null) {
 			dataExpression = null;
@@ -378,7 +378,7 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 	}
 
 	@Override
-	final public void draw(GGraphics2D g2) {
+	public final void draw(GGraphics2D g2) {
 		if (intervalPlotter.isEnabled()) {
 			drawIntervalPlot(g2);
 		} else {
@@ -405,7 +405,6 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 		g2.setPaint(getObjectColor());
 		g2.setStroke(objStroke);
 		intervalPlotter.draw(g2);
-
 	}
 
 	private void drawParametric(GGraphics2D g2) {
@@ -424,17 +423,17 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 			if (isHighlighted()) {
 				g2.setPaint(geo.getSelColor());
 				g2.setStroke(selStroke);
-				g2.draw(gp);
+				gp.draw(g2);
 			}
 
 			g2.setPaint(getObjectColor());
 			g2.setStroke(objStroke);
-			g2.draw(gp);
+			gp.draw(g2);
 
 			if (fillCurve) {
 				try {
 					// fill using default/hatching/image as appropriate
-					fill(g2, geo.isInverseFill() ? getShape() : gp);
+					fill(g2, geo.isInverseFill() ? getShape() : gp.getGeneralPath());
 
 				} catch (Exception e) {
 					Log.error(e.getMessage());
@@ -451,42 +450,38 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 			g2.draw(diag2);
 			g2.restoreTransform();
 		}
-
 	}
 
 	@Override
 	protected final void drawTrace(GGraphics2D g2) {
 		g2.setPaint(getObjectColor());
 		g2.setStroke(objStroke);
-		g2.draw(gp);
+		gp.draw(g2);
 
 		if (fillCurve) {
 			try {
 				// fill using default/hatching/image as appropriate
-				fill(g2, geo.isInverseFill() ? getShape() : gp);
+				fill(g2, geo.isInverseFill() ? getShape() : gp.getGeneralPath());
 			} catch (Exception e) {
 				Log.error(e.getMessage());
 			}
 		}
-
 	}
 
 	@Override
-	final public boolean hit(int x, int y, int hitThreshold) {
+	public final boolean hit(int x, int y, int hitThreshold) {
 		if (dataExpression != null) {
 			for (int i = 0; i < nPoints; i++) {
-				if (MyMath.length(x - points.get(i).getX(),
-						y - points.get(i).getY()) < hitThreshold) {
+				if (MyMath.length(x - points.get(i).getX(), y - points.get(i).getY()) < hitThreshold) {
 					return true;
 				}
 			}
 			return false;
 		}
-		GShape t = geo.isInverseFill() ? getShape() : gp;
+		GShape t = geo.isInverseFill() ? getShape() : gp.getGeneralPath();
 
 		if (geo.isFilled()) {
-			return t.intersects(x - hitThreshold, y - hitThreshold,
-					2 * hitThreshold, 2 * hitThreshold);
+			return t.intersects(x - hitThreshold, y - hitThreshold, 2 * hitThreshold, 2 * hitThreshold);
 		}
 
 		// workaround for #2364
@@ -510,16 +505,12 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 			}
 			if ((right < low && left < low && middle < low)
 					|| (right > high && left > high && middle > high)
-					|| (!Double.isFinite(right)
-					&& !Double.isFinite(left)
-					&& !Double.isFinite(middle))) {
+					|| (!Double.isFinite(right) && !Double.isFinite(left) && !Double.isFinite(middle))) {
 				return false;
 			}
 
-			return gp.intersects(x - hitThreshold, y - hitThreshold,
-					2 * hitThreshold, 2 * hitThreshold)
-					&& !gp.contains(x - hitThreshold, y - hitThreshold,
-					2 * hitThreshold, 2 * hitThreshold);
+			return gp.intersects(x - hitThreshold, y - hitThreshold, 2 * hitThreshold, 2 * hitThreshold)
+					&& !gp.contains(x - hitThreshold, y - hitThreshold, 2 * hitThreshold, 2 * hitThreshold);
 		}
 
 		if (!ensureStrokedShape()) {
@@ -527,8 +518,8 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 		}
 
 		// not GeoFunction, eg parametric
-		return strokedShape.intersects(x - hitThreshold, y - hitThreshold,
-				2 * hitThreshold, 2 * hitThreshold);
+		return strokedShape.intersects(
+				x - hitThreshold, y - hitThreshold, 2 * hitThreshold, 2 * hitThreshold);
 	}
 
 	private boolean ensureStrokedShape() {
@@ -538,10 +529,9 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 
 		// AND-547, initial buffer size
 		try {
-			strokedShape = decoStroke.createStrokedShape(gp, 800);
+			strokedShape = decoStroke.createStrokedShape(gp.getGeneralPath(), 800);
 		} catch (Throwable e) {
-			Log.error(
-					"problem creating Curve shape: " + e.getMessage());
+			Log.error("problem creating Curve shape: " + e.getMessage());
 			return false;
 		}
 		return true;
@@ -550,7 +540,7 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 	@Override
 	public boolean intersectsRectangle(GRectangle rect) {
 		if (isVisible) {
-			GShape t = geo.isInverseFill() ? getShape() : gp;
+			GShape t = geo.isInverseFill() ? getShape() : gp.getGeneralPath();
 
 			if (geo.isFilled()) {
 				return t.intersects(rect);
@@ -561,13 +551,12 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 			}
 
 			return strokedShape.intersects(rect);
-
 		}
 		return false;
 	}
 
 	@Override
-	final public boolean isInside(GRectangle rect) {
+	public final boolean isInside(GRectangle rect) {
 		return gp != null && rect.contains(gp.getBounds());
 	}
 
@@ -575,9 +564,8 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 	 * Returns the bounding box of this DrawPoint in screen coordinates.
 	 */
 	@Override
-	final public GRectangle getBounds() {
-		if (!geo.isDefined() || !curve.isClosedPath()
-				|| !geo.isEuclidianVisible() || gp == null) {
+	public final GRectangle getBounds() {
+		if (!geo.isDefined() || !curve.isClosedPath() || !geo.isEuclidianVisible() || gp == null) {
 			return null;
 		}
 		return AwtFactory.getPrototype().newRectangle(gp.getBounds());
@@ -608,8 +596,10 @@ public class DrawParametricCurve extends Drawable implements RemoveNeeded {
 		}
 	}
 
+	/**
+	 * @return whether the interval plotter is currently enabled
+	 */
 	public boolean isIntervalPlotterEnabled() {
 		return this.intervalPlotter.isEnabled();
 	}
-
 }

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -38,8 +42,7 @@ public class AlgoLocusSlider extends AlgoLocusSliderND<MyPoint> {
 	 * @param slider
 	 *            slider
 	 */
-	public AlgoLocusSlider(Construction cons, String label, GeoPoint Q,
-			GeoNumeric slider) {
+	public AlgoLocusSlider(Construction cons, String label, GeoPoint Q, GeoNumeric slider) {
 		super(cons, label, Q, slider);
 	}
 
@@ -50,14 +53,12 @@ public class AlgoLocusSlider extends AlgoLocusSliderND<MyPoint> {
 
 	@Override
 	protected void insertPoint(GeoPointND point, boolean lineTo) {
-		insertPoint(((GeoPoint) point).inhomX, ((GeoPoint) point).inhomY,
-				lineTo);
+		insertPoint(((GeoPoint) point).inhomX, ((GeoPoint) point).inhomY, lineTo);
 	}
 
 	private void insertPoint(double x, double y, boolean lineTo) {
 		pointCount++;
-		((GeoLocus) locus).insertPoint(x, y, lineTo ? SegmentType.LINE_TO
-				: SegmentType.MOVE_TO);
+		((GeoLocus) locus).insertPoint(x, y, lineTo ? SegmentType.LINE_TO : SegmentType.MOVE_TO);
 		lastX = x;
 		lastY = y;
 		for (int i = 0; i < lastFarAway.length; i++) {
@@ -66,14 +67,13 @@ public class AlgoLocusSlider extends AlgoLocusSliderND<MyPoint> {
 	}
 
 	protected boolean isFarAway(double x, double y, int i) {
-		return x > farXmax[i] || x < farXmin[i] || y > farYmax[i]
-				|| y < farYmin[i];
+		return x > farXmax[i] || x < farXmin[i] || y > farYmax[i] || y < farYmin[i];
 	}
 
 	@Override
 	protected boolean distanceOK(GeoPointND QND, int i) {
-		double[] min = { farXmin[i], farYmin[i] };
-		double[] max = { farXmax[i], farYmax[i] };
+		final double[] min = {farXmin[i], farYmin[i]};
+		final double[] max = {farXmax[i], farYmax[i]};
 		GeoPoint Q = (GeoPoint) QND;
 		// if last point Q' was far away and Q is far away
 		// then the distance is probably OK (return true),
@@ -106,8 +106,8 @@ public class AlgoLocusSlider extends AlgoLocusSliderND<MyPoint> {
 
 		boolean[] distSmall = new boolean[3];
 		for (int i = 0; i < distSmall.length; i++) {
-			distSmall[i] = Math.abs(Q.inhomX - lastX) < maxXdist[i]
-					&& Math.abs(Q.inhomY - lastY) < maxYdist[i];
+			distSmall[i] =
+					Math.abs(Q.inhomX - lastX) < maxXdist[i] && Math.abs(Q.inhomY - lastY) < maxYdist[i];
 		}
 
 		if (orInsteadOfAnd) {
@@ -160,8 +160,6 @@ public class AlgoLocusSlider extends AlgoLocusSliderND<MyPoint> {
 
 	@Override
 	protected boolean isFarAway(GeoPointND point, int i) {
-		return isFarAway(((GeoPoint) point).inhomX, ((GeoPoint) point).inhomY,
-				i);
+		return isFarAway(((GeoPoint) point).inhomX, ((GeoPoint) point).inhomY, i);
 	}
-
 }

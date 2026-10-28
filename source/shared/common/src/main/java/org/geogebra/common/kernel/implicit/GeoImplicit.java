@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.implicit;
 
 import org.geogebra.common.annotation.MissingDoc;
@@ -19,7 +35,8 @@ public interface GeoImplicit extends Path, EquationValue {
 
 	/** Equation form */
 	enum Form {
-		IMPLICIT, USER
+		IMPLICIT,
+		USER
 	}
 
 	/**
@@ -145,25 +162,25 @@ public interface GeoImplicit extends Path, EquationValue {
 	double evaluateImplicitCurve(double x, double y);
 
 	/**
-	 * 
+	 *
 	 * @return coord sys for transformations
 	 */
 	CoordSys getTransformedCoordSys();
 
 	/**
-	 * 
+	 *
 	 * @return function expression creating this implicit curve
 	 */
 	FunctionNVar getFunctionDefinition();
 
 	/**
-	 * 
+	 *
 	 * @return plane equation
 	 */
 	Coords getPlaneEquation();
 
 	/**
-	 * 
+	 *
 	 * @return z-coord translation (if exists)
 	 */
 	double getTranslateZ();

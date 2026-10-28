@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.jre.headless;
 
 import java.util.ArrayList;
@@ -21,9 +37,7 @@ public class LocalizationCommon extends LocalizationJre {
 
 	private static final String RB_MENU = PROPERTIES_DIR + "menu";
 	private static final String RB_COMMAND = PROPERTIES_DIR + "command";
-	private static final String RB_ERROR = PROPERTIES_DIR + "error";
 	private static final String RB_SYMBOL = PROPERTIES_DIR + "symbols";
-	private static final String RB_COLORS = PROPERTIES_DIR + "colors";
 
 	private ResourceBundle.Control control;
 
@@ -47,8 +61,7 @@ public class LocalizationCommon extends LocalizationJre {
 
 	@Override
 	protected ArrayList<Locale> getSupportedLocales() {
-		return getSupportedLocales(
-				app != null && hasAllLanguages());
+		return getSupportedLocales(app != null && hasAllLanguages());
 	}
 
 	@Override
@@ -77,21 +90,11 @@ public class LocalizationCommon extends LocalizationJre {
 	}
 
 	@Override
-	protected String getColorResourcePath() {
-		return RB_COLORS;
-	}
-
-	@Override
-	protected String getErrorResourcePath() {
-		return RB_ERROR;
-	}
-
-	@Override
 	protected String getSymbolResourcePath() {
 		return RB_SYMBOL;
 	}
 
-	private static class EmptyResourceBundle extends ResourceBundle {
+	private static final class EmptyResourceBundle extends ResourceBundle {
 		@Override
 		protected Object handleGetObject(String key) {
 			throw new MissingResourceException("Not found", getClass().getName(), key);

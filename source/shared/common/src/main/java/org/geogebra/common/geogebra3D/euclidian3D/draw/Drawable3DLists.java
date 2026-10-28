@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import java.util.ArrayList;
@@ -15,9 +31,9 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * Class to list the 3D drawables for EuclidianView3D
- * 
+ *
  * @author ggb3D
- * 
+ *
  */
 public class Drawable3DLists {
 
@@ -40,8 +56,7 @@ public class Drawable3DLists {
 			for (Drawable3D d : this) {
 				sb.append(d);
 				sb.append(" -- ");
-				sb.append(d.getGeoElement()
-						.getLabel(StringTemplate.defaultTemplate));
+				sb.append(d.getGeoElement().getLabel(StringTemplate.defaultTemplate));
 				sb.append("\n");
 			}
 			return sb.toString();
@@ -50,7 +65,7 @@ public class Drawable3DLists {
 
 	/**
 	 * default constructor
-	 * 
+	 *
 	 * @param view3D
 	 *            view
 	 */
@@ -64,7 +79,7 @@ public class Drawable3DLists {
 
 	/**
 	 * add the drawable to the correct list
-	 * 
+	 *
 	 * @param drawable
 	 *            drawable to add
 	 */
@@ -75,7 +90,7 @@ public class Drawable3DLists {
 
 	/**
 	 * add a list of drawables
-	 * 
+	 *
 	 * @param list
 	 *            list of drawable objects to be added
 	 */
@@ -87,7 +102,7 @@ public class Drawable3DLists {
 
 	/**
 	 * remove the drawable from the correct list
-	 * 
+	 *
 	 * @param drawable
 	 *            drawable to remove
 	 */
@@ -102,7 +117,7 @@ public class Drawable3DLists {
 
 	/**
 	 * remove all drawables contained in the list
-	 * 
+	 *
 	 * @param list
 	 *            list of drawables to be removed
 	 */
@@ -113,7 +128,7 @@ public class Drawable3DLists {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param type
 	 *            list type
 	 * @return list
@@ -123,7 +138,7 @@ public class Drawable3DLists {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if contains clipped surfaces
 	 */
 	public boolean containsClippedSurfacesInclLists() {
@@ -132,7 +147,7 @@ public class Drawable3DLists {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if contains clipped curves
 	 */
 	private boolean containsClippedCurves() {
@@ -164,7 +179,7 @@ public class Drawable3DLists {
 
 	/**
 	 * update all 3D objects
-	 * 
+	 *
 	 * @param renderer
 	 *            openGL renderer
 	 */
@@ -178,7 +193,7 @@ public class Drawable3DLists {
 
 	/**
 	 * says all have to be reset
-	 * 
+	 *
 	 */
 	public void resetAllDrawables() {
 		for (int i = 0; i < Drawable3D.DRAW_TYPE_MAX; i++) {
@@ -196,7 +211,6 @@ public class Drawable3DLists {
 				d3d.setLabelWaitForReset();
 			}
 		}
-
 	}
 
 	/** says all visual styles to be updated */
@@ -207,12 +221,11 @@ public class Drawable3DLists {
 				d3d.setWaitForUpdateVisualStyle(null);
 			}
 		}
-
 	}
 
 	/**
 	 * draw hidden parts not dashed
-	 * 
+	 *
 	 * @param renderer
 	 *            renderer
 	 */
@@ -221,17 +234,16 @@ public class Drawable3DLists {
 			d3d.drawHidden(renderer);
 		}
 		for (Drawable3D d3d : lists[Drawable3D.DRAW_TYPE_LISTS]) {
-			((DrawList3D) d3d).getDrawable3DLists()
-					.drawHiddenNotTextured(renderer);
+			((DrawList3D) d3d).getDrawable3DLists().drawHiddenNotTextured(renderer);
 		}
 	}
 
 	/**
 	 * export to 3D printer format
-	 * 
+	 *
 	 * @param exportToPrinter3D
 	 *            exporter
-	 * 
+	 *
 	 */
 	public void exportToPrinter3D(ExportToPrinter3D exportToPrinter3D) {
 		for (Drawable3D d : lists[Drawable3D.DRAW_TYPE_POINTS]) {
@@ -265,10 +277,10 @@ public class Drawable3DLists {
 
 	/**
 	 * export to 3D printer format
-	 * 
+	 *
 	 * @param manager
 	 *            geometry getter manager
-	 * 
+	 *
 	 */
 	public void export(Geometry3DGetterManager manager) {
 
@@ -303,7 +315,7 @@ public class Drawable3DLists {
 
 	/**
 	 * draw surfaces that are not transparent
-	 * 
+	 *
 	 * @param renderer
 	 *            renderer
 	 */
@@ -312,14 +324,13 @@ public class Drawable3DLists {
 			d3d.drawNotTransparentSurface(renderer);
 		}
 		for (Drawable3D d3d : lists[Drawable3D.DRAW_TYPE_LISTS]) {
-			((DrawList3D) d3d).getDrawable3DLists()
-					.drawNotTransparentSurfaces(renderer);
+			((DrawList3D) d3d).getDrawable3DLists().drawNotTransparentSurfaces(renderer);
 		}
 	}
 
 	/**
 	 * draw closed surfaces that are not transparent
-	 * 
+	 *
 	 * @param renderer
 	 *            renderer
 	 */
@@ -331,14 +342,13 @@ public class Drawable3DLists {
 			d3d.drawNotTransparentSurface(renderer);
 		}
 		for (Drawable3D d3d : lists[Drawable3D.DRAW_TYPE_LISTS]) {
-			((DrawList3D) d3d).getDrawable3DLists()
-					.drawNotTransparentSurfacesClosed(renderer);
+			((DrawList3D) d3d).getDrawable3DLists().drawNotTransparentSurfacesClosed(renderer);
 		}
 	}
 
 	/**
 	 * draw clipped surfaces that are not transparent
-	 * 
+	 *
 	 * @param renderer
 	 *            renderer
 	 */
@@ -347,14 +357,13 @@ public class Drawable3DLists {
 			d3d.drawNotTransparentSurface(renderer);
 		}
 		for (Drawable3D d3d : lists[Drawable3D.DRAW_TYPE_LISTS]) {
-			((DrawList3D) d3d).getDrawable3DLists()
-					.drawNotTransparentSurfacesClipped(renderer);
+			((DrawList3D) d3d).getDrawable3DLists().drawNotTransparentSurfacesClipped(renderer);
 		}
 	}
 
 	/**
 	 * draw the hidden (dashed) parts of curves and points
-	 * 
+	 *
 	 * @param renderer
 	 *            opengl context
 	 */
@@ -370,14 +379,13 @@ public class Drawable3DLists {
 			renderer.disableClipPlanesIfNeeded();
 		}
 		for (Drawable3D d3d : lists[Drawable3D.DRAW_TYPE_LISTS]) {
-			((DrawList3D) d3d).getDrawable3DLists()
-					.drawHiddenTextured(renderer);
+			((DrawList3D) d3d).getDrawable3DLists().drawHiddenTextured(renderer);
 		}
 	}
 
 	/**
 	 * draw surfaces as transparent parts
-	 * 
+	 *
 	 * @param renderer
 	 *            opengl context
 	 */
@@ -392,7 +400,7 @@ public class Drawable3DLists {
 
 	/**
 	 * draw transparent closed surfaces
-	 * 
+	 *
 	 * @param renderer
 	 *            renderer
 	 */
@@ -401,14 +409,13 @@ public class Drawable3DLists {
 			d3d.drawTransp(renderer);
 		}
 		for (Drawable3D d3d : lists[Drawable3D.DRAW_TYPE_LISTS]) {
-			((DrawList3D) d3d).getDrawable3DLists()
-					.drawTranspClosedNotCurved(renderer);
+			((DrawList3D) d3d).getDrawable3DLists().drawTranspClosedNotCurved(renderer);
 		}
 	}
 
 	/**
 	 * draw transparent closed surfaces
-	 * 
+	 *
 	 * @param renderer
 	 *            renderer
 	 */
@@ -417,14 +424,13 @@ public class Drawable3DLists {
 			d3d.drawTransp(renderer);
 		}
 		for (Drawable3D d3d : lists[Drawable3D.DRAW_TYPE_LISTS]) {
-			((DrawList3D) d3d).getDrawable3DLists()
-					.drawTranspClosedCurved(renderer);
+			((DrawList3D) d3d).getDrawable3DLists().drawTranspClosedCurved(renderer);
 		}
 	}
 
 	/**
 	 * draw transparent clipped surfaces
-	 * 
+	 *
 	 * @param renderer
 	 *            renderer
 	 */
@@ -439,7 +445,7 @@ public class Drawable3DLists {
 
 	/**
 	 * draw the not hidden (solid) parts of curves and points
-	 * 
+	 *
 	 * @param renderer
 	 *            opengl context
 	 */
@@ -461,7 +467,7 @@ public class Drawable3DLists {
 
 	/**
 	 * draw the labels of objects
-	 * 
+	 *
 	 * @param renderer
 	 *            opengl context
 	 */
@@ -475,7 +481,7 @@ public class Drawable3DLists {
 
 	/**
 	 * draw texts (not in absolute position)
-	 * 
+	 *
 	 * @param renderer
 	 *            opengl context
 	 * @param absolute
@@ -489,14 +495,13 @@ public class Drawable3DLists {
 
 		// lists
 		for (Drawable3D d : lists[Drawable3D.DRAW_TYPE_LISTS]) {
-			((DrawComposite3D) d).getDrawable3DLists()
-					.drawForAbsoluteText(renderer, absolute);
+			((DrawComposite3D) d).getDrawable3DLists().drawForAbsoluteText(renderer, absolute);
 		}
 	}
 
 	/**
 	 * draw the hiding (surfaces) parts
-	 * 
+	 *
 	 * @param renderer
 	 *            opengl context
 	 */
@@ -505,14 +510,13 @@ public class Drawable3DLists {
 			d3d.drawHiding(renderer);
 		}
 		for (Drawable3D d3d : lists[Drawable3D.DRAW_TYPE_LISTS]) {
-			((DrawList3D) d3d).getDrawable3DLists()
-					.drawSurfacesForHiding(renderer);
+			((DrawList3D) d3d).getDrawable3DLists().drawSurfacesForHiding(renderer);
 		}
 	}
 
 	/**
 	 * draw the hiding (closed surfaces) parts
-	 * 
+	 *
 	 * @param renderer
 	 *            opengl context
 	 */
@@ -524,14 +528,13 @@ public class Drawable3DLists {
 			d3d.drawHiding(renderer);
 		}
 		for (Drawable3D d3d : lists[Drawable3D.DRAW_TYPE_LISTS]) {
-			((DrawList3D) d3d).getDrawable3DLists()
-					.drawClosedSurfacesForHiding(renderer);
+			((DrawList3D) d3d).getDrawable3DLists().drawClosedSurfacesForHiding(renderer);
 		}
 	}
 
 	/**
 	 * draw the hiding (clipped surfaces) parts
-	 * 
+	 *
 	 * @param renderer
 	 *            opengl context
 	 */
@@ -540,14 +543,13 @@ public class Drawable3DLists {
 			d3d.drawHiding(renderer);
 		}
 		for (Drawable3D d3d : lists[Drawable3D.DRAW_TYPE_LISTS]) {
-			((DrawList3D) d3d).getDrawable3DLists()
-					.drawClippedSurfacesForHiding(renderer);
+			((DrawList3D) d3d).getDrawable3DLists().drawClippedSurfacesForHiding(renderer);
 		}
 	}
 
 	/**
 	 * process the hit
-	 * 
+	 *
 	 * @param hitting
 	 *            e.g. ray
 	 * @param hits
@@ -562,20 +564,19 @@ public class Drawable3DLists {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param x
 	 *            mouse x location
 	 * @param y
 	 *            mouse y location
 	 * @return first hit label geo
 	 */
-	final public GeoElement getLabelHit(double x, double y) {
+	public final GeoElement getLabelHit(double x, double y) {
 		for (Drawable3DList list : lists) {
 			for (Drawable3D d : list) {
 				if (d.isVisible()) {
 					GeoElement geo = d.getGeoElement();
-					if (!geo.isGeoText() && geo.isPickable()
-							&& d.label.hit(x, y)) {
+					if (!geo.isGeoText() && geo.isPickable() && d.label.hit(x, y)) {
 						return geo;
 					}
 				}
@@ -586,7 +587,7 @@ public class Drawable3DLists {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param origin
 	 *            mouse origin
 	 * @param direction
@@ -598,8 +599,7 @@ public class Drawable3DLists {
 			for (Drawable3D d : list) {
 				if (d.isVisible()) {
 					GeoElement geo = d.getGeoElement();
-					if (!geo.isGeoText() && geo.isPickable()
-							&& d.label.hit(origin, direction)) {
+					if (!geo.isGeoText() && geo.isPickable() && d.label.hit(origin, direction)) {
 						return geo;
 					}
 				}

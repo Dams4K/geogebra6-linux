@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import org.geogebra.common.gui.inputfield.InputHelper;
@@ -21,12 +37,11 @@ import org.gwtproject.core.client.Scheduler;
  * @author laszlo
  *
  */
-public class EvaluateInput {
+public final class EvaluateInput {
 	private final GeoSelectionCallback selectionCallback;
 	RadioTreeItem item;
 	App app;
 	RadioTreeItemController ctrl;
-	private boolean usingValidInput;
 
 	/**
 	 * Constructor.
@@ -34,22 +49,12 @@ public class EvaluateInput {
 	 * @param item to evaluate.
 	 * @param ctrl the controller.
 	 */
-	public EvaluateInput(RadioTreeItem item, RadioTreeItemController ctrl,
-			GeoSelectionCallback callback) {
+	public EvaluateInput(
+			RadioTreeItem item, RadioTreeItemController ctrl, GeoSelectionCallback callback) {
 		this.item = item;
 		this.app = item.getApplication();
 		this.ctrl = ctrl;
-		this.usingValidInput = true;
 		this.selectionCallback = callback;
-	}
-
-	/**
-	 * Set whether it should use the last valid input,
-	 * or the user input
-	 * @param usingValidInput use valid input
-	 */
-	public void setUsingValidInput(boolean usingValidInput) {
-		this.usingValidInput = usingValidInput;
 	}
 
 	/**
@@ -76,32 +81,18 @@ public class EvaluateInput {
 		return app.getKernel().getAlgebraProcessor().evaluateToGeoElement(item.getText(), false);
 	}
 
-	private String getUserInput() {
-		return item.getText();
+	private String getInput() {
+		return ctrl.isInputAsText() ? "\"" + item.getText() + "\"" : item.getPreviewText();
 	}
 
-	private String getValidInput(String userInput) {
-		return app.getKernel().getInputPreviewHelper()
-				.getInput(userInput);
-	}
-
-	private String getInput(String userInput, String validInput) {
-		String input = usingValidInput ? validInput : userInput;
-		boolean textInput = ctrl.isInputAsText();
-		return textInput ? "\"" + input + "\"" : input;
-	}
-
-	private void evaluate(final boolean keepFocus,
-			AsyncOperation<GeoElementND[]> cbEval) {
-		String userInput = getUserInput();
-		String validInput = getValidInput(userInput);
-		String input = getInput(userInput, validInput);
+	private void evaluate(final boolean keepFocus, AsyncOperation<GeoElementND[]> cbEval) {
+		String input = getInput();
 		boolean withSliders = app.getConfig().hasAutomaticSliders();
 
 		ctrl.setInputAsText(false);
 		app.setScrollToShow(true);
 
-		final ErrorHandler err = getErrorHandler(input, keepFocus, withSliders);
+		final ErrorHandler err = getErrorHandler(keepFocus, withSliders);
 		EvalInfo info = EvalInfoFactory.getEvalInfoForAV(app, withSliders);
 
 		// undo point stored in callback
@@ -112,25 +103,25 @@ public class EvaluateInput {
 		}
 	}
 
-	ErrorHandler getErrorHandler(String input, boolean keepFocus, boolean withSliders) {
+	ErrorHandler getErrorHandler(boolean keepFocus, boolean withSliders) {
 		if (ctrl.isInputAsText()) {
 			return null;
 		}
-		boolean valid = input.equals(getUserInput());
-		return item.getErrorHandler(valid, keepFocus, withSliders);
+		return item.getErrorHandler(true, keepFocus, withSliders);
 	}
 
-	private void processAlgebraInput(String input, ErrorHandler err, EvalInfo info,
-			AsyncOperation<GeoElementND[]> cbEval) {
-		app.getKernel().getAlgebraProcessor()
-				.processAlgebraCommandNoExceptionHandling(input, false, err,
-						info, cbEval);
+	private void processAlgebraInput(
+			String input, ErrorHandler err, EvalInfo info, AsyncOperation<GeoElementND[]> cbEval) {
+		app.getKernel()
+				.getAlgebraProcessor()
+				.processAlgebraCommandNoExceptionHandling(input, false, err, info, cbEval);
 	}
 
-	private AsyncOperation<GeoElementND[]> evaluationCallback(final boolean keepFocus) {
+	AsyncOperation<GeoElementND[]> evaluationCallback(final boolean keepFocus) {
 		final int oldStep = app.getKernel().getConstructionStep();
 		return geos -> {
 			if (geos == null) {
+				item.removeOutput();
 				ctrl.setFocus(true);
 				return;
 			}
@@ -150,21 +141,19 @@ public class EvaluateInput {
 					geos[0].setEuclidianVisible(false);
 				}
 			}
-			InputHelper.updateProperties(geos, app.getActiveEuclidianView(),
-					oldStep);
+			InputHelper.updateProperties(geos, app.getActiveEuclidianView(), oldStep);
 			selectionCallback.callback(geos);
 			app.storeUndoInfo();
 			app.setScrollToShow(false);
 
-			Scheduler.get()
-					.scheduleDeferred(() -> {
-						item.scrollIntoView();
-						if (keepFocus) {
-							ctrl.setFocus(true);
-						} else {
-							item.setFocus(false);
-						}
-					});
+			Scheduler.get().scheduleDeferred(() -> {
+				item.scrollIntoView();
+				if (keepFocus) {
+					ctrl.setFocus(true);
+				} else {
+					item.setFocus(false);
+				}
+			});
 
 			item.setText("");
 			item.removeOutput();

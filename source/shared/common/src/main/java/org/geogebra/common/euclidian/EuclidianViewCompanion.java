@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
 import java.util.ArrayList;
@@ -9,6 +25,7 @@ import org.geogebra.common.euclidian.draw.DrawAngle;
 import org.geogebra.common.euclidian.draw.DrawBezierCurve;
 import org.geogebra.common.euclidian.draw.DrawParametricCurve;
 import org.geogebra.common.euclidian.event.PointerEventType;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.ModeSetter;
 import org.geogebra.common.kernel.algos.AlgoBezierCurve;
 import org.geogebra.common.kernel.algos.AlgoElement;
@@ -24,13 +41,12 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.kernel.matrix.CoordMatrix;
 import org.geogebra.common.kernel.matrix.CoordSys;
 import org.geogebra.common.kernel.matrix.Coords;
-import org.geogebra.common.main.settings.AbstractSettings;
 import org.geogebra.common.main.settings.EuclidianSettings;
 
 /**
- * 
+ *
  * @author mathieu
- * 
+ *
  *         view companion for methods that have to cross desktop/web
  *
  */
@@ -40,7 +56,7 @@ public class EuclidianViewCompanion {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param view
 	 *            view attached
 	 */
@@ -57,7 +73,7 @@ public class EuclidianViewCompanion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return view attached
 	 */
 	public EuclidianView getView() {
@@ -72,7 +88,7 @@ public class EuclidianViewCompanion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param geo
 	 *            angle
 	 * @return drawable for this angle
@@ -99,7 +115,7 @@ public class EuclidianViewCompanion {
 
 	/**
 	 * transform in view coords
-	 * 
+	 *
 	 * @param coords
 	 *            point
 	 * @return the same coords for classic 2d view
@@ -110,7 +126,7 @@ public class EuclidianViewCompanion {
 
 	/**
 	 * return null if classic 2D view
-	 * 
+	 *
 	 * @return matrix representation of the plane shown by this view
 	 */
 	public CoordMatrix getMatrix() {
@@ -119,7 +135,7 @@ public class EuclidianViewCompanion {
 
 	/**
 	 * return null if classic 2D view
-	 * 
+	 *
 	 * @return matrix inverse representation of the plane shown by this view
 	 */
 	public CoordMatrix getInverseMatrix() {
@@ -127,7 +143,7 @@ public class EuclidianViewCompanion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return string description of plane from the view was created
 	 */
 	public String getFromPlaneString() {
@@ -135,7 +151,7 @@ public class EuclidianViewCompanion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return string translated description of plane from the view was created
 	 */
 	public String getTranslatedFromPlaneString() {
@@ -143,7 +159,7 @@ public class EuclidianViewCompanion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return null (for 2D) and xOyPlane (for 3D)
 	 */
 	public GeoPlaneND getPlaneContaining() {
@@ -151,7 +167,7 @@ public class EuclidianViewCompanion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return null (for 2D) and xOyPlane (for 3D)
 	 */
 	public GeoDirectionND getDirection() {
@@ -159,7 +175,7 @@ public class EuclidianViewCompanion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param v
 	 *            vector
 	 * @return true if v is oriented to z+ direction
@@ -188,11 +204,11 @@ public class EuclidianViewCompanion {
 
 	/**
 	 * add id to xml
-	 * 
+	 *
 	 * @param sbxml
 	 *            xml
 	 */
-	public void getXMLid(StringBuilder sbxml) {
+	public void getXMLid(XMLStringBuilder sbxml) {
 		if (view.evNo >= 2) {
 			getXMLidNoCheck(sbxml);
 		}
@@ -200,27 +216,23 @@ public class EuclidianViewCompanion {
 
 	/**
 	 * add id to xml
-	 * 
+	 *
 	 * @param sbxml
 	 *            xml
 	 */
-	protected void getXMLidNoCheck(StringBuilder sbxml) {
-		sbxml.append("\t<viewNumber ");
-		sbxml.append("viewNo=\"");
-		sbxml.append(view.evNo);
-		sbxml.append("\"");
-		sbxml.append("/>\n");
+	protected void getXMLidNoCheck(XMLStringBuilder sbxml) {
+		sbxml.startTag("viewNumber").attr("viewNo", view.evNo).endTag();
 	}
 
 	/**
 	 * returns settings in XML format
-	 * 
+	 *
 	 * @param sbxml
 	 *            string builder
 	 * @param asPreference
 	 *            true for preferences
 	 */
-	public void getXML(StringBuilder sbxml, boolean asPreference) {
+	public void getXML(XMLStringBuilder sbxml, boolean asPreference) {
 		view.startXML(sbxml, asPreference);
 		view.endXML(sbxml);
 	}
@@ -229,23 +241,21 @@ public class EuclidianViewCompanion {
 	 * @param settings
 	 *            settings
 	 */
-	public void settingsChanged(AbstractSettings settings) {
-		EuclidianSettings evs = (EuclidianSettings) settings;
-
+	public void settingsChanged(EuclidianSettings settings) {
 		view.getKernel().getConstruction().setIgnoringNewTypes(true);
-		setMinMaxObjectsInView(evs);
+		setMinMaxObjectsInView(settings);
 		view.getKernel().getConstruction().setIgnoringNewTypes(false);
-		view.setBackground(evs.getBackground());
-		view.setAxesColor(evs.getAxesColor());
-		view.setGridColor(evs.getGridColor());
-		view.setAxesLineStyle(evs.getAxesLineStyle());
-		view.setGridLineStyle(evs.getGridLineStyle());
+		view.setBackground(settings.getBackground());
+		view.setAxesColor(settings.getAxesColor());
+		view.setGridColor(settings.getGridColor());
+		view.setAxesLineStyle(settings.getAxesLineStyle());
+		view.setGridLineStyle(settings.getGridLineStyle());
 
 		// bold/italic/size for axes labels
 		view.initFontCoords();
 
-		double[] d = evs.getGridDistances();
-		if (!evs.getAutomaticGridDistance() && (d == null)) {
+		double[] d = settings.getGridDistances();
+		if (!settings.getAutomaticGridDistance() && (d == null)) {
 			view.setAutomaticGridDistance(false);
 		} else if (d == null) {
 			view.setAutomaticGridDistance(true);
@@ -254,87 +264,60 @@ public class EuclidianViewCompanion {
 		}
 		int viewDim = view.getDimension();
 		for (int i = 0; i < viewDim; i++) {
-			view.setShowAxis(i, evs.getShowAxis(i), true);
+			view.setShowAxis(i, settings.getShowAxis(i), true);
 		}
-		String[] tempAxesLabels = evs.getAxesLabels();
+		String[] tempAxesLabels = settings.getAxesLabels();
 
 		// make sure <b>, <i> processed
 		for (int i = 0; i < viewDim; i++) {
 			view.setAxisLabel(i, tempAxesLabels[i]);
 		}
-		view.setAxesUnitLabels(evs.getAxesUnitLabels());
+		view.setAxesUnitLabels(settings.getAxesUnitLabels());
 
-		view.showAxesNumbers = evs.getShowAxisNumbers();
+		view.showAxesNumbers = settings.getShowAxisNumbers();
 
 		// might be Double.NaN, handled in setAxesNumberingDistance()
 		for (int i = 0; i < viewDim; i++) {
-			if (!evs.getAutomaticAxesNumberingDistance(i)
-					&& isNaN(evs.getAxisNumberingDistance(i))) {
+			if (!settings.getAutomaticAxesNumberingDistance(i)
+					&& isNaN(settings.getAxisNumberingDistance(i))) {
 				view.setAutomaticAxesNumberingDistance(false, i);
 			} else {
-				view.setAxesNumberingDistance(evs.getAxisNumberingDistance(i),
-						i);
+				view.setAxesNumberingDistance(settings.getAxisNumberingDistance(i), i);
 			}
 		}
 
 		for (int i = 0; i < viewDim; i++) {
-			view.setAxisTickStyle(i, evs.getAxesTickStyles()[i]);
+			view.setAxisTickStyle(i, settings.getAxesTickStyles()[i]);
 		}
 
-		view.setDrawBorderAxes(evs.getDrawBorderAxes());
+		view.setDrawBorderAxes(settings.getDrawBorderAxes());
 
 		for (int i = 0; i < viewDim; i++) {
-			view.axisCross[i] = evs.getAxesCross()[i];
-			view.positiveAxes[i] = evs.getPositiveAxes()[i];
+			view.axisCross[i] = settings.getAxesCross()[i];
+			view.positiveAxes[i] = settings.getPositiveAxes()[i];
 		}
 
-		GDimension ps = evs.getPreferredSize();
+		GDimension ps = settings.getPreferredSize();
 		if (ps != null) {
 			view.setPreferredSize(ps);
 		}
 
-		view.showGrid(evs.getShowGrid());
+		view.showGrid(settings.getShowGrid());
 
-		view.setGridIsBold(evs.getGridIsBold());
+		view.setGridIsBold(settings.getGridIsBold());
 
-		view.setGridType(evs.getGridType());
+		view.setGridType(settings.getGridType());
 
-		view.pointCapturingMode = evs.getPointCapturingMode();
+		view.pointCapturingMode = settings.getPointCapturingMode();
 
-		view.setAllowShowMouseCoords(evs.getAllowShowMouseCoords());
+		view.setAllowShowMouseCoords(settings.getAllowShowMouseCoords());
 
-		view.setAllowToolTips(evs.getAllowToolTips());
+		view.setAllowToolTips(settings.getAllowToolTips());
 
-		view.synchronizeMenuBarAndEuclidianStyleBar(evs);
+		view.synchronizeMenuBarAndEuclidianStyleBar(settings);
 
-		if (!evs.hasDynamicBounds()) {
-			// the xmin, xmax, ... we read from Settings are nulls;
-			// use the double values instead
-			double x0 = evs.getXZero();
-			double y0 = evs.getYZero();
-			if (view.getKeepCenter() && view.isShowing()) {
-				// we may need to shift center if windows/settings sizes
-				// don't match
-				int visibleWidth = view.getVisibleWidth();
-				int visibleHeight = view.getVisibleHeight();
-				if (visibleWidth > EuclidianView.MIN_WIDTH
-						&& visibleHeight > EuclidianView.MIN_HEIGHT) {
-					int settingsVisibleWidth = view.calcVisibleWidthFromSettings();
-					int settingsVisibleHeight = view.calcVisibleHeightFromSettings();
-					if (settingsVisibleWidth == 0) {
-						// no dimension from file: center the view
-						settingsVisibleWidth = (int) Math.round(x0 * 2);
-						settingsVisibleHeight = (int) Math.round(y0 * 2);
-					}
-					x0 += (visibleWidth - settingsVisibleWidth) / 2.0;
-					y0 += (visibleHeight - settingsVisibleHeight) / 2.0;
-					evs.setSize(view.getWidth(), view.getHeight());
-					evs.setOriginNoUpdate(x0, y0);
-				}
-			}
-
-			view.setCoordSystem(x0, y0, evs.getXscale(), evs.getYscale(), true);
-			setMinMaxObjectsInSettings(evs);
+		if (!settings.hasDynamicBounds()) {
+			centerIfNeeded(settings);
 		} else {
 			// xmin, ... are OK; just update bounds
 			view.updateBounds(true, true);
@@ -342,13 +325,40 @@ public class EuclidianViewCompanion {
 
 		// let's do this after other updates because this might override e.g.
 		// xmin
-		view.setLockedAxesRatio(evs.getLockedAxesRatio());
+		view.setLockedAxesRatio(settings.getLockedAxesRatio());
 		view.repaintView();
 	}
 
+	private void centerIfNeeded(EuclidianSettings settings) {
+		// the xmin, xmax, ... we read from Settings are nulls;
+		// use the double values instead
+		double x0 = settings.getXZero();
+		double y0 = settings.getYZero();
+		if (view.getKeepCenter() && view.isShowing()) {
+			// we may need to shift center if windows/settings sizes
+			// don't match
+			int visibleWidth = view.getVisibleWidth();
+			int visibleHeight = view.getVisibleHeight();
+			if (visibleWidth > EuclidianView.MIN_WIDTH && visibleHeight > EuclidianView.MIN_HEIGHT) {
+				int settingsVisibleWidth = view.calcVisibleWidthFromSettings();
+				int settingsVisibleHeight = view.calcVisibleHeightFromSettings();
+				if (settingsVisibleWidth == 0) {
+					// no dimension from file: center the view
+					settingsVisibleWidth = (int) Math.round(x0 * 2);
+					settingsVisibleHeight = (int) Math.round(y0 * 2);
+				}
+				x0 += (visibleWidth - settingsVisibleWidth) / 2.0;
+				y0 += (visibleHeight - settingsVisibleHeight) / 2.0;
+				settings.setSize(view.getWidth(), view.getHeight());
+				settings.setOriginNoUpdate(x0, y0);
+			}
+		}
+		view.setCoordSystem(x0, y0, settings.getXscale(), settings.getYscale(), true);
+		setMinMaxObjectsInSettings(settings);
+	}
+
 	private static boolean isNaN(GeoNumberValue axisNumberingDistance) {
-		return axisNumberingDistance == null
-				|| Double.isNaN(axisNumberingDistance.getDouble());
+		return axisNumberingDistance == null || Double.isNaN(axisNumberingDistance.getDouble());
 	}
 
 	protected void setMinMaxObjectsInView(EuclidianSettings evs) {
@@ -367,7 +377,7 @@ public class EuclidianViewCompanion {
 
 	/**
 	 * Paints content of this view.
-	 * 
+	 *
 	 * @param g2
 	 *            graphics
 	 */
@@ -396,11 +406,15 @@ public class EuclidianViewCompanion {
 		view.drawShapePreview(g2);
 
 		if (view.deletionRectangle != null) {
-			view.drawRect(g2, EuclidianView.colDeletionSquare,
-					EuclidianView.strokeDeletionSquare, view.deletionRectangle);
+			view.drawRect(
+					g2,
+					EuclidianView.colDeletionSquare,
+					EuclidianView.strokeDeletionSquare,
+					view.deletionRectangle);
 		}
 
-		if (view.allowShowMouseCoords && view.showMouseCoords
+		if (view.allowShowMouseCoords
+				&& view.showMouseCoords
 				&& (view.showAxes[0] || view.showAxes[1] || view.showGrid)) {
 			view.drawMouseCoords(g2);
 		}
@@ -446,7 +460,7 @@ public class EuclidianViewCompanion {
 
 	/**
 	 * Returns transform from eigenvector space to screen coords
-	 * 
+	 *
 	 * @param conic
 	 *            conic
 	 * @param M
@@ -455,14 +469,13 @@ public class EuclidianViewCompanion {
 	 *            eigenvectors
 	 * @return affine transform of the conic for this view
 	 */
-	public GAffineTransform getTransform(GeoConicND conic, Coords M,
-			Coords[] ev) {
+	public GAffineTransform getTransform(GeoConicND conic, Coords M, Coords[] ev) {
 		return conic.getAffineTransform();
 	}
 
 	/**
 	 * transform point coords in view coords
-	 * 
+	 *
 	 * @param point
 	 *            point
 	 * @return point coords in view coords
@@ -485,8 +498,7 @@ public class EuclidianViewCompanion {
 	 * @return whether the coord system is in the plane of this view
 	 */
 	public boolean isInPlane(CoordSys sys) {
-		return sys.getEquationVector()
-				.isEqual(CoordSys.Identity3D.getEquationVector());
+		return sys.getEquationVector().isEqual(CoordSys.Identity3D.getEquationVector());
 	}
 
 	/**
@@ -505,7 +517,7 @@ public class EuclidianViewCompanion {
 
 	/**
 	 * set hits for current mouse loc
-	 * 
+	 *
 	 * @param type
 	 *            event type
 	 */
@@ -542,5 +554,4 @@ public class EuclidianViewCompanion {
 		}
 		return new DrawParametricCurve(view, geo);
 	}
-
 }

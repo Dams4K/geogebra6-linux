@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.javax.swing;
 
 import org.geogebra.web.html5.gui.menu.AriaMenuBar;
@@ -12,11 +28,11 @@ import org.gwtproject.user.client.ui.InlineLabel;
 
 /**
  * Adds a menu item with a checkmark on its end.
- * 
+ *
  * @author laszlo
- * 
+ *
  */
-public class GCollapseMenuItem {
+public final class GCollapseMenuItem {
 
 	private AriaMenuItem menuItem;
 	private AriaMenuBar items;
@@ -42,9 +58,13 @@ public class GCollapseMenuItem {
 	 * @param wrappedPopup
 	 *            The command to run.
 	 */
-	public GCollapseMenuItem(SVGResource icon, String title, String expandUrl,
+	public GCollapseMenuItem(
+			SVGResource icon,
+			String title,
+			String expandUrl,
 			String collapseUrl,
-			boolean expanded, final GPopupMenuW wrappedPopup) {
+			boolean expanded,
+			final GPopupMenuW wrappedPopup) {
 		this.icon = icon;
 		this.title = title;
 		imgExpand = new NoDragImage(expandUrl);
@@ -59,14 +79,13 @@ public class GCollapseMenuItem {
 		itemPanel = new FlowPanel();
 		itemPanel.addStyleName("collapseMenuItem");
 		this.parentMenu = wrappedPopup;
-		menuItem = new AriaMenuItem(itemPanel,
-				this::toggle);
+		menuItem = new AriaMenuItem(itemPanel, this::toggle);
 		setExpanded(expanded);
 	}
 
 	/**
 	 * Sets the item checked/unchecked.
-	 * 
+	 *
 	 * @param value
 	 *            to set.
 	 */
@@ -76,16 +95,12 @@ public class GCollapseMenuItem {
 		itemPanel.add(new NoDragImage(icon, 24));
 		itemPanel.add(new InlineLabel(title));
 		itemPanel.add(expanded ? imgCollapse : imgExpand);
-		menuItem.getElement().setAttribute("aria-expanded",
-				String.valueOf(expanded));
+		menuItem.getElement().setAttribute("aria-expanded", String.valueOf(expanded));
 		if (items.getElement().getParentElement() != null) {
-			items.getElement().getParentElement().getStyle()
-					.setProperty("listStyle", "none");
-			items.getElement().getParentElement().setAttribute("aria-hidden",
-					String.valueOf(!expanded));
+			items.getElement().getParentElement().getStyle().setProperty("listStyle", "none");
+			items.getElement().getParentElement().setAttribute("aria-hidden", String.valueOf(!expanded));
 		}
-		menuItem.getElement().setAttribute("aria-label",
-				title + (value ? " expanded" : " collapsed"));
+		menuItem.getElement().setAttribute("aria-label", title + (value ? " expanded" : " collapsed"));
 		updateItems();
 
 		items.getElement().setTabIndex(-1);
@@ -100,7 +115,7 @@ public class GCollapseMenuItem {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The standard menu item with checkmark.
 	 */
 	public AriaMenuItem getMenuItem() {
@@ -108,7 +123,7 @@ public class GCollapseMenuItem {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return if the menu is expanded or not.
 	 */
 	public boolean isExpanded() {
@@ -134,7 +149,7 @@ public class GCollapseMenuItem {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param item
 	 *            to add.
 	 */

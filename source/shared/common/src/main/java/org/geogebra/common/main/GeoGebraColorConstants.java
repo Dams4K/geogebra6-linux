@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main;
 
 import java.util.HashMap;
@@ -14,14 +30,12 @@ public class GeoGebraColorConstants {
 
 	// table colors
 	/** background of selected cell */
-	public static final GColor TABLE_SELECTED_BACKGROUND_COLOR = GColor
-			.newColor(214, 224, 245);
+	public static final GColor TABLE_SELECTED_BACKGROUND_COLOR = GColor.newColor(214, 224, 245);
 	/** background of selected row / column header */
 	public static final GColor TABLE_SELECTED_BACKGROUND_COLOR_HEADER = GColor.LIGHT_GRAY;
 
 	/** background of row / column header */
-	public static final GColor TABLE_BACKGROUND_COLOR_HEADER = GColor
-			.newColor(232, 238, 247);
+	public static final GColor TABLE_BACKGROUND_COLOR_HEADER = GColor.newColor(232, 238, 247);
 	/** grid color for spreadsheet */
 	public static final GColor TABLE_GRID_COLOR = GColor.GRAY;
 
@@ -107,20 +121,17 @@ public class GeoGebraColorConstants {
 
 	// input coloring
 	/** defined objects (violet) */
-	public static final GColor DEFINED_OBJECT_COLOR = GColor.newColor(102, 102,
-			255);
+	public static final GColor DEFINED_OBJECT_COLOR = GColor.newColor(102, 102, 255);
 	/** undefined objects */
 	public static final GColor UNDEFINED_OBJECT_COLOR = GRAY3;
 
 	/** local objects (local variables, blue) */
-	public static final GColor LOCAL_OBJECT_COLOR = GColor.newColor(0, 102,
-			255);
+	public static final GColor LOCAL_OBJECT_COLOR = GColor.newColor(0, 102, 255);
 	/** unbalanced brackets */
 	public static final GColor UNBALANCED_BRACKET_COLOR = GColor.RED;
 
 	/** balanced bracket (green) */
-	public static final GColor BALANCED_BRACKET_COLOR = GColor.newColor(0, 127,
-			0);
+	public static final GColor BALANCED_BRACKET_COLOR = GColor.newColor(0, 127, 0);
 	/** text mode */
 	public static final GColor INPUT_TEXT_COLOR = GRAY4;
 
@@ -146,8 +157,7 @@ public class GeoGebraColorConstants {
 	/** GEOGEBRA_OBJECT_BLACK */
 	public static final GColor GEOGEBRA_OBJECT_BLACK = rgb(0x1C1C1F);
 	/** GEOGEBRA_OBJECT_PINK */
-	public static final GColor GEOGEBRA_OBJECT_PINK = GColor.newColor(216, 27,
-			96);
+	public static final GColor GEOGEBRA_OBJECT_PINK = GColor.newColor(216, 27, 96);
 
 	/** Accent color for GeoGebra */
 	public static final GColor GEOGEBRA_ACCENT = GColor.newColor(101, 87, 210);
@@ -157,33 +167,50 @@ public class GeoGebraColorConstants {
 
 	/** MASK color */
 	public static final GColor MEBIS_MASK = GColor.newColor(0, 0x63, 0x7d);
+
 	public static final GColor DISABLED_BACKGROUND = rgb(0xa3a3a3);
 	public static final GColor DISABLED_BORDER = rgb(0x949494);
 	public static final GColor DEFAULT_BORDER = rgb(0x757575);
 
+	public static final GColor NEUTRAL_0 = rgb(0xFFFFFF);
+	public static final GColor NEUTRAL_100 = rgb(0xFAFAFC);
 	public static final GColor NEUTRAL_200 = rgb(0xF3F2F7);
 	public static final GColor NEUTRAL_300 = rgb(0xE6E6EB);
 	public static final GColor NEUTRAL_400 = rgb(0xD1D0D6);
 	public static final GColor NEUTRAL_500 = rgb(0xB4B3BA);
 	public static final GColor NEUTRAL_600 = rgb(0x85848A);
 	public static final GColor NEUTRAL_700 = rgb(0x6E6D73);
+	public static final GColor NEUTRAL_800 = rgb(0x2F2F33);
 	public static final GColor NEUTRAL_900 = rgb(0x1C1C1F);
 
 	public static final GColor PURPLE_100 = rgb(0xF3F0FF);
 	public static final GColor PURPLE_600 = rgb(0x6557D2); // primary purple
 	public static final GColor PURPLE_700 = rgb(0x5145A8);
 
+	public static final GColor ACCENT_700 = rgb(0x388C83);
+
 	/** MEBIS PURPLE A400 */
 	public static final GColor MEBIS_PURPLE_A400 = GColor.newColorRGB(0x723B86);
+
+	public static final GColor MEBIS_PURPLE_300 = rgb(0x975FA8); // primary Mebis purple
+	public static final GColor MEBIS_PURPLE_100 = rgb(0xEADFEE);
+
+	public static final GColor APPLET_BLUE_BACKGROUND = rgb(0xCAD5ED);
+	public static final GColor APPLET_TEAL_PRIMARY = rgb(0x006758);
+	public static final GColor APPLET_TEAL_BACKGROUND = rgb(0xD2E4E2);
+	public static final GColor APPLET_ORANGE_PRIMARY = rgb(0xC75000);
+	public static final GColor APPLET_ORANGE_BACKGROUND = rgb(0xF5E0D2);
+	public static final GColor APPLET_RED_PRIMARY = rgb(0xB00020);
+	public static final GColor APPLET_RED_BACKGROUND = rgb(0xF1D2D8);
 
 	/**
 	 * HashMap recording RGB color values with named colors key = color name
 	 * from colors.properties value = RBG color
 	 */
 	private static volatile HashMap<String, GColor> geogebraColor = null; // must
-																			// be
-																			// declared
-																			// volatile
+	// be
+	// declared
+	// volatile
 	private static final Object lock = new Object();
 
 	/** popup color menu type: standard */
@@ -196,6 +223,7 @@ public class GeoGebraColorConstants {
 	 * colors.properties
 	 */
 	private static volatile HashMap<GColor, String> geogebraColorReverse = null;
+
 	private static volatile GColor[] grayColors = null;
 	private static volatile GColor[] darkPrimaryColors = null;
 	private static volatile GColor[] lightPrimaryColors = null;
@@ -206,13 +234,13 @@ public class GeoGebraColorConstants {
 
 	/**
 	 * initialize (once) only if needed
-	 * 
+	 *
 	 * @return map of internal lowercase strings to GColors
 	 */
 	public static HashMap<String, GColor> getGeoGebraColors() {
 		if (geogebraColor == null) { // avoid sync penalty if we can
 			synchronized (lock) { // declare a private static Object to use for
-									// mutex
+				// mutex
 				if (geogebraColor == null) { // have to do this inside the sync
 					HashMap<String, GColor> geogebraColor0 = new HashMap<>();
 
@@ -273,16 +301,14 @@ public class GeoGebraColorConstants {
 	private static HashMap<GColor, String> getGeoGebraColorReverse() {
 		if (geogebraColorReverse == null) { // avoid sync penalty if we can
 			synchronized (lock2) { // declare a private static Object to use for
-									// mutex
+				// mutex
 				if (geogebraColorReverse == null) { // have to do this inside
-													// the sync
+					// the sync
 
 					HashMap<GColor, String> geogebraColorReverse0 = new HashMap<>();
 
-					for (Entry<String, GColor> entry : getGeoGebraColors()
-							.entrySet()) {
-						geogebraColorReverse0.put(entry.getValue(),
-								entry.getKey());
+					for (Entry<String, GColor> entry : getGeoGebraColors().entrySet()) {
+						geogebraColorReverse0.put(entry.getValue(), entry.getKey());
 					}
 
 					geogebraColorReverse = geogebraColorReverse0;
@@ -295,7 +321,7 @@ public class GeoGebraColorConstants {
 
 	/**
 	 * Returns Color object corresponding with given GeoGebra color name string
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param colorName
@@ -309,8 +335,7 @@ public class GeoGebraColorConstants {
 		GColor ret = geogebraColor.get(StringUtil.toLowerCaseUS(colorName));
 
 		if (ret == null) {
-			ret = geogebraColor
-					.get(app.getLocalization().reverseGetColor(colorName));
+			ret = geogebraColor.get(app.getLocalization().reverseGetColor(colorName));
 		}
 		if (ret == null) {
 			// will need only English characters
@@ -321,7 +346,7 @@ public class GeoGebraColorConstants {
 
 	/**
 	 * Returns GeoGebra color name string corresponding with given Color object
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param color
@@ -329,8 +354,7 @@ public class GeoGebraColorConstants {
 	 * @return GeoGebra color name string corresponding with given Color object
 	 */
 	public static String getGeogebraColorName(App app, GColor color) {
-		return app.getLocalization()
-				.getColor(getGeoGebraColorReverse().get(color));
+		return app.getLocalization().getColor(getGeoGebraColorReverse().get(color));
 	}
 
 	/**
@@ -338,7 +362,7 @@ public class GeoGebraColorConstants {
 	 * from 1-7. Gray, in RGB values, is given by red = green = blue = (256 -
 	 * 32*n) For example: n = 7 gives RGB[32,32,32], v. dark gray n = 6 gives
 	 * RGB[64,64,64], dark gray ... n = 1 gives RGB[224,224,224] v.light gray
-	 * 
+	 *
 	 * @param n
 	 *            degree of gray (1 -7)
 	 * @return gray
@@ -352,9 +376,9 @@ public class GeoGebraColorConstants {
 
 		if (primaryColors == null) { // avoid sync penalty if we can
 			synchronized (lock2) { // declare a private static Object to use for
-									// mutex
+				// mutex
 				if (primaryColors == null) { // have to do this inside the
-												// sync
+					// sync
 
 					getGeoGebraColors();
 
@@ -370,7 +394,6 @@ public class GeoGebraColorConstants {
 					primaryColors0[8] = geogebraColor.get("magenta");
 
 					primaryColors = primaryColors0;
-
 				}
 			}
 		}
@@ -382,16 +405,16 @@ public class GeoGebraColorConstants {
 
 		if (lightPrimaryColors == null) { // avoid sync penalty if we can
 			synchronized (lock2) { // declare a private static Object to use for
-									// mutex
+				// mutex
 				if (lightPrimaryColors == null) { // have to do this inside the
-													// sync
+					// sync
 
 					getGeoGebraColors();
 
 					GColor[] lightPrimaryColors0 = new GColor[9];
 					lightPrimaryColors0[0] = null; // for the null icon symbol
-													// (for removing
-													// bgcolor)
+					// (for removing
+					// bgcolor)
 					lightPrimaryColors0[1] = geogebraColor.get("pink");
 					lightPrimaryColors0[2] = geogebraColor.get("lightorange");
 					lightPrimaryColors0[3] = geogebraColor.get("lightyellow");
@@ -402,7 +425,6 @@ public class GeoGebraColorConstants {
 					lightPrimaryColors0[8] = geogebraColor.get("lightviolet");
 
 					lightPrimaryColors = lightPrimaryColors0;
-
 				}
 			}
 		}
@@ -414,9 +436,9 @@ public class GeoGebraColorConstants {
 
 		if (darkPrimaryColors == null) { // avoid sync penalty if we can
 			synchronized (lock2) { // declare a private static Object to use for
-									// mutex
+				// mutex
 				if (darkPrimaryColors == null) { // have to do this inside the
-													// sync
+					// sync
 
 					getGeoGebraColors();
 
@@ -443,7 +465,7 @@ public class GeoGebraColorConstants {
 
 		if (grayColors == null) { // avoid sync penalty if we can
 			synchronized (lock2) { // declare a private static Object to use for
-									// mutex
+				// mutex
 				if (grayColors == null) { // have to do this inside the sync
 
 					GColor[] grayColors0 = new GColor[9];
@@ -467,7 +489,7 @@ public class GeoGebraColorConstants {
 
 	/**
 	 * Returns array of localized color names
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param color
@@ -484,7 +506,7 @@ public class GeoGebraColorConstants {
 
 	/**
 	 * Returns array of colors for color popup menus
-	 * 
+	 *
 	 * @param colorSetType
 	 *            COLORSET_* (background or primary)
 	 * @return array of colors for color popup menus
@@ -518,7 +540,7 @@ public class GeoGebraColorConstants {
 
 	/**
 	 * Returns array of colors for color popup menus
-	 * 
+	 *
 	 * @return array of colors for color popup menus
 	 */
 	public static GColor[] getSimplePopupArray() {
@@ -542,7 +564,7 @@ public class GeoGebraColorConstants {
 	/**
 	 * Array of colors intended for the primary color swatch panel of the
 	 * GeoGebraColorChooser class.
-	 * 
+	 *
 	 * @return array of colors intended for the primary color swatch panel
 	 */
 	public static GColor[] getPrimarySwatchColors() {
@@ -553,7 +575,6 @@ public class GeoGebraColorConstants {
 			// first row
 			primColors[i] = getGrayColors()[i / 2];
 			primColors[i + 1] = getPrimaryColors()[i / 2];
-
 		}
 
 		return primColors;
@@ -562,60 +583,110 @@ public class GeoGebraColorConstants {
 	/**
 	 * Array of colors intended for the main color swatch panel of the
 	 * GeoGebraColorChooser class.
-	 * 
+	 *
 	 * @return colors for main chooser
 	 */
 	public static GColor[] getMainColorSwatchColors() {
 		return new GColor[] {
 			// Row 1 RED related colors
 
-			PINK, rgb(255, 153, 204), rgb(255, 102, 153), rgb(255, 51, 102),
-			rgb(255, 0, 51), GGB_RED, MAROON, rgb(51, 0, 0),
+			PINK,
+			rgb(255, 153, 204),
+			rgb(255, 102, 153),
+			rgb(255, 51, 102),
+			rgb(255, 0, 51),
+			GGB_RED,
+			MAROON,
+			rgb(51, 0, 0),
 
 			// Row 2 ORANGE related colors
 
-			LIGHTORANGE, rgb(255, 204, 51), rgb(255, 153, 0), rgb(255, 153, 51),
-			rgb(255, 102, 0), rgb(204, 102, 0), rgb(153, 102, 0),
+			LIGHTORANGE,
+			rgb(255, 204, 51),
+			rgb(255, 153, 0),
+			rgb(255, 153, 51),
+			rgb(255, 102, 0),
+			rgb(204, 102, 0),
+			rgb(153, 102, 0),
 			rgb(51, 51, 0),
 
 			// Row 3 YELLOW related colors
 
-			LIGHTYELLOW, rgb(255, 255, 153), rgb(255, 255, 102), GOLD,
-			rgb(255, 204, 102), rgb(204, 153, 0), GGB_BROWN, rgb(102, 51, 0),
+			LIGHTYELLOW,
+			rgb(255, 255, 153),
+			rgb(255, 255, 102),
+			GOLD,
+			rgb(255, 204, 102),
+			rgb(204, 153, 0),
+			GGB_BROWN,
+			rgb(102, 51, 0),
 
 			// Row 4 YELLOW-GREEN ("LIME") related colors
 
-			rgb(204, 255, 204), rgb(204, 255, 102), rgb(153, 255, 0),
-			rgb(153, 204, 0), rgb(102, 204, 0), rgb(102, 153, 0),
-			rgb(51, 153, 0), rgb(0, 102, 51),
+			rgb(204, 255, 204),
+			rgb(204, 255, 102),
+			rgb(153, 255, 0),
+			rgb(153, 204, 0),
+			rgb(102, 204, 0),
+			rgb(102, 153, 0),
+			rgb(51, 153, 0),
+			rgb(0, 102, 51),
 
 			// Row 5 GREEN related colors
 
-			LIGHTGREEN, rgb(153, 255, 153), rgb(102, 255, 0), rgb(51, 255, 0),
-			rgb(0, 204, 0), rgb(0, 153, 0), GGB_GREEN, rgb(0, 51, 0),
+			LIGHTGREEN,
+			rgb(153, 255, 153),
+			rgb(102, 255, 0),
+			rgb(51, 255, 0),
+			rgb(0, 204, 0),
+			rgb(0, 153, 0),
+			GGB_GREEN,
+			rgb(0, 51, 0),
 
 			// Row 6 CYAN related colors
 
-			TURQUOISE, rgb(153, 255, 255), rgb(51, 255, 204), rgb(0, 153, 255),
-			rgb(0, 153, 204), rgb(0, 102, 153), rgb(0, 51, 204),
+			TURQUOISE,
+			rgb(153, 255, 255),
+			rgb(51, 255, 204),
+			rgb(0, 153, 255),
+			rgb(0, 153, 204),
+			rgb(0, 102, 153),
+			rgb(0, 51, 204),
 			rgb(0, 51, 153),
 
 			// Row 7 BLUE related colors
 
-			AQUA, rgb(153, 204, 255), rgb(102, 204, 255), rgb(102, 153, 255),
-			rgb(125, 125, 255), rgb(51, 51, 255), rgb(0, 0, 204), rgb(0, 0, 51),
+			AQUA,
+			rgb(153, 204, 255),
+			rgb(102, 204, 255),
+			rgb(102, 153, 255),
+			rgb(125, 125, 255),
+			rgb(51, 51, 255),
+			rgb(0, 0, 204),
+			rgb(0, 0, 51),
 
 			// Row 8 VIOLET related colors
 
-			LIGHTPURPLE, rgb(204, 153, 255), rgb(204, 102, 255),
-			rgb(153, 102, 255), rgb(102, 0, 204), PURPLE, INDIGO,
+			LIGHTPURPLE,
+			rgb(204, 153, 255),
+			rgb(204, 102, 255),
+			rgb(153, 102, 255),
+			rgb(102, 0, 204),
+			PURPLE,
+			INDIGO,
 			rgb(51, 0, 51),
 
 			// Row 9 MAGENTA related colors
 
-			LIGHTVIOLET, rgb(255, 153, 255), rgb(255, 153, 153),
-			rgb(255, 51, 204), CRIMSON, rgb(204, 0, 102), rgb(153, 0, 51),
-				rgb(102, 0, 153) };
+			LIGHTVIOLET,
+			rgb(255, 153, 255),
+			rgb(255, 153, 153),
+			rgb(255, 51, 204),
+			CRIMSON,
+			rgb(204, 0, 102),
+			rgb(153, 0, 51),
+			rgb(102, 0, 153)
+		};
 	}
 
 	/**
@@ -624,34 +695,76 @@ public class GeoGebraColorConstants {
 	public static GColor[] getSwatchColors() {
 		GColor[] primColor = GeoGebraColorConstants.getPrimarySwatchColors();
 		GColor[] scolors = GeoGebraColorConstants.getMainColorSwatchColors();
-		return new GColor[] { primColor[0], primColor[2], primColor[4],
-				primColor[8], primColor[10], primColor[12], GColor.BLACK,
-				GeoGebraColorConstants.GEOGEBRA_OBJECT_RED,
-				GeoGebraColorConstants.GGB_ORANGE, scolors[19],
-				GeoGebraColorConstants.GEOGEBRA_OBJECT_GREEN, scolors[43],
-				GeoGebraColorConstants.GEOGEBRA_OBJECT_BLUE,
-				GeoGebraColorConstants.PURPLE_600, scolors[0],
-				scolors[8], scolors[16], scolors[32], scolors[40], scolors[48],
-				scolors[56], scolors[1], scolors[9], scolors[17], scolors[24],
-				scolors[41], scolors[49], scolors[57], scolors[3], scolors[11],
-				primColor[5], scolors[33], primColor[11], scolors[51],
-				scolors[59], scolors[4], scolors[12], scolors[20], scolors[36],
-				scolors[44], scolors[52], scolors[60], scolors[6], scolors[14],
-				scolors[22], scolors[38], scolors[46], scolors[54], scolors[62],
-				scolors[7], scolors[15], scolors[23], scolors[39], scolors[47],
-				scolors[55], scolors[63] };
+		return new GColor[] {
+			primColor[0],
+			primColor[2],
+			primColor[4],
+			primColor[8],
+			primColor[10],
+			primColor[12],
+			GColor.BLACK,
+			GeoGebraColorConstants.GEOGEBRA_OBJECT_RED,
+			GeoGebraColorConstants.GGB_ORANGE,
+			scolors[19],
+			GeoGebraColorConstants.GEOGEBRA_OBJECT_GREEN,
+			scolors[43],
+			GeoGebraColorConstants.GEOGEBRA_OBJECT_BLUE,
+			GeoGebraColorConstants.PURPLE_600,
+			scolors[0],
+			scolors[8],
+			scolors[16],
+			scolors[32],
+			scolors[40],
+			scolors[48],
+			scolors[56],
+			scolors[1],
+			scolors[9],
+			scolors[17],
+			scolors[24],
+			scolors[41],
+			scolors[49],
+			scolors[57],
+			scolors[3],
+			scolors[11],
+			primColor[5],
+			scolors[33],
+			primColor[11],
+			scolors[51],
+			scolors[59],
+			scolors[4],
+			scolors[12],
+			scolors[20],
+			scolors[36],
+			scolors[44],
+			scolors[52],
+			scolors[60],
+			scolors[6],
+			scolors[14],
+			scolors[22],
+			scolors[38],
+			scolors[46],
+			scolors[54],
+			scolors[62],
+			scolors[7],
+			scolors[15],
+			scolors[23],
+			scolors[39],
+			scolors[47],
+			scolors[55],
+			scolors[63]
+		};
 	}
 
 	/**
 	 * initialize (once) only when needed
-	 * 
+	 *
 	 * @return map HTML name =&gt; color
 	 */
-	public static final HashMap<String, GColor> htmlColorMap() {
+	public static HashMap<String, GColor> htmlColorMap() {
 
 		if (colors == null) { // avoid sync penalty if we can
 			synchronized (lock) { // declare a private static Object to use for
-									// mutex
+				// mutex
 				if (colors == null) { // have to do this inside the sync
 
 					// findbugs DC_PARTIALLY_CONSTRUCTED
@@ -799,7 +912,6 @@ public class GeoGebraColorConstants {
 					colors0.put("YELLOWGREEN", rgb(0x9ACD32));
 
 					colors = colors0;
-
 				}
 			}
 		}

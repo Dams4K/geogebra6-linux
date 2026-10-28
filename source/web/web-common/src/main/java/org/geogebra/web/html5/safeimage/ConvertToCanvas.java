@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.safeimage;
 
 import org.geogebra.common.util.FileExtensions;
@@ -35,9 +51,9 @@ public class ConvertToCanvas implements ImagePreprocessor {
 	}
 
 	private boolean matchExtension(FileExtensions extension) {
-		return FileExtensions.PNG.equals(extension)
-				|| FileExtensions.JPG.equals(extension)
-				|| FileExtensions.JPEG.equals(extension);
+		return FileExtensions.PNG == extension
+				|| FileExtensions.JPG == extension
+				|| FileExtensions.JPEG == extension;
 	}
 
 	@Override
@@ -46,8 +62,7 @@ public class ConvertToCanvas implements ImagePreprocessor {
 
 		image.addEventListener("load", (event) -> {
 			drawImageToCanvas(image, 1);
-			String fileName = StringUtil.changeFileExtension(imageFile.getFileName(),
-					FileExtensions.PNG);
+			String fileName = StringUtil.changeFileExtension(imageFile.getFileName(), FileExtensions.PNG);
 
 			provider.onReady(new ArchiveEntry(fileName, canvas.toDataURL()));
 		});
@@ -55,7 +70,7 @@ public class ConvertToCanvas implements ImagePreprocessor {
 		image.src = imageFile.createUrl();
 	}
 
-	private void drawImageToCanvas(HTMLImageElement image, double scale)  {
+	private void drawImageToCanvas(HTMLImageElement image, double scale) {
 		canvas.width = (int) (image.width * scale);
 		canvas.height = (int) (image.height * scale);
 		CanvasRenderingContext2D ctx = Js.uncheckedCast(canvas.getContext("2d"));

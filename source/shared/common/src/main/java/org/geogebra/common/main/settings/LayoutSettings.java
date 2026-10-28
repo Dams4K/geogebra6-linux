@@ -1,13 +1,29 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main.settings;
 
 import java.util.LinkedList;
 
 /**
  * Settings for the layout manager.
- * 
+ *
  * @author Florian Sonner
  */
-public class LayoutSettings extends AbstractSettings {
+public class LayoutSettings extends AbstractSettings<LayoutSettings> {
 	/**
 	 * Show the title bar of views. If disabled, the style bar is always
 	 * visible.
@@ -26,12 +42,11 @@ public class LayoutSettings extends AbstractSettings {
 	private boolean allowStyleBar = true;
 
 	/**
-	 * 
+	 *
 	 */
-	public LayoutSettings() {
-	}
+	public LayoutSettings() {}
 
-	public LayoutSettings(LinkedList<SettingListener> listeners) {
+	public LayoutSettings(LinkedList<SettingListener<LayoutSettings>> listeners) {
 		super(listeners);
 	}
 

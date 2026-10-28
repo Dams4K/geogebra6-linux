@@ -1,8 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.cas;
 
 import java.util.ArrayList;
-
-import javax.annotation.Nonnull;
 
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.StringTemplate;
@@ -19,10 +33,11 @@ import org.geogebra.common.kernel.commands.Commands;
 import org.geogebra.common.kernel.geos.GeoDummyVariable;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoSymbolic;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Algo for updating GeoSymbolic when dependencies change
- * 
+ *
  * @author Zbynek
  *
  */
@@ -41,7 +56,7 @@ public class AlgoDependentSymbolic extends AlgoElement implements UsesCAS {
 	 */
 	public AlgoDependentSymbolic(
 			Construction c,
-			@Nonnull ExpressionNode def,
+			@NonNull ExpressionNode def,
 			ArrayList<GeoElement> vars,
 			ArbitraryConstantRegistry constant,
 			boolean addToConstructionList) {
@@ -63,13 +78,16 @@ public class AlgoDependentSymbolic extends AlgoElement implements UsesCAS {
 	@Override
 	public void compute() {
 		symbolic.computeOutput();
-		for (ExpressionValue val: symbolic.getDefinition()) {
-			if (val instanceof Command
-					&& Commands.CellRange.name().equals(((Command) val).getName())) {
+		for (ExpressionValue val : symbolic.getDefinition()) {
+			if (val instanceof Command && Commands.CellRange.name().equals(((Command) val).getName())) {
 				String start = getCellName(((Command) val).getArgument(0));
 				String end = getCellName(((Command) val).getArgument(1));
-				kernel.getApplication().getSpreadsheetTableModel().getCellRangeManager()
-						.getAlgoCellRange(cons, null, start, end).getList()
+				kernel
+						.getApplication()
+						.getSpreadsheetTableModel()
+						.getCellRangeManager()
+						.getAlgoCellRange(cons, null, start, end)
+						.getList()
 						.addToUpdateSetOnly(this);
 			}
 		}

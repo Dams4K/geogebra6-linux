@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.util;
 
 import org.geogebra.common.gui.SetLabels;
@@ -16,14 +32,13 @@ import org.geogebra.web.html5.css.GuiResourcesSimple;
 import org.geogebra.web.html5.gui.util.ViewsChangedListener;
 import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.main.AppW;
-import org.gwtproject.user.client.ui.HorizontalPanel;
+import org.gwtproject.user.client.ui.FlowPanel;
 
 /**
  * @author G. Sturr
- * 
+ *
  */
-public abstract class StyleBarW extends HorizontalPanel implements
-        ViewsChangedListener, SetLabels {
+public abstract class StyleBarW extends FlowPanel implements ViewsChangedListener, SetLabels {
 
 	private ContextMenuPopup viewButton;
 	private StandardButton menuButton;
@@ -50,6 +65,7 @@ public abstract class StyleBarW extends HorizontalPanel implements
 		this.app = app;
 		this.viewID = viewID;
 		this.app.addViewsChangedListener(this);
+		addStyleName("styleBarW");
 	}
 
 	/**
@@ -75,12 +91,10 @@ public abstract class StyleBarW extends HorizontalPanel implements
 		}
 		if (menuButton == null) {
 			if (app.isUnbundledOrWhiteboard()) {
-				menuButton = new StandardButton(
-						GuiResources.INSTANCE.stylebar_more());
+				menuButton = new StandardButton(GuiResources.INSTANCE.stylebar_more());
 				menuButton.addStyleName("IconButton-borderless");
 			} else {
-				menuButton = new StandardButton(
-						MaterialDesignResources.INSTANCE.gear(), null, 24);
+				menuButton = new StandardButton(MaterialDesignResources.INSTANCE.gear(), null, 24);
 				menuButton.setStyleName("IconButton");
 			}
 
@@ -88,37 +102,34 @@ public abstract class StyleBarW extends HorizontalPanel implements
 				// close keyboard first to avoid perspective mess
 				app.hideKeyboard();
 				if (app.getGuiManager().showView(App.VIEW_PROPERTIES)) {
-					PropertiesViewW pW = (PropertiesViewW) ((GuiManagerW) app
-							.getGuiManager()).getCurrentPropertiesView();
+					PropertiesViewW pW =
+							(PropertiesViewW) ((GuiManagerW) app.getGuiManager()).getCurrentPropertiesView();
 
 					if (optionType == pW.getOptionType()) {
-						app.getGuiManager().setShowView(false,
-								App.VIEW_PROPERTIES);
+						app.getGuiManager().setShowView(false, App.VIEW_PROPERTIES);
 						return;
 					}
 				}
 				if ((!app.getSelectionManager().getSelectedGeos().isEmpty()
-						&& optionType != OptionType.ALGEBRA)
+								&& optionType != OptionType.ALGEBRA)
 						|| optionType == null) {
-					app.getDialogManager()
-							.showPropertiesDialog(OptionType.OBJECTS, null);
+					app.getDialogManager().showPropertiesDialog(OptionType.OBJECTS, null);
 				} else {
-					app.getDialogManager().showPropertiesDialog(optionType,
-							null);
+					app.getDialogManager().showPropertiesDialog(optionType, null);
 				}
 			});
 		}
-			
+
 		add(menuButton);
 	}
-	
+
 	/**
 	 * @return view button
 	 */
 	protected ContextMenuPopup getViewButton() {
 		return this.viewButton;
 	}
-	
+
 	/**
 	 * adds a {@link PopupMenuButtonW button} to show a popup, where the user can
 	 * either close this view or open another one.
@@ -127,31 +138,30 @@ public abstract class StyleBarW extends HorizontalPanel implements
 		GPopupMenuW popup = new GPopupMenuW(app);
 		popup.getPopupMenu().addStyleName("viewsContextMenu");
 
-		final int numberOfOpenViews = app.getGuiManager().getLayout()
-					.getDockManager().getNumberOfOpenViews();
+		final int numberOfOpenViews =
+				app.getGuiManager().getLayout().getDockManager().getNumberOfOpenViews();
 
 		if (numberOfOpenViews > 1) {
 			// show close button if there are more than 1 views open
-			popup.addItem(MainMenu.getMenuBarItem(GuiResourcesSimple.INSTANCE.close(),
-					app.getLocalization().getMenu("Close"), () -> {
-				app.hideKeyboard();
-				app.updateMenubar();
-				app.getGuiManager().setShowView(false, viewID);
-				app.fireViewsChangedEvent();
-			}));
+			popup.addItem(MainMenu.getMenuBarItem(
+					GuiResourcesSimple.INSTANCE.close(), app.getLocalization().getMenu("Close"), () -> {
+						app.hideKeyboard();
+						app.updateMenubar();
+						app.getGuiManager().setShowView(false, viewID);
+						app.fireViewsChangedEvent();
+					}));
 			popup.addSeparator();
 		}
 
 		for (ViewType view : Views.getAll()) {
-			if (app.supportsView(view.getID())
-					&& !app.getGuiManager().showView(view.getID())) {
-				popup.addItem(MainMenu.getMenuBarItem(view.getIcon(),
-						app.getLocalization().getMenu(view.getKey()), () -> {
-					app.hideKeyboard();
-					app.updateMenubar();
-					app.getGuiManager().setShowView(true, view.getID());
-					app.fireViewsChangedEvent();
-				}));
+			if (app.supportsView(view.getID()) && !app.getGuiManager().showView(view.getID())) {
+				popup.addItem(MainMenu.getMenuBarItem(
+						view.getIcon(), app.getLocalization().getMenu(view.getKey()), () -> {
+							app.hideKeyboard();
+							app.updateMenubar();
+							app.getGuiManager().setShowView(true, view.getID());
+							app.fireViewsChangedEvent();
+						}));
 			}
 		}
 

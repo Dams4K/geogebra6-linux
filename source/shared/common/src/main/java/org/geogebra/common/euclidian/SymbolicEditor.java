@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
 import java.util.HashMap;
@@ -19,16 +35,15 @@ import org.geogebra.common.plugin.EventType;
 import org.geogebra.common.util.MyMath;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.SyntaxAdapterImpl;
-
-import com.himamis.retex.editor.share.editor.EditorFeatures;
-import com.himamis.retex.editor.share.editor.MathFieldInternal;
-import com.himamis.retex.editor.share.event.KeyEvent;
-import com.himamis.retex.editor.share.event.MathFieldListener;
-import com.himamis.retex.editor.share.model.MathFormula;
-import com.himamis.retex.editor.share.serializer.GeoGebraSerializer;
-import com.himamis.retex.editor.share.serializer.TeXSerializer;
-import com.himamis.retex.editor.share.util.JavaKeyCodes;
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.editor.EditorFeatures;
+import org.geogebra.editor.share.editor.MathFieldInternal;
+import org.geogebra.editor.share.event.KeyEvent;
+import org.geogebra.editor.share.event.MathFieldListener;
+import org.geogebra.editor.share.serializer.GeoGebraSerializer;
+import org.geogebra.editor.share.serializer.TeXSerializer;
+import org.geogebra.editor.share.tree.Formula;
+import org.geogebra.editor.share.util.JavaKeyCodes;
+import org.geogebra.editor.share.util.Unicode;
 
 /**
  * MathField-capable editor for input boxes on EuclidianView.
@@ -57,7 +72,7 @@ public abstract class SymbolicEditor implements MathFieldListener {
 	}
 
 	protected void applyChanges() {
-		MathFormula formula = getMathFieldInternal().getFormula();
+		Formula formula = getMathFieldInternal().getFormula();
 		String editedText = null;
 		if (getMathFieldInternal().getInputController().getPlainTextMode()) {
 			asciiSerializer.setComma(",");
@@ -68,8 +83,7 @@ public abstract class SymbolicEditor implements MathFieldListener {
 		if (entries.length == 0) {
 			editedText = asciiSerializer.serialize(formula);
 		}
-		geoInputBox.updateLinkedGeo(editedText,
-				texSerializer.serialize(formula), entries);
+		geoInputBox.updateLinkedGeo(editedText, texSerializer.serialize(formula), entries);
 	}
 
 	protected boolean isTextMode() {
@@ -113,8 +127,8 @@ public abstract class SymbolicEditor implements MathFieldListener {
 	 * @param bounds place to attach the editor to.
 	 * @param settings how to render text.
 	 */
-	public abstract void attach(GeoInputBox geoInputBox, GRectangle bounds,
-			TextRendererSettings settings);
+	public abstract void attach(
+			GeoInputBox geoInputBox, GRectangle bounds, TextRendererSettings settings);
 
 	/**
 	 * @param caretLocation position of caret relative to view
@@ -122,8 +136,8 @@ public abstract class SymbolicEditor implements MathFieldListener {
 	 */
 	public void selectEntryAt(GPoint caretLocation, GRectangle2D bounds) {
 		if (caretLocation != null) {
-			selectEntryAt(caretLocation.x - (int) bounds.getMinX(),
-					caretLocation.y - (int) bounds.getMinY());
+			selectEntryAt(
+					caretLocation.x - (int) bounds.getMinX(), caretLocation.y - (int) bounds.getMinY());
 		} else {
 			selectEntryAt(0, 0);
 		}
@@ -162,9 +176,9 @@ public abstract class SymbolicEditor implements MathFieldListener {
 	protected void resetChanges() {
 		boolean textMode = isTextMode();
 		String text = getGeoInputBox().getTextForEditor();
-		getMathFieldInternal().setAllowAbs(
-				!(getGeoInputBox().getLinkedGeo() instanceof GeoPointND));
+		getMathFieldInternal().setAllowAbs(!(getGeoInputBox().getLinkedGeo() instanceof GeoPointND));
 		getMathFieldInternal().setPlainTextMode(textMode);
+		getMathFieldInternal().getInputController().setAllowSpaceReplacement(false);
 		if (textMode) {
 			getMathFieldInternal().setPlainText(text);
 		} else {
@@ -178,6 +192,12 @@ public abstract class SymbolicEditor implements MathFieldListener {
 	 */
 	public void updateStyle() {
 		// only needed in Web
+	}
+
+	@Override
+	public boolean onEscape() {
+		resetChanges();
+		return true;
 	}
 
 	/**
@@ -195,7 +215,9 @@ public abstract class SymbolicEditor implements MathFieldListener {
 	}
 
 	protected void addDegree(String key, MathFieldInternal mf) {
-		if (geoInputBox.getLinkedGeo().isGeoAngle() && key != null && isSimpleNumber(mf)
+		if (geoInputBox.getLinkedGeo().isGeoAngle()
+				&& key != null
+				&& isSimpleNumber(mf)
 				&& key.matches("[0-9]")) {
 			mf.insertString(Unicode.DEGREE_STRING);
 			mf.onKeyPressed(new KeyEvent(JavaKeyCodes.VK_LEFT, KeyEvent.KeyboardType.INTERNAL));
@@ -208,7 +230,7 @@ public abstract class SymbolicEditor implements MathFieldListener {
 		try {
 			Double.parseDouble(text);
 			return true;
-		} catch (RuntimeException e) {
+		} catch (RuntimeException expected) {
 			// not a number
 		}
 		return false;
@@ -231,10 +253,10 @@ public abstract class SymbolicEditor implements MathFieldListener {
 
 	protected void setProtection() {
 		if (getGeoInputBox().isListEditor()) {
-			getMathFieldInternal().getFormula().getRootComponent().setKeepCommas();
+			getMathFieldInternal().getFormula().getRootNode().setKeepCommas();
 		} else if (getGeoInputBox().getLinkedGeo().hasSpecialEditor()) {
-			getMathFieldInternal().getFormula().getRootComponent().setProtected();
-			getMathFieldInternal().setLockedCaretPath();
+			getMathFieldInternal().getFormula().getRootNode().setProtected();
+			getMathFieldInternal().moveCursorToFirstEditablePart();
 		}
 	}
 
@@ -243,7 +265,7 @@ public abstract class SymbolicEditor implements MathFieldListener {
 	 * @return input as flat string
 	 */
 	public String getEditorState() {
-		MathFormula formula = getMathFieldInternal().getFormula();
+		Formula formula = getMathFieldInternal().getFormula();
 		String editedText = null;
 		String[] entries = asciiSerializer.serializeMatrixEntries(formula);
 		if (entries.length == 0) {
@@ -256,7 +278,7 @@ public abstract class SymbolicEditor implements MathFieldListener {
 	 * @return current content in GGB syntax, using ? for empty matrix entries
 	 */
 	public EditorContent getEditorStateWithQuestionMarks() {
-		MathFormula formula = getMathFieldInternal().getFormula();
+		Formula formula = getMathFieldInternal().getFormula();
 		GeoGebraSerializer geoGebraSerializer = new GeoGebraSerializer(editorFeatures);
 		geoGebraSerializer.setShowPlaceholderAsQuestionmark(true);
 		String content;
@@ -276,7 +298,7 @@ public abstract class SymbolicEditor implements MathFieldListener {
 	 */
 	public String getLatexInput(String input) {
 		getMathFieldInternal().parse(input);
-		MathFormula formula = getMathFieldInternal().getFormula();
+		Formula formula = getMathFieldInternal().getFormula();
 		return texSerializer.serialize(formula);
 	}
 
@@ -284,8 +306,7 @@ public abstract class SymbolicEditor implements MathFieldListener {
 		Event event = new Event(EventType.EDITOR_KEY_TYPED, getGeoInputBox());
 		HashMap<String, Object> jsonArgument = new HashMap<>();
 		jsonArgument.put("key", key == null ? "" : key);
-		jsonArgument.put("label", getGeoInputBox() != null
-				? getGeoInputBox().getLabelSimple() : "");
+		jsonArgument.put("label", getGeoInputBox() != null ? getGeoInputBox().getLabelSimple() : "");
 		event.setJsonArgument(jsonArgument);
 		app.dispatchEvent(event);
 	}

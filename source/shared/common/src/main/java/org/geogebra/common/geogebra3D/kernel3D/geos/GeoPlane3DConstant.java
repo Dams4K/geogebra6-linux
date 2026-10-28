@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.geos;
 
 import org.geogebra.common.awt.GColor;
@@ -15,29 +31,24 @@ import org.geogebra.common.plugin.EventType;
  * Constant plane
  *
  */
-public class GeoPlane3DConstant extends GeoPlane3D
-		implements SymbolicParametersBotanaAlgo {
+public class GeoPlane3DConstant extends GeoPlane3D implements SymbolicParametersBotanaAlgo {
 	/** xYo plane */
 	public static final int XOY_PLANE = 1;
+
 	private boolean gridVisible;
 
 	/**
 	 * construct the plane xOy, ...
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param type
 	 *            XOY_PLANE
 	 */
 	public GeoPlane3DConstant(Construction c, int type) {
-
 		super(c);
 
-		switch (type) {
-		default:
-			// do nothing
-			break;
-		case XOY_PLANE:
+		if (type == XOY_PLANE) {
 			coordsys.addPoint(Coords.O);
 			coordsys.addVector(Coords.VX);
 			coordsys.addVector(Coords.VY);
@@ -48,8 +59,6 @@ public class GeoPlane3DConstant extends GeoPlane3D
 			setLabelSet(true);
 			setObjColor(GColor.GRAY);
 			setLabelVisible(false);
-			break;
-
 		}
 
 		setFixed(true);
@@ -57,11 +66,11 @@ public class GeoPlane3DConstant extends GeoPlane3D
 
 	/*
 	 * public GgbVector getPoint(double x2d, double y2d){
-	 * 
+	 *
 	 * if (x2d>getXmax()) x2d=getXmax(); else if (x2d<getXmin()) x2d=getXmin();
-	 * 
+	 *
 	 * if (y2d>getYmax()) y2d=getYmax(); else if (y2d<getYmin()) y2d=getYmin();
-	 * 
+	 *
 	 * return super.getPoint(x2d,y2d); }
 	 */
 
@@ -84,7 +93,6 @@ public class GeoPlane3DConstant extends GeoPlane3D
 			return getLoc().getMenu(label);
 		}
 		return label;
-
 	}
 
 	@Override
@@ -99,8 +107,7 @@ public class GeoPlane3DConstant extends GeoPlane3D
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -128,7 +135,7 @@ public class GeoPlane3DConstant extends GeoPlane3D
 
 	/**
 	 * Show or hide grid
-	 * 
+	 *
 	 * @param grid
 	 *            grid visibility flag
 	 * @return whether it changed
@@ -150,5 +157,4 @@ public class GeoPlane3DConstant extends GeoPlane3D
 	public boolean isConstant() {
 		return true;
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.cas;
 
 import org.geogebra.common.kernel.Construction;
@@ -28,28 +44,25 @@ public class AlgoImplicitDerivative extends AlgoElement implements UsesCAS {
 	 * @param functional
 	 *            function of two variables
 	 */
-	public AlgoImplicitDerivative(Construction cons, String label,
-			FunctionalNVar functional) {
+	public AlgoImplicitDerivative(Construction cons, String label, FunctionalNVar functional) {
 		super(cons);
 		this.functional = functional;
 		this.result = new GeoFunctionNVar(cons);
 		setInputOutput();
 		compute();
 		result.setLabel(label);
-
 	}
 
 	@Override
 	protected void setInputOutput() {
 		setOnlyOutput(result);
 		if (functional instanceof GeoFunctionNVar) {
-			input = new GeoElement[] { (GeoFunctionNVar) functional };
+			input = new GeoElement[] {(GeoFunctionNVar) functional};
 		}
 		if (functional instanceof GeoFunction) {
-			input = new GeoElement[] { (GeoFunction) functional };
+			input = new GeoElement[] {(GeoFunction) functional};
 		}
 		setDependencies();
-
 	}
 
 	@Override
@@ -61,14 +74,12 @@ public class AlgoImplicitDerivative extends AlgoElement implements UsesCAS {
 		sb.append(")");
 
 		try {
-			String functionOut = kernel.evaluateCachedGeoGebraCAS(sb.toString(),
-					arbconst);
+			String functionOut = kernel.evaluateCachedGeoGebraCAS(sb.toString(), arbconst);
 			if (functionOut == null || functionOut.length() == 0) {
 				result.setUndefined();
 			} else {
 				// read result back into function
-				result.set(kernel.getAlgebraProcessor()
-						.evaluateToFunctionNVar(functionOut, true, false));
+				result.set(kernel.getAlgebraProcessor().evaluateToFunctionNVar(functionOut, true, false));
 			}
 		} catch (Throwable e) {
 			result.setUndefined();
@@ -86,5 +97,4 @@ public class AlgoImplicitDerivative extends AlgoElement implements UsesCAS {
 	public GeoFunctionNVar getResult() {
 		return result;
 	}
-
 }

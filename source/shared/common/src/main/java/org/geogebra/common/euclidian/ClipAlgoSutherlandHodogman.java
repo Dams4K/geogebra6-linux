@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
 import java.util.ArrayList;
@@ -18,7 +34,7 @@ public class ClipAlgoSutherlandHodogman {
 		private final MyPoint start;
 		private final MyPoint end;
 
-		public Edge(MyPoint start, MyPoint end) {
+		Edge(MyPoint start, MyPoint end) {
 			this.start = start;
 			this.end = end;
 		}
@@ -40,6 +56,7 @@ public class ClipAlgoSutherlandHodogman {
 	public List<MyPoint> process(List<MyPoint> input, double[][] clipPoints) {
 		List<MyPoint> output = input;
 		limitYValues(output);
+
 		for (int i = 0; i < EDGE_COUNT; i++) {
 			output = clipWithEdge(createEdge(clipPoints, i), output);
 		}
@@ -48,13 +65,11 @@ public class ClipAlgoSutherlandHodogman {
 	}
 
 	private void limitYValues(List<MyPoint> input) {
-		input.stream().filter(pt -> pt.y > Y_LIMIT)
-				.forEach(pt -> pt.y = Math.signum(pt.y) * Y_LIMIT);
+		input.stream().filter(pt -> pt.y > Y_LIMIT).forEach(pt -> pt.y = Math.signum(pt.y) * Y_LIMIT);
 	}
 
 	private Edge createEdge(double[][] clipPoints, int i) {
-		return new Edge(createPoint(clipPoints[(i + 3) % EDGE_COUNT]),
-				createPoint(clipPoints[i]));
+		return new Edge(createPoint(clipPoints[(i + 3) % EDGE_COUNT]), createPoint(clipPoints[i]));
 	}
 
 	private MyPoint createPoint(double[] value) {
@@ -73,8 +88,7 @@ public class ClipAlgoSutherlandHodogman {
 		return output;
 	}
 
-	private void addClippedOutput(Edge edge,
-			MyPoint prev, MyPoint current, List<MyPoint> output) {
+	private void addClippedOutput(Edge edge, MyPoint prev, MyPoint current, List<MyPoint> output) {
 		if (isInside(edge, current)) {
 			if (!isInside(edge, prev)) {
 				handleIntersectionPoint(edge, prev, current, output);
@@ -87,8 +101,8 @@ public class ClipAlgoSutherlandHodogman {
 		}
 	}
 
-	private void handleIntersectionPoint(Edge edge, MyPoint prev,
-			MyPoint current, List<MyPoint> output) {
+	private void handleIntersectionPoint(
+			Edge edge, MyPoint prev, MyPoint current, List<MyPoint> output) {
 		MyPoint intersection = intersection(edge, prev, current);
 		if (intersection == null) {
 			current.setLineTo(false);
@@ -98,12 +112,10 @@ public class ClipAlgoSutherlandHodogman {
 	}
 
 	private static boolean isInside(Edge edge, MyPoint c) {
-		return (edge.start.x - c.x) * (edge.end.y - c.y)
-				< (edge.start.y - c.y) * (edge.end.x - c.x);
+		return (edge.start.x - c.x) * (edge.end.y - c.y) < (edge.start.y - c.y) * (edge.end.x - c.x);
 	}
 
-	private MyPoint intersection(Edge edge, MyPoint p,
-			MyPoint q) {
+	private MyPoint intersection(Edge edge, MyPoint p, MyPoint q) {
 		double a1 = edge.end.y - edge.start.y;
 		double b1 = edge.start.x - edge.end.x;
 		double c1 = a1 * edge.start.x + b1 * edge.start.y;
@@ -121,7 +133,7 @@ public class ClipAlgoSutherlandHodogman {
 
 		double y = getSafeNumber(n2 / det);
 
-		if (Double.isNaN(x) || Double.isNaN(y))  {
+		if (Double.isNaN(x) || Double.isNaN(y)) {
 			return null;
 		}
 
@@ -143,6 +155,5 @@ public class ClipAlgoSutherlandHodogman {
 		}
 
 		return value;
-
 	}
 }

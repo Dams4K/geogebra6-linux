@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoAnglePoints.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -36,6 +34,7 @@ import org.geogebra.common.util.DoubleUtil;
 public class AlgoAngleLines3D extends AlgoAngleLinesND {
 	/** normal vector */
 	protected Coords vn;
+
 	private Coords o;
 	private Coords v1;
 	private Coords v2;
@@ -50,8 +49,7 @@ public class AlgoAngleLines3D extends AlgoAngleLinesND {
 	 * @param orientation
 	 *            orientation
 	 */
-	AlgoAngleLines3D(Construction cons, GeoLineND g, GeoLineND h,
-			GeoDirectionND orientation) {
+	AlgoAngleLines3D(Construction cons, GeoLineND g, GeoLineND h, GeoDirectionND orientation) {
 		super(cons, g, h, orientation);
 	}
 
@@ -63,8 +61,7 @@ public class AlgoAngleLines3D extends AlgoAngleLinesND {
 	 * @param h
 	 *            line
 	 */
-	AlgoAngleLines3D(Construction cons, GeoLineND g,
-			GeoLineND h) {
+	AlgoAngleLines3D(Construction cons, GeoLineND g, GeoLineND h) {
 		this(cons, g, h, null);
 	}
 
@@ -110,12 +107,11 @@ public class AlgoAngleLines3D extends AlgoAngleLinesND {
 				return;
 			}
 		} else { // non parallel lines
-					// nearest points
-			Coords[] points = CoordMatrixUtil.nearestPointsFromTwoLines(o1, v1,
-					o2, v2);
+			// nearest points
+			Coords[] points = CoordMatrixUtil.nearestPointsFromTwoLines(o1, v1, o2, v2);
 
 			if (!points[0].equalsForKernel(points[1])) { // lines are not
-															// coplanar
+				// coplanar
 				getAngle().setUndefined();
 				return;
 			}
@@ -132,15 +128,13 @@ public class AlgoAngleLines3D extends AlgoAngleLinesND {
 		double c = v1.dotproduct(v2) / (l1 * l2); // cosinus of the angle
 
 		getAngle().setValue(AlgoAnglePoints3D.acos(c));
-
 	}
 
 	@Override
-	public boolean updateDrawInfo(double[] m, double[] firstVec,
-			DrawAngle drawable) {
+	public boolean updateDrawInfo(double[] m, double[] firstVec, DrawAngle drawable) {
 
 		if (drawable == null) { // TODO : this is a pgf / asymptote / pstricks
-								// call
+			// call
 			return false;
 		}
 
@@ -204,5 +198,4 @@ public class AlgoAngleLines3D extends AlgoAngleLinesND {
 		copy.vn = vn.copy();
 		return copy;
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -35,33 +51,36 @@ public class CmdRandomPointIn extends CommandProcessor {
 
 		if (n == 1) {
 			if (arg[0].isGeoPolygon()) {
-				AlgoRandomPointInPolygon algo = new AlgoRandomPointInPolygon(
-						cons, (GeoPolygon) arg[0]);
+				AlgoRandomPointInPolygon algo = new AlgoRandomPointInPolygon(cons, (GeoPolygon) arg[0]);
 				algo.getRandomPoint().setLabel(c.getLabel());
-				GeoElement[] ret = { algo.getRandomPoint().toGeoElement() };
+				GeoElement[] ret = {algo.getRandomPoint().toGeoElement()};
 				return ret;
 			} else if (arg[0].isGeoConic()) {
-				AlgoRandomPointInConic algo = new AlgoRandomPointInConic(cons,
-						(GeoConicND) arg[0]);
+				AlgoRandomPointInConic algo = new AlgoRandomPointInConic(cons, (GeoConicND) arg[0]);
 				algo.getRandomPoint().setLabel(c.getLabel());
-				GeoElement[] ret = { algo.getRandomPoint() };
+				GeoElement[] ret = {algo.getRandomPoint()};
 				return ret;
 			} else if (arg[0] instanceof GeoList) {
-				AlgoRandomPointInPoints algo = new AlgoRandomPointInPoints(cons, null,
-						(GeoList) arg[0]);
+				AlgoRandomPointInPoints algo = new AlgoRandomPointInPoints(cons, null, (GeoList) arg[0]);
 				algo.getRandomPoint().setLabel(c.getLabel());
-				GeoElement[] ret = { algo.getRandomPoint() };
+				GeoElement[] ret = {algo.getRandomPoint()};
 				return ret;
 			} else {
 				throw argErr(c, arg[0]);
 			}
-		} else if (n == 4 && arg[0].isNumberValue() && arg[1].isNumberValue()
-				&& arg[2].isNumberValue() && arg[3].isNumberValue()) {
-			AlgoRandomPoint algo = new AlgoRandomPoint(cons, (GeoNumberValue) arg[0],
-					(GeoNumberValue) arg[1], (GeoNumberValue) arg[2],
+		} else if (n == 4
+				&& arg[0].isNumberValue()
+				&& arg[1].isNumberValue()
+				&& arg[2].isNumberValue()
+				&& arg[3].isNumberValue()) {
+			AlgoRandomPoint algo = new AlgoRandomPoint(
+					cons,
+					(GeoNumberValue) arg[0],
+					(GeoNumberValue) arg[1],
+					(GeoNumberValue) arg[2],
 					(GeoNumberValue) arg[3]);
 			algo.getPoint().setLabel(c.getLabel());
-			GeoElement[] ret = { algo.getPoint() };
+			GeoElement[] ret = {algo.getPoint()};
 			return ret;
 
 		} else if (n > 2) {
@@ -77,14 +96,12 @@ public class CmdRandomPointIn extends CommandProcessor {
 			}
 			// everything ok
 
-			AlgoRandomPointInPoints algo = new AlgoRandomPointInPoints(cons,
-					points, null);
+			AlgoRandomPointInPoints algo = new AlgoRandomPointInPoints(cons, points, null);
 			algo.getRandomPoint().setLabel(c.getLabel());
-			GeoElement[] ret = { algo.getRandomPoint() };
+			GeoElement[] ret = {algo.getRandomPoint()};
 			return ret;
 		} else {
 			throw argNumErr(c);
 		}
 	}
-
 }

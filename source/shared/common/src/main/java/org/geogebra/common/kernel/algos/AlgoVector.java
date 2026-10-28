@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoVector.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 24. September 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -39,7 +37,7 @@ import org.geogebra.common.kernel.prover.polynomial.PVariable;
 
 /**
  * Vector between two points P and Q.
- * 
+ *
  * @author Markus
  */
 public class AlgoVector extends AlgoElement
@@ -55,7 +53,7 @@ public class AlgoVector extends AlgoElement
 
 	/**
 	 * Creates new AlgoVector
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param P
@@ -63,8 +61,7 @@ public class AlgoVector extends AlgoElement
 	 * @param Q
 	 *            end point
 	 */
-	public AlgoVector(Construction cons, GeoPointND P,
-			GeoPointND Q) {
+	public AlgoVector(Construction cons, GeoPointND P, GeoPointND Q) {
 		super(cons);
 		this.P = P;
 		this.Q = Q;
@@ -88,7 +85,7 @@ public class AlgoVector extends AlgoElement
 				startPoint.set(P);
 				v.setStartPoint(startPoint);
 			}
-		} catch (CircularDefinitionException e) {
+		} catch (CircularDefinitionException ignored) {
 			// just formal; v is new, so can't really cause this
 		}
 
@@ -186,10 +183,8 @@ public class AlgoVector extends AlgoElement
 	}
 
 	@Override
-	public void getFreeVariables(HashSet<PVariable> variables)
-			throws NoSymbolicParametersException {
-		if (P != null && Q != null && P instanceof SymbolicParametersAlgo
-				&& Q instanceof SymbolicParametersAlgo) {
+	public void getFreeVariables(HashSet<PVariable> variables) throws NoSymbolicParametersException {
+		if (P instanceof SymbolicParametersAlgo && Q instanceof SymbolicParametersAlgo) {
 			((SymbolicParametersAlgo) P).getFreeVariables(variables);
 			((SymbolicParametersAlgo) Q).getFreeVariables(variables);
 			return;
@@ -198,17 +193,13 @@ public class AlgoVector extends AlgoElement
 	}
 
 	@Override
-	public int[] getDegrees(AbstractProverReciosMethod a)
-			throws NoSymbolicParametersException {
-		if (P != null && Q != null && P instanceof SymbolicParametersAlgo
-				&& Q instanceof SymbolicParametersAlgo) {
+	public int[] getDegrees(AbstractProverReciosMethod a) throws NoSymbolicParametersException {
+		if (P instanceof SymbolicParametersAlgo && Q instanceof SymbolicParametersAlgo) {
 			int[] degree1 = ((SymbolicParametersAlgo) P).getDegrees(a);
 			int[] degree2 = ((SymbolicParametersAlgo) Q).getDegrees(a);
 			int[] result = new int[3];
-			result[0] = Math.max(degree1[0] + degree2[2],
-					degree2[0] + degree1[2]);
-			result[1] = Math.max(degree1[1] + degree2[2],
-					degree2[1] + degree1[2]);
+			result[0] = Math.max(degree1[0] + degree2[2], degree2[0] + degree1[2]);
+			result[1] = Math.max(degree1[1] + degree2[2], degree2[1] + degree1[2]);
 			result[2] = degree2[2] + degree1[2];
 
 			return result;
@@ -217,20 +208,14 @@ public class AlgoVector extends AlgoElement
 	}
 
 	@Override
-	public BigInteger[] getExactCoordinates(
-			final HashMap<PVariable, BigInteger> values)
+	public BigInteger[] getExactCoordinates(final HashMap<PVariable, BigInteger> values)
 			throws NoSymbolicParametersException {
-		if (P != null && Q != null && P instanceof SymbolicParametersAlgo
-				&& Q instanceof SymbolicParametersAlgo) {
-			BigInteger[] coords1 = ((SymbolicParametersAlgo) P)
-					.getExactCoordinates(values);
-			BigInteger[] coords2 = ((SymbolicParametersAlgo) Q)
-					.getExactCoordinates(values);
+		if (P instanceof SymbolicParametersAlgo && Q instanceof SymbolicParametersAlgo) {
+			BigInteger[] coords1 = ((SymbolicParametersAlgo) P).getExactCoordinates(values);
+			BigInteger[] coords2 = ((SymbolicParametersAlgo) Q).getExactCoordinates(values);
 			BigInteger[] result = new BigInteger[3];
-			result[0] = coords2[0].multiply(coords1[2])
-					.subtract(coords1[0].multiply(coords2[2]));
-			result[1] = coords2[1].multiply(coords1[2])
-					.subtract(coords1[1].multiply(coords2[2]));
+			result[0] = coords2[0].multiply(coords1[2]).subtract(coords1[0].multiply(coords2[2]));
+			result[1] = coords2[1].multiply(coords1[2]).subtract(coords1[1].multiply(coords2[2]));
 			result[2] = coords1[2].multiply(coords2[2]);
 			return SymbolicParameters.reduce(result);
 		}
@@ -242,17 +227,12 @@ public class AlgoVector extends AlgoElement
 		if (polynomials != null) {
 			return polynomials;
 		}
-		if (P != null && Q != null && P instanceof SymbolicParametersAlgo
-				&& Q instanceof SymbolicParametersAlgo) {
-			PPolynomial[] coords1 = ((SymbolicParametersAlgo) P)
-					.getPolynomials();
-			PPolynomial[] coords2 = ((SymbolicParametersAlgo) Q)
-					.getPolynomials();
+		if (P instanceof SymbolicParametersAlgo && Q instanceof SymbolicParametersAlgo) {
+			PPolynomial[] coords1 = ((SymbolicParametersAlgo) P).getPolynomials();
+			PPolynomial[] coords2 = ((SymbolicParametersAlgo) Q).getPolynomials();
 			polynomials = new PPolynomial[3];
-			polynomials[0] = coords2[0].multiply(coords1[2])
-					.subtract(coords1[0].multiply(coords2[2]));
-			polynomials[1] = coords2[1].multiply(coords1[2])
-					.subtract(coords1[1].multiply(coords2[2]));
+			polynomials[0] = coords2[0].multiply(coords1[2]).subtract(coords1[0].multiply(coords2[2]));
+			polynomials[1] = coords2[1].multiply(coords1[2]).subtract(coords1[1].multiply(coords2[2]));
 			polynomials[2] = coords1[2].multiply(coords2[2]);
 			return polynomials;
 		}
@@ -265,8 +245,7 @@ public class AlgoVector extends AlgoElement
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 
 		if (botanaPolynomials != null) {
 			return botanaPolynomials;
@@ -309,5 +288,4 @@ public class AlgoVector extends AlgoElement
 		}
 		throw new NoSymbolicParametersException();
 	}
-
 }

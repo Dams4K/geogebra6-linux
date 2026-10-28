@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.jre.headless;
 
 import java.util.ArrayList;
@@ -21,11 +37,12 @@ import org.geogebra.common.main.App;
 import org.geogebra.common.main.DialogManager;
 import org.geogebra.common.main.OptionType;
 import org.geogebra.common.main.error.ErrorHandler;
+import org.geogebra.common.main.error.ErrorHelper;
 import org.geogebra.common.util.AsyncOperation;
 
 /**
  * Dialog manager for tests.
- * 
+ *
  * @author Zbynek
  */
 public class DialogManagerNoGui extends DialogManager implements ErrorHandler {
@@ -56,27 +73,33 @@ public class DialogManagerNoGui extends DialogManager implements ErrorHandler {
 	}
 
 	@Override
-	public void showNumberInputDialogSegmentFixed(String title,
-			final GeoPointND startPoint) {
-		final NumberInputHandler handler = new NumberInputHandler(
-				startPoint.getKernel().getAlgebraProcessor());
+	public void showNumberInputDialogSegmentFixed(String title, final GeoPointND startPoint) {
+		final NumberInputHandler handler =
+				new NumberInputHandler(startPoint.getKernel().getAlgebraProcessor());
 		new SegmentHandler(startPoint, startPoint.getKernel())
 				.doSegmentFixedAsync(getInput(), handler, this, obj -> {
 					// ignore
 				});
-
 	}
 
 	@Override
-	public void showNumberInputDialogAngleFixed(String menu,
-			GeoSegmentND[] selectedSegments, GeoPointND[] selectedPoints,
-			GeoElement[] selGeos, EuclidianController ec) {
-		DialogManager.createAngleFixed(selectedPoints[0].getKernel(),
+	public void showNumberInputDialogAngleFixed(
+			String menu,
+			GeoSegmentND[] selectedSegments,
+			GeoPointND[] selectedPoints,
+			GeoElement[] selGeos,
+			EuclidianController ec) {
+		DialogManager.createAngleFixed(
+				selectedPoints[0].getKernel(),
 				getInput(),
-				getClockwise(), this, selectedSegments, selectedPoints,
+				getClockwise(),
+				this,
+				selectedSegments,
+				selectedPoints,
 				obj -> {
-							// ignore
-						}, ec);
+					// ignore
+				},
+				ec);
 	}
 
 	private boolean getClockwise() {
@@ -90,63 +113,90 @@ public class DialogManagerNoGui extends DialogManager implements ErrorHandler {
 	}
 
 	@Override
-	public void showNumberInputDialogRotate(String title,
-			GeoPolygon[] selectedPolygons, GeoPointND[] selectedPoints,
-			GeoElement[] selGeos, EuclidianController ec) {
-		DialogManager.rotateObject(app, getInput(),
-				getClockwise(), selectedPolygons,
-				new DialogManager.CreateGeoForRotatePoint(selectedPoints[0]), selGeos,
-				ec, this, obj -> {
+	public void showNumberInputDialogRotate(
+			String title,
+			GeoPolygon[] selectedPolygons,
+			GeoPointND[] selectedPoints,
+			GeoElement[] selGeos,
+			EuclidianController ec) {
+		DialogManager.rotateObject(
+				app,
+				getInput(),
+				getClockwise(),
+				selectedPolygons,
+				new DialogManager.CreateGeoForRotatePoint(selectedPoints[0]),
+				selGeos,
+				ec,
+				this,
+				obj -> {
 					// ignore
 				});
 	}
 
 	@Override
-	public void showNumberInputDialogDilate(String title,
-			GeoPolygon[] selectedPolygons, GeoPointND[] selectedPoints,
-			GeoElement[] selGeos, EuclidianController ec) {
+	public void showNumberInputDialogDilate(
+			String title,
+			GeoPolygon[] selectedPolygons,
+			GeoPointND[] selectedPoints,
+			GeoElement[] selGeos,
+			EuclidianController ec) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void showNumberInputDialogRegularPolygon(String menu,
-			EuclidianController ec, GeoPointND geoPoint1, GeoPointND geoPoint2,
+	public void showNumberInputDialogRegularPolygon(
+			String menu,
+			EuclidianController ec,
+			GeoPointND geoPoint1,
+			GeoPointND geoPoint2,
 			GeoCoordSys2D direction) {
-		DialogManager.makeRegularPolygon(app, ec, getInput(), geoPoint1,
-				geoPoint2, direction, this, ok -> {
+		DialogManager.makeRegularPolygon(
+				app, ec, getInput(), geoPoint1, geoPoint2, direction, this, ok -> {
 					// ignore
 				});
 	}
 
 	@Override
-	public void showBooleanCheckboxCreationDialog(GPoint corner,
-			GeoBoolean bool) {
+	public void showBooleanCheckboxCreationDialog(GPoint corner, GeoBoolean bool) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void showNumberInputDialogCirclePointRadius(String title,
-			GeoPointND geoPointND, EuclidianView view) {
+	public void showNumberInputDialogCirclePointRadius(
+			String title, GeoPointND geoPointND, EuclidianView view) {
+		String input = getInput();
+		if (input == null) {
+			return;
+		}
+		NumberInputHandler handler = new NumberInputHandler(app.getKernel().getAlgebraProcessor());
+		handler.processInput(input, ErrorHelper.silent(), success -> {
+			if (success) {
+				app.getKernel().getAlgoDispatcher().circle(null, geoPointND, handler.getNum());
+			}
+		});
+	}
+
+	@Override
+	public void showNumberInputDialog(
+			String title, String message, String initText, AsyncOperation<GeoNumberValue> callback) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void showNumberInputDialog(String title, String message,
-			String initText, AsyncOperation<GeoNumberValue> callback) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void showNumberInputDialog(String title, String message,
-			String initText, boolean changingSign, String checkBoxText,
+	public void showNumberInputDialog(
+			String title,
+			String message,
+			String initText,
+			boolean changingSign,
+			String checkBoxText,
 			AsyncOperation<GeoNumberValue> callback) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void showAngleInputDialog(String title, String message,
-			String initText, AsyncOperation<GeoNumberValue> callback) {
+	public void showAngleInputDialog(
+			String title, String message, String initText, AsyncOperation<GeoNumberValue> callback) {
 		// TODO Auto-generated method stub
 	}
 
@@ -162,8 +212,7 @@ public class DialogManagerNoGui extends DialogManager implements ErrorHandler {
 	}
 
 	@Override
-	public void showRenameDialog(GeoElement geo, boolean b, String label,
-			boolean c) {
+	public void showRenameDialog(GeoElement geo, boolean b, String label, boolean c) {
 		// TODO Auto-generated method stub
 	}
 
@@ -173,20 +222,13 @@ public class DialogManagerNoGui extends DialogManager implements ErrorHandler {
 	}
 
 	@Override
-	public void showPropertiesDialog(OptionType type,
-			ArrayList<GeoElement> geos) {
+	public void showPropertiesDialog(OptionType type, ArrayList<GeoElement> geos) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void openToolHelp() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public TextInputDialog createTextDialog(GeoText text, GeoPointND startPoint,
-			boolean rw) {
+	public TextInputDialog createTextDialog(GeoText text, GeoPointND startPoint, boolean rw) {
 		return null;
 	}
 
@@ -206,8 +248,7 @@ public class DialogManagerNoGui extends DialogManager implements ErrorHandler {
 	}
 
 	@Override
-	public boolean onUndefinedVariables(String string,
-			AsyncOperation<String[]> callback) {
+	public boolean onUndefinedVariables(String string, AsyncOperation<String[]> callback) {
 		// TODO Auto-generated method stub
 		return false;
 	}

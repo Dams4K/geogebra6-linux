@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.exam.classic;
 
 import org.geogebra.common.exam.ExamController;
@@ -28,10 +44,10 @@ import elemental2.dom.KeyboardEvent;
 /**
  * Exam start dialog
  */
-public class ExamClassicStartDialog extends ComponentDialog {
+public final class ExamClassicStartDialog extends ComponentDialog {
 	private static boolean examStyle;
-	protected AppW appW;
-	private static final ExamController examController = GlobalScope.examController;
+	private final AppW appW;
+	private final ExamController examController;
 
 	/**
 	 * @param app
@@ -40,6 +56,10 @@ public class ExamClassicStartDialog extends ComponentDialog {
 	public ExamClassicStartDialog(AppW app, DialogData data) {
 		super(app, data, false, true);
 		this.appW = app;
+		examController = GlobalScope.getExamController(app);
+		if (examController == null) {
+			return;
+		}
 		examController.prepareExam();
 		addStyleName("classicExamStartDialog");
 		buildGUI();
@@ -59,21 +79,21 @@ public class ExamClassicStartDialog extends ComponentDialog {
 		startPanel.add(description);
 
 		if (!appW.getSettings().getCasSettings().isEnabledSet()) {
-			ComponentCheckbox cas = new ComponentCheckbox(appW.getLocalization(), true,
-					"Perspective.CAS", selected -> {
-				appW.getSettings().getCasSettings().setEnabled(selected);
-				guiManager.updateToolbarActions();
-			});
+			ComponentCheckbox cas =
+					new ComponentCheckbox(appW.getLocalization(), true, "Perspective.CAS", selected -> {
+						appW.getSettings().getCasSettings().setEnabled(selected);
+						guiManager.updateToolbarActions();
+					});
 			appW.getSettings().getCasSettings().setEnabled(true);
 			startPanel.add(cas);
 		}
 
 		if (!appW.getSettings().getEuclidian(-1).isEnabledSet()) {
-			final ComponentCheckbox allow3D = new ComponentCheckbox(appW.getLocalization(), true,
-					"Perspective.3DGraphics", selected -> {
-				appW.getSettings().getEuclidian(-1).setEnabled(selected);
-				guiManager.updateToolbarActions();
-			});
+			final ComponentCheckbox allow3D = new ComponentCheckbox(
+					appW.getLocalization(), true, "Perspective.3DGraphics", selected -> {
+						appW.getSettings().getEuclidian(-1).setEnabled(selected);
+						guiManager.updateToolbarActions();
+					});
 			appW.getSettings().getEuclidian(-1).setEnabled(true);
 			startPanel.add(allow3D);
 		}
@@ -91,8 +111,7 @@ public class ExamClassicStartDialog extends ComponentDialog {
 		appW.fireViewsChangedEvent();
 		GuiManagerInterfaceW guiManager = appW.getGuiManager();
 		guiManager.updateToolbarActions();
-		guiManager.setGeneralToolBarDefinition(
-				ToolBar.getAllToolsNoMacros(true, false, appW));
+		guiManager.setGeneralToolBarDefinition(ToolBar.getAllToolsNoMacros(true, false, appW));
 		guiManager.updateToolbar();
 		guiManager.resetMenu();
 	}
@@ -112,30 +131,25 @@ public class ExamClassicStartDialog extends ComponentDialog {
 		app.fileNew();
 		app.updateRounding();
 		// do this *before* perspective so that we have CAS toolbar for CAS
-		guiManager.setGeneralToolBarDefinition(
-				ToolBar.getAllToolsNoMacros(true, true, app));
+		guiManager.setGeneralToolBarDefinition(ToolBar.getAllToolsNoMacros(true, true, app));
 		((LayoutW) app.getGuiManager().getLayout()).resetPerspectives(app);
 
 		app.getKernel().getAlgebraProcessor().reinitCommands();
-		((AppWFull) app).startExam(ExamType.GENERIC,
-				new ExamOptions(app.getSettings().getCasSettings().isEnabled()));
+		((AppWFull) app)
+				.startExam(
+						ExamType.GENERIC, new ExamOptions(app.getSettings().getCasSettings().isEnabled()));
 
 		app.fireViewsChangedEvent();
 		guiManager.updateToolbar();
 		guiManager.updateToolbarActions();
 		guiManager.updateMenubar();
 		guiManager.resetMenu();
-		DockPanelW dp = ((DockManagerW) guiManager.getLayout().getDockManager())
-				.getPanelForKeyboard();
+		DockPanelW dp = ((DockManagerW) guiManager.getLayout().getDockManager()).getPanelForKeyboard();
 		MathKeyboardListener listener = guiManager.getKeyboardListener(dp);
 		if (listener != null && listener.needsAutofocus()) {
 			app.showKeyboard(listener, true);
 		}
 	}
-
-	////////////////////////////////////
-	// ANDROID TABLETS
-	////////////////////////////////////
 
 	/**
 	 * In electron this is done by kiosk mode, but on Chromebook it still
@@ -144,14 +158,13 @@ public class ExamClassicStartDialog extends ComponentDialog {
 	public static void blockEscTab(AppW app) {
 		DomGlobal.document.body.addEventListener("keyup", evt -> {
 			KeyboardEvent e = (KeyboardEvent) evt;
-			if ("Escape".equals(e.code) && !examController.isIdle()) {
+			if ("Escape".equals(e.code) && GlobalScope.isExamActive(app)) {
 				e.preventDefault();
 			}
 		});
 		DomGlobal.document.body.addEventListener("keydown", evt -> {
 			KeyboardEvent e = (KeyboardEvent) evt;
-			if (("Tab".equals(e.code) || "Escape".equals(e.code))
-					&& !examController.isIdle()) {
+			if (("Tab".equals(e.code) || "Escape".equals(e.code)) && GlobalScope.isExamActive(app)) {
 				e.preventDefault();
 			}
 		});

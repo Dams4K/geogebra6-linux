@@ -1,11 +1,27 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GEllipse2DDouble;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.GRectangle2D;
 import org.geogebra.common.awt.GShape;
 import org.geogebra.common.awt.MyImage;
-import org.geogebra.common.factories.AwtFactory;
 
 public class MultiBoundingBox extends BoundingBox<GShape> {
 
@@ -79,16 +95,16 @@ public class MultiBoundingBox extends BoundingBox<GShape> {
 	private void setHandlerFromCenter(int handlerIndex, double x, double y) {
 		GShape handler = handlers.get(handlerIndex);
 		if (isRotationHandler(handlerIndex)) {
-			((GEllipse2DDouble) handlers.get(handlerIndex)).setFrameFromCenter(x, y,
-					x + ROTATION_HANDLER_RADIUS, y + ROTATION_HANDLER_RADIUS);
+			((GEllipse2DDouble) handlers.get(handlerIndex))
+					.setFrameFromCenter(x, y, x + ROTATION_HANDLER_RADIUS, y + ROTATION_HANDLER_RADIUS);
 		} else if (isCornerHandler(handler)) {
-			((GEllipse2DDouble) handlers.get(handlerIndex)).setFrameFromCenter(x, y,
-					x + HANDLER_RADIUS, y + HANDLER_RADIUS);
+			((GEllipse2DDouble) handlers.get(handlerIndex))
+					.setFrameFromCenter(x, y, x + HANDLER_RADIUS, y + HANDLER_RADIUS);
 		} else if (isSideHandler(handler)) {
 			int width = handlerIndex % 2 == 0 ? SIDE_HANDLER_WIDTH : SIDE_HANDLER_HEIGHT;
 			int height = handlerIndex % 2 == 0 ? SIDE_HANDLER_HEIGHT : SIDE_HANDLER_WIDTH;
-			((GRectangle2D) handlers.get(handlerIndex)).setFrame(x - width, y - height,
-					width * 2, height * 2);
+			((GRectangle2D) handlers.get(handlerIndex))
+					.setFrame(x - width, y - height, width * 2, height * 2);
 		}
 	}
 }

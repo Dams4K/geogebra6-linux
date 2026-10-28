@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.openGL;
 
 import java.util.ArrayList;
@@ -7,7 +23,7 @@ import org.geogebra.common.geogebra3D.euclidian3D.draw.Drawable3D;
 
 /**
  * Manager to create GLLists using GL elements methods
- * 
+ *
  * @author mathieu
  *
  */
@@ -34,8 +50,8 @@ public class ManagerElementForGLList extends Manager {
 	 * @param managerOriginal
 	 *            wrapped manager
 	 */
-	public ManagerElementForGLList(Renderer renderer, EuclidianView3D view3d,
-			Manager managerOriginal) {
+	public ManagerElementForGLList(
+			Renderer renderer, EuclidianView3D view3d, Manager managerOriginal) {
 		super(view3d);
 		setRenderer(renderer);
 		this.managerOriginal = managerOriginal;
@@ -173,8 +189,7 @@ public class ManagerElementForGLList extends Manager {
 	}
 
 	@Override
-	protected void rectangleGeometry(double x, double y, double z, double width,
-			double height) {
+	protected void rectangleGeometry(double x, double y, double z, double width, double height) {
 		// TODO Auto-generated method stub
 	}
 
@@ -190,7 +205,7 @@ public class ManagerElementForGLList extends Manager {
 
 		private ManagerElementForGLList manager;
 
-		public GLBufferIndicesForGLList(ManagerElementForGLList manager) {
+		GLBufferIndicesForGLList(ManagerElementForGLList manager) {
 			this.manager = manager;
 		}
 
@@ -209,7 +224,6 @@ public class ManagerElementForGLList extends Manager {
 		@Override
 		public void put(short value) {
 			manager.put(value);
-
 		}
 
 		@Override
@@ -260,12 +274,11 @@ public class ManagerElementForGLList extends Manager {
 		public void position(int newPosition) {
 			// not needed
 		}
-
 	}
 
 	/**
 	 * Put normal, texture and vertex for given index to the original manager
-	 * 
+	 *
 	 * @param value
 	 *            index
 	 */
@@ -276,14 +289,13 @@ public class ManagerElementForGLList extends Manager {
 			managerOriginal.texture(tx.get(value), ty.get(value));
 		}
 		managerOriginal.vertex(vx.get(value), vy.get(value), vz.get(value));
-
 	}
-	
+
 	@Override
 	protected ScalerXYZ getScalerXYZ() {
 		return managerOriginal.getScalerXYZ();
 	}
-	
+
 	@Override
 	public void setScalerIdentity() {
 		managerOriginal.setScalerIdentity();
@@ -293,5 +305,4 @@ public class ManagerElementForGLList extends Manager {
 	public void setScalerView() {
 		managerOriginal.setScalerView();
 	}
-
 }

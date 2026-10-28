@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
 import static org.geogebra.common.gui.view.algebra.AlgebraItem.checkAllRHSareIntegers;
@@ -31,14 +47,13 @@ public class SymbolicUtil {
 		Command topLevelCommand = symbolic.getDefinition().getTopLevelCommand();
 		return topLevelCommand != null
 				&& (Commands.Solve.getCommand().equals(topLevelCommand.getName())
-				|| Commands.NSolve.getCommand().equals(topLevelCommand.getName()));
+						|| Commands.NSolve.getCommand().equals(topLevelCommand.getName()));
 	}
 
 	private static boolean isNumericOfSolve(GeoSymbolic symbolic) {
 		ExpressionNode definition = symbolic.getDefinition();
 		if (definition.getLeft() instanceof Command
-				&& Commands.Numeric.getCommand()
-				.equals(((Command) definition.getLeft()).getName())) {
+				&& Commands.Numeric.getCommand().equals(((Command) definition.getLeft()).getName())) {
 			Command firstCommand = (Command) definition.getLeft();
 			if (firstCommand.getArgumentNumber() > 0
 					&& firstCommand.getArgument(0).getLeft() instanceof Command) {
@@ -62,7 +77,8 @@ public class SymbolicUtil {
 		String textOriginal = getValueString(symbolic);
 		String textOpposite = getValueString(opposite);
 
-		return !containsUndefinedOrIsEmpty(symbolic) && !containsUndefinedOrIsEmpty(opposite)
+		return !containsUndefinedOrIsEmpty(symbolic)
+				&& !containsUndefinedOrIsEmpty(opposite)
 				&& !textOriginal.equals(textOpposite);
 	}
 
@@ -86,8 +102,7 @@ public class SymbolicUtil {
 		}
 
 		// Return true for empty list
-		if (v instanceof MyList
-				&& ((MyList) v).size() == 0) {
+		if (v instanceof MyList && ((MyList) v).size() == 0) {
 			return true;
 		}
 
@@ -100,8 +115,8 @@ public class SymbolicUtil {
 	}
 
 	private static GeoSymbolic getOpposite(GeoSymbolic symbolic) {
-		GeoSymbolic opposite = new GeoSymbolic(symbolic.getConstruction(),
-				symbolic.getDefinition().deepCopy(symbolic.getKernel()));
+		GeoSymbolic opposite = new GeoSymbolic(
+				symbolic.getConstruction(), symbolic.getDefinition().deepCopy(symbolic.getKernel()));
 		toggleNumericSolve(opposite);
 		return opposite;
 	}
@@ -139,11 +154,11 @@ public class SymbolicUtil {
 	public static void toggleNumericSolve(GeoSymbolic symbolic) {
 		Command topLevelCommand = symbolic.getDefinition().getTopLevelCommand();
 		boolean isNSolve = Commands.NSolve.getCommand().equals(topLevelCommand.getName());
-		Commands opposite = isNSolve
-				? Commands.Solve : Commands.NSolve;
+		Commands opposite = isNSolve ? Commands.Solve : Commands.NSolve;
 
 		topLevelCommand.setName(opposite.getCommand());
-		if (isNSolve && topLevelCommand.getArgumentNumber() == 2
+		if (isNSolve
+				&& topLevelCommand.getArgumentNumber() == 2
 				&& topLevelCommand.getArgument(1).unwrap() instanceof Equation) {
 			ExpressionNode eqn = topLevelCommand.removeLastArgument();
 			symbolic.setExcludedEquation(eqn);
@@ -154,8 +169,7 @@ public class SymbolicUtil {
 	}
 
 	private static void toggleNumericWrap(GeoSymbolic symbolic) {
-		boolean isNumeric = Commands.Numeric.getCommand()
-				.equals(symbolic.getDefinition().getTopLevelCommand().getName());
+		boolean isNumeric = symbolic.getDefinition().isTopLevelCommand(Commands.Numeric.getCommand());
 		if (isNumeric) {
 			unwrapFromNumeric(symbolic);
 		} else {
@@ -190,23 +204,25 @@ public class SymbolicUtil {
 			HasSymbolicMode hasSymbolicGeo = (HasSymbolicMode) geo;
 			hasSymbolicGeo.setSymbolicMode(!hasSymbolicGeo.isSymbolicMode(), true);
 
-			if (geo instanceof GeoSymbolic) {
-				GeoSymbolic symbolic = (GeoSymbolic) geo;
+			if (geo instanceof GeoSymbolic symbolic) {
 				if (isSolve(symbolic) || isNumericOfSolve(symbolic)) {
-					if (symbolic.shouldWrapInNumeric()) {
-						toggleNumericWrap(symbolic);
-					} else {
-						toggleNumericSolve(symbolic);
-					}
-					symbolic.setDescriptionNeedsUpdateInAV(true);
+					toggleSymbolicForSolve(symbolic);
 				}
 			}
 
 			geo.updateRepaint();
 			return hasSymbolicGeo.isSymbolicMode();
-
 		}
 		return false;
+	}
+
+	private static void toggleSymbolicForSolve(GeoSymbolic symbolic) {
+		if (symbolic.shouldWrapInNumeric()) {
+			toggleNumericWrap(symbolic);
+		} else {
+			toggleNumericSolve(symbolic);
+		}
+		symbolic.setDescriptionNeedsUpdateInAV(true);
 	}
 
 	/**
@@ -239,8 +255,7 @@ public class SymbolicUtil {
 	 * @return Whether the element has the engineering notation mode activated
 	 */
 	public static boolean isEngineeringNotationMode(GeoElement geo) {
-		return geo instanceof HasSymbolicMode
-				&& ((HasSymbolicMode) geo).isEngineeringNotationMode();
+		return geo instanceof HasSymbolicMode && ((HasSymbolicMode) geo).isEngineeringNotationMode();
 	}
 
 	/**
@@ -248,7 +263,8 @@ public class SymbolicUtil {
 	 * @return true if numeric approximation should be calculated
 	 */
 	public static boolean shouldComputeNumericValue(ExpressionValue expression) {
-		if (expression != null && expression.isNumberValue()
+		if (expression != null
+				&& expression.isNumberValue()
 				&& !(expression.unwrap() instanceof BooleanValue)) {
 			ExpressionValue unwrapped = expression.unwrap();
 			if (expression.wrap().containsGeoDummyVariable()) {

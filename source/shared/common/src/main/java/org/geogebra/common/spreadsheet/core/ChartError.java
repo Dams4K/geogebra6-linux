@@ -1,6 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.spreadsheet.core;
 
 import java.util.List;
+
+import org.jspecify.annotations.NonNull;
 
 /**
  * Enumeration representing possible validation errors when generating charts
@@ -14,7 +32,8 @@ import java.util.List;
 public enum ChartError {
 	NONE(""),
 	NoData("StatsDialog.NoData"),
-	TwoColumnsNeeded("ChartError.TwoColumns");
+	TwoColumnsNeeded("ChartError.TwoColumns"),
+	InvalidData("Error.InvalidInput");
 
 	private final String errorKey;
 
@@ -55,8 +74,10 @@ public enum ChartError {
 		if (ranges.size() == 2) {
 			TabularRange r1 = ranges.get(0);
 			TabularRange r2 = ranges.get(1);
-			if (r1.getWidth() == 1 && r2.getWidth() == 1
-					&& r1.getMinRow() == r2.getMinRow() && r1.getMaxRow() == r2.getMaxRow()) {
+			if (r1.getWidth() == 1
+					&& r2.getWidth() == 1
+					&& r1.getMinRow() == r2.getMinRow()
+					&& r1.getMaxRow() == r2.getMaxRow()) {
 				return NONE;
 			}
 		}
@@ -88,5 +109,49 @@ public enum ChartError {
 			return range.getWidth() >= 2 ? NONE : noDataOrTwoColumnNeeded(range);
 		}
 		return validateMultiRange(ranges);
+	}
+
+	/**
+	 * Checks if selected ranges are valid for BoxPlot.
+	 * @param ranges One or two ranges. The first range may be a 2xN or Nx2 rectangular range,
+	 * in which case there must only be one range.
+	 * @return {@link #NONE} if the ranges are valid, or a validation error otherwise.
+	 */
+	public static ChartError validateRangesForBoxPlot(@NonNull List<TabularRange> ranges) {
+		if (ranges.isEmpty()) {
+			return ChartError.NoData; // not enough ranges
+		}
+		if (ranges.size() > 2) {
+			return ChartError.InvalidData; // too many ranges
+		}
+		TabularRange range1 = ranges.get(0);
+		if (range1.isSingleCell()) {
+			return ChartError.NoData; // not enough cells
+		}
+		if (range1.isEntireColumn() || range1.isEntireRow()) {
+			return ChartError.InvalidData; // too many cells
+		}
+		if (ranges.size() == 2) {
+			TabularRange range2 = ranges.get(1);
+			if (range2.isEntireColumn()
+					|| range2.isEntireRow()
+					// if we have 2 ranges, they must not be wider than 1 row or column
+					|| !range2.is1D()
+					|| !range1.is1D()) {
+				return ChartError.InvalidData; // too many cells
+			}
+			int size1 = range1.isPartialColumn() ? range1.getHeight() : range1.getWidth();
+			int size2 = range2.isPartialColumn() ? range2.getHeight() : range2.getWidth();
+			if (size1 != size2) {
+				return ChartError.InvalidData;
+			}
+		} else {
+			// if we have just one range which is rectangular (e.g., 3x2), the smaller dimension
+			// must not exceed 2 (i.e., 4x3 is not allowed)
+			if (Math.min(range1.getWidth(), range1.getHeight()) > 2) {
+				return ChartError.InvalidData;
+			}
+		}
+		return ChartError.NONE;
 	}
 }

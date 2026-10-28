@@ -1,4 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.probcalculator;
+
+import java.util.List;
 
 import org.geogebra.common.gui.view.probcalculator.ChiSquareCell;
 import org.geogebra.common.gui.view.probcalculator.ChiSquarePanel;
@@ -7,9 +25,9 @@ import org.geogebra.common.gui.view.probcalculator.StatisticsCalculator;
 import org.geogebra.common.gui.view.probcalculator.StatisticsCollection;
 import org.geogebra.common.main.Localization;
 import org.geogebra.web.full.gui.components.ComponentCheckbox;
+import org.geogebra.web.full.gui.components.ComponentDropDown;
 import org.geogebra.web.html5.gui.inputfield.AutoCompleteTextFieldW;
-import org.geogebra.web.html5.gui.util.ListBoxApi;
-import org.gwtproject.dom.client.Document;
+import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.event.dom.client.ChangeEvent;
 import org.gwtproject.event.dom.client.ChangeHandler;
 import org.gwtproject.event.dom.client.FocusEvent;
@@ -19,24 +37,21 @@ import org.gwtproject.event.dom.client.KeyUpEvent;
 import org.gwtproject.event.dom.client.KeyUpHandler;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Label;
-import org.gwtproject.user.client.ui.ListBox;
 import org.gwtproject.user.client.ui.TextBox;
 
 /**
  * ChiSquarePanel for Web
  */
-public class ChiSquarePanelW extends ChiSquarePanel
-		implements ChangeHandler {
-
+public final class ChiSquarePanelW extends ChiSquarePanel implements ChangeHandler {
 	private FlowPanel wrappedPanel;
-	private Label lblRows;
-	private Label lblColumns;
 	private ComponentCheckbox ckExpected;
 	private ComponentCheckbox ckChiDiff;
 	private ComponentCheckbox ckRowPercent;
 	private ComponentCheckbox ckColPercent;
-	private ListBox cbRows;
-	private ListBox cbColumns;
+	private final List<String> numbers =
+			List.of("2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12");
+	private ComponentDropDown cbRows;
+	private ComponentDropDown cbColumns;
 	private FlowPanel pnlCount;
 	private ChiSquareCellW[][] cell;
 	private FlowPanel pnlControl;
@@ -68,19 +83,15 @@ public class ChiSquarePanelW extends ChiSquarePanel
 	private void createControlPanel() {
 		pnlControl = new FlowPanel();
 		pnlControl.setStyleName("pnlControl");
-		pnlControl.add(lblRows);
-		pnlControl.add(cbRows);
-		pnlControl.getElement().appendChild(Document.get().createBRElement());
-		pnlControl.add(lblColumns);
-		pnlControl.add(cbColumns);
-		FlowPanel lineBreak = new FlowPanel();
-		lineBreak.setStyleName("lineBreak");
-		pnlControl.add(lineBreak);
+		FlowPanel rowColumnHolder = new FlowPanel();
+		rowColumnHolder.setStyleName("rowColumnHolder");
+		rowColumnHolder.add(cbRows);
+		rowColumnHolder.add(cbColumns);
+		pnlControl.add(rowColumnHolder);
 		pnlControl.add(ckRowPercent);
 		pnlControl.add(ckColPercent);
 		pnlControl.add(ckExpected);
 		pnlControl.add(ckChiDiff);
-
 	}
 
 	private void createCountPanel() {
@@ -155,7 +166,6 @@ public class ChiSquarePanelW extends ChiSquarePanel
 
 	private void setChiSquaredControlsVisible(boolean visible) {
 		cbColumns.setVisible(visible);
-		lblColumns.setVisible(visible);
 		ckRowPercent.setVisible(visible);
 		ckExpected.setVisible(visible);
 		ckChiDiff.setVisible(visible);
@@ -165,12 +175,12 @@ public class ChiSquarePanelW extends ChiSquarePanel
 	 * Reset chi-squared data
 	 */
 	public void updateCollection() {
-		getSc().setChiSqData(
-				Integer.parseInt(cbRows.getValue(cbRows.getSelectedIndex())),
-				getSc().getSelectedProcedure() == Procedure.GOF_TEST ? 2
-						: Integer.parseInt(cbColumns
-								.getValue(cbColumns.getSelectedIndex())));
-
+		getSc()
+				.setChiSqData(
+						Integer.parseInt(cbRows.getSelectedText()),
+						getSc().getSelectedProcedure() == Procedure.GOF_TEST
+								? 2
+								: Integer.parseInt(cbColumns.getSelectedText()));
 	}
 
 	/**
@@ -194,8 +204,6 @@ public class ChiSquarePanelW extends ChiSquarePanel
 	 * Update translation
 	 */
 	public void setLabels() {
-		lblRows.setText(getMenu("Rows"));
-		lblColumns.setText(getMenu("Columns"));
 		ckExpected.setLabels();
 		ckChiDiff.setLabels();
 		ckRowPercent.setLabels();
@@ -205,37 +213,25 @@ public class ChiSquarePanelW extends ChiSquarePanel
 			cell[0][1].setLabelText(0, getMenu("ObservedCount"));
 			cell[0][2].setLabelText(0, getMenu("ExpectedCount"));
 		}
-
 	}
 
 	private void createGUIElements() {
-		lblRows = new Label();
-		lblColumns = new Label();
-
 		ckExpected = createCheckbox("ExpectedCount");
 		ckChiDiff = createCheckbox("ChiSquaredContribution");
 		ckRowPercent = createCheckbox("RowPercent");
 		ckColPercent = createCheckbox("ColumnPercent");
 
-		// drop down menu for rows/columns 2-12
-		String[] num = new String[11];
-		for (int i = 0; i < num.length; i++) {
-			num[i] = "" + (i + 2);
-		}
-
-		cbRows = new ListBox();
-		cbColumns = new ListBox();
-
-		for (int i = 0; i < num.length; i++) {
-			cbRows.addItem(num[i]);
-			cbColumns.addItem(num[i]);
-		}
-
-		ListBoxApi.select(String.valueOf(getSc().rows), cbRows);
-		cbRows.addChangeHandler(this);
-
-		ListBoxApi.select(String.valueOf(getSc().columns), cbColumns);
-		cbColumns.addChangeHandler(this);
+		cbRows = new ComponentDropDown((AppW) statCalc.getApp(), "Rows", numbers, getSc().rows);
+		cbRows.addChangeHandler(() -> {
+			updateCollection();
+			updateGUI();
+		});
+		cbColumns =
+				new ComponentDropDown((AppW) statCalc.getApp(), "Columns", numbers, getSc().columns);
+		cbColumns.addChangeHandler(() -> {
+			updateCollection();
+			updateGUI();
+		});
 	}
 
 	private ComponentCheckbox createCheckbox(String ggbtrans) {
@@ -260,8 +256,7 @@ public class ChiSquarePanelW extends ChiSquarePanel
 	 * Cell (input+output) of the table
 	 *
 	 */
-	public class ChiSquareCellW extends ChiSquareCell
-			implements FocusHandler, KeyUpHandler {
+	public final class ChiSquareCellW extends ChiSquareCell implements FocusHandler, KeyUpHandler {
 
 		private FlowPanel wrappedCellPanel;
 		private AutoCompleteTextFieldW fldInput;
@@ -271,7 +266,7 @@ public class ChiSquarePanelW extends ChiSquarePanel
 
 		/**
 		 * Construct ChiSquareCell with given row, column
-		 * 
+		 *
 		 * @param sc
 		 *            data
 		 * @param row
@@ -291,7 +286,7 @@ public class ChiSquarePanelW extends ChiSquarePanel
 
 		/**
 		 * Construct ChiSquareCell
-		 * 
+		 *
 		 * @param sc
 		 *            data
 		 */
@@ -421,5 +416,4 @@ public class ChiSquarePanelW extends ChiSquarePanel
 	public FlowPanel getWrappedPanel() {
 		return wrappedPanel;
 	}
-
 }

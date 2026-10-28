@@ -1,6 +1,20 @@
-package org.geogebra.common;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import static org.junit.Assert.fail;
+package org.geogebra.common;
 
 import java.util.function.Function;
 
@@ -21,13 +35,10 @@ import org.geogebra.common.main.Localization;
 import org.geogebra.common.main.UndoRedoMode;
 import org.geogebra.common.main.error.ErrorHandler;
 import org.geogebra.common.main.settings.Settings;
-import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.test.TestErrorHandler;
 import org.geogebra.test.commands.AlgebraTestHelper;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.After;
-import org.junit.Before;
 
 /**
  * Base class for unit tests.
@@ -44,22 +55,14 @@ public class BaseUnitTest {
 	private ErrorHandler errorHandler = TestErrorHandler.INSTANCE;
 	private static TypeSafeMatcher<GeoElementND> isDefined;
 
-    /**
-     * Set up test class before every test.
-     */
-    @Before
-	public void setup() {
-		app = createAppCommon();
-        kernel = app.getKernel();
-        construction = kernel.getConstruction();
-        elementFactory = new GeoElementFactory(this);
-    }
-
 	/**
-	 * Clean up after every test.
+	 * Set up test class before every test.
 	 */
-	@After
-	public void teardown() {
+	public BaseUnitTest() {
+		app = createAppCommon();
+		kernel = app.getKernel();
+		construction = kernel.getConstruction();
+		elementFactory = new GeoElementFactory(this);
 	}
 
 	/**
@@ -74,27 +77,27 @@ public class BaseUnitTest {
 	 *
 	 * @return kernel
 	 */
-    protected Kernel getKernel() {
-        return kernel;
-    }
+	protected Kernel getKernel() {
+		return kernel;
+	}
 
-    /**
-     * Get the construction.
-     *
-     * @return construction
-     */
-    protected Construction getConstruction() {
-        return construction;
-    }
+	/**
+	 * Get the construction.
+	 *
+	 * @return construction
+	 */
+	protected Construction getConstruction() {
+		return construction;
+	}
 
-    /**
-     * Get the app.
-     *
-     * @return app
-     */
-    protected AppCommon getApp() {
-        return app;
-    }
+	/**
+	 * Get the app.
+	 *
+	 * @return app
+	 */
+	protected AppCommon getApp() {
+		return app;
+	}
 
 	/**
 	 * Get the algebra processor.
@@ -109,14 +112,14 @@ public class BaseUnitTest {
 		return app.getSettings();
 	}
 
-    /**
-     * Get the geo element factory. Use this class to create GeoElements.
-     *
-     * @return geo element factory
-     */
-    protected GeoElementFactory getElementFactory() {
-        return elementFactory;
-    }
+	/**
+	 * Get the geo element factory. Use this class to create GeoElements.
+	 *
+	 * @return geo element factory
+	 */
+	protected GeoElementFactory getElementFactory() {
+		return elementFactory;
+	}
 
 	/**
 	 * Get the localization.
@@ -145,9 +148,8 @@ public class BaseUnitTest {
 	 * @return resulting element
 	 */
 	protected <T extends GeoElementND> T add(String command) {
-		GeoElementND[] geoElements =
-				getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command, false,
-						errorHandler, false, null);
+		GeoElementND[] geoElements = getAlgebraProcessor()
+				.processAlgebraCommandNoExceptionHandling(command, false, errorHandler, false, null);
 		return getFirstElement(geoElements);
 	}
 
@@ -166,7 +168,6 @@ public class BaseUnitTest {
 	 *            algebra input to be processed
 	 * @return resulting element
 	 */
-
 	protected <T extends GeoElement> T addAvInput(String command) {
 		EvalInfo info = EvalInfoFactory.getEvalInfoForAV(app, false);
 		return add(command, info);
@@ -186,16 +187,15 @@ public class BaseUnitTest {
 	}
 
 	protected void editGeoElement(GeoElement geoElement, String newDefinition) {
-		EvalInfo evalInfo = EvalInfoFactory.getEvalInfoForRedefinition(
-				getKernel(), geoElement, true);
-		getAlgebraProcessor().changeGeoElementNoExceptionHandling(
-				geoElement, newDefinition, evalInfo, false, null, errorHandler);
+		EvalInfo evalInfo = EvalInfoFactory.getEvalInfoForRedefinition(getKernel(), geoElement, true);
+		getAlgebraProcessor()
+				.changeGeoElementNoExceptionHandling(
+						geoElement, newDefinition, evalInfo, false, null, errorHandler);
 	}
 
 	protected void t(String input, String... expected) {
-		AlgebraTestHelper.checkSyntaxSingle(input, expected,
-				getApp().getKernel().getAlgebraProcessor(),
-				StringTemplate.xmlTemplate);
+		AlgebraTestHelper.checkSyntaxSingle(
+				input, expected, getApp().getKernel().getAlgebraProcessor(), StringTemplate.xmlTemplate);
 	}
 
 	protected <T extends GeoElementND> T[] getElements(String command) {
@@ -205,43 +205,14 @@ public class BaseUnitTest {
 	private <T extends GeoElementND> T[] getElements(String command, EvalInfo info) {
 		return (T[]) getAlgebraProcessor()
 				.processAlgebraCommandNoExceptionHandling(
-						command,
-						false,
-						getSliderErrorHandler(info),
-						info,
-						null);
+						command, false, getSliderErrorHandler(info), info, null);
 	}
 
 	private ErrorHandler getSliderErrorHandler(EvalInfo info) {
 		if (!info.isAutocreateSliders()) {
 			return app.getErrorHandler();
 		}
-		return new ErrorHandler() {
-			@Override
-			public void showError(String msg) {
-				fail(msg);
-			}
-
-			@Override
-			public void showCommandError(String command, String message) {
-				fail(message);
-			}
-
-			@Override
-			public String getCurrentCommand() {
-				return null;
-			}
-
-			@Override
-			public boolean onUndefinedVariables(String string, AsyncOperation<String[]> callback) {
-				return true;
-			}
-
-			@Override
-			public void resetError() {
-				// nothing to do
-			}
-		};
+		return TestErrorHandler.WITH_SLIDERS;
 	}
 
 	/**
@@ -258,7 +229,7 @@ public class BaseUnitTest {
 	 */
 	public static TypeSafeMatcher<GeoElementND> isDefined() {
 		if (isDefined == null) {
-			isDefined = new TypeSafeMatcher<GeoElementND>() {
+			isDefined = new TypeSafeMatcher<>() {
 				@Override
 				protected boolean matchesSafely(GeoElementND item) {
 					return item.isDefined();
@@ -278,7 +249,11 @@ public class BaseUnitTest {
 	 * @return construction element matcher
 	 */
 	public static TypeSafeMatcher<ExpressionValue> hasValue(String val) {
-		return hasProperty("value", geo -> geo.toValueString(StringTemplate.defaultTemplate), val);
+		return hasProperty(
+				"value",
+				geo -> geo.toValueString(
+						StringTemplate.defaultTemplate.deriveWithoutCoefficientSimplification()),
+				val);
 	}
 
 	/**
@@ -289,16 +264,15 @@ public class BaseUnitTest {
 	 * @param <A> object type
 	 * @param <B> property type
 	 */
-	public static <A, B> TypeSafeMatcher<A> hasProperty(String propName,
-			Function<A, B> prop, B val) {
-		return new TypeSafeMatcher<A>() {
+	public static <A, B> TypeSafeMatcher<A> hasProperty(String propName, Function<A, B> prop, B val) {
+		return new TypeSafeMatcher<>() {
 			@Override
 			protected boolean matchesSafely(A item) {
 				return val.equals(prop.apply(item));
 			}
 
 			@Override
-			public void describeMismatchSafely(A item, Description description) {
+			protected void describeMismatchSafely(A item, Description description) {
 				description.appendText("had " + propName + " ").appendValue(prop.apply(item));
 			}
 

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -38,7 +42,7 @@ public class AlgoFunctionFreehand extends AlgoElement {
 
 	/**
 	 * Creates new AlgoDependentFunction
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -63,8 +67,7 @@ public class AlgoFunctionFreehand extends AlgoElement {
 
 		g = new GeoFunction(cons); // output
 		FunctionVariable X = new FunctionVariable(kernel);
-		ExpressionNode expr = new ExpressionNode(kernel, X, Operation.SIN,
-				null);
+		ExpressionNode expr = new ExpressionNode(kernel, X, Operation.SIN, null);
 		Function fun = new Function(expr, X);
 		g.setFunction(fun);
 		g.setDefined(false);
@@ -105,26 +108,25 @@ public class AlgoFunctionFreehand extends AlgoElement {
 		}
 
 		FunctionVariable X = new FunctionVariable(kernel);
-		ExpressionNode expr = new ExpressionNode(kernel, X, Operation.FREEHAND,
-				inputList);
+		ExpressionNode expr = new ExpressionNode(kernel, X, Operation.FREEHAND, inputList);
 		Function fun = new Function(expr, X);
 		g.setFunction(fun);
 		g.setDefined(true);
-		g.setInterval(((GeoNumeric) inputList.get(0)).getDouble(),
-				((GeoNumeric) inputList.get(1)).getDouble());
+		g.setInterval(
+				((GeoNumeric) inputList.get(0)).getDouble(), ((GeoNumeric) inputList.get(1)).getDouble());
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
-		if (inputList.size() < 4
-				|| !inputList.getElementType().equals(GeoClass.NUMERIC)) {
+	public final String toString(StringTemplate tpl) {
+		if (inputList.size() < 4 || !inputList.getElementType().equals(GeoClass.NUMERIC)) {
 			return "?";
 		}
-		return getLoc().getPlainDefault("FreehandFunctionOnIntervalAB",
-				"Freehand function on [%0, %1]",
-				kernel.format(((GeoNumeric) inputList.get(0)).getDouble(), tpl),
-				kernel.format(((GeoNumeric) inputList.get(1)).getDouble(),
-						tpl));
+		return getLoc()
+				.getPlainDefault(
+						"FreehandFunctionOnIntervalAB",
+						"Freehand function on [%0, %1]",
+						kernel.format(((GeoNumeric) inputList.get(0)).getDouble(), tpl),
+						kernel.format(((GeoNumeric) inputList.get(1)).getDouble(), tpl));
 	}
 
 	@Override
@@ -178,5 +180,4 @@ public class AlgoFunctionFreehand extends AlgoElement {
 
 		return ret;
 	}
-
 }

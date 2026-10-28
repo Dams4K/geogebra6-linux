@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.exam.restrictions;
 
 import static org.geogebra.common.SuiteSubApp.CAS;
@@ -126,12 +142,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-
 import org.geogebra.common.contextmenu.AlgebraContextMenuItem;
 import org.geogebra.common.contextmenu.ContextMenuItemFilter;
-import org.geogebra.common.exam.ExamType;
+import org.geogebra.common.exam.restrictions.mms.MmsAlgebraOutputFilter;
 import org.geogebra.common.exam.restrictions.visibility.HiddenInequalityVisibilityRestriction;
 import org.geogebra.common.exam.restrictions.visibility.HiddenVectorVisibilityRestriction;
 import org.geogebra.common.exam.restrictions.visibility.VisibilityRestriction;
@@ -157,6 +170,7 @@ import org.geogebra.common.kernel.cas.AlgoIntegralDefinite;
 import org.geogebra.common.kernel.commands.CommandProcessor;
 import org.geogebra.common.kernel.commands.Commands;
 import org.geogebra.common.kernel.commands.filter.CommandArgumentFilter;
+import org.geogebra.common.kernel.commands.filter.ExamCommandArgumentFilter;
 import org.geogebra.common.kernel.commands.selector.CommandFilter;
 import org.geogebra.common.kernel.commands.selector.CommandNameFilter;
 import org.geogebra.common.kernel.geos.GeoConic;
@@ -177,14 +191,18 @@ import org.geogebra.common.main.syntax.Syntax;
 import org.geogebra.common.main.syntax.suggestionfilter.LineSelectorSyntaxFilter;
 import org.geogebra.common.main.syntax.suggestionfilter.SyntaxFilter;
 import org.geogebra.common.plugin.Operation;
+import org.geogebra.common.restrictions.FeatureRestriction;
+import org.geogebra.common.restrictions.Restrictions;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-public class MmsExamRestrictions extends ExamRestrictions {
+public class MmsExamRestrictions extends Restrictions {
 
 	/**
 	 * Restrictions for MMS
 	 */
-	protected MmsExamRestrictions() {
-		super(ExamType.MMS,
+	public MmsExamRestrictions() {
+		super(
 				Set.of(GRAPHING, GEOMETRY, G3D, PROBABILITY, SCIENTIFIC),
 				CAS,
 				createFeatureRestrictions(),
@@ -201,18 +219,19 @@ public class MmsExamRestrictions extends ExamRestrictions {
 				null,
 				null,
 				createStatisticsFilter(),
-				createAlgebraOutputFormatFilters());
+				createAlgebraOutputFormatFilters(),
+				new MmsAlgebraOutputFilter());
 	}
 
-	private static Set<ExamFeatureRestriction> createFeatureRestrictions() {
+	private static Set<FeatureRestriction> createFeatureRestrictions() {
 		return Set.of(
-				ExamFeatureRestriction.HIDE_CALCULATED_EQUATION,
-				ExamFeatureRestriction.HIDE_SPECIAL_POINTS,
-				ExamFeatureRestriction.SPREADSHEET,
-				ExamFeatureRestriction.SURD,
-				ExamFeatureRestriction.RATIONALIZATION,
-				ExamFeatureRestriction.DISABLE_MIXED_NUMBERS,
-				ExamFeatureRestriction.CUSTOM_MMS_REGRESSION_MODELS);
+				FeatureRestriction.HIDE_CALCULATED_EQUATION,
+				FeatureRestriction.SPECIAL_POINTS_ONLY_ON_GRAPHICS_VIEW_SELECTION,
+				FeatureRestriction.SPREADSHEET,
+				FeatureRestriction.SURD,
+				FeatureRestriction.RATIONALIZATION,
+				FeatureRestriction.DISABLE_MIXED_NUMBERS,
+				FeatureRestriction.CUSTOM_MMS_REGRESSION_MODELS);
 	}
 
 	private static Set<ExpressionFilter> createInputExpressionFilters() {
@@ -221,11 +240,9 @@ public class MmsExamRestrictions extends ExamRestrictions {
 				new DeepExpressionFilter(new MmsListOperationFilter()),
 				new DeepExpressionFilter(new MmsFunctionExpressionFilter()),
 				new DeepExpressionFilter(
-						OperationFilter.restricting(restrictedInequalityOperations())
-								.toExpressionFilter())
+								OperationFilter.restricting(restrictedInequalityOperations()).toExpressionFilter())
 						.allowWhen(operatorInInequality()),
-				new RadianGradianFilter()
-		);
+				new RadianGradianFilter());
 	}
 
 	private static Set<ExpressionFilter> createOutputExpressionFilters() {
@@ -235,29 +252,106 @@ public class MmsExamRestrictions extends ExamRestrictions {
 	}
 
 	private static Set<CommandFilter> createCommandFilters() {
-		CommandFilter filter =
-				new CommandNameFilter(false, Append, BarChart, BinomialCoefficient, BinomialDist,
-						Cross, Derivative, Division, Dot, Element, Expand, First, Flatten,
-						Identity, IndexOf, Insert, Integral, IntegralSymbolic, Invert, Join, Last,
-						LeftSide, Length, Limit, LimitAbove, LimitBelow, Mod, nCr, NIntegral,
-						NSolutions, NSolve, Product, RandomElement, Remove, Reverse, RightSide,
-						Sample, SampleSD, Sequence, Shuffle, SigmaXX, SigmaXY, Slider, Solutions,
-						Solve, Sort, stdev, StepGraph, StickGraph, Sum, Take, Transpose, Numeric,
-						Substitute, Normal, RemoveUndefined);
+		CommandFilter filter = new CommandNameFilter(
+				false,
+				Append,
+				BarChart,
+				BinomialCoefficient,
+				BinomialDist,
+				Cross,
+				Derivative,
+				Division,
+				Dot,
+				Element,
+				Expand,
+				First,
+				Flatten,
+				Identity,
+				IndexOf,
+				Insert,
+				Integral,
+				IntegralSymbolic,
+				Invert,
+				Join,
+				Last,
+				LeftSide,
+				Length,
+				Limit,
+				LimitAbove,
+				LimitBelow,
+				Mod,
+				nCr,
+				NIntegral,
+				NSolutions,
+				NSolve,
+				Product,
+				RandomElement,
+				Remove,
+				Reverse,
+				RightSide,
+				Sample,
+				SampleSD,
+				Sequence,
+				Shuffle,
+				SigmaXX,
+				SigmaXY,
+				Slider,
+				Solutions,
+				Solve,
+				Sort,
+				stdev,
+				StepGraph,
+				StickGraph,
+				Sum,
+				Take,
+				Transpose,
+				Numeric,
+				Substitute,
+				Normal,
+				RemoveUndefined);
 		return Set.of(filter);
 	}
 
 	private static Set<CommandArgumentFilter> createCommandArgumentFilters() {
-		return Set.of(new MmsCommandArgumentFilter());
+		return Set.of(new ExamCommandArgumentFilter(), new MmsCommandArgumentFilter());
 	}
 
 	private static OperationFilter createOperationFilter() {
 		Set<Operation> restrictedOperations = Set.of(
-				ARG, CONJUGATE, REAL, IMAGINARY, ALT, RANDOM, ARCTAN2, ARCTAN2D, BETA,
-				BETA_INCOMPLETE, BETA_INCOMPLETE_REGULARIZED, GAMMA, GAMMA_INCOMPLETE,
-				GAMMA_INCOMPLETE_REGULARIZED, ERF, PSI, POLYGAMMA, SI, CI, EI, ZETA, LAMBERTW,
-				EQUAL_BOOLEAN, NOT_EQUAL, AND, OR, NOT, XOR, IMPLICATION,
-				PARALLEL, PERPENDICULAR, IS_ELEMENT_OF, IS_SUBSET_OF, IS_SUBSET_OF_STRICT,
+				ARG,
+				CONJUGATE,
+				REAL,
+				IMAGINARY,
+				ALT,
+				RANDOM,
+				ARCTAN2,
+				ARCTAN2D,
+				BETA,
+				BETA_INCOMPLETE,
+				BETA_INCOMPLETE_REGULARIZED,
+				GAMMA,
+				GAMMA_INCOMPLETE,
+				GAMMA_INCOMPLETE_REGULARIZED,
+				ERF,
+				PSI,
+				POLYGAMMA,
+				SI,
+				CI,
+				EI,
+				ZETA,
+				LAMBERTW,
+				EQUAL_BOOLEAN,
+				NOT_EQUAL,
+				AND,
+				OR,
+				NOT,
+				XOR,
+				IMPLICATION,
+				PARALLEL,
+				PERPENDICULAR,
+				IS_ELEMENT_OF,
+				IS_SUBSET_OF,
+				IS_SUBSET_OF_STRICT,
 				SET_DIFFERENCE);
 		return OperationFilter.restricting(restrictedOperations);
 	}
@@ -285,14 +379,14 @@ public class MmsExamRestrictions extends ExamRestrictions {
 	}
 
 	private static StatisticsFilter createStatisticsFilter() {
-		Set<Statistic> filteredStatistics = Set.of(MEAN, SD, MIN, Q1, MEDIAN,
-				Q3, MAX, PMCC, COVARIANCE);
+		Set<Statistic> filteredStatistics =
+				Set.of(MEAN, SD, MIN, Q1, MEDIAN, Q3, MAX, PMCC, COVARIANCE);
 		return statistic -> !filteredStatistics.contains(statistic);
 	}
 
 	private static Set<AlgebraOutputFormatFilter> createAlgebraOutputFormatFilters() {
-		return Set.of(new NormalCommandAlgebraOutputFormatFilter(),
-				new PolarCoordinateCartesianFormatFilter());
+		return Set.of(
+				new NormalCommandAlgebraOutputFormatFilter(), new PolarCoordinateCartesianFormatFilter());
 	}
 
 	/**
@@ -300,7 +394,7 @@ public class MmsExamRestrictions extends ExamRestrictions {
 	 * <p>Example: {@code Normal(2, 0.5, 1)}</p>
 	 * <ul>
 	 *     <li>
-	 *         Restricted {@code (erf(-√2) + 1) / 2} output format
+	 *         Restricted {@code (erf(-sqrt(2)) + 1) / 2} output format
 	 *         ({@link AlgebraOutputFormat#EXACT})
 	 *     </li>
 	 *     <li>
@@ -311,7 +405,7 @@ public class MmsExamRestrictions extends ExamRestrictions {
 	 */
 	private static final class NormalCommandAlgebraOutputFormatFilter
 			implements AlgebraOutputFormatFilter {
-		@SuppressWarnings("PMD.SimplifyBooleanReturns")
+
 		@Override
 		public boolean isAllowed(GeoElement geoElement, AlgebraOutputFormat outputFormat) {
 			if (isNormalCommand(geoElement) && outputFormat != APPROXIMATION) {
@@ -336,10 +430,10 @@ public class MmsExamRestrictions extends ExamRestrictions {
 	 * <p>Examples: </p>
 	 * <ul>
 	 *     <li>
-	 *         {@code (3; π / 3)}
+	 *         {@code (3; pi / 3)}
 	 *         <ul>
 	 *             <li>
-	 *                 Restricted {@code (3 / 2, 3 * √3 / 2)} output format
+	 *                 Restricted {@code (3 / 2, 3 * sqrt(3) / 2)} output format
 	 *                 ({@link AlgebraOutputFormat#EXACT})
 	 *             </li>
 	 *             <li>
@@ -365,7 +459,7 @@ public class MmsExamRestrictions extends ExamRestrictions {
 	 */
 	private static final class PolarCoordinateCartesianFormatFilter
 			implements AlgebraOutputFormatFilter {
-		@SuppressWarnings("PMD.SimplifyBooleanReturns")
+
 		@Override
 		public boolean isAllowed(GeoElement geoElement, AlgebraOutputFormat outputFormat) {
 			GeoElementND unwrappedElement = geoElement.unwrapSymbolic();
@@ -404,10 +498,12 @@ public class MmsExamRestrictions extends ExamRestrictions {
 	private static final class HiddenIntegralAreaVisibilityRestriction
 			implements VisibilityRestriction {
 		@Override
-		public @Nonnull Effect getEffect(GeoElement geoElement) {
+		public @NonNull Effect getEffect(GeoElement geoElement) {
 			GeoElementND unwrappedTwin = geoElement.unwrapSymbolic();
-			return (unwrappedTwin != null && unwrappedTwin
-					.getParentAlgorithm() instanceof AlgoIntegralDefinite) ? HIDE : IGNORE;
+			return (unwrappedTwin != null
+							&& unwrappedTwin.getParentAlgorithm() instanceof AlgoIntegralDefinite)
+					? HIDE
+					: IGNORE;
 		}
 	}
 
@@ -440,7 +536,7 @@ public class MmsExamRestrictions extends ExamRestrictions {
 	private static final class HiddenImplicitCurveVisibilityRestriction
 			implements VisibilityRestriction {
 		@Override
-		public @Nonnull Effect getEffect(GeoElement geoElement) {
+		public @NonNull Effect getEffect(GeoElement geoElement) {
 			return isImplicitCurve(geoElement) ? HIDE : IGNORE;
 		}
 
@@ -455,13 +551,15 @@ public class MmsExamRestrictions extends ExamRestrictions {
 		}
 
 		private static boolean isGeoImplicitCurve(GeoElement geoElement) {
-			return geoElement instanceof GeoImplicitCurve || geoElement instanceof GeoSymbolic
-					&& ((GeoSymbolic) geoElement).getTwinGeo() instanceof GeoImplicitCurve;
+			return geoElement instanceof GeoImplicitCurve
+					|| geoElement instanceof GeoSymbolic
+							&& ((GeoSymbolic) geoElement).getTwinGeo() instanceof GeoImplicitCurve;
 		}
 
 		private static boolean isGeoConic(GeoElement geoElement) {
-			return geoElement instanceof GeoConic || geoElement instanceof GeoSymbolic
-					&& ((GeoSymbolic) geoElement).getTwinGeo() instanceof GeoConic;
+			return geoElement instanceof GeoConic
+					|| geoElement instanceof GeoSymbolic
+							&& ((GeoSymbolic) geoElement).getTwinGeo() instanceof GeoConic;
 		}
 	}
 
@@ -476,11 +574,10 @@ public class MmsExamRestrictions extends ExamRestrictions {
 	 */
 	private static final class HiddenLineVisibilityRestriction implements VisibilityRestriction {
 		@Override
-		public @Nonnull Effect getEffect(GeoElement geoElement) {
+		public @NonNull Effect getEffect(GeoElement geoElement) {
 			return isLine(geoElement) ? HIDE : IGNORE;
 		}
 
-		@SuppressWarnings("PMD.SimplifyBooleanReturns")
 		private boolean isLine(GeoElementND geoElement) {
 			if (geoElement instanceof GeoSymbolic) {
 				return isLine(((GeoSymbolic) geoElement).getTwinGeo());
@@ -503,7 +600,7 @@ public class MmsExamRestrictions extends ExamRestrictions {
 	private static final class AllowedLinearFunctionVisibilityRestriction
 			implements VisibilityRestriction {
 		@Override
-		public @Nonnull Effect getEffect(GeoElement geoElement) {
+		public @NonNull Effect getEffect(GeoElement geoElement) {
 			return isLinearFunction(geoElement) ? ALLOW : IGNORE;
 		}
 
@@ -535,43 +632,41 @@ public class MmsExamRestrictions extends ExamRestrictions {
 
 	private static final class MmsCommandArgumentFilter implements CommandArgumentFilter {
 		private final Map<Commands, Set<Syntax>> allowedSyntaxesForRestrictedCommands = Map.of(
-				BinomialDist, Set.of(
-						Syntax.of(BinomialDist, isNumber(), isNumber(), isNumber(),
-								GeoElement::isGeoBoolean),
-						Syntax.of(BinomialDist, isNumber(), isNumber(), GeoElement::isGeoList)),
-				Invert, Set.of(
-						Syntax.of(Invert, GeoElement::isMatrix)),
-				Length, Set.of(
-						Syntax.of(Length, GeoElement::isGeoList)),
-				Normal, Set.of(
-						Syntax.of(Normal, isNumber(), isNumber(), isNumber()),
-						Syntax.of(Normal, isNumber(), isNumber(), isNumber(), isNumber())),
-				Product, Set.of(
-						Syntax.of(Product, GeoElement::isGeoList),
-						Syntax.of(Product, GeoElement::isGeoList, isNumber()),
-						Syntax.of(Product, GeoElement::isGeoList, GeoElement::isGeoList)),
-				SampleSD, Set.of(
-						Syntax.of(SampleSD, GeoElement::isGeoList)),
-				SigmaXX, Set.of(
-						Syntax.of(SigmaXX, isNonEmptyListOfNumbers())),
-				SigmaXY, Set.of(
-						Syntax.of(SigmaXY, GeoElement::isGeoList, GeoElement::isGeoList)),
-				stdev, Set.of(
-						Syntax.of(stdev, GeoElement::isGeoList)),
-				Sum, Set.of(
-						Syntax.of(Sum, GeoElement::isGeoList),
-						Syntax.of(Sum, GeoElement::isGeoList, isNumber()),
-						Syntax.of(Sum, GeoElement::isGeoList, GeoElement::isGeoList)));
+				BinomialDist,
+						Set.of(
+								Syntax.of(
+										BinomialDist, isNumber(), isNumber(), isNumber(), GeoElement::isGeoBoolean),
+								Syntax.of(BinomialDist, isNumber(), isNumber(), GeoElement::isGeoList)),
+				Invert, Set.of(Syntax.of(Invert, GeoElement::isMatrix)),
+				Length, Set.of(Syntax.of(Length, GeoElement::isGeoList)),
+				Normal,
+						Set.of(
+								Syntax.of(Normal, isNumber(), isNumber(), isNumber()),
+								Syntax.of(Normal, isNumber(), isNumber(), isNumber(), isNumber())),
+				Product,
+						Set.of(
+								Syntax.of(Product, GeoElement::isGeoList),
+								Syntax.of(Product, GeoElement::isGeoList, isNumber()),
+								Syntax.of(Product, GeoElement::isGeoList, GeoElement::isGeoList)),
+				SampleSD, Set.of(Syntax.of(SampleSD, GeoElement::isGeoList)),
+				SigmaXX, Set.of(Syntax.of(SigmaXX, isNonEmptyListOfNumbers())),
+				SigmaXY, Set.of(Syntax.of(SigmaXY, GeoElement::isGeoList, GeoElement::isGeoList)),
+				stdev, Set.of(Syntax.of(stdev, GeoElement::isGeoList)),
+				Sum,
+						Set.of(
+								Syntax.of(Sum, GeoElement::isGeoList),
+								Syntax.of(Sum, GeoElement::isGeoList, isNumber()),
+								Syntax.of(Sum, GeoElement::isGeoList, GeoElement::isGeoList)));
 
 		@Override
-		public void checkAllowed(Command command, CommandProcessor commandProcessor)
-				throws MyError {
+		public void checkAllowed(Command command, CommandProcessor commandProcessor) throws MyError {
 			Syntax.checkRestrictedSyntaxes(
 					allowedSyntaxesForRestrictedCommands, command, commandProcessor);
 		}
 
 		private static Syntax.ArgumentMatcher isNonEmptyListOfNumbers() {
-			return argument -> argument.isGeoList() && ((GeoList) argument).size() > 0
+			return argument -> argument.isGeoList()
+					&& ((GeoList) argument).size() > 0
 					&& ((GeoList) argument).get(0).isGeoNumeric();
 		}
 	}
@@ -581,12 +676,10 @@ public class MmsExamRestrictions extends ExamRestrictions {
 	}
 
 	private static final class MmsListOperationFilter extends ExpressionNodeFilter {
-		private static final Set<Operation> operations =
-				Set.of(PLUS, MINUS, MULTIPLY, DIVIDE, POWER);
+		private static final Set<Operation> operations = Set.of(PLUS, MINUS, MULTIPLY, DIVIDE, POWER);
 
-		@SuppressWarnings("PMD.SimplifyBooleanReturns")
 		@Override
-		protected boolean isExpressionNodeAllowed(@Nonnull ExpressionNode expressionNode) {
+		protected boolean isExpressionNodeAllowed(@NonNull ExpressionNode expressionNode) {
 			if (operations.stream().noneMatch(expressionNode::isOperation)) {
 				return true;
 			}
@@ -599,7 +692,7 @@ public class MmsExamRestrictions extends ExamRestrictions {
 
 	private static final class MmsFunctionExpressionFilter extends ExpressionNodeFilter {
 		@Override
-		protected boolean isExpressionNodeAllowed(@Nonnull ExpressionNode expressionNode) {
+		protected boolean isExpressionNodeAllowed(@NonNull ExpressionNode expressionNode) {
 			Operation operation = expressionNode.getOperation();
 			if (Operation.isSimpleFunction(operation)) {
 				return !isList(expressionNode.getLeft());
@@ -609,14 +702,14 @@ public class MmsExamRestrictions extends ExamRestrictions {
 			}
 			if (operation == FUNCTION_NVAR) {
 				return !(expressionNode.getRight() instanceof MyList)
-						|| ((MyList) expressionNode.getRight()).elements()
-							.noneMatch(MmsExamRestrictions::isList);
+						|| ((MyList) expressionNode.getRight())
+								.elements()
+								.noneMatch(MmsExamRestrictions::isList);
 			}
 			return true;
 		}
 	}
 
-	@SuppressWarnings("PMD.SimplifyBooleanReturns")
 	private static boolean isExplicitEquation(GeoElement geoElement) {
 		Equation equation = unwrapEquation(geoElement);
 		if (equation == null) {
@@ -640,7 +733,7 @@ public class MmsExamRestrictions extends ExamRestrictions {
 		});
 	}
 
-	private static @CheckForNull Equation unwrapEquation(GeoElement geoElement) {
+	private static @Nullable Equation unwrapEquation(GeoElement geoElement) {
 		ExpressionNode definition = geoElement.getDefinition();
 		if (definition != null && definition.unwrap() instanceof Equation) {
 			return (Equation) definition.unwrap();
@@ -651,7 +744,7 @@ public class MmsExamRestrictions extends ExamRestrictions {
 		return null;
 	}
 
-	private static @CheckForNull String unwrapVariable(ExpressionValue expressionValue) {
+	private static @Nullable String unwrapVariable(ExpressionValue expressionValue) {
 		if (expressionValue instanceof FunctionVariable) {
 			return ((FunctionVariable) expressionValue).getSetVarString();
 		}
@@ -660,7 +753,7 @@ public class MmsExamRestrictions extends ExamRestrictions {
 
 	private static final class ParametricCurveExpressionFilter extends ExpressionNodeFilter {
 		@Override
-		protected boolean isExpressionNodeAllowed(@Nonnull ExpressionNode expressionNode) {
+		protected boolean isExpressionNodeAllowed(@NonNull ExpressionNode expressionNode) {
 			ExpressionValue value = expressionNode.unwrap();
 			if (value instanceof GeoElement) {
 				GeoElementND element = ((GeoElement) value).unwrapSymbolic();
@@ -671,8 +764,7 @@ public class MmsExamRestrictions extends ExamRestrictions {
 			return true;
 		}
 
-		@SuppressWarnings("PMD.SimplifyBooleanReturns")
-		private static boolean isParametricCurve(@CheckForNull GeoElementND geoElement) {
+		private static boolean isParametricCurve(@Nullable GeoElementND geoElement) {
 			if (geoElement == null) {
 				return false;
 			}

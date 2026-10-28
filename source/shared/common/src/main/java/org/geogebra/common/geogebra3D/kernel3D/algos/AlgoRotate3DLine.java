@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoRotatePoint.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 24. September 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -39,15 +37,15 @@ public class AlgoRotate3DLine extends AlgoRotate3D {
 
 	private GeoLineND line;
 
-	AlgoRotate3DLine(Construction cons, String label, GeoElement in,
-			GeoNumberValue angle, GeoLineND line) {
+	AlgoRotate3DLine(
+			Construction cons, String label, GeoElement in, GeoNumberValue angle, GeoLineND line) {
 		this(cons, in, angle, line);
 		out.setLabel(label);
 	}
 
 	/**
 	 * Creates new unlabeled point rotation algo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param in
@@ -57,8 +55,7 @@ public class AlgoRotate3DLine extends AlgoRotate3D {
 	 * @param line
 	 *            axis
 	 */
-	public AlgoRotate3DLine(Construction cons, GeoElement in,
-			GeoNumberValue angle, GeoLineND line) {
+	public AlgoRotate3DLine(Construction cons, GeoElement in, GeoNumberValue angle, GeoLineND line) {
 
 		super(cons, in, angle);
 
@@ -100,12 +97,11 @@ public class AlgoRotate3DLine extends AlgoRotate3D {
 		}
 
 		if (inGeo instanceof GeoFunction) {
-			AlgoTransformation3D.toGeoCurveCartesian(kernel,
-					(GeoFunction) inGeo, (GeoCurveCartesian3D) outGeo);
-		}
-		else if (inGeo instanceof GeoFunctionNVar) {
-			AlgoTransformation3D.toGeoSurfaceCartesian(kernel,
-					(GeoFunctionNVar) inGeo, (GeoSurfaceCartesian3D) outGeo);
+			AlgoTransformation3D.toGeoCurveCartesian(
+					kernel, (GeoFunction) inGeo, (GeoCurveCartesian3D) outGeo);
+		} else if (inGeo instanceof GeoFunctionNVar) {
+			AlgoTransformation3D.toGeoSurfaceCartesian(
+					kernel, (GeoFunctionNVar) inGeo, (GeoSurfaceCartesian3D) outGeo);
 		} else {
 			setOutGeo();
 		}
@@ -119,15 +115,15 @@ public class AlgoRotate3DLine extends AlgoRotate3D {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		/*
 		 * if (center==null) return loc.getPlain("ARotatedByAngleBAboutC",
 		 * in.getLabel(tpl), ((GeoElement) angle).getLabel(tpl), ((GeoElement)
 		 * orientation).getLabel(tpl));
 		 */
-		return getLoc().getPlain("ARotatedByAngleBAboutC", inGeo.getLabel(tpl),
-				angle.getLabel(tpl), line.getLabel(tpl));
-
+		return getLoc()
+				.getPlain(
+						"ARotatedByAngleBAboutC", inGeo.getLabel(tpl), angle.getLabel(tpl), line.getLabel(tpl));
 	}
 
 	@Override
@@ -148,5 +144,4 @@ public class AlgoRotate3DLine extends AlgoRotate3D {
 	public double getAreaScaleFactor() {
 		return 1;
 	}
-
 }

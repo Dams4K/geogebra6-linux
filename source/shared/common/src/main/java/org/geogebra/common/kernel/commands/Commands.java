@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.commands;
@@ -21,9 +25,7 @@ import org.geogebra.common.util.StringUtil;
 /**
  * All commands available in AV or CAS, including aliases of renamed commands.
  */
-public enum Commands implements CommandsConstants,
-
-		GetCommand {
+public enum Commands implements CommandsConstants, GetCommand {
 
 	// Subtables are separated by comment lines here.
 
@@ -160,6 +162,7 @@ public enum Commands implements CommandsConstants,
 	PolyLine(TABLE_GEOMETRY),
 
 	PenStroke(TABLE_GEOMETRY),
+	PenStrokeBezier(TABLE_ENGLISH),
 
 	PointIn(TABLE_GEOMETRY),
 
@@ -1239,8 +1242,8 @@ public enum Commands implements CommandsConstants,
 	Stadium(TABLE_ENGLISH);
 
 	private static final Commands[] RENAMED = {
-			Commands.Binomial, Commands.BinomialCoefficient, Commands.Mean,
-			Commands.SD, Commands.SampleSD, Commands.MAD
+		Commands.Binomial, Commands.BinomialCoefficient, Commands.Mean,
+		Commands.SD, Commands.SampleSD, Commands.MAD
 	};
 
 	private final int table;
@@ -1275,93 +1278,93 @@ public enum Commands implements CommandsConstants,
 	 */
 	public static Commands englishToInternal(Commands comm) {
 		switch (comm) {
-		case Quartile1:
-			return Q1;
-		case Quartile3:
-			return Q3;
-		case Polyline:
-			return PolyLine;
-		case Sxx:
-			return SXX;
-		case Syy:
-			return SYY;
-		case Sxy:
-			return SXY;
-		case CircularArc:
-			return CircleArc;
-		case CircularSector:
-			return CircleSector;
-		case CircumcircularArc:
-			return CircumcircleArc;
-		case CircumcircularSector:
-			return CircumcircleSector;
-		case AngleBisector:
-			return AngularBisector;
-		case Reflect:
-			return Mirror;
-		case Curve:
-			return CurveCartesian;
-		case FormulaText:
-			return LaTeX;
-		case IsDefined:
-			return Defined;
-		case ConjugateDiameter:
-			return Diameter;
-		case LinearEccentricity:
-			return Excentricity;
-		case MajorAxis:
-			return FirstAxis;
-		case SemiMajorAxisLength:
-			return FirstAxisLength;
-		case PerpendicularBisector:
-			return LineBisector;
-		case PerpendicularLine:
-			return OrthogonalLine;
-		case PerpendicularVector:
-			return OrthogonalVector;
-		case MinorAxis:
-			return SecondAxis;
-		case SemiMinorAxisLength:
-			return SecondAxisLength;
-		case UnitPerpendicularVector:
-			return UnitOrthogonalVector;
-		case InflectionPoint:
-			return TurningPoint;
-		case CorrelationCoefficient:
-			return PMCC;
-		case FitLine:
-			return FitLineY;
-		case BinomialCoefficient:
-		case Binomial:
-			return nCr;
-		case RandomBetween:
-			return Random;
-		case TaylorPolynomial:
-			return TaylorSeries;
-		case InfiniteCylinder:
-			return CylinderInfinite;
-		case InfiniteCone:
-			return ConeInfinite;
-		case PerpendicularPlane:
-			return OrthogonalPlane;
-		case InputBox:
-			return Textfield;
-		case IntersectCircle:
-			return IntersectConic;
-		case Side:
-			return QuadricSide;
-		case DelaunayTriangulation:
-			return DelauneyTriangulation;
-		case Mean:
-			return mean;
-		case SD:
-			return stdevp;
-		case SampleSD:
-			return stdev;
-		case MAD:
-			return mad;
-		default:
-			break;
+			case Quartile1:
+				return Q1;
+			case Quartile3:
+				return Q3;
+			case Polyline:
+				return PolyLine;
+			case Sxx:
+				return SXX;
+			case Syy:
+				return SYY;
+			case Sxy:
+				return SXY;
+			case CircularArc:
+				return CircleArc;
+			case CircularSector:
+				return CircleSector;
+			case CircumcircularArc:
+				return CircumcircleArc;
+			case CircumcircularSector:
+				return CircumcircleSector;
+			case AngleBisector:
+				return AngularBisector;
+			case Reflect:
+				return Mirror;
+			case Curve:
+				return CurveCartesian;
+			case FormulaText:
+				return LaTeX;
+			case IsDefined:
+				return Defined;
+			case ConjugateDiameter:
+				return Diameter;
+			case LinearEccentricity:
+				return Excentricity;
+			case MajorAxis:
+				return FirstAxis;
+			case SemiMajorAxisLength:
+				return FirstAxisLength;
+			case PerpendicularBisector:
+				return LineBisector;
+			case PerpendicularLine:
+				return OrthogonalLine;
+			case PerpendicularVector:
+				return OrthogonalVector;
+			case MinorAxis:
+				return SecondAxis;
+			case SemiMinorAxisLength:
+				return SecondAxisLength;
+			case UnitPerpendicularVector:
+				return UnitOrthogonalVector;
+			case InflectionPoint:
+				return TurningPoint;
+			case CorrelationCoefficient:
+				return PMCC;
+			case FitLine:
+				return FitLineY;
+			case BinomialCoefficient:
+			case Binomial:
+				return nCr;
+			case RandomBetween:
+				return Random;
+			case TaylorPolynomial:
+				return TaylorSeries;
+			case InfiniteCylinder:
+				return CylinderInfinite;
+			case InfiniteCone:
+				return ConeInfinite;
+			case PerpendicularPlane:
+				return OrthogonalPlane;
+			case InputBox:
+				return Textfield;
+			case IntersectCircle:
+				return IntersectConic;
+			case Side:
+				return QuadricSide;
+			case DelaunayTriangulation:
+				return DelauneyTriangulation;
+			case Mean:
+				return mean;
+			case SD:
+				return stdevp;
+			case SampleSD:
+				return stdev;
+			case MAD:
+				return mad;
+			default:
+				break;
 		}
 		return comm;
 	}
@@ -1396,8 +1399,7 @@ public enum Commands implements CommandsConstants,
 	 */
 	public static String getRenamed(String cmdLower, Localization loc) {
 		for (Commands c : Commands.RENAMED) {
-			if (StringUtil.toLowerCaseUS(loc.getCommand(c.name()))
-					.equals(cmdLower)) {
+			if (StringUtil.toLowerCaseUS(loc.getCommand(c.name())).equals(cmdLower)) {
 				return Commands.englishToInternal(c).name();
 			}
 		}
@@ -1411,14 +1413,10 @@ public enum Commands implements CommandsConstants,
 	 *            localization
 	 */
 	public static void addRenamed(
-			HashMap<String, String> revTranslateCommandTable,
-			Localization loc) {
+			HashMap<String, String> revTranslateCommandTable, Localization loc) {
 		for (Commands c : Commands.RENAMED) {
-			String lowerCaseCmd = StringUtil
-					.toLowerCaseUS(loc.getCommand(c.name()));
-			revTranslateCommandTable.put(lowerCaseCmd,
-					Commands.englishToInternal(c).name());
+			String lowerCaseCmd = StringUtil.toLowerCaseUS(loc.getCommand(c.name()));
+			revTranslateCommandTable.put(lowerCaseCmd, Commands.englishToInternal(c).name());
 		}
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.move.ggtapi.models;
 
 import java.util.ArrayList;
@@ -107,8 +123,7 @@ public class JSONParserGGT {
 
 		material.setBase64(getString(obj, "ggbBase64"));
 		material.setDeleted(getStringBoolean(obj, "deleted", false));
-		material.setFromAnotherDevice(
-				getStringBoolean(obj, "from_another_device", false));
+		material.setFromAnotherDevice(getStringBoolean(obj, "from_another_device", false));
 		JSONObject settings = obj.optJSONObject("settings");
 		if (settings != null) {
 			copySettings(settings, material);
@@ -137,8 +152,8 @@ public class JSONParserGGT {
 		} else {
 			String displayName = getString(obj, "author");
 			// creatorId used in MOW, crator_id in Marvl, author_id in Tube
-			int userId = getInt(obj, "author_id", getInt(obj, "creator_id",
-					getInt(obj, "creatorId", -1)));
+			int userId =
+					getInt(obj, "author_id", getInt(obj, "creator_id", getInt(obj, "creatorId", -1)));
 			material.setCreator(new UserPublic(userId, displayName));
 		}
 		return material;
@@ -224,8 +239,7 @@ public class JSONParserGGT {
 		}
 	}
 
-	private static boolean getStringBoolean(JSONObject obj, String name,
-			boolean def) {
+	private static boolean getStringBoolean(JSONObject obj, String name, boolean def) {
 		String value = obj.optString(name);
 		if (value == null || "".equals(value)) {
 			return def;
@@ -233,8 +247,7 @@ public class JSONParserGGT {
 		return Boolean.parseBoolean(value);
 	}
 
-	private static boolean getNumericBoolean(JSONObject obj, String name,
-			boolean def) {
+	private static boolean getNumericBoolean(JSONObject obj, String name, boolean def) {
 		String value = obj.optString(name);
 		if (value == null || "".equals(value)) {
 			return def;
@@ -268,8 +281,7 @@ public class JSONParserGGT {
 	 * @param result
 	 *            output array
 	 */
-	public void parseResponse(String response,
-			ArrayList<Material> result) {
+	public void parseResponse(String response, ArrayList<Material> result) {
 		Object materialsArray = null;
 
 		if (response != null) {
@@ -277,24 +289,17 @@ public class JSONParserGGT {
 				JSONTokener tokener = new JSONTokener(response);
 				JSONObject responseObject = new JSONObject(tokener);
 				if (responseObject.has("responses")) {
-					JSONObject materialsObject = (JSONObject) ((JSONObject) responseObject
-							.get("responses")).get("response");
+					JSONObject materialsObject =
+							(JSONObject) ((JSONObject) responseObject.get("responses")).get("response");
 
 					if (materialsObject.has("item")) {
 						materialsArray = materialsObject.get("item");
-					} else {
-						// List is empty
 					}
-				} else if (responseObject.has("error")) {
-					// Show error
 				}
 			} catch (Throwable t) {
 				Log.debug(t.getMessage());
 				Log.debug("'" + response + "'");
 			}
-
-		} else {
-			// Response String was null
 		}
 		// 0 materials
 		if (materialsArray == null) {
@@ -310,7 +315,6 @@ public class JSONParserGGT {
 				} catch (Exception e) {
 					Log.debug("problem adding material " + i);
 				}
-
 			}
 		}
 		// 1 material

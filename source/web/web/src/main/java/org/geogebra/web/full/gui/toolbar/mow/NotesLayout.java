@@ -1,21 +1,34 @@
-package org.geogebra.web.full.gui.toolbar.mow;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
+package org.geogebra.web.full.gui.toolbar.mow;
 
 import org.geogebra.common.euclidian.ModeChangeListener;
 import org.geogebra.common.gui.SetLabels;
 import org.geogebra.web.full.gui.toolbar.mow.toolbox.NotesToolbox;
 import org.geogebra.web.full.main.AppWFull;
+import org.geogebra.web.full.mow.header.NotesTopBar;
 import org.geogebra.web.html5.main.AppW;
-import org.geogebra.web.shared.mow.header.NotesTopBar;
 import org.gwtproject.user.client.ui.Widget;
+import org.jspecify.annotations.Nullable;
 
-public class NotesLayout implements SetLabels, ModeChangeListener {
+public final class NotesLayout implements SetLabels, ModeChangeListener {
 	private final AppW appW;
-	private final @CheckForNull NotesToolbox toolbar;
-	private final @CheckForNull NotesTopBar topBar;
-
-	private static final int TOP_BAR_HEIGHT = 48;
+	private final @Nullable NotesToolbox toolbar;
+	private final @Nullable NotesTopBar topBar;
 
 	/**
 	 * @param appW application
@@ -24,8 +37,7 @@ public class NotesLayout implements SetLabels, ModeChangeListener {
 		this.appW = appW;
 		topBar = new NotesTopBar(appW);
 		this.toolbar = appW.showToolBar() ? new NotesToolbox(appW, topBar.wasAttached()) : null;
-		appW.getActiveEuclidianView().getEuclidianController()
-				.setModeChangeListener(this);
+		appW.getActiveEuclidianView().getEuclidianController().setModeChangeListener(this);
 		setLabels();
 	}
 
@@ -66,8 +78,11 @@ public class NotesLayout implements SetLabels, ModeChangeListener {
 		}
 	}
 
+	/**
+	 * @return the height of the top bar, or 0 if there is no top bar
+	 */
 	public int getTopBarHeight() {
-		return topBar != null && topBar.wasAttached() ? TOP_BAR_HEIGHT : 0;
+		return topBar == null ? 0 : topBar.getHeight();
 	}
 
 	/**

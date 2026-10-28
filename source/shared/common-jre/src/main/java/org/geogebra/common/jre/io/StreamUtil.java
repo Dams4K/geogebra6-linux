@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.jre.io;
 
 import java.io.BufferedReader;
@@ -29,8 +45,7 @@ public class StreamUtil {
 	 * @return stream content
 	 */
 	public static String loadIntoString(InputStream is) {
-		BufferedReader reader = new BufferedReader(
-				new InputStreamReader(is, StandardCharsets.UTF_8));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 		StringBuilder sb = new StringBuilder();
 
 		String line;
@@ -45,8 +60,7 @@ public class StreamUtil {
 		return sb.toString();
 	}
 
-	private static void copyStream(InputStream in, OutputStream out)
-			throws IOException {
+	private static void copyStream(InputStream in, OutputStream out) throws IOException {
 		byte[] buf = new byte[4096];
 		int len;
 		while ((len = in.read(buf)) > -1) {

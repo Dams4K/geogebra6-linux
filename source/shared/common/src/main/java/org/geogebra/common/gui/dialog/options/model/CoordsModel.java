@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import java.util.Arrays;
@@ -16,8 +32,11 @@ public class CoordsModel extends MultipleOptionsModel {
 
 	public CoordsModel(App app) {
 		super(app);
-		coordValues = Arrays.asList(Kernel.COORD_CARTESIAN, Kernel.COORD_POLAR,
-				Kernel.COORD_COMPLEX, Kernel.COORD_CARTESIAN_3D,
+		coordValues = Arrays.asList(
+				Kernel.COORD_CARTESIAN,
+				Kernel.COORD_POLAR,
+				Kernel.COORD_COMPLEX,
+				Kernel.COORD_CARTESIAN_3D,
 				Kernel.COORD_SPHERICAL);
 	}
 
@@ -43,9 +62,7 @@ public class CoordsModel extends MultipleOptionsModel {
 	@Override
 	public void updateProperties() {
 		CoordStyle geo0 = getCoordStyleAt(0);
-		getListener()
-				.setSelectedIndex(coordValues.indexOf(geo0.getToStringMode()));
-
+		getListener().setSelectedIndex(coordValues.indexOf(geo0.getToStringMode()));
 	}
 
 	@Override
@@ -55,7 +72,8 @@ public class CoordsModel extends MultipleOptionsModel {
 
 	@Override
 	public List<String> getChoices(Localization loc) {
-		return Arrays.asList(loc.getMenu("CartesianCoords"), // index 0
+		return Arrays.asList(
+				loc.getMenu("CartesianCoords"), // index 0
 				loc.getMenu("PolarCoords"), // index 1
 				loc.getMenu("ComplexNumber"), // index 2
 				loc.getMenu("CartesianCoords3D"), // index 3
@@ -73,5 +91,4 @@ public class CoordsModel extends MultipleOptionsModel {
 		// not used
 		return 0;
 	}
-
 }

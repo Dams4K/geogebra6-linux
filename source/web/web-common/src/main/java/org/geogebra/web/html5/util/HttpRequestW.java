@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.util;
 
 import static org.geogebra.common.move.ggtapi.models.AuthenticationModel.CSRF_TOKEN_KEY_NAME;
@@ -17,10 +33,8 @@ public class HttpRequestW extends HttpRequest {
 	private final XMLHttpRequest request = new XMLHttpRequest();
 
 	@Override
-	public void sendRequestPost(String method, String url, String post,
-			AjaxCallback callback) {
-		sendRequest(method, url, post,
-				xhr -> callback.onSuccess(xhr.responseText), callback::onError);
+	public void sendRequestPost(String method, String url, String post, AjaxCallback callback) {
+		sendRequest(method, url, post, xhr -> callback.onSuccess(xhr.responseText), callback::onError);
 	}
 
 	/**
@@ -32,8 +46,12 @@ public class HttpRequestW extends HttpRequest {
 	 * @param content
 	 *            already encoded HTTP request content
 	 */
-	public void sendRequest(String method, String url, String content,
-			Consumer<XMLHttpRequest> onSuccess, Consumer<String> onError) {
+	public void sendRequest(
+			String method,
+			String url,
+			String content,
+			Consumer<XMLHttpRequest> onSuccess,
+			Consumer<String> onError) {
 		request.open(method, url);
 
 		// text/plain needed for SMART, hopefully no problem for others

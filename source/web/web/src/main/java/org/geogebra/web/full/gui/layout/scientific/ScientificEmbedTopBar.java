@@ -1,22 +1,40 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.layout.scientific;
 
 import org.geogebra.common.main.OptionType;
 import org.geogebra.web.full.css.MaterialDesignResources;
 import org.geogebra.web.full.gui.toolbar.mow.toolbox.components.IconButton;
 import org.geogebra.web.full.gui.toolbarpanel.UndoRedoProvider;
+import org.geogebra.web.full.main.AppWFull;
 import org.geogebra.web.html5.gui.view.ImageIconSpec;
 import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.dom.style.shared.Unit;
 import org.gwtproject.user.client.ui.FlowPanel;
 
-public class ScientificEmbedTopBar extends FlowPanel {
-	private final static int LEFT_PADDING_WITH_NAV_RAIL = 88;
-	private final static int LEFT_PADDING = 16;
+public final class ScientificEmbedTopBar extends FlowPanel {
+	private static final int LEFT_PADDING_WITH_NAV_RAIL = 88;
+	private static final int LEFT_PADDING = 16;
 	/**
 	 * Padding if floating menu is shown on top of calc.
 	 * It would be better to have the menu button in the top bar to fix centering,
 	 * but that's out of scope for APPS-6498 */
 	private static final int LEFT_PADDING_WITH_MENU = 56;
+
 	public final AppW appW;
 	private final UndoRedoProvider undoRedoProvider;
 
@@ -25,7 +43,7 @@ public class ScientificEmbedTopBar extends FlowPanel {
 	 * Used only for embedded scientific calculator.
 	 * @param appW application
 	 */
-	public ScientificEmbedTopBar(AppW appW) {
+	public ScientificEmbedTopBar(AppWFull appW) {
 		this.appW = appW;
 		undoRedoProvider = new UndoRedoProvider(appW);
 		addStyleName("scientificEmbedTopBar");
@@ -45,9 +63,11 @@ public class ScientificEmbedTopBar extends FlowPanel {
 	}
 
 	private void addSettingsButton() {
-		IconButton settingsButton = new IconButton(appW, () -> appW.getDialogManager()
-				.showPropertiesDialog(OptionType.GLOBAL, null), new ImageIconSpec(
-				MaterialDesignResources.INSTANCE.gear()), "Settings");
+		IconButton settingsButton = new IconButton(
+				appW,
+				() -> appW.getDialogManager().showPropertiesDialog(OptionType.GLOBAL, null),
+				new ImageIconSpec(MaterialDesignResources.INSTANCE.gear()),
+				"Settings");
 		settingsButton.addStyleName("settingsBtnScientific");
 		add(settingsButton);
 	}
@@ -73,8 +93,7 @@ public class ScientificEmbedTopBar extends FlowPanel {
 	 */
 	private void updateTopBarVisibility() {
 		setVisible(appW.getAppletParameters().getDataParamShowMenuBar(false)
-				|| (appW.getAppletParameters().getDataParamShowToolBar(false)
-				&& getWidgetCount() != 0));
+				|| (appW.getAppletParameters().getDataParamShowToolBar(false) && getWidgetCount() != 0));
 	}
 
 	/**
@@ -89,8 +108,10 @@ public class ScientificEmbedTopBar extends FlowPanel {
 	 * portrait/landscape view.
 	 */
 	public void updateUndoRedoPosition() {
-		getElement().getStyle().setPaddingLeft(appW.isPortrait() ? getPortraitPadding()
-				: LEFT_PADDING_WITH_NAV_RAIL, Unit.PX);
+		getElement()
+				.getStyle()
+				.setPaddingLeft(
+						appW.isPortrait() ? getPortraitPadding() : LEFT_PADDING_WITH_NAV_RAIL, Unit.PX);
 	}
 
 	private double getPortraitPadding() {

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.color;
 
 import java.util.HashMap;
@@ -21,6 +37,7 @@ public class ColorPopupMenuButton extends PopupMenuButtonW implements ClickHandl
 	public static final int COLORSET_DEFAULT = 0;
 	/** background */
 	public static final int COLORSET_BGCOLOR = 1;
+
 	private final int colorSetType;
 	private final GColor[] colorSet;
 	private GColor defaultColor;
@@ -37,8 +54,7 @@ public class ColorPopupMenuButton extends PopupMenuButtonW implements ClickHandl
 	 * @param hasSlider
 	 *            provides geos to make slider action undoable
 	 */
-	public ColorPopupMenuButton(AppW app, int colorSetType,
-			boolean hasSlider) {
+	public ColorPopupMenuButton(AppW app, int colorSetType, boolean hasSlider) {
 		super(app, createDummyIcons(10), -1, 5, SelectionTable.MODE_ICON, true, hasSlider);
 		this.app = app;
 		this.colorSetType = colorSetType;
@@ -85,16 +101,14 @@ public class ColorPopupMenuButton extends PopupMenuButtonW implements ClickHandl
 	 * Update the table
 	 */
 	protected void updateColorTable() {
-		getMyTable().populateModel(
-				getColorSwatchIcons(colorSet, getSliderValue() / 100f));
+		getMyTable().populateModel(getColorSwatchIcons(colorSet, getSliderValue() / 100f));
 	}
 
 	@Override
 	public ImageOrText getButtonIcon() {
 		ImageOrText icon = super.getButtonIcon();
 		if (icon == null) {
-			icon = GeoGebraIconW.createColorSwatchIcon(getSliderValue() / 100f,
-					defaultColor, null);
+			icon = GeoGebraIconW.createColorSwatchIcon(getSliderValue() / 100f, defaultColor, null);
 		}
 		return icon;
 	}
@@ -129,8 +143,7 @@ public class ColorPopupMenuButton extends PopupMenuButtonW implements ClickHandl
 		int index = getSelectedIndex();
 		if (index <= -1) {
 			return defaultColor;
-		} else if (colorSetType == COLORSET_BGCOLOR
-				&& index > colorSet.length - 1) {
+		} else if (colorSetType == COLORSET_BGCOLOR && index > colorSet.length - 1) {
 			return null;
 		} else {
 			return colorSet[index];
@@ -154,17 +167,14 @@ public class ColorPopupMenuButton extends PopupMenuButtonW implements ClickHandl
 		}
 	}
 
-	private static ImageOrText[] getColorSwatchIcons(GColor[] colorArray,
-			double alpha) {
+	private static ImageOrText[] getColorSwatchIcons(GColor[] colorArray, double alpha) {
 		ImageOrText[] a = new ImageOrText[colorArray.length];
 		for (int i = 0; i < colorArray.length; i++) {
 			if (colorArray[i] != null) {
-				a[i] = GeoGebraIconW.createColorSwatchIcon(alpha, colorArray[i],
-						null);
+				a[i] = GeoGebraIconW.createColorSwatchIcon(alpha, colorArray[i], null);
 			} else {
-				a[i] = new ImageOrText(
-						MaterialDesignResources.INSTANCE.add_black(), 24)
-								.setClass("plusButton");
+				a[i] = new ImageOrText(MaterialDesignResources.INSTANCE.add_black(), 24)
+						.setClass("plusButton");
 				// a[i] = new ImageOrText("+");
 				// a[i] = new ImageOrText(AppResources.INSTANCE.more());
 			}

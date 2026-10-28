@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.scripting;
 
 import org.geogebra.common.awt.GColor;
@@ -30,7 +46,7 @@ public class CmdSetColor extends CmdScripting {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -69,79 +85,72 @@ public class CmdSetColor extends CmdScripting {
 		cons.setSuppressLabelCreation(oldMacroMode);
 
 		switch (n) {
-		case 2:
+			case 2:
+				GColor col = fromText(c, 1);
+				String label = c.getArgument(0).toString(StringTemplate.defaultTemplate);
 
-			GColor col = fromText(c, 1);
-			String label = c.getArgument(0)
-					.toString(StringTemplate.defaultTemplate);
+				if (kernel.lookupLabel(label) == null
+						&& LabelManager.isValidLabel(label, kernel, null)
+						&& GeoElementSpreadsheet.isSpreadsheetLabel(label)) {
 
-			if (kernel.lookupLabel(label) == null
-					&& LabelManager.isValidLabel(label, kernel, null)
-					&& GeoElementSpreadsheet.isSpreadsheetLabel(label)) {
+					SpreadsheetCoords coords = GeoElementSpreadsheet.getSpreadsheetCoordsSafe(label);
 
-				SpreadsheetCoords coords = GeoElementSpreadsheet.spreadsheetIndices(label);
+					CellFormatInterface formatHandler =
+							kernel.getApplication().getSpreadsheetTableModel().getCellFormat(null);
 
-				CellFormatInterface formatHandler = kernel.getApplication()
-						.getSpreadsheetTableModel().getCellFormat(null);
+					formatHandler.setFormat(coords, CellFormat.FORMAT_BGCOLOR, col);
 
-				formatHandler.setFormat(coords, CellFormat.FORMAT_BGCOLOR,
-						col);
+					return null;
+				}
+				try {
+					if (background) {
+						target.setBackgroundColor(col);
+					} else {
+						target.setObjColor(col.deriveWithAlpha(255));
+						if (col.getAlpha() > 0 && col.getAlpha() < 255) {
+							target.setAlphaValue(col.getAlpha() / 255.0);
+						}
+					}
 
-				return null;
-			}
-			try {
+					target.updateVisualStyleRepaint(GProperty.COLOR);
+					return target.asArray();
+				} catch (Exception e) {
+					throw argErr(c.getName(), target, e);
+				}
+
+			case 4:
+				label = c.getArgument(0).toString(StringTemplate.defaultTemplate);
+				col = fromRGB(c, 1);
+
+				// SetBackgroundColor(A1,1,1,0)
+				// for empty cell
+				if (kernel.lookupLabel(label) == null
+						&& LabelManager.isValidLabel(label, kernel, null)
+						&& GeoElementSpreadsheet.isSpreadsheetLabel(label)) {
+
+					SpreadsheetCoords coords = GeoElementSpreadsheet.getSpreadsheetCoordsSafe(label);
+
+					CellFormatInterface formatHandler =
+							kernel.getApplication().getSpreadsheetTableModel().getCellFormat(null);
+
+					formatHandler.setFormat(coords, CellFormat.FORMAT_BGCOLOR, col);
+
+					return null;
+				}
+
 				if (background) {
 					target.setBackgroundColor(col);
 				} else {
-					target.setObjColor(col.deriveWithAlpha(255));
-					if (col.getAlpha() > 0 && col.getAlpha() < 255) {
-						target.setAlphaValue(col.getAlpha() / 255.0);
-					}
+					target.setObjColor(col);
 				}
 
 				target.updateVisualStyleRepaint(GProperty.COLOR);
+
 				return target.asArray();
-			} catch (Exception e) {
-				throw argErr(c.getName(), target, e);
-			}
 
-		case 4:
-
-			label = c.getArgument(0)
-					.toString(StringTemplate.defaultTemplate);
-			col = fromRGB(c, 1);
-
-			// SetBackgroundColor(A1,1,1,0)
-			// for empty cell
-			if (kernel.lookupLabel(label) == null
-					&& LabelManager.isValidLabel(label, kernel, null)
-					&& GeoElementSpreadsheet.isSpreadsheetLabel(label)) {
-
-				SpreadsheetCoords coords = GeoElementSpreadsheet.spreadsheetIndices(label);
-
-				CellFormatInterface formatHandler = kernel.getApplication()
-						.getSpreadsheetTableModel().getCellFormat(null);
-
-				formatHandler.setFormat(coords, CellFormat.FORMAT_BGCOLOR,
-						col);
-
-				return null;
-			}
-
-			if (background) {
-				target.setBackgroundColor(col);
-			} else {
-				target.setObjColor(col);
-			}
-
-			target.updateVisualStyleRepaint(GProperty.COLOR);
-
-			return target.asArray();
-
-		default:
-			throw argNumErr(c);
+			default:
+				throw argNumErr(c);
 		}
-
 	}
 
 	private GColor fromRGB(Command c, int offset) {
@@ -193,8 +202,7 @@ public class CmdSetColor extends CmdScripting {
 			// if there's a problem with the second argument, just wrap in
 			// quotes in case it's a color
 			// eg SetColor[A,blue] rather than SetColor[A,"blue"]
-			color = new GeoText(cons,
-					args[offset].toString(StringTemplate.defaultTemplate));
+			color = new GeoText(cons, args[offset].toString(StringTemplate.defaultTemplate));
 		} finally {
 			cons.setSuppressLabelCreation(oldMacroMode);
 		}

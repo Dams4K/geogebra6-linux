@@ -1,6 +1,21 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.jre.openGL;
 
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
@@ -39,19 +54,18 @@ public class GLBufferJre implements GLBuffer {
 		if (impl == null || impl.capacity() < length) {
 			impl = FloatBuffer.allocate(length);
 		} else {
-			((Buffer) impl).rewind();
+			impl.rewind();
 		}
 
-		((Buffer) impl).limit(length);
-
+		impl.limit(length);
 	}
 
 	@Override
 	public void setLimit(int length) {
-		((Buffer) impl).limit(length);
+		impl.limit(length);
 		currentLength = length;
 
-		((Buffer) impl).rewind();
+		impl.rewind();
 		isEmpty = false;
 	}
 
@@ -67,7 +81,7 @@ public class GLBufferJre implements GLBuffer {
 
 	@Override
 	public void rewind() {
-		((Buffer) impl).rewind();
+		impl.rewind();
 	}
 
 	@Override
@@ -90,19 +104,16 @@ public class GLBufferJre implements GLBuffer {
 	}
 
 	@Override
-	public void set(ArrayList<Double> array, int arrayOffset, int offset,
-			int length) {
+	public void set(ArrayList<Double> array, int arrayOffset, int offset, int length) {
 		for (int i = 0; i < length; i++) {
 			impl.put(i + offset, array.get(arrayOffset + i).floatValue());
 		}
 	}
 
 	@Override
-	public void set(ArrayList<Double> array, float[] translate, float scale,
-			int offset, int length) {
+	public void set(ArrayList<Double> array, float[] translate, float scale, int offset, int length) {
 		for (int i = 0; i < length; i++) {
-			impl.put(i + offset,
-					array.get(i).floatValue() * scale + translate[i % 3]);
+			impl.put(i + offset, array.get(i).floatValue() * scale + translate[i % 3]);
 		}
 	}
 
@@ -127,7 +138,7 @@ public class GLBufferJre implements GLBuffer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return buffer
 	 */
 	public FloatBuffer getBuffer() {
@@ -146,5 +157,4 @@ public class GLBufferJre implements GLBuffer {
 		impl.rewind();
 		impl.position(newPosition);
 	}
-
 }

@@ -1,6 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.arithmetic;
 
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 /**
  * String constants + String types
@@ -8,7 +24,7 @@ import com.himamis.retex.editor.share.util.Unicode;
 public interface ExpressionNodeConstants {
 
 	/** String types */
-	public enum StringType {
+	enum StringType {
 		/** XML */
 		GEOGEBRA_XML,
 		/** default */
@@ -82,5 +98,4 @@ public interface ExpressionNodeConstants {
 	String strIS_SUBSET_OF_STRICT = String.valueOf(Unicode.IS_SUBSET_OF_STRICT);
 	/** set difference */
 	String strSET_DIFFERENCE = "\\";
-
 }

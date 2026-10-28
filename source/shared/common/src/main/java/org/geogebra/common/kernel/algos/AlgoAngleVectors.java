@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoAngleVector.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -37,8 +35,7 @@ public class AlgoAngleVectors extends AlgoAngleVectorsND {
 	 * @param w
 	 *            second vector
 	 */
-	public AlgoAngleVectors(Construction cons, GeoVectorND v,
-			GeoVectorND w) {
+	public AlgoAngleVectors(Construction cons, GeoVectorND v, GeoVectorND w) {
 		super(cons, v, w, null);
 	}
 
@@ -62,10 +59,8 @@ public class AlgoAngleVectors extends AlgoAngleVectorsND {
 		// cos(alpha) = v . w / (|v| * |w|)
 		// tan(alpha) = sin(alpha) / cos(alpha)
 		// => tan(alpha) = det(v, w) / v . w
-		double det = ((GeoVector) v).x * ((GeoVector) w).y
-				- ((GeoVector) v).y * ((GeoVector) w).x;
-		double prod = ((GeoVector) v).x * ((GeoVector) w).x
-				+ ((GeoVector) v).y * ((GeoVector) w).y;
+		double det = ((GeoVector) v).x * ((GeoVector) w).y - ((GeoVector) v).y * ((GeoVector) w).x;
+		double prod = ((GeoVector) v).x * ((GeoVector) w).x + ((GeoVector) v).y * ((GeoVector) w).y;
 		double value = Math.atan2(det, prod);
 		angle.setValue(value);
 	}
@@ -88,5 +83,4 @@ public class AlgoAngleVectors extends AlgoAngleVectorsND {
 	public GeoElementND getInput(int i) {
 		return getInputMaybeXOYPlane(i);
 	}
-
 }

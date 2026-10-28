@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.advanced;
@@ -29,7 +33,7 @@ import org.geogebra.common.util.DoubleUtil;
 
 /**
  * Taylor series of a function (GeoFunction)
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class AlgoTaylorSeries extends AlgoElement {
@@ -45,7 +49,7 @@ public class AlgoTaylorSeries extends AlgoElement {
 
 	/**
 	 * Creates new Taylor series for function f about the point x=a of order n.
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -57,8 +61,8 @@ public class AlgoTaylorSeries extends AlgoElement {
 	 * @param n
 	 *            degree
 	 */
-	public AlgoTaylorSeries(Construction cons, String label, GeoFunctionable f,
-			GeoNumberValue a, GeoNumberValue n) {
+	public AlgoTaylorSeries(
+			Construction cons, String label, GeoFunctionable f, GeoNumberValue a, GeoNumberValue n) {
 		super(cons);
 		this.f = f;
 		this.a = a;
@@ -142,11 +146,9 @@ public class AlgoTaylorSeries extends AlgoElement {
 			if (DoubleUtil.isZero(ad)) { // only x
 				diffExp = fVar;
 			} else if (ad > 0) { // (x - a)
-				diffExp = new ExpressionNode(kernel, fVar, Operation.MINUS,
-						new MyDouble(kernel, ad));
+				diffExp = new ExpressionNode(kernel, fVar, Operation.MINUS, new MyDouble(kernel, ad));
 			} else { // (x + a)
-				diffExp = new ExpressionNode(kernel, fVar, Operation.PLUS,
-						new MyDouble(kernel, -ad));
+				diffExp = new ExpressionNode(kernel, fVar, Operation.PLUS, new MyDouble(kernel, -ad));
 			}
 
 			Function deriv = f.getFunction();
@@ -178,17 +180,14 @@ public class AlgoTaylorSeries extends AlgoElement {
 
 				// build the expression (x - a) ^ k
 				ExpressionValue powerExp;
-				switch (k) {
-				case 1:
+				if (k == 1) {
 					powerExp = diffExp;
-					break;
-				default:
-					powerExp = new ExpressionNode(kernel,
-							new ExpressionNode(kernel, diffExp, Operation.POWER,
-									new MyDouble(kernel, k)),
+				} else {
+					powerExp = new ExpressionNode(
+							kernel,
+							new ExpressionNode(kernel, diffExp, Operation.POWER, new MyDouble(kernel, k)),
 							Operation.DIVIDE,
-							new ExpressionNode(kernel, new MyDouble(kernel, k),
-									Operation.FACTORIAL, null));
+							new ExpressionNode(kernel, new MyDouble(kernel, k), Operation.FACTORIAL, null));
 				}
 
 				// build the expression
@@ -199,24 +198,19 @@ public class AlgoTaylorSeries extends AlgoElement {
 					partExp = powerExp;
 				} else {
 					coeffMyDouble = new MyDouble(kernel, coeff);
-					partExp = new ExpressionNode(kernel, coeffMyDouble,
-							Operation.MULTIPLY, powerExp);
+					partExp = new ExpressionNode(kernel, coeffMyDouble, Operation.MULTIPLY, powerExp);
 				}
 
 				// add part to series
 				if (series == null) {
 					series = new ExpressionNode(kernel, partExp);
-				} else {
-					if (negativeCoeff) {
-						if (coeffMyDouble != null) {
-							coeffMyDouble.set(-coeff); // change sign
-						}
-						series = new ExpressionNode(kernel, series,
-								Operation.MINUS, partExp);
-					} else {
-						series = new ExpressionNode(kernel, series,
-								Operation.PLUS, partExp);
+				} else if (negativeCoeff) {
+					if (coeffMyDouble != null) {
+						coeffMyDouble.set(-coeff); // change sign
 					}
+					series = new ExpressionNode(kernel, series, Operation.MINUS, partExp);
+				} else {
+					series = new ExpressionNode(kernel, series, Operation.PLUS, partExp);
 				}
 			}
 		}
@@ -230,5 +224,4 @@ public class AlgoTaylorSeries extends AlgoElement {
 		g.setFunction(seriesFun);
 		g.setDefined(true);
 	}
-
 }

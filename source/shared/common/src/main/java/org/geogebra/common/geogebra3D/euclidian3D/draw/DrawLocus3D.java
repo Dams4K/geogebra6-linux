@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import org.geogebra.common.euclidian.plot.CurvePlotterUtils;
@@ -12,9 +28,9 @@ import org.geogebra.common.kernel.matrix.CoordSys;
 
 /**
  * @author mathieu
- * 
+ *
  *         Drawable for locus
- * 
+ *
  */
 public class DrawLocus3D extends Drawable3DCurves {
 
@@ -31,8 +47,11 @@ public class DrawLocus3D extends Drawable3DCurves {
 	 * @param transformSys
 	 *            transformation coord sys for implicit curves
 	 */
-	public DrawLocus3D(EuclidianView3D a_view3d, GeoLocusND<? extends MyPoint> locus,
-			GeoElement geo, CoordSys transformSys) {
+	public DrawLocus3D(
+			EuclidianView3D a_view3d,
+			GeoLocusND<? extends MyPoint> locus,
+			GeoElement geo,
+			CoordSys transformSys) {
 		super(a_view3d, geo);
 		this.locus = locus;
 		this.transformCoordSys = transformSys;
@@ -53,8 +72,7 @@ public class DrawLocus3D extends Drawable3DCurves {
 		setPackCurve(true);
 		PlotterBrush brush = renderer.getGeometryManager().getBrush();
 		brush.start(getReusableGeometryIndex());
-		brush.setThickness(getGeoElement().getLineThickness(),
-				(float) view.getScale());
+		brush.setThickness(getGeoElement().getLineThickness(), (float) view.getScale());
 		brush.setAffineTexture(0f, 0f);
 		brush.setLength(1f);
 
@@ -76,8 +94,7 @@ public class DrawLocus3D extends Drawable3DCurves {
 
 	@Override
 	protected void updateForView() {
-		if (getView3D().viewChangedByZoom()
-				|| getView3D().viewChangedByTranslate()) {
+		if (getView3D().viewChangedByZoom() || getView3D().viewChangedByTranslate()) {
 			setWaitForUpdate();
 		}
 	}
@@ -118,5 +135,4 @@ public class DrawLocus3D extends Drawable3DCurves {
 			exportToPrinter3D.exportCurve(this, ExportToPrinter3D.Export3DType.CURVE);
 		}
 	}
-
 }

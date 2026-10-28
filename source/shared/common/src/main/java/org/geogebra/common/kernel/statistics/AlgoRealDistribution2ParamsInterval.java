@@ -1,13 +1,17 @@
 /*
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by
-the Free Software Foundation.
-
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -33,8 +37,12 @@ public class AlgoRealDistribution2ParamsInterval extends AlgoDistribution {
 	 * @param upperBound interval upper bound
 	 * @param dist distribution
 	 */
-	public AlgoRealDistribution2ParamsInterval(Construction cons, GeoNumberValue a,
-			GeoNumberValue b, GeoNumberValue c, GeoNumberValue upperBound,
+	public AlgoRealDistribution2ParamsInterval(
+			Construction cons,
+			GeoNumberValue a,
+			GeoNumberValue b,
+			GeoNumberValue c,
+			GeoNumberValue upperBound,
 			ProbabilityCalculatorSettings.Dist dist) {
 		super(cons, a, b, c, upperBound, null);
 		this.dist = dist;
@@ -48,8 +56,7 @@ public class AlgoRealDistribution2ParamsInterval extends AlgoDistribution {
 
 	@Override
 	public final void compute() {
-		if (a.isDefined() && b.isDefined()
-				&& c.isDefined() && d.isDefined()) {
+		if (a.isDefined() && b.isDefined() && c.isDefined() && d.isDefined()) {
 			double param = a.getDouble();
 			double param2 = b.getDouble();
 			try {
@@ -69,5 +76,4 @@ public class AlgoRealDistribution2ParamsInterval extends AlgoDistribution {
 			num.setUndefined();
 		}
 	}
-
 }

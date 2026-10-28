@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.geogebra3D.web.main;
 
 import org.geogebra.common.euclidian.EuclidianController;
@@ -8,6 +24,7 @@ import org.geogebra.common.geogebra3D.io.OFFHandler;
 import org.geogebra.common.geogebra3D.kernel3D.GeoFactory3D;
 import org.geogebra.common.geogebra3D.kernel3D.Kernel3D;
 import org.geogebra.common.geogebra3D.main.App3DCompanion;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.GeoFactory;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.main.App;
@@ -37,6 +54,7 @@ import org.geogebra.web.html5.kernel.commands.CommandDispatcherW;
 import org.geogebra.web.html5.main.GgbFile;
 import org.geogebra.web.html5.util.AppletParameters;
 import org.geogebra.web.html5.util.GeoGebraElement;
+import org.jspecify.annotations.NonNull;
 
 /** 3D applet */
 public class AppWapplet3D extends AppWFull {
@@ -56,13 +74,17 @@ public class AppWapplet3D extends AppWFull {
 	 * @param device
 	 *            browser or tablet
 	 */
-	public AppWapplet3D(GeoGebraElement element, AppletParameters parameters,
-			GeoGebraFrameFull gf, GLookAndFeel laf, GDevice device) {
+	public AppWapplet3D(
+			GeoGebraElement element,
+			AppletParameters parameters,
+			GeoGebraFrameFull gf,
+			GLookAndFeel laf,
+			GDevice device) {
 		super(element, parameters, 3, laf, device, gf);
 	}
 
 	@Override
-	protected Kernel newKernel(App thisApp) {
+	protected Kernel newKernel(@NonNull App thisApp) {
 		if (thisApp.is3DViewEnabled()) {
 			return new Kernel3D(thisApp, new GeoFactory3D());
 		}
@@ -74,8 +96,8 @@ public class AppWapplet3D extends AppWFull {
 		// Window.alert("getEuclidianView3D()");
 		if (this.euclidianView3D == null) {
 			euclidianController3D = App3DW.newEuclidianController3DW(kernel);
-			euclidianView3D = App3DW.newEuclidianView3DW(euclidianController3D,
-					getSettings().getEuclidian(3));
+			euclidianView3D =
+					App3DW.newEuclidianView3DW(euclidianController3D, getSettings().getEuclidian(3));
 		}
 		return euclidianView3D;
 	}
@@ -88,8 +110,7 @@ public class AppWapplet3D extends AppWFull {
 	@Override
 	public boolean supportsView(int viewID) {
 		if (viewID == App.VIEW_EUCLIDIAN3D) {
-			return Browser.supportsWebGL()
-					&& getSettings().getEuclidian(-1).isEnabled();
+			return Browser.supportsWebGL() && getSettings().getEuclidian(-1).isEnabled();
 		}
 		return super.supportsView(viewID);
 	}
@@ -146,9 +167,13 @@ public class AppWapplet3D extends AppWFull {
 	}
 
 	@Override
-	public EuclidianViewW newEuclidianView(EuclidianPanelWAbstract evPanel,
-			EuclidianController ec, boolean[] evShowAxes, boolean evShowGrid,
-			int id, EuclidianSettings evSettings) {
+	public EuclidianViewW newEuclidianView(
+			EuclidianPanelWAbstract evPanel,
+			EuclidianController ec,
+			boolean[] evShowAxes,
+			boolean evShowGrid,
+			int id,
+			EuclidianSettings evSettings) {
 		return new EuclidianViewFor3DW(evPanel, ec, id, evSettings);
 	}
 
@@ -167,7 +192,7 @@ public class AppWapplet3D extends AppWFull {
 	}
 
 	@Override
-	protected AppCompanion newAppCompanion() {
+	protected @NonNull AppCompanion newAppCompanion() {
 		return new App3DCompanionW(this);
 	}
 
@@ -175,8 +200,7 @@ public class AppWapplet3D extends AppWFull {
 	public void setCurrentFile(GgbFile file) {
 		super.setCurrentFile(file);
 		if (this.isEuclidianView3Dinited()) {
-			((EuclidianView3DW) getEuclidianView3D())
-					.setCurrentFile(getCurrentFile());
+			((EuclidianView3DW) getEuclidianView3D()).setCurrentFile(getCurrentFile());
 		}
 	}
 
@@ -194,21 +218,17 @@ public class AppWapplet3D extends AppWFull {
 	}
 
 	@Override
-	public String getCompleteUserInterfaceXML(boolean asPreference) {
-		StringBuilder sb = new StringBuilder();
-
+	public void getCompleteUserInterfaceXML(boolean asPreference, XMLStringBuilder builder) {
 		// save super settings
-		sb.append(super.getCompleteUserInterfaceXML(asPreference));
+		super.getCompleteUserInterfaceXML(asPreference, builder);
 
 		// save euclidianView3D settings
 		if (isEuclidianView3Dinited()) {
-			euclidianView3D.getXML(sb, asPreference);
+			euclidianView3D.getXML(builder, asPreference);
 		}
 
 		// save euclidian views for plane settings
-		((App3DCompanion) companion).addCompleteUserInterfaceXMLForPlane(sb, asPreference);
-
-		return sb.toString();
+		((App3DCompanion) companion).addCompleteUserInterfaceXMLForPlane(builder, asPreference);
 	}
 
 	@Override
@@ -223,7 +243,7 @@ public class AppWapplet3D extends AppWFull {
 	}
 
 	@Override
-	public final void openOFF(String content) {
+	public void openOFF(String content) {
 		OFFHandler h = new OFFHandler(getKernel().getConstruction());
 		h.reset();
 		String[] lines = content.split("\n");
@@ -231,7 +251,6 @@ public class AppWapplet3D extends AppWFull {
 			for (String line : lines) {
 
 				h.addLine(line);
-
 			}
 		} catch (CSVException e) {
 			// TODO Auto-generated catch block

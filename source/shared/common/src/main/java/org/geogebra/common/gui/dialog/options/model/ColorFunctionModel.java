@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import org.geogebra.common.annotation.MissingDoc;
@@ -40,7 +56,6 @@ public class ColorFunctionModel extends OptionsModel {
 		super(app);
 		this.kernel = app.getKernel();
 		this.listener = listener;
-
 	}
 
 	@Override
@@ -72,8 +87,7 @@ public class ColorFunctionModel extends OptionsModel {
 			strGreen = colorList.get(1).getLabel(StringTemplate.editTemplate);
 			strBlue = colorList.get(2).getLabel(StringTemplate.editTemplate);
 			if (colorList.size() == 4) {
-				strAlpha = colorList.get(3)
-						.getLabel(StringTemplate.editTemplate);
+				strAlpha = colorList.get(3).getLabel(StringTemplate.editTemplate);
 			}
 		}
 
@@ -83,16 +97,12 @@ public class ColorFunctionModel extends OptionsModel {
 			GeoElement geo = getGeoAt(i);
 			GeoList colorListTemp = geo.getColorFunction();
 			if (colorListTemp != null) {
-				String strRedTemp = colorListTemp.get(0)
-						.getLabel(StringTemplate.editTemplate);
-				String strGreenTemp = colorListTemp.get(1)
-						.getLabel(StringTemplate.editTemplate);
-				String strBlueTemp = colorListTemp.get(2)
-						.getLabel(StringTemplate.editTemplate);
+				String strRedTemp = colorListTemp.get(0).getLabel(StringTemplate.editTemplate);
+				String strGreenTemp = colorListTemp.get(1).getLabel(StringTemplate.editTemplate);
+				String strBlueTemp = colorListTemp.get(2).getLabel(StringTemplate.editTemplate);
 				String strAlphaTemp = "";
 				if (colorListTemp.size() == 4) {
-					strAlphaTemp = colorListTemp.get(3)
-							.getLabel(StringTemplate.editTemplate);
+					strAlphaTemp = colorListTemp.get(3).getLabel(StringTemplate.editTemplate);
 				}
 				if (!strRed.equals(strRedTemp)) {
 					strRed = "";
@@ -111,23 +121,26 @@ public class ColorFunctionModel extends OptionsModel {
 
 		// set the color fields
 		setListenerRGBA(strRed, strGreen, strBlue, strAlpha);
-
 	}
 
-	private void setListenerRGBA(final String strRed, final String strGreen,
-			final String strBlue, final String strAlpha) {
+	private void setListenerRGBA(
+			final String strRed, final String strGreen, final String strBlue, final String strAlpha) {
 		listener.setRedText(strRed);
 		listener.setGreenText(strGreen);
 		listener.setBlueText(strBlue);
 		listener.setAlphaText(strAlpha);
 	}
 
-	public void applyChanges(String strRed0, String strGreen0, String strBlue0,
-			String strAlpha0, int colorSpace, final String defaultRed,
-			final String defaultGreen, final String defaultBlue,
+	public void applyChanges(
+			String strRed0,
+			String strGreen0,
+			String strBlue0,
+			String strAlpha0,
+			int colorSpace,
+			final String defaultRed,
+			final String defaultGreen,
+			final String defaultBlue,
 			final String defaultAlpha) {
-		GeoList list = null;
-		GeoList listAlpha = null;
 		String strRed = strRed0;
 		String strGreen = strGreen0;
 		String strBlue = strBlue0;
@@ -150,21 +163,28 @@ public class ColorFunctionModel extends OptionsModel {
 			strAlpha = defaultAlpha;
 			defaults++;
 		}
+		GeoList list = null;
+		GeoList listAlpha = null;
 		if (defaults < 4) {
-			list = kernel.getAlgebraProcessor().evaluateToList(
-					"{" + strRed + "," + strGreen + "," + strBlue + "}");
+			list = kernel
+					.getAlgebraProcessor()
+					.evaluateToList("{" + strRed + "," + strGreen + "," + strBlue + "}");
 
-			listAlpha = kernel.getAlgebraProcessor().evaluateToList("{" + strRed
-					+ "," + strGreen + "," + strBlue + "," + strAlpha + "}");
+			listAlpha = kernel
+					.getAlgebraProcessor()
+					.evaluateToList("{" + strRed + "," + strGreen + "," + strBlue + "," + strAlpha + "}");
 		}
 
 		// set condition
 		// try {
 		if (list != null) { //
-			if ((list.get(0) instanceof NumberValue) && // bugfix, enter "x"
-															// for a color
-					(list.get(1) instanceof NumberValue) && //
-					(list.get(2) instanceof NumberValue) && //
+			if ((list.get(0) instanceof NumberValue)
+					&& // bugfix, enter "x"
+					// for a color
+					(list.get(1) instanceof NumberValue)
+					&& //
+					(list.get(2) instanceof NumberValue)
+					&& //
 					(list.size() == 3 || list.get(3) instanceof NumberValue)) {
 				for (int i = 0; i < getGeosLength(); i++) {
 
@@ -189,7 +209,6 @@ public class ColorFunctionModel extends OptionsModel {
 			setListenerRGBA(strRed, strGreen, strBlue, strAlpha);
 		}
 		storeUndoInfo();
-
 	}
 
 	@Override
@@ -210,7 +229,6 @@ public class ColorFunctionModel extends OptionsModel {
 		listener.setGreenText("");
 		listener.setBlueText("");
 		listener.setAlphaText("");
-
 	}
 
 	@Override

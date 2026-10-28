@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main.undo;
 
 import java.util.List;
@@ -7,7 +23,7 @@ import org.geogebra.common.plugin.ActionType;
 
 /**
  * Item of undo list; can be either a checkpoint or undoable action
- * 
+ *
  * @author Zbynek
  */
 public class UndoCommand {
@@ -60,8 +76,8 @@ public class UndoCommand {
 	 * @param args
 	 *            action arguments
 	 */
-	public UndoCommand(String slideId, ActionType action, String[] args,
-			ActionType undoAction, String[] undoArgs) {
+	public UndoCommand(
+			String slideId, ActionType action, String[] args, ActionType undoAction, String[] undoArgs) {
 		this.action = action;
 		this.args = args;
 		this.slideID = slideId;
@@ -87,7 +103,7 @@ public class UndoCommand {
 
 	/**
 	 * Execute the command again
-	 * 
+	 *
 	 * @param undoManager
 	 *            undo manager
 	 */
@@ -139,7 +155,7 @@ public class UndoCommand {
 			withCurrentSlide(undoManager, () -> {
 				undoManager.executeAction(undoAction, undoArgs);
 
-				//TODO: maybe these actions should also take care of reloading
+				// TODO: maybe these actions should also take care of reloading
 				// the correct information without replay?
 				if (action == ActionType.CLEAR_PAGE || action == ActionType.REMOVE_PAGE) {
 					undoManager.replayActions(slideID, this);
@@ -159,7 +175,7 @@ public class UndoCommand {
 
 	/**
 	 * Get the app to the state right after this was executed.
-	 * 
+	 *
 	 * @param mgr
 	 *            undo manager
 	 */

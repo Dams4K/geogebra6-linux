@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.util;
 
 import org.geogebra.common.io.MyXMLio;
@@ -63,11 +79,13 @@ public class ArchiveEntry {
 		}
 		BlobPropertyBag options = BlobPropertyBag.create();
 		options.setType(extension.getMime());
-		return URL.createObjectURL(new Blob(
-				new JsArray<>(Blob.ConstructorBlobPartsArrayUnionType.of(data)),
-				options));
+		return URL.createObjectURL(
+				new Blob(new JsArray<>(Blob.ConstructorBlobPartsArrayUnionType.of(data)), options));
 	}
 
+	/**
+	 * @return whether this entry is empty
+	 */
 	public boolean isEmpty() {
 		return StringUtil.empty(string) && data == null;
 	}
@@ -87,6 +105,9 @@ public class ArchiveEntry {
 		return extension;
 	}
 
+	/**
+	 * @return whether this represents a thumbnail
+	 */
 	public boolean isThumbnail() {
 		return MyXMLio.XML_FILE_THUMBNAIL.equalsIgnoreCase(fileName);
 	}

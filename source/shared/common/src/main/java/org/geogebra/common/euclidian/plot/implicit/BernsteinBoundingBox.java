@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.plot.implicit;
 
 import java.util.Objects;
@@ -73,10 +89,7 @@ public class BernsteinBoundingBox implements Splittable<BernsteinBoundingBox> {
 		}
 
 		BernsteinBoundingBox that = (BernsteinBoundingBox) o;
-		return x1 == that.x1
-				&& y1 == that.y1
-				&& x2 == that.x2
-				&& y2 == that.y2;
+		return x1 == that.x1 && y1 == that.y1 && x2 == that.x2 && y2 == that.y2;
 	}
 
 	@Override
@@ -86,11 +99,7 @@ public class BernsteinBoundingBox implements Splittable<BernsteinBoundingBox> {
 
 	@Override
 	public String toString() {
-		return "Box{x1=" + x1
-				+ ", y1=" + y1
-				+ ", y2=" + y2
-				+ ", x2=" + x2
-				+ '}';
+		return "Box{x1=" + x1 + ", y1=" + y1 + ", y2=" + y2 + ", x2=" + x2 + '}';
 	}
 
 	/**
@@ -121,10 +130,16 @@ public class BernsteinBoundingBox implements Splittable<BernsteinBoundingBox> {
 		return y2;
 	}
 
+	/**
+	 * @return width of the box.
+	 */
 	public double getWidth() {
 		return x2 - x1;
 	}
 
+	/**
+	 * @return height of the box.
+	 */
 	public double getHeight() {
 		return y2 - y1;
 	}
@@ -135,5 +150,4 @@ public class BernsteinBoundingBox implements Splittable<BernsteinBoundingBox> {
 	public void release() {
 		pool.release(this);
 	}
-
 }

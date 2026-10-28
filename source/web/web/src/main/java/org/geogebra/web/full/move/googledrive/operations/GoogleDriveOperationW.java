@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.move.googledrive.operations;
 
 import org.geogebra.common.GeoGebraConstants;
@@ -38,9 +54,10 @@ import jsinterop.base.JsPropertyMap;
 /**
  * Operational class for Google Drive Api
  */
-public class GoogleDriveOperationW implements GoogleDriveOperation {
+public final class GoogleDriveOperationW implements GoogleDriveOperation {
 
-	private static final String GoogleApiJavaScriptSrc = "https://apis.google.com/js/client.js?onload=GGW_loadGoogleDrive";
+	private static final String GoogleApiJavaScriptSrc =
+			"https://apis.google.com/js/client.js?onload=GGW_loadGoogleDrive";
 	private final AppW app;
 	private boolean loggedIn;
 	private JsPropertyMap<Object> googleDriveURL;
@@ -54,7 +71,7 @@ public class GoogleDriveOperationW implements GoogleDriveOperation {
 
 	/**
 	 * creates new google drive operation instance
-	 * 
+	 *
 	 * @param app
 	 *            Application
 	 */
@@ -89,41 +106,40 @@ public class GoogleDriveOperationW implements GoogleDriveOperation {
 
 	private void loadGoogleDrive() {
 		if (GoogleApi.get() != null) {
-			GoogleApi.get().load("auth",
-					JsPropertyMap.of("callback", (JsRunnable) () -> {}));
-			GoogleApi.get().load("picker",
-					JsPropertyMap.of("callback", (JsRunnable) () -> Log.debug("picker loaded")));
+			GoogleApi.get().load("auth", JsPropertyMap.of("callback", (JsRunnable) () -> {}));
+			GoogleApi.get().load("picker", JsPropertyMap.of("callback", (JsRunnable)
+					() -> Log.debug("picker loaded")));
 
 			if (GoogleApi.get().getClient() != null) {
-				GoogleApi.get().getClient()
-						.load("drive", "v3", this::checkIfOpenedFromGoogleDrive);
+				GoogleApi.get().getClient().load("drive", "v3", this::checkIfOpenedFromGoogleDrive);
 			}
 		}
 	}
 
 	/**
 	 * logs in the user to Google
-	 * 
+	 *
 	 * @param immediate
 	 *            whether to force login popup open
 	 */
 	public void login(boolean immediate) {
 		JsPropertyMap<Object> config = JsPropertyMap.of(
-			"client_id", app.getLAF().getClientId(),
-			"scope", GeoGebraConstants.DRIVE_SCOPE + " "
+				"client_id",
+				app.getLAF().getClientId(),
+				"scope",
+				GeoGebraConstants.DRIVE_SCOPE + " "
 						+ GeoGebraConstants.USERINFO_EMAIL_SCOPE + " "
 						+ GeoGebraConstants.USERINFO_PROFILE_SCOPE + " "
 						+ GeoGebraConstants.PLUS_ME_SCOPE,
-			"immediate", immediate
-		);
+				"immediate",
+				immediate);
 
 		GoogleApi.get().getAuthorization().authorize(config, this::authorizeCallback);
 	}
 
 	private void authorizeCallback(GoogleAuthorization.Response response) {
 		if (response.error != null) {
-			Log.error("Error loading from GoogleDrive: "
-					+ response.error + " " + response.details);
+			Log.error("Error loading from GoogleDrive: " + response.error + " " + response.details);
 			this.loggedIn = false;
 			if ("open".equals(getAction())) {
 				login(false);
@@ -154,7 +170,8 @@ public class GoogleDriveOperationW implements GoogleDriveOperation {
 
 					GoogleDriveDocument file = data.docs.getAt(0);
 					loadFromGoogleFile(file.name, file.id);
-				}).build();
+				})
+				.build();
 		picker.setVisible(true);
 	}
 
@@ -199,8 +216,7 @@ public class GoogleDriveOperationW implements GoogleDriveOperation {
 			FileReader reader = new FileReader();
 			reader.onloadend = (e2) -> {
 				if (e2.target.result.asString().startsWith("UEsDBBQ")) {
-					processGoogleDriveFileContentAsBase64(e2.target.result.asString(),
-							name, id);
+					processGoogleDriveFileContentAsBase64(e2.target.result.asString(), name, id);
 				} else {
 					content.arrayBuffer().then(arrayBuffer -> {
 						processGoogleDriveFileContentAsBinary(arrayBuffer, name, id);
@@ -215,8 +231,7 @@ public class GoogleDriveOperationW implements GoogleDriveOperation {
 		xhr.send();
 	}
 
-	private void processGoogleDriveFileContentAsBase64(String base64,
-			final String title, String id) {
+	private void processGoogleDriveFileContentAsBase64(String base64, final String title, String id) {
 		app.loadGgbFileAsBase64(base64);
 		postprocessFileLoading(title, id);
 	}
@@ -227,16 +242,14 @@ public class GoogleDriveOperationW implements GoogleDriveOperation {
 		app.setUnsaved();
 	}
 
-	private void processGoogleDriveFileContentAsBinary(ArrayBuffer binary,
-	        String title, String id) {
+	private void processGoogleDriveFileContentAsBinary(ArrayBuffer binary, String title, String id) {
 		app.loadGgbFileAsBinary(binary);
 		postprocessFileLoading(title, id);
 	}
 
 	@Override
 	public void refreshCurrentFileDescriptors(String fName) {
-		if (app.getAppletParameters().getDataParamFitToScreen()
-				&& !StringUtil.empty(fName)) {
+		if (app.getAppletParameters().getDataParamFitToScreen() && !StringUtil.empty(fName)) {
 			Browser.changeMetaTitle(fName.replace(".ggb", ""));
 		}
 
@@ -256,26 +269,22 @@ public class GoogleDriveOperationW implements GoogleDriveOperation {
 		return (base64) -> saveFileToGoogleDrive(fileName, description, base64, isggb);
 	}
 
-	private void saveFileToGoogleDrive(final String fileName,
-			final String description, final String fileContent,
-			boolean isggb) {
+	private void saveFileToGoogleDrive(
+			final String fileName, final String description, final String fileContent, boolean isggb) {
 		if (!fileName.equals(getFileName())) {
 			setCurrentFileId(null);
 		}
 
 		JsPropertyMap<Object> metaData = JsPropertyMap.of(
 				"title", fileName,
-				"description", description
-		);
+				"description", description);
 
 		if (!StringUtil.empty(getFolderId())) {
-			metaData.set("parents", new JsArray<Object>(JsPropertyMap.of("id", getFolderId())));
+			JsArray<Object> folder = new JsArray<>(JsPropertyMap.of("id", getFolderId()));
+			metaData.set("parents", folder);
 		}
 
-		metaData.set("thumbnail", JsPropertyMap.of(
-				"image", getThumbnail(),
-				"mimeType", "image/png"
-		));
+		metaData.set("thumbnail", JsPropertyMap.of("image", getThumbnail(), "mimeType", "image/png"));
 
 		handleFileUploadToGoogleDrive(getCurrentFileId(), metaData, fileContent, isggb);
 	}
@@ -283,7 +292,8 @@ public class GoogleDriveOperationW implements GoogleDriveOperation {
 	private String getThumbnail() {
 		return ((EuclidianViewWInterface) app.getActiveEuclidianView())
 				.getCanvasBase64WithTypeString()
-				.substring(StringUtil.pngMarker.length()).replace("+", "-")
+				.substring(StringUtil.pngMarker.length())
+				.replace("+", "-")
 				.replace("/", "_");
 	}
 
@@ -296,8 +306,8 @@ public class GoogleDriveOperationW implements GoogleDriveOperation {
 		dialog.show();
 	}
 
-	private void handleFileUploadToGoogleDrive(String fileId,
-			JsPropertyMap<Object> fileMetadata, String fileData, boolean isggb) {
+	private void handleFileUploadToGoogleDrive(
+			String fileId, JsPropertyMap<Object> fileMetadata, String fileData, boolean isggb) {
 		String boundary = "-------314159265358979323846";
 		String delimiter = "\r\n--" + boundary + "\r\n";
 		String close_delim = "\r\n--" + boundary + "--";
@@ -313,25 +323,25 @@ public class GoogleDriveOperationW implements GoogleDriveOperation {
 		JsPropertyMap<Object> requestBody = JsPropertyMap.of();
 		requestBody.set("path", "/upload/drive/v2/files/" + (fileId == null ? "" : fileId));
 		requestBody.set("method", fileId != null ? "PUT" : "POST");
-		requestBody.set("params", JsPropertyMap.of(
-				"uploadType", "multipart",
-				"alt", "json"
-		));
-		requestBody.set("headers", JsPropertyMap.of(
-				"Content-Type",
-				"multipart/mixed; boundary=\"" + boundary + "\"")
-		);
+		requestBody.set(
+				"params",
+				JsPropertyMap.of(
+						"uploadType", "multipart",
+						"alt", "json"));
+		requestBody.set(
+				"headers",
+				JsPropertyMap.of("Content-Type", "multipart/mixed; boundary=\"" + boundary + "\""));
 		requestBody.set("body", multipartRequestBody);
 
 		GoogleUploadRequest request = GoogleApi.get().getClient().request(requestBody);
 
 		request.execute((resp) -> {
-				if (resp.error == null) {
-					updateAfterGoogleDriveSave(resp.id, resp.title, isggb);
-				} else {
-					Log.error("Error saving to Google Drive: " + resp.error);
-					showUploadError();
-				}
+			if (resp.error == null) {
+				updateAfterGoogleDriveSave(resp.id, resp.title, isggb);
+			} else {
+				Log.error("Error saving to Google Drive: " + resp.error);
+				showUploadError();
+			}
 		});
 	}
 

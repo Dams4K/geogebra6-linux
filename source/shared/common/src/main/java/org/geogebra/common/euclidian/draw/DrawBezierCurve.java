@@ -1,12 +1,28 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GPoint2D;
 import org.geogebra.common.euclidian.ControlPointHandler;
 import org.geogebra.common.euclidian.CurveBoundingBox;
 import org.geogebra.common.euclidian.EuclidianView;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.MyPoint;
 import org.geogebra.common.kernel.algos.AlgoBezierCurve;
 import org.geogebra.common.kernel.geos.ParametricCurve;
@@ -23,8 +39,7 @@ public class DrawBezierCurve extends DrawParametricCurve {
 	 * @param geo curve
 	 * @param parentAlgorithm curve's parent algorithm
 	 */
-	public DrawBezierCurve(EuclidianView view, ParametricCurve geo,
-			AlgoBezierCurve parentAlgorithm) {
+	public DrawBezierCurve(EuclidianView view, ParametricCurve geo, AlgoBezierCurve parentAlgorithm) {
 		super(view, geo);
 		algo = parentAlgorithm;
 	}
@@ -42,16 +57,16 @@ public class DrawBezierCurve extends DrawParametricCurve {
 	@Override
 	public void updateBoundingBox() {
 		getBoundingBox().setRectangle(AwtFactory.getPrototype().newRectangle(gp.getBounds()));
-		for (int i = 0; i < 4; i ++) {
-			boundingBox.setHandlerFromCenter(i,
+		for (int i = 0; i < 4; i++) {
+			boundingBox.setHandlerFromCenter(
+					i,
 					view.toScreenCoordXd(algo.getPoints()[i].getInhomX()),
 					view.toScreenCoordYd(algo.getPoints()[i].getInhomY()));
 		}
 	}
 
 	@Override
-	public void updateByControlPointMovement(GPoint2D point,
-			ControlPointHandler handler) {
+	public void updateByControlPointMovement(GPoint2D point, ControlPointHandler handler) {
 		GeoPointND updated = algo.getPoints()[handler.id];
 		GeoPointND control = null;
 		double realX = view.toRealWorldCoordX(point.getX());
@@ -77,8 +92,7 @@ public class DrawBezierCurve extends DrawParametricCurve {
 		ArrayList<GPoint2D> points = new ArrayList<>();
 		for (GeoPointND pt : algo.getPoints()) {
 			points.add(
-					new MyPoint(view.toScreenCoordXd(pt.getInhomX()),
-							view.toScreenCoordYd(pt.getInhomY())));
+					new MyPoint(view.toScreenCoordXd(pt.getInhomX()), view.toScreenCoordYd(pt.getInhomY())));
 		}
 		return points;
 	}
@@ -87,8 +101,10 @@ public class DrawBezierCurve extends DrawParametricCurve {
 	public void fromPoints(ArrayList<GPoint2D> points) {
 		int i = 0;
 		for (GeoPointND pt : algo.getPoints()) {
-			pt.setCoords(view.toRealWorldCoordX(points.get(i).getX()),
-					view.toRealWorldCoordY(points.get(i).getY()), 1);
+			pt.setCoords(
+					view.toRealWorldCoordX(points.get(i).getX()),
+					view.toRealWorldCoordY(points.get(i).getY()),
+					1);
 			i++;
 		}
 		algo.update();

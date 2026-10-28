@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.exam;
 
 import static org.geogebra.common.exam.restrictions.visibility.VisibilityRestriction.Effect.ALLOW;
@@ -26,26 +42,27 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class VisibilityRestrictionTests extends BaseAppTestSetup {
+class VisibilityRestrictionTests extends BaseAppTestSetup {
 	@BeforeEach
-	public void setupApp() {
+	void setupApp() {
 		setupApp(SuiteSubApp.GRAPHING);
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {
-			"f(x) = x",
-			"x > 2",
-			"y = 2x",
-			"x^2 + y^2 = 5",
-			"(1, 2)",
-	})
-	public void testEmptySetOfVisibilityRestrictions(String expression) {
+	@ValueSource(
+			strings = {
+				"f(x) = x",
+				"x > 2",
+				"y = 2x",
+				"x^2 + y^2 = 5",
+				"(1, 2)",
+			})
+	void testEmptySetOfVisibilityRestrictions(String expression) {
 		assertFalse(isVisibilityRestricted(evaluateGeoElement(expression), Set.of()));
 	}
 
 	@Test
-	public void testIgnoredRestrictionEffects() {
+	void testIgnoredRestrictionEffects() {
 		Set<VisibilityRestriction> visibilityRestrictions = Set.of(
 				geoElement -> geoElement.isInequality() ? HIDE : IGNORE,
 				geoElement -> geoElement.isAngle() ? HIDE : IGNORE);
@@ -53,7 +70,7 @@ public class VisibilityRestrictionTests extends BaseAppTestSetup {
 	}
 
 	@Test
-	public void testIgnoredAndHiddenRestrictionEffects() {
+	void testIgnoredAndHiddenRestrictionEffects() {
 		Set<VisibilityRestriction> visibilityRestrictions = Set.of(
 				geoElement -> geoElement.isInequality() ? HIDE : IGNORE,
 				geoElement -> geoElement.isAngle() ? HIDE : IGNORE);
@@ -61,10 +78,11 @@ public class VisibilityRestrictionTests extends BaseAppTestSetup {
 	}
 
 	@Test
-	public void testOverlappingConflictingRestrictionsWithHiddenAndAllowedEffects() {
+	void testOverlappingConflictingRestrictionsWithHiddenAndAllowedEffects() {
 		GeoElement linearEquation = evaluateGeoElement("x = 2");
 		GeoElement quadraticEquation = evaluateGeoElement("x^2 = 2");
-		assertAll(() -> assertTrue(isEquation(linearEquation)),
+		assertAll(
+				() -> assertTrue(isEquation(linearEquation)),
 				() -> assertTrue(isEquation(quadraticEquation)),
 				() -> assertTrue(isLinearEquation(linearEquation)),
 				() -> assertFalse(isLinearEquation(quadraticEquation)));
@@ -75,33 +93,30 @@ public class VisibilityRestrictionTests extends BaseAppTestSetup {
 
 		assertAll(
 				() -> assertFalse(isVisibilityRestricted(linearEquation, visibilityRestrictions)),
-				() -> assertTrue(isVisibilityRestricted(quadraticEquation, visibilityRestrictions))
-		);
+				() -> assertTrue(isVisibilityRestricted(quadraticEquation, visibilityRestrictions)));
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {
-			"a = (1, 2)",
-			"b = (1, 2) + 0"
-	})
-	public void testVectorRestrictions(String expression) {
-		assertTrue(isVisibilityRestricted(evaluateGeoElement(expression),
-				Set.of(new HiddenVectorVisibilityRestriction())));
+	@ValueSource(strings = {"a = (1, 2)", "b = (1, 2) + 0"})
+	void testVectorRestrictions(String expression) {
+		assertTrue(isVisibilityRestricted(
+				evaluateGeoElement(expression), Set.of(new HiddenVectorVisibilityRestriction())));
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {
-			"x > 0",
-			"y <= 1",
-			"x < y",
-			"x - y > 2",
-			"x^2 + 2y^2 < 1",
-			"f: x > 0",
-			"f(x) = x > 2",
-	})
-	public void testInequalityRestrictions(String expression) {
-		assertTrue(isVisibilityRestricted(evaluateGeoElement(expression),
-				Set.of(new HiddenInequalityVisibilityRestriction())));
+	@ValueSource(
+			strings = {
+				"x > 0",
+				"y <= 1",
+				"x < y",
+				"x - y > 2",
+				"x^2 + 2y^2 < 1",
+				"f: x > 0",
+				"f(x) = x > 2",
+			})
+	void testInequalityRestrictions(String expression) {
+		assertTrue(isVisibilityRestricted(
+				evaluateGeoElement(expression), Set.of(new HiddenInequalityVisibilityRestriction())));
 	}
 
 	private static boolean isEquation(GeoElement geoElement) {

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.menubar;
 
 import java.util.ArrayList;
@@ -23,11 +39,9 @@ import org.gwtproject.user.client.ui.Widget;
  * @author Zbynek, Laszlo
  *
  */
-public class AriaStackPanel extends ComplexPanel
-		implements StackPanelInterface {
+public class AriaStackPanel extends ComplexPanel implements StackPanelInterface {
 	private static final String DEFAULT_STYLENAME = "gwt-StackPanel";
-	private static final String DEFAULT_ITEM_STYLENAME = DEFAULT_STYLENAME
-			+ "Item";
+	private static final String DEFAULT_ITEM_STYLENAME = DEFAULT_STYLENAME + "Item";
 
 	private int visibleStack = -1;
 	private int lastVisibleStack = -1;
@@ -43,8 +57,8 @@ public class AriaStackPanel extends ComplexPanel
 		ul = Document.get().createULElement();
 		setElement(ul);
 		addStyleName("gwt-StackPanel");
-		sinkEvents(Event.ONCLICK | Event.ONMOUSEOVER | Event.ONMOUSEOUT
-				| Event.ONFOCUS | Event.ONKEYDOWN);
+		sinkEvents(
+				Event.ONCLICK | Event.ONMOUSEOVER | Event.ONMOUSEOUT | Event.ONFOCUS | Event.ONKEYDOWN);
 	}
 
 	@Override
@@ -78,7 +92,6 @@ public class AriaStackPanel extends ComplexPanel
 	@Override
 	public void add(Widget w, SafeHtml stackHtml) {
 		add(w, stackHtml.asString(), true);
-
 	}
 
 	/**
@@ -177,7 +190,6 @@ public class AriaStackPanel extends ComplexPanel
 			// Reshow the stack to apply style names
 			setStackVisible(visibleStack, true);
 		}
-
 	}
 
 	@Override
@@ -233,8 +245,7 @@ public class AriaStackPanel extends ComplexPanel
 	 *            <code>true</code> to treat the specified text as HTML
 	 */
 	@Override
-	public void setStackText(int index, @IsSafeHtml String text,
-			boolean asHTML) {
+	public void setStackText(int index, @IsSafeHtml String text, boolean asHTML) {
 		if (index >= getWidgetCount()) {
 			return;
 		}
@@ -249,8 +260,7 @@ public class AriaStackPanel extends ComplexPanel
 	 */
 	@Override
 	public void showStack(int index) {
-		if ((index >= getWidgetCount()) || (index < 0)
-				|| (index == visibleStack)) {
+		if ((index >= getWidgetCount()) || (index < 0) || (index == visibleStack)) {
 			return;
 		}
 
@@ -310,9 +320,8 @@ public class AriaStackPanel extends ComplexPanel
 	 */
 	protected int findDividerIndex(Element target) {
 		Element elem = target;
-		String expando = null;
 		while (elem != null) {
-			expando = elem.getPropertyString("__index");
+			String expando = elem.getPropertyString("__index");
 			if (expando != null) {
 				int index = headers.indexOf(elem);
 				return index;
@@ -373,8 +382,7 @@ public class AriaStackPanel extends ComplexPanel
 		UIObject.setVisible(content, visible);
 		int nextIdx = index + 1;
 		if (nextIdx < headers.size()) {
-			setStyleName(headers.get(nextIdx),
-					DEFAULT_ITEM_STYLENAME + "-below-selected", visible);
+			setStyleName(headers.get(nextIdx), DEFAULT_ITEM_STYLENAME + "-below-selected", visible);
 		}
 	}
 
@@ -399,7 +407,8 @@ public class AriaStackPanel extends ComplexPanel
 
 		Element target = DOM.eventGetTarget(event);
 		int index = findDividerIndex(target);
-		if (eventType == Event.ONMOUSEOVER || eventType == Event.ONKEYDOWN
+		if (eventType == Event.ONMOUSEOVER
+				|| eventType == Event.ONKEYDOWN
 				|| eventType == Event.ONCLICK) {
 
 			if (index > -1) {
@@ -484,5 +493,4 @@ public class AriaStackPanel extends ComplexPanel
 	public boolean isCollapsed() {
 		return visibleStack != lastVisibleStack;
 	}
-
 }

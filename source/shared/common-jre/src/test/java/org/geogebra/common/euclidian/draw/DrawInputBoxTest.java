@@ -1,7 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.geogebra.common.BaseUnitTest;
 import org.geogebra.common.euclidian.EuclidianView;
@@ -11,13 +27,13 @@ import org.geogebra.common.plugin.script.GgbScript;
 import org.geogebra.common.util.TextObject;
 import org.geogebra.test.euclidian.AutoCompleteTextFieldC;
 import org.geogebra.test.euclidian.TextFieldCommonJre;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class DrawInputBoxTest extends BaseUnitTest {
+class DrawInputBoxTest extends BaseUnitTest {
 
 	@Test
-	public void testConsistentHeight() {
+	void testConsistentHeight() {
 		add("f(x) = x");
 		add("a=1");
 		GeoInputBox inputBox = add("InputBox(f)");
@@ -26,10 +42,9 @@ public class DrawInputBoxTest extends BaseUnitTest {
 		TextObject textObject = mockTextObjectWithReturn("");
 		emptyInputBox.textObjectUpdated(textObject);
 
-		DrawInputBox inputBoxDrawer
-				= new DrawInputBox(getApp().getActiveEuclidianView(), inputBox);
-		DrawInputBox emptyInputBoxDrawer
-				= new DrawInputBox(getApp().getActiveEuclidianView(), emptyInputBox);
+		DrawInputBox inputBoxDrawer = new DrawInputBox(getApp().getActiveEuclidianView(), inputBox);
+		DrawInputBox emptyInputBoxDrawer =
+				new DrawInputBox(getApp().getActiveEuclidianView(), emptyInputBox);
 
 		int inputBoxHeight = getHeightOfInputBox(inputBoxDrawer, true);
 		int emptyInputBoxHeight = getHeightOfInputBox(emptyInputBoxDrawer, true);
@@ -38,7 +53,7 @@ public class DrawInputBoxTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testDefaultHeightForFocusedInput() {
+	void testDefaultHeightForFocusedInput() {
 		add("a=1");
 		GeoInputBox inputBox = add("InputBox(a)");
 		inputBox.setSymbolicMode(true, false);
@@ -53,12 +68,11 @@ public class DrawInputBoxTest extends BaseUnitTest {
 
 		int symbolicInputBoxHeightFocused = getHeightOfInputBox(inputBoxDrawer, true);
 
-		assertEquals(symbolicInputBoxHeightNotFocused,
-				symbolicInputBoxHeightFocused);
+		assertEquals(symbolicInputBoxHeightNotFocused, symbolicInputBoxHeightFocused);
 	}
 
 	@Test
-	public void testHeightWontChangeAfterFirstCharacter() {
+	void testHeightWontChangeAfterFirstCharacter() {
 		add("a=1");
 		GeoInputBox inputBox = add("InputBox(a)");
 		inputBox.setSymbolicMode(true, false);
@@ -80,18 +94,16 @@ public class DrawInputBoxTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void inputBoxShouldNotStealContent() {
+	void inputBoxShouldNotStealContent() {
 		EuclidianView ev = getApp().getActiveEuclidianView();
 		ev.setViewTextField(new TextFieldCommonJre());
 		add("a=1");
 		GeoInputBox inputBoxNumber = add("InputBox(a)");
 		add("B=(1,1)");
 		add("InputBox(B)");
-		inputBoxNumber
-				.setClickScript(
-						new GgbScript(getApp(), "UpdateConstruction()"));
-		AutoCompleteTextFieldC tf = (AutoCompleteTextFieldC)
-				((DrawInputBox) getDrawable(inputBoxNumber)).getTextField();
+		inputBoxNumber.setClickScript(new GgbScript(getApp(), "UpdateConstruction()"));
+		AutoCompleteTextFieldC tf =
+				(AutoCompleteTextFieldC) ((DrawInputBox) getDrawable(inputBoxNumber)).getTextField();
 		tf.setUsedForInputBox(inputBoxNumber);
 		tf.requestFocus();
 		tf.setText("2");

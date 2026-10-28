@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.scripting;
 
 import org.geogebra.common.kernel.Kernel;
@@ -18,7 +34,7 @@ public class CmdSetCoords extends CmdScripting {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -31,33 +47,33 @@ public class CmdSetCoords extends CmdScripting {
 		int n = c.getArgumentNumber();
 
 		switch (n) {
-		case 3:
-			GeoElement[] arg = resArgs(c);
-			// we don't want to change coords unless the point is free or
-			// Point[path/region]
+			case 3:
+				GeoElement[] arg = resArgs(c);
+				// we don't want to change coords unless the point is free or
+				// Point[path/region]
 
-			double x = getDouble(arg[1], c);
-			double y = getDouble(arg[2], c);
+				double x = getDouble(arg[1], c);
+				double y = getDouble(arg[2], c);
 
-			if (!setCoords(arg[0], x, y)) {
-				throw argErr(c, arg[0]);
-			}
-			return arg;
-		case 4:
-			arg = resArgs(c);
-			// we don't want to change coords unless the point is free or
-			// Point[path/region]
+				if (!setCoords(arg[0], x, y)) {
+					throw argErr(c, arg[0]);
+				}
+				return arg;
+			case 4:
+				arg = resArgs(c);
+				// we don't want to change coords unless the point is free or
+				// Point[path/region]
 
-			x = getDouble(arg[1], c);
-			y = getDouble(arg[2], c);
-			double z = getDouble(arg[3], c);
+				x = getDouble(arg[1], c);
+				y = getDouble(arg[2], c);
+				double z = getDouble(arg[3], c);
 
-			if (!setCoords(arg[0], x, y, z)) {
-				throw argErr(c, arg[0]);
-			}
-			return arg;
-		default:
-			throw argNumErr(c);
+				if (!setCoords(arg[0], x, y, z)) {
+					throw argErr(c, arg[0]);
+				}
+				return arg;
+			default:
+				throw argNumErr(c);
 		}
 	}
 
@@ -124,25 +140,21 @@ public class CmdSetCoords extends CmdScripting {
 	 *            z coordinate
 	 * @return true when successful
 	 */
-	public static boolean setCoords(GeoElement geo, double x, double y,
-			double z) {
+	public static boolean setCoords(GeoElement geo, double x, double y, double z) {
 		if (geo.isMoveable() && geo instanceof GeoPointND) {
 			((GeoPointND) geo).setCoords(x, y, z, 1);
 			geo.updateRepaint();
 			return true;
-
 		}
 		if (geo.isMoveable() && geo instanceof GeoVectorND) {
 			((GeoVectorND) geo).setCoords(x, y, z, 0);
 			geo.updateRepaint();
 			return true;
-
 		}
 		if (geo.isMoveable() && geo instanceof GeoLine) {
 			((GeoLine) geo).setCoords(x, y, z);
 			geo.updateRepaint();
 			return true;
-
 		}
 		// ignore z-coord otherwise
 		return setCoords(geo, x, y);

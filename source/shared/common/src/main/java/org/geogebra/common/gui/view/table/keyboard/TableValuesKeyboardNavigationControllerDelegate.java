@@ -1,6 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.table.keyboard;
 
-import javax.annotation.CheckForNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The companion delegate to the {@link TableValuesKeyboardNavigationController}.
@@ -49,7 +65,7 @@ public interface TableValuesKeyboardNavigationControllerDelegate {
 	 * @return The current content of the editor for the given cell. May return null or an
 	 * empty string if the cell is empty.
 	 */
-	@CheckForNull String getCellEditorContent(int row, int column);
+	@Nullable String getCellEditorContent(int row, int column);
 
 	/**
 	 * Show a warning about invalid cell content.
@@ -57,4 +73,21 @@ public interface TableValuesKeyboardNavigationControllerDelegate {
 	 * @param column The column index of the invalid cell.
 	 */
 	void invalidCellContentDetected(int row, int column);
+
+	/**
+	 * Show context menu for column.
+	 * @param column the column index of the selected cell.
+	 */
+	default void showContextMenu(int column) {
+		// nothing to do here
+	}
+
+	/**
+	 * Copy content of cell to the clipboard.
+	 * @param row The row index of selected cell.
+	 * @param column The column index of selected cell.
+	 */
+	default void copyContent(int row, int column) {
+		// nothing to do here
+	}
 }

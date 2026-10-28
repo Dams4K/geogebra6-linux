@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDirectrix.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.advanced;
@@ -133,21 +131,17 @@ public class AlgoDirectrix extends AlgoElement {
 
 			double py = b.getY() + eigenvec[0].getY() * a / e;
 			double px = b.getX() + eigenvec[0].getX() * a / e;
-			double py2 = b.getY() - eigenvec[0].getY() * a / e;
-			double px2 = b.getX() - eigenvec[0].getX() * a / e;
-
 			directrix.x = -eigenvec[1].getY();
 			directrix.y = eigenvec[1].getX();
 			directrix.z = -(directrix.x * px + directrix.y * py);
-
 			P.setCoords(px, py, 1.0);
 
+			double py2 = b.getY() - eigenvec[0].getY() * a / e;
+			double px2 = b.getX() - eigenvec[0].getX() * a / e;
 			directrix2.x = -eigenvec[1].getY();
 			directrix2.y = eigenvec[1].getX();
 			directrix2.z = -(directrix.x * px2 + directrix.y * py2);
-
 			P2.setCoords(px2, py2, 1.0);
-
 		} else {
 			directrix.setUndefined();
 			directrix2.setUndefined();
@@ -155,11 +149,9 @@ public class AlgoDirectrix extends AlgoElement {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("DirectrixOfA", "Directrix of %0",
-				c.getLabel(tpl));
+		return getLoc().getPlainDefault("DirectrixOfA", "Directrix of %0", c.getLabel(tpl));
 	}
-
 }

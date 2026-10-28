@@ -23,65 +23,39 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  *
- * Linking this library statically or dynamically with other modules 
- * is making a combined work based on this library. Thus, the terms 
- * and conditions of the GNU General Public License cover the whole 
+ * Linking this library statically or dynamically with other modules
+ * is making a combined work based on this library. Thus, the terms
+ * and conditions of the GNU General Public License cover the whole
  * combination.
- * 
- * As a special exception, the copyright holders of this library give you 
- * permission to link this library with independent modules to produce 
- * an executable, regardless of the license terms of these independent 
- * modules, and to copy and distribute the resulting executable under terms 
- * of your choice, provided that you also meet, for each linked independent 
- * module, the terms and conditions of the license of that module. 
- * An independent module is a module which is not derived from or based 
- * on this library. If you modify this library, you may extend this exception 
- * to your version of the library, but you are not obliged to do so. 
- * If you do not wish to do so, delete this exception statement from your 
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce
+ * an executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under terms
+ * of your choice, provided that you also meet, for each linked independent
+ * module, the terms and conditions of the license of that module.
+ * An independent module is a module which is not derived from or based
+ * on this library. If you modify this library, you may extend this exception
+ * to your version of the library, but you are not obliged to do so.
+ * If you do not wish to do so, delete this exception statement from your
  * version.
- * 
+ *
  */
 package com.himamis.retex.renderer.share.platform;
 
-import com.himamis.retex.renderer.share.platform.geom.Area;
-import com.himamis.retex.renderer.share.platform.geom.GeomFactory;
-import com.himamis.retex.renderer.share.platform.geom.Line2D;
-import com.himamis.retex.renderer.share.platform.geom.Point2D;
-import com.himamis.retex.renderer.share.platform.geom.Rectangle2D;
-import com.himamis.retex.renderer.share.platform.geom.RoundRectangle2D;
-import com.himamis.retex.renderer.share.platform.geom.Shape;
+import org.geogebra.common.awt.AwtFactory;
+import org.geogebra.common.awt.GLine2D;
+import org.geogebra.common.awt.GRectangle2D;
 
 public class Geom {
 
-	private final GeomFactory geomFactory;
-
-	public Geom() {
-		geomFactory = FactoryProvider.getInstance().getGeomFactory();
+	public GRectangle2D createRectangle2D(double x, double y, double w, double h) {
+		GRectangle2D rect = AwtFactory.getPrototype().newRectangle2D();
+		rect.setFrame(x, y, w, h);
+		return rect;
 	}
 
-	public Rectangle2D createRectangle2D(double x, double y, double w,
-			double h) {
-		return geomFactory.createRectangle2D(x, y, w, h);
-	}
-
-	public Area createArea(Shape s) {
-		return geomFactory.createArea(s);
-	}
-
-	public Line2D createLine2D() {
-		return geomFactory.createLine2D(0, 0, 0, 0);
-	}
-
-	public RoundRectangle2D createRoundRectangle2D(double x, double y, double w,
-			double h, double arcw, double arch) {
-		return geomFactory.createRoundRectangle2D(x, y, w, h, arcw, arch);
-	}
-
-	public Point2D createPoint2D(double x, double y) {
-		return geomFactory.createPoint2D(x, y);
-	}
-
-	public Area createArea() {
-		return geomFactory.newArea();
+	public GLine2D createLine2D() {
+		return AwtFactory.getPrototype().newLine2D();
 	}
 }

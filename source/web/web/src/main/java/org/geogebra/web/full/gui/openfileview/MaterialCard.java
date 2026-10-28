@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.openfileview;
 
 import org.geogebra.common.move.ggtapi.models.Material;
@@ -16,7 +32,7 @@ import org.gwtproject.user.client.ui.Label;
 /**
  * Material card
  */
-public class MaterialCard extends FlowPanel implements MaterialCardI {
+public final class MaterialCard extends FlowPanel implements MaterialCardI {
 	private AppWFull app;
 	// image of material
 	private MaterialImagePanel imgPanel;
@@ -43,7 +59,7 @@ public class MaterialCard extends FlowPanel implements MaterialCardI {
 	/**
 	 * Open this material.
 	 */
-	protected void openMaterial() {
+	void openMaterial() {
 		app.getGuiManager().getBrowseView().closeAndSave(obj -> controller.loadOnlineFile());
 	}
 
@@ -69,9 +85,7 @@ public class MaterialCard extends FlowPanel implements MaterialCardI {
 	}
 
 	private String getCardAuthor() {
-		return getMaterial().getCreator() != null
-				? getMaterial().getCreator().getDisplayName()
-				: "";
+		return getMaterial().getCreator() != null ? getMaterial().getCreator().getDisplayName() : "";
 	}
 
 	/**
@@ -84,13 +98,6 @@ public class MaterialCard extends FlowPanel implements MaterialCardI {
 	@Override
 	public void remove() {
 		removeFromParent();
-	}
-
-	/**
-	 * Actually delete the file.
-	 */
-	protected void onConfirmDelete() {
-		controller.onConfirmDelete(this);
 	}
 
 	/**
@@ -149,23 +156,23 @@ public class MaterialCard extends FlowPanel implements MaterialCardI {
 			visibilityTxt = getCardAuthor();
 		} else {
 			switch (visibility) {
-			case "P":
-				visibilityImg = new NoDragImage(res.mow_card_private(), 24);
-				visibilityTxt = app.getLocalization().getMenu("Private");
-				break;
-			case "S":
-				if (app.isByCS()) {
-					visibilityImg = new NoDragImage(res.mow_card_shared(), 24);
-				} else {
-					visibilityImg = new NoDragImage(res.resource_card_shared(), 24);
-				}
-				visibilityTxt = app.getLocalization().getMenu("Shared");
-				break;
-			case "O":
-			default:
-				visibilityImg = new NoDragImage(res.mow_card_public(), 24);
-				visibilityTxt = app.getLocalization().getMenu("Public");
-				break;
+				case "P":
+					visibilityImg = new NoDragImage(res.mow_card_private(), 24);
+					visibilityTxt = app.getLocalization().getMenu("Private");
+					break;
+				case "S":
+					if (app.isByCS()) {
+						visibilityImg = new NoDragImage(res.mow_card_shared(), 24);
+					} else {
+						visibilityImg = new NoDragImage(res.resource_card_shared(), 24);
+					}
+					visibilityTxt = app.getLocalization().getMenu("Shared");
+					break;
+				case "O":
+				default:
+					visibilityImg = new NoDragImage(res.mow_card_public(), 24);
+					visibilityTxt = app.getLocalization().getMenu("Public");
+					break;
 			}
 		}
 
@@ -174,8 +181,7 @@ public class MaterialCard extends FlowPanel implements MaterialCardI {
 
 		if (visibilityImg != null) {
 			infoPanelContent.setStyleName("visibilityPanel");
-			infoPanelContent
-					.add(LayoutUtilW.panelRow(visibilityImg, visibilityLbl));
+			infoPanelContent.add(LayoutUtilW.panelRow(visibilityImg, visibilityLbl));
 		} else {
 			infoPanelContent.setStyleName("cardAuthor");
 			infoPanelContent.add(visibilityLbl);
@@ -183,8 +189,7 @@ public class MaterialCard extends FlowPanel implements MaterialCardI {
 	}
 
 	private NoDragImage getMultiuserIcon() {
-		return new NoDragImage(
-				MaterialDesignResources.INSTANCE.mow_card_multiuser(), 24);
+		return new NoDragImage(MaterialDesignResources.INSTANCE.mow_card_multiuser(), 24);
 	}
 
 	/**

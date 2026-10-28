@@ -23,48 +23,50 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  *
- * Linking this library statically or dynamically with other modules 
- * is making a combined work based on this library. Thus, the terms 
- * and conditions of the GNU General Public License cover the whole 
+ * Linking this library statically or dynamically with other modules
+ * is making a combined work based on this library. Thus, the terms
+ * and conditions of the GNU General Public License cover the whole
  * combination.
- * 
- * As a special exception, the copyright holders of this library give you 
- * permission to link this library with independent modules to produce 
- * an executable, regardless of the license terms of these independent 
- * modules, and to copy and distribute the resulting executable under terms 
- * of your choice, provided that you also meet, for each linked independent 
- * module, the terms and conditions of the license of that module. 
- * An independent module is a module which is not derived from or based 
- * on this library. If you modify this library, you may extend this exception 
- * to your version of the library, but you are not obliged to do so. 
- * If you do not wish to do so, delete this exception statement from your 
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce
+ * an executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under terms
+ * of your choice, provided that you also meet, for each linked independent
+ * module, the terms and conditions of the license of that module.
+ * An independent module is a module which is not derived from or based
+ * on this library. If you modify this library, you may extend this exception
+ * to your version of the library, but you are not obliged to do so.
+ * If you do not wish to do so, delete this exception statement from your
  * version.
- * 
+ *
  */
+
 package com.himamis.retex.renderer.share.platform.graphics;
+
+import org.geogebra.common.awt.GAffineTransform;
+import org.geogebra.common.awt.GBasicStroke;
+import org.geogebra.common.awt.GColor;
+import org.geogebra.common.awt.GShape;
 
 import com.himamis.retex.renderer.share.platform.font.Font;
 import com.himamis.retex.renderer.share.platform.font.FontRenderContext;
-import com.himamis.retex.renderer.share.platform.geom.Line2D;
-import com.himamis.retex.renderer.share.platform.geom.Rectangle2D;
-import com.himamis.retex.renderer.share.platform.geom.RoundRectangle2D;
-import com.himamis.retex.renderer.share.platform.geom.Shape;
 
 public interface Graphics2DInterface {
 
-	void setStroke(Stroke stroke);
+	void setStroke(GBasicStroke stroke);
 
-	Stroke getStroke();
+	GBasicStroke getStroke();
 
-	void setColor(Color color);
+	void setColor(GColor color);
 
-	Color getColor();
+	GColor getColor();
 
-	Transform getTransform();
+	GAffineTransform getTransform();
 
-	void saveTransformation();
+	void saveTransform();
 
-	void restoreTransformation();
+	void restoreTransform();
 
 	Font getFont();
 
@@ -72,34 +74,15 @@ public interface Graphics2DInterface {
 
 	void fillRect(double x, double y, double width, double height);
 
-	void fill(Shape rectangle);
+	void fill(GShape shape);
 
-	void startDrawing();
-
-	void moveTo(double x, double y);
-
-	void lineTo(double x, double y);
-
-	void quadraticCurveTo(double x, double y, double x1, double y1);
-
-	void bezierCurveTo(double x, double y, double x1, double y1, double x2,
-			double y2);
-
-	void finishDrawing();
-
-	void draw(Rectangle2D rectangle);
-
-	void draw(RoundRectangle2D rectangle);
-
-	void draw(Line2D line);
+	void draw(GShape shape);
 
 	void drawChars(char[] data, int offset, int length, int x, int y);
 
-	void drawArc(int x, int y, int width, int height, int startAngle,
-			int arcAngle);
+	void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle);
 
-	void fillArc(int x, int y, int width, int height, int startAngle,
-			int arcAngle);
+	void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle);
 
 	void translate(double x, double y);
 
@@ -111,7 +94,7 @@ public interface Graphics2DInterface {
 
 	void drawImage(Image image, int x, int y);
 
-	void drawImage(Image image, Transform transform);
+	void drawImage(Image image, GAffineTransform transform);
 
 	FontRenderContext getFontRenderContext();
 

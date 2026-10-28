@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D;
 
 import org.geogebra.common.awt.GPoint;
@@ -41,11 +57,18 @@ public class TextDispatcher3D extends TextDispatcher {
 
 		Coords coords = view3D.getCursor3D().getCoords();
 
-		return view3D.getEuclidianController().createNewPoint(
-				removeUnderscoresAndBraces(loc.getMenu("Point")
-						+ object.getLabel(StringTemplate.defaultTemplate)),
-				false, object, coords.getX(), coords.getY(), coords.getZ(),
-				false, false);
+		return view3D
+				.getEuclidianController()
+				.createNewPoint(
+						removeUnderscoresAndBraces(
+								loc.getMenu("Point") + object.getLabel(StringTemplate.defaultTemplate)),
+						false,
+						object,
+						coords.getX(),
+						coords.getY(),
+						coords.getZ(),
+						false,
+						false);
 	}
 
 	@Override
@@ -53,11 +76,19 @@ public class TextDispatcher3D extends TextDispatcher {
 
 		Coords coords = view3D.getCursor3D().getCoords();
 
-		return view3D.getEuclidianController().getCompanion().createNewPoint(
-				removeUnderscoresAndBraces(loc.getMenu("Point")
-						+ object.getLabel(StringTemplate.defaultTemplate)),
-				false, object, coords.getX(), coords.getY(), coords.getZ(),
-				false, false);
+		return view3D
+				.getEuclidianController()
+				.getCompanion()
+				.createNewPoint(
+						removeUnderscoresAndBraces(
+								loc.getMenu("Point") + object.getLabel(StringTemplate.defaultTemplate)),
+						false,
+						object,
+						coords.getX(),
+						coords.getY(),
+						coords.getZ(),
+						false,
+						false);
 	}
 
 	@Override
@@ -94,19 +125,15 @@ public class TextDispatcher3D extends TextDispatcher {
 	 *            text location
 	 */
 	public void createVolumeText(GeoElement hasVolume, GPoint corner) {
-		GeoNumeric volume = kernel.getManager3D().volume(null,
-				(HasVolume) hasVolume);
+		GeoNumeric volume = kernel.getManager3D().volume(null, (HasVolume) hasVolume);
 
 		// text
-		GeoText text = createDynamicTextForMouseLoc("VolumeOfA", "Volume of %0",
-				hasVolume,
-				volume, corner);
+		GeoText text =
+				createDynamicTextForMouseLoc("VolumeOfA", "Volume of %0", hasVolume, volume, corner);
 		if (text != null && hasVolume.isLabelSet()) {
 			volume.setLabel(removeUnderscoresAndBraces(
-					StringUtil.toLowerCaseUS(loc.getCommand("Volume"))
-							+ hasVolume.getLabelSimple()));
-			text.setLabel(removeUnderscoresAndBraces(
-					loc.getMenu("Text") + hasVolume.getLabelSimple()));
+					StringUtil.toLowerCaseUS(loc.getCommand("Volume")) + hasVolume.getLabelSimple()));
+			text.setLabel(removeUnderscoresAndBraces(loc.getMenu("Text") + hasVolume.getLabelSimple()));
 		}
 	}
 }

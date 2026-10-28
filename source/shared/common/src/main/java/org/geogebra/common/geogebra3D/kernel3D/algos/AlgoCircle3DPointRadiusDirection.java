@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -24,11 +28,10 @@ import org.geogebra.common.kernel.kernelND.GeoPointND;
  *
  * @author matthieu
  */
-public class AlgoCircle3DPointRadiusDirection
-		extends AlgoCircle3DPointDirection {
+public class AlgoCircle3DPointRadiusDirection extends AlgoCircle3DPointDirection {
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param point
@@ -38,10 +41,9 @@ public class AlgoCircle3DPointRadiusDirection
 	 * @param radius
 	 *            radius
 	 */
-	public AlgoCircle3DPointRadiusDirection(Construction cons, GeoPointND point,
-			GeoNumberValue radius, GeoDirectionND forAxis) {
+	public AlgoCircle3DPointRadiusDirection(
+			Construction cons, GeoPointND point, GeoNumberValue radius, GeoDirectionND forAxis) {
 		super(cons, point, radius, forAxis);
-
 	}
 
 	@Override
@@ -55,11 +57,11 @@ public class AlgoCircle3DPointRadiusDirection
 	}
 
 	/**
-	 * 
+	 *
 	 * @return command string
 	 */
 	@Override
-	final protected String getCommandString() {
+	protected final String getCommandString() {
 		if (getForAxis() instanceof GeoCoordSys2D) {
 			return "CircleWithCenterARadiusBParallelToC";
 		}
@@ -68,13 +70,12 @@ public class AlgoCircle3DPointRadiusDirection
 	}
 
 	@Override
-	final protected boolean setCoordSys() {
+	protected final boolean setCoordSys() {
 		if (((GeoDirectionND) getForAxis()).getDirectionInD3() == null) { // e.g.
-																			// space
+			// space
 			return false;
 		}
 
 		return super.setCoordSys();
 	}
-
 }

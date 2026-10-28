@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.gwtutil;
 
 import java.util.Date;
@@ -48,8 +64,8 @@ public final class Cookies {
 	 * @param name the name of the cookie to be removed
 	 */
 	public static void removeCookie(String name) {
-		DomGlobal.document.cookie = Global.encodeURIComponent(name)
-				+ "=;expires=Fri, 02-Jan-1970 00:00:00 GMT";
+		DomGlobal.document.cookie =
+				Global.encodeURIComponent(name) + "=;expires=Fri, 02-Jan-1970 00:00:00 GMT";
 	}
 
 	/**
@@ -97,11 +113,9 @@ public final class Cookies {
 	 * @param domain the domain to be associated with this cookie
 	 * @param path the path to be associated with this cookie
 	 */
-	public static void setCookie(String name, String value, Date expires,
-			String domain, String path) {
-		String cookie = Global.encodeURIComponent(name)
-				+ '='
-				+ Global.encodeURIComponent(value);
+	public static void setCookie(
+			String name, String value, Date expires, String domain, String path) {
+		String cookie = Global.encodeURIComponent(name) + '=' + Global.encodeURIComponent(value);
 		if (expires != null) {
 			cookie += ";expires=" + expires.toGMTString();
 		}

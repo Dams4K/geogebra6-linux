@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.geos;
 
 import org.geogebra.common.kernel.Kernel;
@@ -24,8 +40,7 @@ public class SurfaceTransform {
 	 * @param m
 	 *            transform matrix
 	 */
-	public static void transform(FunctionNVar[] fun, Kernel kernel,
-			CoordMatrix4x4 m) {
+	public static void transform(FunctionNVar[] fun, Kernel kernel, CoordMatrix4x4 m) {
 		// current expressions
 		ExpressionNode[] expr = new ExpressionNode[3];
 		for (int i = 0; i < 3; i++) {
@@ -45,7 +60,6 @@ public class SurfaceTransform {
 
 			fun[row].setExpression(trans);
 		}
-
 	}
 
 	/**
@@ -56,12 +70,9 @@ public class SurfaceTransform {
 	 * @param plane
 	 *            mirroring plane
 	 */
-	public static void mirror(FunctionNVar[] fun, Kernel kernel,
-			GeoCoordSys2D plane) {
+	public static void mirror(FunctionNVar[] fun, Kernel kernel, GeoCoordSys2D plane) {
 		CoordMatrix4x4 m = plane.getCoordSys().getMatrixOrthonormal();
-		transform(fun, kernel,
-				CoordMatrix4x4.planeSymmetry(m.getVz(), m.getOrigin()));
-
+		transform(fun, kernel, CoordMatrix4x4.planeSymmetry(m.getVz(), m.getOrigin()));
 	}
 
 	/**
@@ -72,13 +83,12 @@ public class SurfaceTransform {
 	 * @param line
 	 *            mirroring line
 	 */
-	public static void mirror(FunctionNVar[] fun, Kernel kernel,
-			GeoLineND line) {
-		transform(fun, kernel,
+	public static void mirror(FunctionNVar[] fun, Kernel kernel, GeoLineND line) {
+		transform(
+				fun,
+				kernel,
 				CoordMatrix4x4.axialSymmetry(
-						line.getDirectionInD3().normalized(),
-						line.getStartInhomCoords()));
-
+						line.getDirectionInD3().normalized(), line.getStartInhomCoords()));
 	}
 
 	/**
@@ -93,32 +103,29 @@ public class SurfaceTransform {
 	 * @param tmpMatrix4x4
 	 *            helper matrix
 	 */
-	public static void rotate(FunctionNVar[] fun, Kernel kernel, NumberValue r,
-			GeoPointND s, CoordMatrix4x4 tmpMatrix4x4) {
-		CoordMatrix4x4.rotation4x4(r.getDouble(), s.getInhomCoordsInD3(),
-				tmpMatrix4x4);
+	public static void rotate(
+			FunctionNVar[] fun, Kernel kernel, NumberValue r, GeoPointND s, CoordMatrix4x4 tmpMatrix4x4) {
+		CoordMatrix4x4.rotation4x4(r.getDouble(), s.getInhomCoordsInD3(), tmpMatrix4x4);
 		transform(fun, kernel, tmpMatrix4x4);
-
 	}
 
 	/**
 	 * Rotates around z-axis
-	 * 
+	 *
 	 * @param fun
 	 *            functions
 	 * @param kernel
 	 *            kernel
-	 * 
+	 *
 	 * @param r
 	 *            angle
 	 * @param tmpMatrix4x4
 	 *            temp matrix
 	 */
-	public static void rotate(FunctionNVar[] fun, Kernel kernel, NumberValue r,
-			CoordMatrix4x4 tmpMatrix4x4) {
+	public static void rotate(
+			FunctionNVar[] fun, Kernel kernel, NumberValue r, CoordMatrix4x4 tmpMatrix4x4) {
 		CoordMatrix4x4.rotation4x4(r.getDouble(), tmpMatrix4x4);
 		transform(fun, kernel, tmpMatrix4x4);
-
 	}
 
 	/**
@@ -135,13 +142,16 @@ public class SurfaceTransform {
 	 * @param tmpMatrix4x4
 	 *            helper matrix
 	 */
-	public static void rotate(FunctionNVar[] fun, Kernel kernel, NumberValue r,
-			Coords s, GeoDirectionND orientation,
+	public static void rotate(
+			FunctionNVar[] fun,
+			Kernel kernel,
+			NumberValue r,
+			Coords s,
+			GeoDirectionND orientation,
 			CoordMatrix4x4 tmpMatrix4x4) {
-		CoordMatrix4x4.rotation4x4(orientation.getDirectionInD3().normalized(),
-				r.getDouble(), s, tmpMatrix4x4);
+		CoordMatrix4x4.rotation4x4(
+				orientation.getDirectionInD3().normalized(), r.getDouble(), s, tmpMatrix4x4);
 		transform(fun, kernel, tmpMatrix4x4);
-
 	}
 
 	/**
@@ -149,7 +159,7 @@ public class SurfaceTransform {
 	 *            functions
 	 * @param kernel
 	 *            kernel
-	 * 
+	 *
 	 * @param r
 	 *            angle
 	 * @param line
@@ -157,12 +167,17 @@ public class SurfaceTransform {
 	 * @param tmpMatrix4x4
 	 *            temp matrix
 	 */
-	public static void rotate(FunctionNVar[] fun, Kernel kernel, NumberValue r,
-			GeoLineND line, CoordMatrix4x4 tmpMatrix4x4) {
-		CoordMatrix4x4.rotation4x4(line.getDirectionInD3().normalized(),
-				r.getDouble(), line.getStartInhomCoords(), tmpMatrix4x4);
+	public static void rotate(
+			FunctionNVar[] fun,
+			Kernel kernel,
+			NumberValue r,
+			GeoLineND line,
+			CoordMatrix4x4 tmpMatrix4x4) {
+		CoordMatrix4x4.rotation4x4(
+				line.getDirectionInD3().normalized(),
+				r.getDouble(),
+				line.getStartInhomCoords(),
+				tmpMatrix4x4);
 		transform(fun, kernel, tmpMatrix4x4);
-
 	}
-
 }

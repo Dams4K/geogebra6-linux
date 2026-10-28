@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.cas.view;
 
 import java.awt.BorderLayout;
@@ -80,9 +96,6 @@ public abstract class CASTableCell extends JPanel {
 
 		add(northPanel, BorderLayout.NORTH);
 		add(outputPanel, BorderLayout.CENTER);
-		// add(showHideControl, app.borderEast());
-
-		return;
 	}
 
 	/**
@@ -113,7 +126,7 @@ public abstract class CASTableCell extends JPanel {
 	/**
 	 * Sets the width of the input panel. Use width = -1 to set width to the
 	 * full input string length.
-	 * 
+	 *
 	 * @param width
 	 *            desired width
 	 */
@@ -126,12 +139,11 @@ public abstract class CASTableCell extends JPanel {
 		}
 
 		inputPanel.setPreferredSize(d);
-
 	}
 
 	/**
 	 * Fill this component with input / output of given CAS cell
-	 * 
+	 *
 	 * @param cellValue
 	 *            CAS cell
 	 */
@@ -141,8 +153,7 @@ public abstract class CASTableCell extends JPanel {
 		String input = cellValue.getLocalizedInput();
 		inputPanel.setInput(input);
 		if (cellValue.isUseAsText()) {
-			inputPanel.setCommentColor(
-					GColorD.getAwtColor(cellValue.getObjectColor()));
+			inputPanel.setCommentColor(GColorD.getAwtColor(cellValue.getObjectColor()));
 		} else {
 			inputPanel.setCommentColor(GColorD.getAwtColor(GColor.BLACK));
 		}
@@ -160,8 +171,10 @@ public abstract class CASTableCell extends JPanel {
 			// #5119
 			outputPanel.setOutput(
 					cellValue.getOutput(StringTemplate.numericDefault),
-					cellValue.getLaTeXOutput(), evalCmdLocal,
-					cellValue.isError(), cellValue.getAlgebraColor(),
+					cellValue.getLaTeXOutput(),
+					evalCmdLocal,
+					cellValue.isError(),
+					cellValue.getAlgebraColor(),
 					cellValue.getKernel().getApplication());
 		}
 	}
@@ -202,7 +215,7 @@ public abstract class CASTableCell extends JPanel {
 
 	/**
 	 * change directly the text in the Input field of the cell
-	 * 
+	 *
 	 * @param input
 	 *            the input string
 	 */
@@ -213,7 +226,7 @@ public abstract class CASTableCell extends JPanel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if the InputArea has been set focused successfully, false
 	 *         otherwise
 	 */
@@ -256,5 +269,4 @@ public abstract class CASTableCell extends JPanel {
 		inputPanel.setOrientation();
 		outputPanel.setOrientation();
 	}
-
 }

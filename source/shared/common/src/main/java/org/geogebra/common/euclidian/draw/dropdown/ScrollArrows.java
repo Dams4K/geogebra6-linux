@@ -1,15 +1,31 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw.dropdown;
 
 import static org.geogebra.common.euclidian.draw.dropdown.DrawOptions.MARGIN;
 import static org.geogebra.common.euclidian.draw.dropdown.DrawOptions.ROUND;
 import static org.geogebra.common.gui.util.DropDownList.MAX_WIDTH;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GDimension;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.GPaint;
 import org.geogebra.common.awt.GRectangle;
-import org.geogebra.common.factories.AwtFactory;
 
 class ScrollArrows {
 
@@ -23,15 +39,11 @@ class ScrollArrows {
 	}
 
 	void update(int left, int top, int height, GDimension dimension) {
-		up = AwtFactory.getPrototype().newRectangle(dimension.getWidth(),
-				dimension.getHeight() / 2);
-		down = AwtFactory.getPrototype()
-				.newRectangle(dimension.getWidth(), dimension.getHeight() / 2);
+		up = AwtFactory.getPrototype().newRectangle(dimension.getWidth(), dimension.getHeight() / 2);
+		down = AwtFactory.getPrototype().newRectangle(dimension.getWidth(), dimension.getHeight() / 2);
 		up.setBounds(left, top, (int) up.getWidth(), (int) up.getHeight());
-		down.setBounds(left, top + height
-						- (int) down.getHeight(),
-				(int) down.getWidth(),
-				(int) down.getHeight());
+		down.setBounds(
+				left, top + height - (int) down.getHeight(), (int) down.getWidth(), (int) down.getHeight());
 	}
 
 	void draw(GGraphics2D g2, GPaint backgroundColor) {
@@ -58,8 +70,7 @@ class ScrollArrows {
 		drawDown(g2, x2, y2, w2, h2);
 	}
 
-	void drawUp(GGraphics2D g2, int left, int top, int width,
-			int height) {
+	void drawUp(GGraphics2D g2, int left, int top, int width, int height) {
 		g2.setColor(GColor.DARK_GRAY);
 
 		int middleX = left + width / 2;
@@ -77,8 +88,7 @@ class ScrollArrows {
 		AwtFactory.fillTriangle(g2, x1, y1, x2, y1, middleX, y3);
 	}
 
-	void drawDown(GGraphics2D g2, int left, int top, int width,
-			int height) {
+	void drawDown(GGraphics2D g2, int left, int top, int width, int height) {
 		g2.setColor(GColor.DARK_GRAY);
 		int middleX = left + width / 2;
 
@@ -100,13 +110,11 @@ class ScrollArrows {
 	}
 
 	int getUpBottom() {
-		return (int) (up.getBounds().getY()
-				+ up.getBounds().getHeight());
+		return (int) (up.getBounds().getY() + up.getBounds().getHeight());
 	}
 
 	int getDownBottom() {
-		return (int) (down.getBounds().getY()
-				+ down.getBounds().getHeight());
+		return (int) (down.getBounds().getY() + down.getBounds().getHeight());
 	}
 
 	boolean intersect(OptionItem item) {
@@ -140,8 +148,7 @@ class ScrollArrows {
 	boolean clip(GGraphics2D g2, OptionItem item, int dragOffset) {
 		clip = dragOffset != 0 && intersect(item);
 		if (clip) {
-			g2.setClip(item.getLeft(), getUpBottom(), (int) item.getBoundsWidth(),
-					distanceBetween(), true);
+			g2.setClip(item.getLeft(), getUpBottom(), (int) item.getBoundsWidth(), distanceBetween());
 		}
 		return clip;
 	}

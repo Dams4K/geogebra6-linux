@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import java.util.ArrayList;
@@ -13,9 +29,9 @@ import com.google.j2objc.annotations.Weak;
 @SuppressWarnings("deprecation")
 @Deprecated
 /*
-* This class is not UI independent that's why it can not be used by mobile. Logic needs changes later to
-* be commonly usable
-* */
+ * This class is not UI independent that's why it can not be used by mobile. Logic needs changes later to
+ * be commonly usable
+ * */
 public abstract class OptionsModel {
 	private Object[] geos; // currently selected geos
 
@@ -92,8 +108,7 @@ public abstract class OptionsModel {
 
 	public void storeUndoInfo() {
 		if (app != null) {
-			app.getKernel().getConstruction().getUndoManager()
-					.storeUndoInfo();
+			app.getKernel().getConstruction().getUndoManager().storeUndoInfo();
 		}
 	}
 

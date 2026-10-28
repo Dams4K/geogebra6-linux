@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.util;
 
 import java.util.HashMap;
@@ -13,7 +29,7 @@ import org.gwtproject.user.client.ui.FlowPanel;
 /**
  * Group of toggles to switch between probability modes
  */
-public class ProbabilityModeGroup extends FlowPanel implements SetLabels {
+public final class ProbabilityModeGroup extends FlowPanel implements SetLabels {
 	private final Map<Integer, ToggleButton> buttons;
 	private final Map<Integer, String> tooltips;
 	private final Localization loc;
@@ -72,12 +88,11 @@ public class ProbabilityModeGroup extends FlowPanel implements SetLabels {
 	 * @return if button was toggled or not.
 	 */
 	public boolean handle(Object source) {
-		if (!(source instanceof  ToggleButton)) {
+		if (!(source instanceof ToggleButton toggleButton)) {
 			return false;
 		}
-		ToggleButton sourceButton = (ToggleButton) source;
-		buttons.values().forEach(button -> button.setSelected(button == sourceButton));
-		return buttons.containsValue(sourceButton);
+		buttons.values().forEach(button -> button.setSelected(button == toggleButton));
+		return buttons.containsValue(toggleButton);
 	}
 
 	/**
@@ -86,7 +101,6 @@ public class ProbabilityModeGroup extends FlowPanel implements SetLabels {
 	 */
 	public void setMode(int mode) {
 		buttons.forEach((k, v) -> v.setSelected(k == mode));
-
 	}
 
 	/**
@@ -95,7 +109,7 @@ public class ProbabilityModeGroup extends FlowPanel implements SetLabels {
 	 * -1 for none.
 	 */
 	public int getValue() {
-		for (Map.Entry<Integer, ToggleButton> entry: buttons.entrySet()) {
+		for (Map.Entry<Integer, ToggleButton> entry : buttons.entrySet()) {
 			if (entry.getValue().isSelected()) {
 				return entry.getKey();
 			}

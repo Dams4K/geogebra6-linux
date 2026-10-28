@@ -49,7 +49,6 @@ package com.himamis.retex.renderer.share;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-import com.himamis.retex.renderer.share.platform.geom.Area;
 import com.himamis.retex.renderer.share.platform.graphics.Graphics2DInterface;
 
 /**
@@ -61,8 +60,7 @@ class VerticalBox extends Box {
 	private double rightMostPos = -Double.MAX_VALUE;
 	protected final ArrayList<Box> children = new ArrayList<Box>();
 
-	public VerticalBox() {
-	}
+	public VerticalBox() {}
 
 	public VerticalBox(Box b) {
 		add(b);
@@ -110,8 +108,7 @@ class VerticalBox extends Box {
 
 	private void recalculateWidth(Box b) {
 		leftMostPos = Math.min(leftMostPos, b.shift);
-		rightMostPos = Math.max(rightMostPos,
-				b.shift + (b.width > 0 ? b.width : 0));
+		rightMostPos = Math.max(rightMostPos, b.shift + (b.width > 0 ? b.width : 0));
 		width = rightMostPos - leftMostPos;
 	}
 
@@ -145,36 +142,6 @@ class VerticalBox extends Box {
 		endDraw(g2);
 	}
 
-	@Override
-	public Area getArea() {
-		// final Area area = new Area();
-		final Area area = geom.createArea();
-		// final AffineTransform af = AffineTransform.getTranslateInstance(0.,
-		// -height);
-		final double afX = 0;
-		double afY = -height;
-
-		for (final Box b : children) {
-			if (b instanceof StrutBox) {
-				// af.translate(0., b.getHeight() + b.getDepth());
-				afY += b.getHeight() + b.getDepth();
-			} else {
-				final Area a = b.getArea();
-				if (a == null) {
-					return null;
-				}
-				// af.translate(0., b.getHeight());
-				afY += b.getHeight();
-				// a.transform(af);
-				a.translate(afX, afY);
-				area.add(a);
-				// af.translate(0., b.getDepth());
-				afY += b.getDepth();
-			}
-		}
-		return area;
-	}
-
 	public int getSize() {
 		return children.size();
 	}
@@ -185,9 +152,8 @@ class VerticalBox extends Box {
 		// highest)
 		// until a font id is found that's not equal to NO_FONT
 		FontInfo fontId = null;
-		for (ListIterator it = children
-				.listIterator(children.size()); fontId == null
-						&& it.hasPrevious();) {
+		for (ListIterator it = children.listIterator(children.size());
+				fontId == null && it.hasPrevious(); ) {
 			fontId = ((Box) it.previous()).getLastFont();
 		}
 
@@ -198,13 +164,13 @@ class VerticalBox extends Box {
 	public void inspect(BoxConsumer handler, BoxPosition position) {
 		super.inspect(handler, position);
 
-		double yPos = position.y - height;
-		double baseline = position.baseline - height;
+		double yPos = position.y() - height;
+		double baseline = position.baseline() - height;
 		for (Box box : children) {
 			yPos += box.getHeight();
 			baseline += box.getHeight();
-			BoxPosition current = new BoxPosition(position.x + box.getShift() - leftMostPos,
-					yPos, position.scale, baseline);
+			BoxPosition current = new BoxPosition(
+					position.x() + box.getShift() - leftMostPos, yPos, position.scale(), baseline);
 			box.inspect(handler, current);
 			yPos += box.getDepth();
 			baseline += box.getDepth();

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.scripting;
 
 import java.util.Set;
@@ -43,64 +59,65 @@ public class CmdSetDecoration extends CmdScripting {
 		int n = c.getArgumentNumber();
 
 		switch (n) {
-		case 2:
-			GeoElement[] arg = resArgs(c);
-			if (!arg[1].isNumberValue()) {
-				throw argErr(c, arg[1]);
-			}
+			case 2:
+				GeoElement[] arg = resArgs(c);
+				if (!arg[1].isNumberValue()) {
+					throw argErr(c, arg[1]);
+				}
 
-			int style = (int) arg[1].evaluateDouble();
+				int style = (int) arg[1].evaluateDouble();
 
-			// For invalid number we assume it's 0
-			// We do this also for SetPointStyle
+				// For invalid number we assume it's 0
+				// We do this also for SetPointStyle
 
-			if (style < 0) {
-				style = 0;
-			}
-			if (arg[0].isGeoAngle() || arg[0].isGeoSegment()) {
-
-				arg[0].setDecorationType(style);
-			} else if (arg[0].isFillable()) {
-				FillType[] types = FillType.values();
-				if (style >= types.length) {
+				if (style < 0) {
 					style = 0;
 				}
-				FillType type = types[style];
-				if (!availableTypes.contains(type) || type == FillType.SYMBOLS
-						|| type == FillType.IMAGE) {
-					// we could add SetDecoration(poly1, 8 pic1),
-					// SetDecoration(poly1, 7, text) for these
-					// also SetDecoration(poly1, 1, hatchAngle)
-					style = 0;
+				if (arg[0].isGeoAngle() || arg[0].isGeoSegment()) {
+
+					arg[0].setDecorationType(style);
+				} else if (arg[0].isFillable()) {
+					FillType[] types = FillType.values();
+					if (style >= types.length) {
+						style = 0;
+					}
+					FillType type = types[style];
+					if (!availableTypes.contains(type)
+							|| type == FillType.SYMBOLS
+							|| type == FillType.IMAGE) {
+						// we could add SetDecoration(poly1, 8 pic1),
+						// SetDecoration(poly1, 7, text) for these
+						// also SetDecoration(poly1, 1, hatchAngle)
+						style = 0;
+					}
+					arg[0].setFillType(types[style]);
 				}
-				arg[0].setFillType(types[style]);
-			}
 
-			arg[0].updateVisualStyleRepaint(GProperty.DECORATION);
+				arg[0].updateVisualStyleRepaint(GProperty.DECORATION);
 
-			return arg;
-		case 3:
-			GeoElement[] args = resArgs(c);
-			if (!args[1].isNumberValue()) {
-				throw argErr(c, args[1]);
-			}
-			if (!args[2].isNumberValue()) {
-				throw argErr(c, args[2]);
-			}
+				return arg;
+			case 3:
+				GeoElement[] args = resArgs(c);
+				if (!args[1].isNumberValue()) {
+					throw argErr(c, args[1]);
+				}
+				if (!args[2].isNumberValue()) {
+					throw argErr(c, args[2]);
+				}
 
-			int startStyle = getValidStyle(args[1]);
-			int endStyle = getValidStyle(args[2]);
+				int startStyle = getValidStyle(args[1]);
+				int endStyle = getValidStyle(args[2]);
 
-			if (args[0] instanceof GeoSegment) {
-				((GeoSegment) args[0]).setStartStyle(SegmentStyle.values()[startStyle]);
-				((GeoSegment) args[0]).setEndStyle(SegmentStyle.values()[endStyle]);
-			}
+				if (args[0] instanceof GeoSegment) {
+					((GeoSegment) args[0]).setStartStyle(SegmentStyle.values()[startStyle]);
+					((GeoSegment) args[0]).setEndStyle(SegmentStyle.values()[endStyle]);
+				}
 
-			args[0].updateVisualStyleRepaint(GProperty.COMBINED);
-			return args;
+				args[0].updateVisualStyleRepaint(GProperty.COMBINED);
+				return args;
 
-		default:
-			throw argNumErr(c);
+			default:
+				throw argNumErr(c);
 		}
 	}
 
@@ -111,5 +128,4 @@ public class CmdSetDecoration extends CmdScripting {
 		}
 		return style;
 	}
-
 }

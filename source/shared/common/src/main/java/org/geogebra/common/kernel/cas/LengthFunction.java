@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.cas;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -16,7 +32,7 @@ class LengthFunction implements UnivariateFunction {
 	 *            derivative of measured function
 	 * @param f measured function
 	 */
-	public LengthFunction(GeoFunction df, GeoFunction f) {
+	LengthFunction(GeoFunction df, GeoFunction f) {
 		this.df = df;
 		this.f = f;
 	}
@@ -35,7 +51,7 @@ class LengthFunction implements UnivariateFunction {
 	 * @param b interval max
 	 * @return integral value
 	 */
-	public double integral(double a, double b) {
+	double integral(double a, double b) {
 		double dist = b - a;
 		double edges = 0;
 		double dx = dist * Kernel.MAX_PRECISION;

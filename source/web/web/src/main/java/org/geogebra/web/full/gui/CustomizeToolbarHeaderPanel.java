@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui;
 
 import org.geogebra.common.main.App;
@@ -13,12 +29,13 @@ import org.gwtproject.user.client.ui.Widget;
 /**
  * GUI for toolbar customization
  */
-public class CustomizeToolbarHeaderPanel extends AuxiliaryHeaderPanel {
+public final class CustomizeToolbarHeaderPanel extends AuxiliaryHeaderPanel {
 
 	/**
 	 * General toolbar id
 	 */
-	protected static final int GENERAL = -1;
+	static final int GENERAL = -1;
+
 	private AppW app;
 	private FlowPanel buttons;
 	private int selectedViewId = GENERAL;
@@ -35,17 +52,16 @@ public class CustomizeToolbarHeaderPanel extends AuxiliaryHeaderPanel {
 	}
 
 	private static class ViewButton extends ToggleButton {
-		private int id;
+		private final int id;
 
-		public ViewButton(ResourcePrototype img, int viewId) {
+		ViewButton(ResourcePrototype img, int viewId) {
 			super(img);
 			this.id = viewId;
 		}
 
-		public int getId() {
+		int getId() {
 			return id;
 		}
-
 	}
 
 	/**
@@ -73,13 +89,13 @@ public class CustomizeToolbarHeaderPanel extends AuxiliaryHeaderPanel {
 		SvgPerspectiveResources pr = SvgPerspectiveResources.INSTANCE;
 		final ToggleButton btnGeneral = new ToggleButton(pr.menu_icon_graphics());
 		buttons.add(btnGeneral);
-		DockPanelW[] panels = ((GuiManagerW) app.getGuiManager()).getLayout()
-				.getDockManager().getPanels();
+		DockPanelW[] panels =
+				((GuiManagerW) app.getGuiManager()).getLayout().getDockManager().getPanels();
 		for (DockPanelW panel : panels) {
 			final int viewId = panel.getViewId();
 			if (panel.canCustomizeToolbar()) {
 				Log.debug("[customize] view id for button is " + viewId);
-				ResourcePrototype res = null;
+				ResourcePrototype res;
 				if (viewId == App.VIEW_DATA_ANALYSIS) {
 					res = pr.menu_icon_probability();
 				} else if (App.isView3D(viewId)) {
@@ -105,7 +121,7 @@ public class CustomizeToolbarHeaderPanel extends AuxiliaryHeaderPanel {
 	 * @param btn - clicked button
 	 * @param viewId - view ID
 	 */
-	protected void selectAndUpdate(ToggleButton btn, int viewId) {
+	private void selectAndUpdate(ToggleButton btn, int viewId) {
 		uncheckAll(btn);
 		selectedViewId = viewId;
 		listener.update(selectedViewId);

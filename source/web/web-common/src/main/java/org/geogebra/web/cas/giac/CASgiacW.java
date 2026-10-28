@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.cas.giac;
 
 import java.util.ArrayList;
@@ -24,7 +40,7 @@ import jsinterop.base.Js;
 
 /**
  * Web implementation of Giac CAS
- * 
+ *
  * @author Michael Borcherds, based on Reduce version
  *
  */
@@ -32,12 +48,13 @@ public class CASgiacW extends CASgiac {
 
 	/** kernel */
 	Kernel kernel;
+
 	private static final boolean externalCAS = Browser.externalCAS();
 	Function caseval;
 
 	/**
 	 * Creates new CAS
-	 * 
+	 *
 	 * @param casParser
 	 *            parser
 	 * @param kernel
@@ -64,7 +81,7 @@ public class CASgiacW extends CASgiac {
 		try {
 			// replace Unicode when sending to JavaScript
 			// (encoding problem)
-			String processedExp = casParser.replaceIndices(exp, true);
+			String processedExp = CASparser.replaceIndices(exp, true);
 			String ret = evaluateRaw(processedExp);
 
 			return postProcess(ret);
@@ -87,7 +104,7 @@ public class CASgiacW extends CASgiac {
 		// restart Giac before each call
 		// native Giac needs same initString as desktop
 		evaluateRaw(externalCAS ? initString : initStringWeb, externalCAS);
-		
+
 		// GGB-850
 		CustomFunctions[] init = CustomFunctions.values();
 		CustomFunctions.setDependencies();
@@ -102,19 +119,17 @@ public class CASgiacW extends CASgiac {
 			/*
 			 * Check if the command uses any "extra" custom functions for
 			 * example ggbisPolynomial()
-			 * 
+			 *
 			 * (using a string compare which is robust)
-			 * 
+			 *
 			 * It's just possible that we will load commands that aren't needed
 			 * in rare circumstances
 			 */
-			if (function.functionName == null || (foundInInput =
-					exp.contains(function.functionName))) {
+			if (function.functionName == null || (foundInInput = exp.contains(function.functionName))) {
 				evaluateRaw(function.definitionString, externalCAS);
 				/* Some commands may require additional commands to load. */
 				if (foundInInput) {
-					ArrayList<CustomFunctions> dependencies = CustomFunctions
-							.prereqs(function);
+					ArrayList<CustomFunctions> dependencies = CustomFunctions.prereqs(function);
 					for (CustomFunctions dep : dependencies) {
 						Log.debug(function + " implicitly loads " + dep);
 						evaluateRaw(dep.definitionString, externalCAS);
@@ -177,8 +192,7 @@ public class CASgiacW extends CASgiac {
 
 	private void updateCaseval() {
 		if (caseval == null && Js.isTruthy(GeoGebraGlobal.__ggb__giac)) {
-			caseval = GeoGebraGlobal.__ggb__giac.cwrap("caseval", "string",
-					JsArray.of("string"));
+			caseval = GeoGebraGlobal.__ggb__giac.cwrap("caseval", "string", JsArray.of("string"));
 		}
 	}
 
@@ -192,7 +206,7 @@ public class CASgiacW extends CASgiac {
 
 	/**
 	 * Make sure an instance of giac.js is loaded
-	 * 
+	 *
 	 * @param wasm
 	 *            whether to use WebAssembly or JavaScript
 	 */
@@ -212,7 +226,6 @@ public class CASgiacW extends CASgiac {
 			});
 
 			return;
-
 		}
 
 		Log.debug("Loading " + versionString);

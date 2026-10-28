@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
@@ -57,8 +73,8 @@ public class ChartFilling {
 	 * @param fillShape
 	 *            shape to be filled
 	 */
-	public void fill(GGraphics2D g2, GShape fillShape, ChartStyle chartStyle,
-			int index, Drawable drawable) {
+	public void fill(
+			GGraphics2D g2, GShape fillShape, ChartStyle chartStyle, int index, Drawable drawable) {
 		if (drawable.isForceNoFill()) {
 			return;
 		}
@@ -73,22 +89,30 @@ public class ChartFilling {
 			g2.fill(fillShape);
 		} else if (chartStyle.getBarFillType(index) == FillType.IMAGE
 				&& !StringUtil.empty(chartStyle.getBarImage(index))) {
-			setTextureFromBarOrGeo(g2, geo, chartStyle.getBarImage(index), hatchingHandler);
+			setTextureFromBarOrGeo(
+					g2, geo, chartStyle.getBarImage(index), hatchingHandler, chartStyle.getBarAlpha(index));
 			g2.fill(fillShape);
 		} else if (geo.isHatchingEnabled()
 				|| (geo.getFillType() == FillType.IMAGE && geo.getFillImage() != null)) {
 			drawable.fillWithHatchOrImage(g2, fillShape, barColor);
-		}  else if (geo.getAlphaValue() > 0.0f) {
+		} else if (geo.getAlphaValue() > 0.0f) {
 			setColorFromBarOrGeo(g2, geo, barColor, chartStyle.getBarAlpha(index));
 			// magic for switching off dash emulation moved to GGraphics2DW
 			g2.fill(fillShape);
 		}
 	}
 
-	private void setHatchPaint(Drawable drawable, GColor barColor, HatchingHandler hatchingHandler,
-			ChartStyle chartStyle, int index, GGraphics2D g2) {
-		GPaint gpaint = hatchingHandler.getHatchingTexture(drawable.getDecoStroke(),
-				barColor, drawable.getGeoElement().getBackgroundColor(),
+	private void setHatchPaint(
+			Drawable drawable,
+			GColor barColor,
+			HatchingHandler hatchingHandler,
+			ChartStyle chartStyle,
+			int index,
+			GGraphics2D g2) {
+		GPaint gpaint = hatchingHandler.getHatchingTexture(
+				drawable.getDecoStroke(),
+				barColor,
+				drawable.getGeoElement().getBackgroundColor(),
 				chartStyle.getBarAlpha(index),
 				chartStyle.getBarHatchDistance(index),
 				chartStyle.getBarHatchAngle(index),
@@ -98,19 +122,17 @@ public class ChartFilling {
 		g2.setPaint(gpaint);
 	}
 
-	private void setColorFromBarOrGeo(GGraphics2D g2, GeoElement geo,
-			GColor barColor, double barAlpha) {
+	private void setColorFromBarOrGeo(
+			GGraphics2D g2, GeoElement geo, GColor barColor, double barAlpha) {
 		double alpha = barAlpha >= 0 ? barAlpha : geo.getAlphaValue();
-		GColor fillColor = GColor.newColor(barColor.getRed(), barColor.getGreen(),
-				barColor.getBlue(), (int) (255 * alpha));
+		GColor fillColor = GColor.newColor(
+				barColor.getRed(), barColor.getGreen(), barColor.getBlue(), (int) (255 * alpha));
 		g2.setPaint(fillColor);
 	}
 
-	private void setTextureFromBarOrGeo(GGraphics2D g2, GeoElement geo,
-			String fn, HatchingHandler hatchingHandler) {
-		MyImage externalImageAdapter =
-				application.getExternalImageAdapter(fn, 0, 0);
-		hatchingHandler.setTexture(g2,
-				externalImageAdapter, geo, geo.getBackgroundColor(), geo.getAlphaValue());
+	private void setTextureFromBarOrGeo(
+			GGraphics2D g2, GeoElement geo, String fn, HatchingHandler hatchingHandler, double alpha) {
+		MyImage externalImageAdapter = application.getExternalImageAdapter(fn, 0, 0);
+		hatchingHandler.setTexture(g2, externalImageAdapter, geo, geo.getBackgroundColor(), alpha);
 	}
 }

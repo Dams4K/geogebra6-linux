@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -41,8 +45,8 @@ public class AlgoConicPartCircumcircle3D extends AlgoConicPartCircumcircleND {
 	 * @param type
 	 *            arc or sector
 	 */
-	public AlgoConicPartCircumcircle3D(Construction cons, String label,
-			GeoPointND A, GeoPointND B, GeoPointND C, int type) {
+	public AlgoConicPartCircumcircle3D(
+			Construction cons, String label, GeoPointND A, GeoPointND B, GeoPointND C, int type) {
 		super(cons, label, A, B, C, type);
 	}
 
@@ -59,33 +63,32 @@ public class AlgoConicPartCircumcircle3D extends AlgoConicPartCircumcircleND {
 
 	@Override
 	protected void computeSinglePoint() {
-		GeoConic3D.setSinglePoint((GeoConic3D) conicPart,
-				A.getInhomCoordsInD(3));
+		GeoConic3D.setSinglePoint((GeoConic3D) conicPart, A.getInhomCoordsInD(3));
 		super.computeSinglePoint();
 	}
 
 	@Override
-	final public GeoPoint getA() {
+	public final GeoPoint getA() {
 		return algo.getPoint2D(0);
 	}
 
 	/**
 	 * Method for LocusEqu.
-	 * 
+	 *
 	 * @return second point.
 	 */
 	@Override
-	final public GeoPoint getB() {
+	public final GeoPoint getB() {
 		return algo.getPoint2D(1);
 	}
 
 	/**
 	 * Method for LocusEqu.
-	 * 
+	 *
 	 * @return third point.
 	 */
 	@Override
-	final public GeoPoint getC() {
+	public final GeoPoint getC() {
 		return algo.getPoint2D(2);
 	}
 
@@ -93,5 +96,4 @@ public class AlgoConicPartCircumcircle3D extends AlgoConicPartCircumcircleND {
 	public GeoConicPart3D getConicPart() {
 		return (GeoConicPart3D) super.getConicPart();
 	}
-
 }

@@ -1,6 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,11 +26,11 @@ import java.util.Objects;
 
 import org.geogebra.common.BaseUnitTest;
 import org.geogebra.common.kernel.geos.GeoFunction;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class PlotConditionalFunctionTest extends BaseUnitTest {
+class PlotConditionalFunctionTest extends BaseUnitTest {
 	@Test
-	public void testGetLimitInequalities() {
+	void testGetLimitInequalities() {
 		List<Double> expected = Collections.singletonList(5.0);
 		limitShouldBe("x < 5", expected);
 		limitShouldBe("5 < x", expected);
@@ -42,7 +58,7 @@ public class PlotConditionalFunctionTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testGetLimitAndIntervals() {
+	void testGetLimitAndIntervals() {
 		List<Double> expected = Arrays.asList(-5.0, 5.0);
 		limitShouldBe("-5 < x < 5", expected);
 		limitShouldBe("-5 <= x <= 5", expected);
@@ -50,7 +66,7 @@ public class PlotConditionalFunctionTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testLimitInvalid() {
+	void testLimitInvalid() {
 		limitShouldBe("x < x");
 		limitShouldBe("f(x):=2 < 3");
 		limitShouldBe("2x > 3");
@@ -61,13 +77,12 @@ public class PlotConditionalFunctionTest extends BaseUnitTest {
 	private void limitShouldBe(String command, List<Double> expected) {
 		GeoFunction f = add(command);
 		List<Double> limits = new ArrayList<>();
-		PlotConditionalFunction.getConditionLimit(Objects.requireNonNull(
-				f.getFunctionExpression()).wrap(), limits);
+		PlotConditionalFunction.getConditionLimit(
+				Objects.requireNonNull(f.getFunctionExpression()).wrap(), limits);
 		assertEquals(expected, limits);
 	}
 
 	private void limitShouldBe(String command, Double... expected) {
 		limitShouldBe(command, Arrays.asList(expected));
 	}
-
 }

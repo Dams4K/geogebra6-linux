@@ -1,18 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * Area of polygon P[0], ..., P[n]
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -28,7 +27,7 @@ import org.geogebra.common.kernel.kernelND.GeoConicPartND;
 
 /**
  * Computes the area of a conic section
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class AlgoAreaConic extends AlgoElement {
@@ -37,7 +36,7 @@ public class AlgoAreaConic extends AlgoElement {
 	private GeoNumeric area; // output
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -100,7 +99,7 @@ public class AlgoAreaConic extends AlgoElement {
 			area.setValue(conicPart.getArea());
 			/*
 			 * int partType = conicPart.getConicPartType();
-			 * 
+			 *
 			 * if (partType == GeoConicPart.CONIC_PART_SECTOR) { //
 			 * circumference of sector area.setValue(conicPart.getValue()); }
 			 * else { // area of arc is undefined area.setUndefined(); }
@@ -112,23 +111,22 @@ public class AlgoAreaConic extends AlgoElement {
 		// standard case: area of conic
 		int type = conic.getType();
 		switch (type) {
-		case GeoConicNDConstants.CONIC_SINGLE_POINT:
-		case GeoConicNDConstants.CONIC_CIRCLE:
-			// r is length of one of the half axes
-			double r = conic.getHalfAxis(0);
-			area.setValue(r * r * Math.PI);
-			break;
+			case GeoConicNDConstants.CONIC_SINGLE_POINT:
+			case GeoConicNDConstants.CONIC_CIRCLE:
+				// r is length of one of the half axes
+				double r = conic.getHalfAxis(0);
+				area.setValue(r * r * Math.PI);
+				break;
 
-		case GeoConicNDConstants.CONIC_ELLIPSE:
-			// lengths of the half axes
-			double a = conic.getHalfAxis(0);
-			double b = conic.getHalfAxis(1);
-			area.setValue(a * b * Math.PI);
-			break;
+			case GeoConicNDConstants.CONIC_ELLIPSE:
+				// lengths of the half axes
+				double a = conic.getHalfAxis(0);
+				double b = conic.getHalfAxis(1);
+				area.setValue(a * b * Math.PI);
+				break;
 
-		default:
-			area.setUndefined();
+			default:
+				area.setUndefined();
 		}
 	}
-
 }

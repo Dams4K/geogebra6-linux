@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -47,8 +51,11 @@ public class AlgoOrthoLinePointDirectionDirection extends AlgoElement3D {
 	 * @param direction2
 	 *            orthogonal direction
 	 */
-	public AlgoOrthoLinePointDirectionDirection(Construction cons, String label,
-			GeoPointND point, GeoDirectionND direction1,
+	public AlgoOrthoLinePointDirectionDirection(
+			Construction cons,
+			String label,
+			GeoPointND point,
+			GeoDirectionND direction1,
 			GeoDirectionND direction2) {
 		super(cons);
 		this.point = point;
@@ -57,9 +64,8 @@ public class AlgoOrthoLinePointDirectionDirection extends AlgoElement3D {
 		line = new GeoLine3D(cons);
 
 		setInputOutput(
-				new GeoElement[] { (GeoElement) point, (GeoElement) direction1,
-						(GeoElement) direction2 },
-				new GeoElement[] { getLine() });
+				new GeoElement[] {(GeoElement) point, (GeoElement) direction1, (GeoElement) direction2},
+				new GeoElement[] {getLine()});
 
 		// compute line
 		compute();
@@ -78,34 +84,40 @@ public class AlgoOrthoLinePointDirectionDirection extends AlgoElement3D {
 	@Override
 	public void compute() {
 
-		Coords direction = direction1.getDirectionInD3()
-				.crossProduct(direction2.getDirectionInD3());
+		Coords direction = direction1.getDirectionInD3().crossProduct(direction2.getDirectionInD3());
 		if (direction.isZero()) {
 			line.setUndefined();
 		} else {
 			line.setCoord(point.getInhomCoordsInD3(), direction);
 		}
-
 	}
 
 	@Override
 	public String toString(StringTemplate tpl) {
 		// point, plane, line
 		if (direction1 instanceof GeoCoordSys2D) {
-			return getLoc().getPlain("LineThroughAParallelToBPerpendicularToC",
-					point.getLabel(tpl), direction1.getLabel(tpl),
-					direction2.getLabel(tpl));
+			return getLoc()
+					.getPlain(
+							"LineThroughAParallelToBPerpendicularToC",
+							point.getLabel(tpl),
+							direction1.getLabel(tpl),
+							direction2.getLabel(tpl));
 		}
 		// point, line, plane
 		if (direction2 instanceof GeoCoordSys2D) {
-			return getLoc().getPlain("LineThroughAPerpendicularToBParallelToC",
-					point.getLabel(tpl), direction1.getLabel(tpl),
-					direction2.getLabel(tpl));
+			return getLoc()
+					.getPlain(
+							"LineThroughAPerpendicularToBParallelToC",
+							point.getLabel(tpl),
+							direction1.getLabel(tpl),
+							direction2.getLabel(tpl));
 		}
 		// point, line, line
-		return getLoc().getPlain("LineThroughAPerpendicularToBAndC",
-				point.getLabel(tpl), direction1.getLabel(tpl),
-				direction2.getLabel(tpl));
+		return getLoc()
+				.getPlain(
+						"LineThroughAPerpendicularToBAndC",
+						point.getLabel(tpl),
+						direction1.getLabel(tpl),
+						direction2.getLabel(tpl));
 	}
-
 }

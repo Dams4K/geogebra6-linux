@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.gui.layout;
 
 import java.awt.Dimension;
@@ -18,9 +34,9 @@ import org.geogebra.desktop.util.ImageResourceD;
 
 /**
  * JPopupMenu to offer Perspective choices
- * 
+ *
  * @author G.Sturr
- * 
+ *
  */
 public class PerspectivePanel extends JPopupMenu {
 
@@ -37,7 +53,7 @@ public class PerspectivePanel extends JPopupMenu {
 
 	/**
 	 * Constructs a PerspectivePanel
-	 * 
+	 *
 	 * @param app application
 	 * @param dockBar dockbar
 	 */
@@ -63,7 +79,7 @@ public class PerspectivePanel extends JPopupMenu {
 
 	/**
 	 * call super.setVisible()
-	 * 
+	 *
 	 * @param b
 	 *            flag
 	 */
@@ -104,15 +120,13 @@ public class PerspectivePanel extends JPopupMenu {
 			return;
 		}
 		JMenuItem tmpItem = new JMenuItem(changePerspectiveAction);
-		tmpItem.setText(app.getLocalization()
-				.getMenu(layout.getDefaultPerspectives(i).getId()));
+		tmpItem.setText(
+				app.getLocalization().getMenu(layout.getDefaultPerspectives(i).getId()));
 		tmpItem.setActionCommand("d" + i);
 
 		Icon ic;
 		if (icon != null) {
 			ic = app.getScaledIcon(icon);
-			// GeoGebraIcon.ensureIconSize((ImageIcon) ic, new
-			// Dimension(40,40));
 		} else {
 			ic = app.getEmptyIcon();
 		}
@@ -123,7 +137,6 @@ public class PerspectivePanel extends JPopupMenu {
 		tmpItem.setMaximumSize(d);
 
 		add(tmpItem);
-
 	}
 
 	/**
@@ -138,14 +151,11 @@ public class PerspectivePanel extends JPopupMenu {
 			public void actionPerformed(ActionEvent e) {
 				// default perspectives start with a "d"
 				int index = Integer.parseInt(e.getActionCommand().substring(1));
-				boolean changed = layout.applyPerspective(
-							layout.getDefaultPerspectives(index));
+				boolean changed = layout.applyPerspective(layout.getDefaultPerspectives(index));
 				if (changed) {
 					app.storeUndoInfo();
 				}
 			}
 		};
-
 	}
-
 }

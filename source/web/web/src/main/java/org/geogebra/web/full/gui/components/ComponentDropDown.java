@@ -1,13 +1,33 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.components;
+
+import static org.geogebra.common.properties.PropertyView.ConfigurationUpdateDelegate;
+import static org.geogebra.common.properties.PropertyView.Dropdown;
+import static org.geogebra.common.properties.PropertyView.VisibilityUpdateDelegate;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.geogebra.common.euclidian.event.PointerEventType;
 import org.geogebra.common.gui.SetLabels;
-import org.geogebra.common.properties.NamedEnumeratedProperty;
 import org.geogebra.web.full.css.MaterialDesignResources;
 import org.geogebra.web.html5.gui.BaseWidgetFactory;
+import org.geogebra.web.html5.gui.menu.AriaMenuItem;
 import org.geogebra.web.html5.gui.util.AriaHelper;
 import org.geogebra.web.html5.gui.util.ClickStartHandler;
 import org.geogebra.web.html5.gui.util.Dom;
@@ -15,17 +35,32 @@ import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Label;
 import org.gwtproject.user.client.ui.SimplePanel;
+import org.jspecify.annotations.Nullable;
 
 import elemental2.dom.KeyboardEvent;
 
-public class ComponentDropDown extends FlowPanel implements SetLabels {
+public final class ComponentDropDown extends FlowPanel
+		implements SetLabels, ConfigurationUpdateDelegate, VisibilityUpdateDelegate {
 	private final AppW app;
+	private final Styler styler;
 	private Label label;
 	private final String labelKey;
 	private Label selectedOption;
 	private boolean isDisabled = false;
 	private DropDownComboBoxController controller;
 	private boolean fullWidth = false;
+	private @Nullable Dropdown dropDown;
+
+	/**
+	 * Style provider for individual items.
+	 */
+	public interface Styler {
+		/**
+		 * @param item item to apply style to
+		 * @param index item index
+		 */
+		void apply(AriaMenuItem item, int index);
+	}
 
 	/**
 	 * Material drop-down component.
@@ -36,22 +71,10 @@ public class ComponentDropDown extends FlowPanel implements SetLabels {
 	private ComponentDropDown(AppW app, String label, List<String> items) {
 		this.app = app;
 		labelKey = label;
-		addStyleName("dropDown");
-		setAccessibilityProperties();
+		styler = null;
 
 		buildGUI(label);
-		addClickHandler();
-
 		initController(items);
-
-		Dom.addEventListener(this.getElement(), "keydown", event -> {
-			KeyboardEvent e = (KeyboardEvent) event;
-			if ("Enter".equals(e.code) || "Space".equals(e.code)) {
-				if (!isDisabled) {
-					controller.toggleAsDropDown(fullWidth);
-				}
-			}
-		});
 	}
 
 	/**
@@ -68,38 +91,100 @@ public class ComponentDropDown extends FlowPanel implements SetLabels {
 
 	/**
 	 * @param app see {@link AppW}
-	 * @param label label of drop-down
-	 * @param property property
+	 * @param property see {@link org.geogebra.common.properties.PropertyView.Dropdown}
 	 */
-	public ComponentDropDown(AppW app, String label, NamedEnumeratedProperty<?> property) {
-		this(app, label, Arrays.asList(property.getValueNames()));
-		controller.setProperty(property);
-		if (property.getIndex() > -1) {
-			controller.setSelectedOption(property.getIndex());
-		}
-		updateSelectionText();
+	public ComponentDropDown(AppW app, Dropdown property) {
+		this(app, null, property);
 	}
 
 	/**
 	 * @param app see {@link AppW}
-	 * @param property property
+	 * @param label label of drop-down
+	 * @param property see {@link org.geogebra.common.properties.PropertyView.Dropdown}
 	 */
-	public ComponentDropDown(AppW app, NamedEnumeratedProperty<?> property) {
-		this(app, null, property);
+	public ComponentDropDown(AppW app, String label, Dropdown property) {
+		this(app, label, property, null);
+	}
+
+	/**
+	 * @param app see {@link AppW}
+	 * @param label label of drop-down
+	 * @param property see {@link org.geogebra.common.properties.PropertyView.Dropdown}
+	 * @param styler a function that applies style to an item
+	 */
+	public ComponentDropDown(AppW app, String label, Dropdown property, @Nullable Styler styler) {
+		this.app = app;
+		labelKey = label;
+		dropDown = property;
+		this.styler = styler;
+
+		buildGUI(label);
+		initController(property.getItems());
+
+		Integer index = property.getSelectedItemIndex();
+		if (index == null) {
+			index = 0;
+		}
+		controller.setSelectedOption(index);
+
+		updateSelectionText();
+		property.setConfigurationUpdateDelegate(this);
+		property.setVisibilityUpdateDelegate(this);
+	}
+
+	@SuppressWarnings("PMD.LambdaCanBeMethodReference")
+	private void addKeyHandlers() {
+		addActionKeyHandler(
+				"keydown", () -> controller.toggleAsDropDown(fullWidth, getElement(), false));
+		// Only move focus into the popup once this key's own press and release cycle has finished
+		addActionKeyHandler("keyup", () -> controller.focusOpenedPopup());
+	}
+
+	private void addActionKeyHandler(String eventType, Runnable action) {
+		Dom.addEventListener(this.getElement(), eventType, event -> {
+			KeyboardEvent e = (KeyboardEvent) event;
+			if (!isDisabled && !e.repeat && ("Enter".equals(e.code) || "Space".equals(e.code))) {
+				action.run();
+			}
+		});
 	}
 
 	private void initController(List<String> items) {
-		controller = new DropDownComboBoxController(app, this,
-				items, labelKey, () -> {
-			removeStyleName("active");
-			AriaHelper.setAriaExpanded(this, false);
+		controller = new DropDownComboBoxController(
+				app,
+				() -> asList(dropDown == null ? null : dropDown.getGroupDividerIndices()),
+				this,
+				() -> items,
+				labelKey,
+				() -> {
+					removeStyleName("active");
+					AriaHelper.setAriaExpanded(this, false);
+				},
+				styler);
+		controller.addChangeHandler(() -> {
+			if (dropDown != null) {
+				dropDown.setSelectedItemIndex(controller.getSelectedIndex());
+			}
+			updateSelectionText();
 		});
-		controller.addChangeHandler(this::updateSelectionText);
 		controller.setFocusAnchor(getElement());
 		updateSelectionText();
 	}
 
+	private static List<Integer> asList(int @Nullable [] indices) {
+		if (indices == null) {
+			return List.of();
+		}
+		return Arrays.stream(indices).boxed().toList();
+	}
+
 	private void buildGUI(String labelStr) {
+		addStyleName("dropDown");
+		setAccessibilityProperties();
+
+		addClickHandler();
+		addKeyHandlers();
+
 		FlowPanel optionHolder = new FlowPanel();
 		optionHolder.addStyleName("optionLabelHolder");
 
@@ -118,11 +203,11 @@ public class ComponentDropDown extends FlowPanel implements SetLabels {
 	static SimplePanel createArrowIcon() {
 		SimplePanel arrowIcon = new SimplePanel();
 		arrowIcon.addStyleName("arrow");
-		arrowIcon.getElement().setInnerHTML(MaterialDesignResources.INSTANCE
-				.arrow_drop_down().getSVG());
+		arrowIcon
+				.getElement()
+				.setInnerHTML(MaterialDesignResources.INSTANCE.arrow_drop_down().getSVG());
 		AriaHelper.setAriaHidden(arrowIcon);
-		arrowIcon.getElement().getFirstChildElement()
-				.setAttribute("focusable", "false");
+		arrowIcon.getElement().getFirstChildElement().setAttribute("focusable", "false");
 		return arrowIcon;
 	}
 
@@ -134,7 +219,7 @@ public class ComponentDropDown extends FlowPanel implements SetLabels {
 			@Override
 			public void onClickStart(int x, int y, PointerEventType type) {
 				if (!isDisabled) {
-					controller.toggleAsDropDown(fullWidth);
+					controller.toggleAsDropDown(fullWidth, getElement());
 				}
 			}
 		});
@@ -157,10 +242,14 @@ public class ComponentDropDown extends FlowPanel implements SetLabels {
 	public void setDisabled(boolean disabled) {
 		isDisabled = disabled;
 		Dom.toggleClass(this, "disabled", disabled);
+		AriaHelper.setAriaDisabled(this, disabled);
 	}
 
 	// Helpers
 
+	/**
+	 * @return index of the selected option, or -1 if nothing is selected.
+	 */
 	public int getSelectedIndex() {
 		return controller.getSelectedIndex();
 	}
@@ -185,16 +274,18 @@ public class ComponentDropDown extends FlowPanel implements SetLabels {
 	 */
 	private void updateSelectionText() {
 		selectedOption.setText(controller.getSelectedText());
-		AriaHelper.setLabel(this, app.getLocalization().getMenu(labelKey) + " "
-			+ controller.getSelectedText());
+		AriaHelper.setLabel(
+				this, app.getLocalization().getMenu(labelKey) + " " + controller.getSelectedText());
 	}
 
 	/**
 	 * Reset dropdown to the model (property) value.
 	 */
 	public void resetFromModel() {
-		controller.resetFromModel();
-		updateSelectionText();
+		if (dropDown != null) {
+			controller.resetFromModel(dropDown);
+			updateSelectionText();
+		}
 	}
 
 	public void setFullWidth(boolean isFullWidth) {
@@ -204,8 +295,8 @@ public class ComponentDropDown extends FlowPanel implements SetLabels {
 	/**
 	 * @param property update property
 	 */
-	public void setProperty(NamedEnumeratedProperty<?> property) {
-		controller.setProperty(property);
+	public void setProperty(Dropdown property) {
+		this.dropDown = property;
 	}
 
 	@Override
@@ -222,5 +313,23 @@ public class ComponentDropDown extends FlowPanel implements SetLabels {
 		AriaHelper.setTabIndex(this, 0);
 		AriaHelper.setAriaHaspopup(this, "listbox");
 		AriaHelper.setAriaExpanded(this, false);
+	}
+
+	@Override
+	public void configurationUpdated() {
+		if (dropDown != null) {
+			controller.resetFromModel(dropDown);
+			Integer index = dropDown.getSelectedItemIndex();
+			if (index != null) {
+				setSelectedIndex(index);
+			}
+		}
+	}
+
+	@Override
+	public void visibilityUpdated() {
+		if (dropDown != null) {
+			setVisible(dropDown.isVisible());
+		}
 	}
 }

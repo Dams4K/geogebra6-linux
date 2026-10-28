@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbar.mow.toolbox.ruler;
 
 import static org.geogebra.common.euclidian.EuclidianConstants.MODE_PROTRACTOR;
@@ -17,7 +33,7 @@ import org.geogebra.web.html5.gui.view.IconSpec;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.main.toolbox.ToolboxIcon;
 
-public class RulerPopup extends GPopupMenuW implements SetLabels {
+public final class RulerPopup extends GPopupMenuW implements SetLabels {
 	private final RulerIconButton rulerButton;
 	private int activeRulerMode = MODE_RULER;
 
@@ -33,10 +49,10 @@ public class RulerPopup extends GPopupMenuW implements SetLabels {
 
 	private void buildGui() {
 		addItem(getApp().getLocalization().getMenu("Ruler"), MODE_RULER);
-		for (int mode: getApp().getVendorSettings().getProtractorTools(
-				getApp().getLocalization().getLanguage())) {
-			addItem(getApp().getLocalization().getMenu(EuclidianConstants.getModeText(mode)),
-					mode);
+		for (int mode : getApp()
+				.getVendorSettings()
+				.getProtractorTools(getApp().getLocalization().getLanguage())) {
+			addItem(getApp().getLocalization().getMenu(EuclidianConstants.getModeText(mode)), mode);
 		}
 		popupMenu.selectItem(activeRulerMode == MODE_RULER ? 0 : 1);
 	}
@@ -65,7 +81,7 @@ public class RulerPopup extends GPopupMenuW implements SetLabels {
 				: GColor.BLACK.toString();
 		rulerButton.removeTool();
 		rulerButton.updateImgAndTxt(iconSpec.withFill(fillColor), mode, getApp());
-		rulerButton.handleRuler();
+		rulerButton.handleRuler(true);
 	}
 
 	private void setHighlight(AriaMenuItem highlighted) {
@@ -93,8 +109,10 @@ public class RulerPopup extends GPopupMenuW implements SetLabels {
 	@Override
 	public void setLabels() {
 		clearItems();
-		boolean triangleSupported = getApp().getVendorSettings().getProtractorTools(
-				getApp().getLocalization().getLanguage()).contains(MODE_TRIANGLE_PROTRACTOR);
+		boolean triangleSupported = getApp()
+				.getVendorSettings()
+				.getProtractorTools(getApp().getLocalization().getLanguage())
+				.contains(MODE_TRIANGLE_PROTRACTOR);
 		if (activeRulerMode == MODE_TRIANGLE_PROTRACTOR && !triangleSupported) {
 			activeRulerMode = MODE_PROTRACTOR;
 			updateRulerButton(activeRulerMode);

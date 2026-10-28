@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.plot.interval;
 
 import org.geogebra.common.awt.GGraphics2D;
@@ -38,15 +54,16 @@ public class IntervalPathPlotterImpl implements IntervalPathPlotter {
 
 	@Override
 	public void segment(EuclidianViewBounds bounds, double x1, double y1, double x2, double y2) {
-		segmentClipped(bounds.toScreenCoordXd(x1),
+		segmentClipped(
+				bounds.toScreenCoordXd(x1),
 				bounds.toScreenCoordYd(y1),
 				bounds.toScreenCoordXd(x2),
 				bounds.toScreenCoordYd(y2),
 				bounds.getHeight());
 	}
 
-	private void segmentClipped(double screenX1, double screenY1,
-			double screenX2, double screenY2, int height) {
+	private void segmentClipped(
+			double screenX1, double screenY1, double screenX2, double screenY2, int height) {
 		if (isSegmentOffscreen(screenY1, screenY2, height)) {
 			return;
 		}
@@ -64,23 +81,16 @@ public class IntervalPathPlotterImpl implements IntervalPathPlotter {
 
 	@Override
 	public void draw(GGraphics2D g2) {
-		g2.draw(gp);
+		gp.draw(g2);
 	}
 
 	@Override
 	public void leftToTop(EuclidianViewBounds bounds, Interval x, Interval y) {
-		segment(bounds,
-				x.getLow(),
-				y.getLow(),
-				x.middle(),
-				bounds.getYmax());
-
+		segment(bounds, x.getLow(), y.getLow(), x.middle(), bounds.getYmax());
 	}
 
 	@Override
 	public void leftToBottom(EuclidianViewBounds bounds, Interval x, Interval y) {
-		segment(bounds, x.getLow(), y.getHigh(),
-				x.middle(),
-				bounds.getYmin());
+		segment(bounds, x.getLow(), y.getHigh(), x.middle(), bounds.getYmin());
 	}
 }

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -18,15 +22,14 @@ import org.geogebra.common.kernel.geos.GeoBoolean;
 import org.geogebra.common.kernel.geos.GeoNumberValue;
 
 /**
- * 
+ *
  * @author Michael Borcherds
  */
-
 public class AlgoTriangular extends AlgoDistribution {
 
 	/**
 	 * returns cumulative probability less than x for triangular distribution
-	 * 
+	 *
 	 * @param cons
 	 *            cons
 	 * @param a
@@ -40,8 +43,13 @@ public class AlgoTriangular extends AlgoDistribution {
 	 * @param cumulative
 	 *            cumulative?
 	 */
-	public AlgoTriangular(Construction cons, GeoNumberValue a, GeoNumberValue b,
-			GeoNumberValue mode, GeoNumberValue x, GeoBoolean cumulative) {
+	public AlgoTriangular(
+			Construction cons,
+			GeoNumberValue a,
+			GeoNumberValue b,
+			GeoNumberValue mode,
+			GeoNumberValue x,
+			GeoBoolean cumulative) {
 		super(cons, a, b, mode, x, cumulative);
 		compute();
 	}
@@ -53,22 +61,26 @@ public class AlgoTriangular extends AlgoDistribution {
 
 	@Override
 	public final void compute() {
-		if (input[0].isDefined() && input[1].isDefined()
-				&& input[2].isDefined()) {
+		if (input[0].isDefined() && input[1].isDefined() && input[2].isDefined()) {
 			double A = a.getDouble();
 			double B = b.getDouble();
 			double mode = c.getDouble();
 			double x = d.getDouble();
 
-			if (Double.isNaN(A) || Double.isNaN(B) || Double.isNaN(mode)
-					|| Double.isNaN(x) || Double.isInfinite(A)
-					|| Double.isInfinite(B) || Double.isInfinite(mode)
-					|| Double.isInfinite(x) || mode < A || mode > B) {
+			if (Double.isNaN(A)
+					|| Double.isNaN(B)
+					|| Double.isNaN(mode)
+					|| Double.isNaN(x)
+					|| Double.isInfinite(A)
+					|| Double.isInfinite(B)
+					|| Double.isInfinite(mode)
+					|| Double.isInfinite(x)
+					|| mode < A
+					|| mode > B) {
 				num.setUndefined();
 				return;
 			}
-			boolean pdf = this.isCumulative == null
-					|| this.isCumulative.getBoolean();
+			boolean pdf = this.isCumulative == null || this.isCumulative.getBoolean();
 			if (x <= A) {
 				num.setValue(0);
 			} else if (x >= B) {
@@ -79,12 +91,10 @@ public class AlgoTriangular extends AlgoDistribution {
 			} else {
 				// mode <= x < B
 				double halfDensity = (x - B) / ((B - A) * (mode - B));
-				num.setValue(
-						pdf ? 1 + (x - B) * halfDensity : 2 * halfDensity);
+				num.setValue(pdf ? 1 + (x - B) * halfDensity : 2 * halfDensity);
 			}
 		} else {
 			num.setUndefined();
 		}
 	}
-
 }

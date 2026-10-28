@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main;
 
 import static org.geogebra.common.main.GeoGebraColorConstants.NEUTRAL_500;
@@ -5,6 +21,7 @@ import static org.geogebra.common.main.GeoGebraColorConstants.NEUTRAL_500;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.kernel.Kernel;
+import org.geogebra.common.main.settings.FontSettings;
 
 /**
  * @author michael
@@ -16,16 +33,16 @@ public class GeoGebraPreferencesXML {
 	 * these can get changed by --screenDPI (and maybe by --screenResX,
 	 * --screenResY)
 	 */
-	private static int defaultFontSize = 16;
 	private static int defaultWindowX = 800;
+
 	private static int defaultWindowY = 600;
 
 	/** Angle unit: radians */
-	public final static String ANGLE_RADIANT_XML_NAME = "radiant";
+	public static final String ANGLE_RADIANT_XML_NAME = "radiant";
 	/** Angle unit: degrees */
-	public final static String ANGLE_DEGREE_XML_NAME = "degree";
+	public static final String ANGLE_DEGREE_XML_NAME = "degree";
 	/** Angle unit: degrees, minutes, seconds */
-	public final static String ANGLE_DEGREES_MINUTES_SECONDS_XML_NAME = "degreesMinutesSeconds";
+	public static final String ANGLE_DEGREES_MINUTES_SECONDS_XML_NAME = "degreesMinutesSeconds";
 
 	/**
 	 * @param app
@@ -41,7 +58,6 @@ public class GeoGebraPreferencesXML {
 		return "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
 				+ "<geogebra format=\"5.0\" xsi:noNamespaceSchemaLocation=\"http://www.geogebra.org/ggb.xsd\" xmlns=\"\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" >"
 				+ "<gui>"
-
 				+ "<window width=\""
 
 				// dynamic bit!
@@ -49,22 +65,18 @@ public class GeoGebraPreferencesXML {
 
 				// dynamic bit!
 				+ defaultWindowY
-
 				+ "\" />"
 				+ "<settings ignoreDocument=\"false\" showTitleBar=\"true\" />"
 				+ "<labelingStyle val=\""
-
 				+ app.getConfig().getDefaultLabelingStyle().getValue()
 				+ "\"/>"
 				+ "<font  size=\""
 
 				// dynamic bit!
-				+ defaultFontSize
-
+				+ FontSettings.DEFAULT_FONT_SIZE
 				+ "\"/>" + "<menuFont size=\"-1\"/>"
 				+ "<tooltipSettings language=\"\" timeout=\"0\"/>" + "</gui>"
 				+ "<euclidianView>"
-
 				+ "<size width=\"640\" height=\"480\"/>"
 				+ "<coordSystem xZero=\"215.0\" yZero=\"315.0\" scale=\"50.0\" yscale=\"50.0\"/>"
 				+ "<evSettings axes=\"" + showAxes + "\" grid=\"" + showGrid
@@ -72,7 +84,6 @@ public class GeoGebraPreferencesXML {
 
 				// dynamic
 				+ rightAngleStyle
-
 				+ "\" checkboxSize=\"26\" gridType=\""
 				+ +EuclidianView.GRID_CARTESIAN_WITH_SUBGRID + "\"/>"
 				+ "<bgColor r=\"255\" g=\"255\" b=\"255\"/>"
@@ -86,7 +97,6 @@ public class GeoGebraPreferencesXML {
 				+ "\" label=\"\" unitLabel=\"\" tickStyle=\"1\" showNumbers=\"true\""
 				+ " axisCross=\"0.0\" positiveAxis=\"false\"/>"
 				+ "</euclidianView>"
-
 				+ "<euclidianView3D>\r\n"
 				+ "  <coordSystem xZero=\"0.0\" yZero=\"0.0\" zZero=\"-1.5\""
 				+ "  scale=\"50.0\" xAngle=\"20.0\" zAngle=\"-60.0\"/>\r\n"
@@ -102,29 +112,22 @@ public class GeoGebraPreferencesXML {
 				+ "  <bgColor r=\"255\" g=\"255\" b=\"255\"/>\r\n"
 				+ "  <clipping use=\"false\" show=\"false\" size=\"1\"/>\r\n"
 				+ "  <projection type=\"0\"/>\r\n" + "</euclidianView3D>"
-
 				+ "<kernel>" + "<continuous val=\"false\"/>"
-
 				+ "<decimals val=\""
 				+ app.getConfig().getDefaultPrintDecimals()
 				+ "\"/>"
-
 				+ "<angleUnit val=\""
 				+ getDefaultAngleUnit(app)
 				+ "\"/>"
-
 				+ "<algebraStyle val=\""
 
 				// dynamic bit!
 				+ app.getConfig().getDefaultAlgebraStyle().getNumericValue()
-
 				+ "\"/>"
-
 				+ "<coordStyle val=\"0\"/>"
 				+ "<localization digits=\"false\" labels=\"true\"/>"
 				+ "<angleFromInvTrig val=\"false\"/>"
 				+ "<casSettings timeout=\"5\" expRoots=\"true\"/>"
-
 				+ "</kernel>"
 				+ "<algebraView><mode val=\"3\"/></algebraView>"
 				+ "<scripting blocked=\"false\"/>" + "</geogebra>";
@@ -132,7 +135,7 @@ public class GeoGebraPreferencesXML {
 
 	private static String getAxesColorTag() {
 		GColor color = GColor.DEFAULT_AXES_COLOR;
-		return  "<axesColor "
+		return "<axesColor "
 				+ "r=\"" + color.getRed() + "\" "
 				+ "g=\"" + color.getGreen() + "\" "
 				+ "b=\"" + color.getBlue() + "\" "
@@ -161,15 +164,6 @@ public class GeoGebraPreferencesXML {
 	}
 
 	/**
-	 * @param fontSize
-	 *            font size
-	 */
-	public static void setDefaultFontSize(int fontSize) {
-		defaultFontSize = fontSize;
-
-	}
-
-	/**
 	 * @param width
 	 *            window width
 	 */
@@ -183,6 +177,5 @@ public class GeoGebraPreferencesXML {
 	 */
 	public static void setDefaultWindowY(int height) {
 		defaultWindowY = height;
-
 	}
 }

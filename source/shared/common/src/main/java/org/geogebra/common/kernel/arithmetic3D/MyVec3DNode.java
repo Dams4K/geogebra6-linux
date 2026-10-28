@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * GeoVec2D.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 31. August 2001, 11:34
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.arithmetic3D;
@@ -40,6 +38,7 @@ import org.geogebra.common.kernel.kernelND.Geo3DVecInterface;
 import org.geogebra.common.kernel.printing.printable.vector.PrintableVector;
 import org.geogebra.common.kernel.printing.printer.vector.VectorNodeStringifier;
 import org.geogebra.common.kernel.printing.printer.vector.VectorPrintingMode;
+import org.geogebra.common.main.Localization;
 import org.geogebra.common.main.MyError.Errors;
 import org.geogebra.common.main.MyParseError;
 import org.geogebra.common.plugin.GeoClass;
@@ -48,7 +47,7 @@ import org.geogebra.common.util.StringUtil;
 import com.google.j2objc.annotations.Weak;
 
 /**
- * 
+ *
  * @author Markus + ggb3D
  */
 public class MyVec3DNode extends ValidExpression
@@ -57,15 +56,17 @@ public class MyVec3DNode extends ValidExpression
 	private ExpressionValue x;
 	private ExpressionValue y;
 	private ExpressionValue z;
+
 	@Weak
 	private Kernel kernel;
+
 	private int mode = Kernel.COORD_CARTESIAN_3D;
 	private boolean isCASVector;
 	private VectorNodeStringifier stringifier;
 
 	/**
 	 * Creates new MyVec3D
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -78,7 +79,7 @@ public class MyVec3DNode extends ValidExpression
 	/**
 	 * Creates new MyPoint3DNode with coordinates (x,y,z) as ExpressionNodes.
 	 * Both nodes must evaluate to NumberValues.
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 * @param x
@@ -88,23 +89,22 @@ public class MyVec3DNode extends ValidExpression
 	 * @param z
 	 *            z coordinate
 	 */
-	public MyVec3DNode(Kernel kernel, ExpressionValue x, ExpressionValue y,
-			ExpressionValue z) {
+	public MyVec3DNode(Kernel kernel, ExpressionValue x, ExpressionValue y, ExpressionValue z) {
 		this(kernel);
 		setCoords(x, y, z);
 	}
 
 	private void initStringifier() {
 		VectorPrinterMapBuilder3D builder = new VectorPrinterMapBuilder3D();
-		stringifier = new VectorNodeStringifier(this,
-				builder.build(kernel.getApplication().getSettings().getGeneral()));
+		stringifier = new VectorNodeStringifier(
+				this, builder.build(kernel.getApplication().getSettings().getGeneral()));
 		stringifier.setPrintingMode(VectorPrintingMode.Cartesian);
 	}
 
 	@Override
 	public MyVec3DNode deepCopy(Kernel kernel1) {
-		MyVec3DNode ret = new MyVec3DNode(kernel1, x.deepCopy(kernel1),
-				y.deepCopy(kernel1), z.deepCopy(kernel1));
+		MyVec3DNode ret =
+				new MyVec3DNode(kernel1, x.deepCopy(kernel1), y.deepCopy(kernel1), z.deepCopy(kernel1));
 		ret.setMode(mode);
 		if (isCASVector()) {
 			ret.setupCASVector();
@@ -151,8 +151,7 @@ public class MyVec3DNode extends ValidExpression
 		return mode == Kernel.COORD_SPHERICAL;
 	}
 
-	private void setCoords(ExpressionValue x, ExpressionValue y,
-			ExpressionValue z) {
+	private void setCoords(ExpressionValue x, ExpressionValue y, ExpressionValue z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -161,23 +160,23 @@ public class MyVec3DNode extends ValidExpression
 	/**
 	 * @return coordinates of this point as array of doubles
 	 */
-	final public double[] getCoords() {
+	public final double[] getCoords() {
 		// check if both ExpressionNodes represent NumberValues
 		StringTemplate tpl = StringTemplate.defaultTemplate;
 		ExpressionValue evx = x.evaluate(tpl);
 		if (!(evx instanceof NumberValue)) {
-			throw new MyParseError(kernel.getLocalization(), Errors.NumberExpected,
-					evx.wrap().toString(tpl));
+			throw new MyParseError(
+					kernel.getLocalization(), Errors.NumberExpected, evx.wrap().toString(tpl));
 		}
 		ExpressionValue evy = y.evaluate(tpl);
 		if (!(evy instanceof NumberValue)) {
-			throw new MyParseError(kernel.getLocalization(), Errors.NumberExpected,
-					evy.wrap().toString(tpl));
+			throw new MyParseError(
+					kernel.getLocalization(), Errors.NumberExpected, evy.wrap().toString(tpl));
 		}
 		ExpressionValue evz = z.evaluate(tpl);
 		if (!(evz instanceof NumberValue)) {
-			throw new MyParseError(kernel.getLocalization(), Errors.NumberExpected,
-					evz.wrap().toString(tpl));
+			throw new MyParseError(
+					kernel.getLocalization(), Errors.NumberExpected, evz.wrap().toString(tpl));
 		}
 
 		if (mode == Kernel.COORD_SPHERICAL) {
@@ -185,22 +184,22 @@ public class MyVec3DNode extends ValidExpression
 			// allow negative radius for US
 			double theta = evy.evaluateDouble();
 			double phi = evz.evaluateDouble();
-			double[] ret = { r * Math.cos(theta) * Math.cos(phi),
-					r * Math.sin(theta) * Math.cos(phi), r * Math.sin(phi) };
+			double[] ret = {
+				r * Math.cos(theta) * Math.cos(phi), r * Math.sin(theta) * Math.cos(phi), r * Math.sin(phi)
+			};
 			return ret;
 		}
 
 		// CARTESIAN 3D
-		double[] ret = { evx.evaluateDouble(), evy.evaluateDouble(),
-				evz.evaluateDouble() };
+		double[] ret = {evx.evaluateDouble(), evy.evaluateDouble(), evz.evaluateDouble()};
 		return ret;
-
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		return hasSphericalCoords()
-				? stringifier.toString(tpl, VectorPrintingMode.Polar) : stringifier.toString(tpl);
+				? stringifier.toString(tpl, VectorPrintingMode.Polar)
+				: stringifier.toString(tpl);
 	}
 
 	@Override
@@ -209,7 +208,7 @@ public class MyVec3DNode extends ValidExpression
 	}
 
 	@Override
-	final public String toLaTeXString(boolean symbolic, StringTemplate tpl) {
+	public final String toLaTeXString(boolean symbolic, StringTemplate tpl) {
 		return symbolic ? stringifier.toString(tpl) : stringifier.toValueString(tpl);
 	}
 
@@ -252,7 +251,7 @@ public class MyVec3DNode extends ValidExpression
 	}
 
 	@Override
-	final public boolean contains(ExpressionValue ev) {
+	public final boolean contains(ExpressionValue ev) {
 		return ev == this;
 	}
 
@@ -265,8 +264,7 @@ public class MyVec3DNode extends ValidExpression
 	@Override
 	public Geo3DVecInterface getVector() {
 		double[] coords = getCoords();
-		Geo3DVecInterface ret = kernel.getManager3D().newGeo3DVec(coords[0],
-				coords[1], coords[2]);
+		Geo3DVecInterface ret = kernel.getManager3D().newGeo3DVec(coords[0], coords[1], coords[2]);
 		ret.setMode(mode);
 		return ret;
 	}
@@ -296,10 +294,14 @@ public class MyVec3DNode extends ValidExpression
 	@Override
 	public ExpressionValue getChild(int index) {
 		switch (index) {
-		case 0: return x;
-		case 1: return y;
-		case 2: return z;
-		default: return super.getChild(index);
+			case 0:
+				return x;
+			case 1:
+				return y;
+			case 2:
+				return z;
+			default:
+				return super.getChild(index);
 		}
 	}
 
@@ -311,13 +313,18 @@ public class MyVec3DNode extends ValidExpression
 	}
 
 	@Override
+	public Localization getLocalization() {
+		return kernel.getLocalization();
+	}
+
+	@Override
 	public boolean hasCoords() {
 		return true;
 	}
 
 	/**
 	 * Sets the spherical coords and changes the coord mode
-	 * 
+	 *
 	 * @param r
 	 *            radius
 	 * @param theta
@@ -325,8 +332,8 @@ public class MyVec3DNode extends ValidExpression
 	 * @param phi
 	 *            alt
 	 */
-	public void setSphericalPolarCoords(ExpressionValue r,
-			ExpressionValue theta, ExpressionValue phi) {
+	public void setSphericalPolarCoords(
+			ExpressionValue r, ExpressionValue theta, ExpressionValue phi) {
 		setCoords(r, theta, phi);
 		setMode(Kernel.COORD_SPHERICAL);
 	}
@@ -376,8 +383,7 @@ public class MyVec3DNode extends ValidExpression
 
 	@Override
 	public ExpressionValue getUndefinedCopy(Kernel kernel1) {
-		return kernel1.getManager3D().newGeo3DVec(Double.NaN, Double.NaN,
-				Double.NaN);
+		return kernel1.getManager3D().newGeo3DVec(Double.NaN, Double.NaN, Double.NaN);
 	}
 
 	@Override
@@ -429,9 +435,8 @@ public class MyVec3DNode extends ValidExpression
 				size = Math.min(((ListValue) zEval).size(), maxSize);
 			}
 			for (int idx = 0; idx < size; idx++) {
-				MyVec3DNode el = new MyVec3DNode(kernel,
-						MyList.get(xEval, idx), MyList.get(yEval, idx),
-						MyList.get(zEval, idx));
+				MyVec3DNode el = new MyVec3DNode(
+						kernel, MyList.get(xEval, idx), MyList.get(yEval, idx), MyList.get(zEval, idx));
 				el.setMode(mode);
 				result.addListElement(el);
 			}

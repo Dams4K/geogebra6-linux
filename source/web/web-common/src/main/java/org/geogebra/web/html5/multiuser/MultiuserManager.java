@@ -1,13 +1,29 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.multiuser;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GBasicStroke;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.euclidian.EuclidianView;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.main.App;
 import org.geogebra.common.plugin.Event;
 import org.geogebra.common.plugin.EventListener;
@@ -32,12 +48,14 @@ public final class MultiuserManager implements EventListener {
 	 * @param label label of the changed object
 	 * @param implicit whether the geo was interacted with (add, update) without explicit selection
 	 */
-	public void addSelection(App app, String clientId, String user, GColor color, String label,
-			boolean implicit) {
-		GColor withAlpha = GColor.newColor(adjustColor(color.getRed()),
-				adjustColor(color.getGreen()), adjustColor(color.getBlue()), 127);
-		User currentUser = activeInteractions
-				.computeIfAbsent(clientId, k -> new User(user, withAlpha));
+	public void addSelection(
+			App app, String clientId, String user, GColor color, String label, boolean implicit) {
+		GColor withAlpha = GColor.newColor(
+				adjustColor(color.getRed()),
+				adjustColor(color.getGreen()),
+				adjustColor(color.getBlue()),
+				127);
+		User currentUser = activeInteractions.computeIfAbsent(clientId, k -> new User(user, withAlpha));
 		app.getEventDispatcher().removeEventListener(this);
 		app.getEventDispatcher().addEventListener(this);
 		// TODO this removeSelection is not propagated to other users. Markers get

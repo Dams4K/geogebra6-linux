@@ -1,22 +1,38 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.openGL;
 
 import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * Class that describes the geometry of buttons for 3D view
- * 
+ *
  * @author ggb3D
  *
  */
 public class PlotterMouseCursor {
 
-	static private float coeff = 30f;
+	private static float coeff = 30f;
 
 	private int index;
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param manager
 	 *            geometry manager
 	 */
@@ -34,16 +50,11 @@ public class PlotterMouseCursor {
 		// outline vertices
 		Coords[] b = new Coords[7];
 		b[0] = new Coords(-0.028 * coeff, 0.068859231 * coeff, 0);
-		b[1] = new Coords(0.450461328556841 * coeff, -0.422193185106047 * coeff,
-				0);
-		b[2] = new Coords(0.254264077762676 * coeff, -0.410652170353449 * coeff,
-				0);
-		b[3] = new Coords(0.326453438653662 * coeff, -0.573078232358169 * coeff,
-				0);
-		b[4] = new Coords(0.196313798935428 * coeff, -0.638148052217286 * coeff,
-				0);
-		b[5] = new Coords(0.120971069271961 * coeff, -0.468626910474487 * coeff,
-				0);
+		b[1] = new Coords(0.450461328556841 * coeff, -0.422193185106047 * coeff, 0);
+		b[2] = new Coords(0.254264077762676 * coeff, -0.410652170353449 * coeff, 0);
+		b[3] = new Coords(0.326453438653662 * coeff, -0.573078232358169 * coeff, 0);
+		b[4] = new Coords(0.196313798935428 * coeff, -0.638148052217286 * coeff, 0);
+		b[5] = new Coords(0.120971069271961 * coeff, -0.468626910474487 * coeff, 0);
 		b[6] = new Coords(-0.028 * coeff, -0.617597979746448 * coeff, 0);
 
 		// create geometry with color
@@ -120,7 +131,6 @@ public class PlotterMouseCursor {
 		vertexWhite(manager, a[5]);
 		manager.endGeometry();
 		manager.endList();
-
 	}
 
 	private static void vertexWhite(Manager manager, Coords v) {
@@ -138,11 +148,10 @@ public class PlotterMouseCursor {
 	// ////////////////////////////////
 
 	/**
-	 * 
+	 *
 	 * @return geometry index
 	 */
 	public int getIndex() {
 		return index;
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.euclidian.inline;
 
 import org.geogebra.common.awt.GAffineTransform;
@@ -5,18 +21,20 @@ import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.GPoint2D;
 import org.geogebra.common.euclidian.EuclidianView;
+import org.geogebra.common.euclidian.draw.DrawInline;
 import org.geogebra.common.euclidian.inline.InlineTableController;
+import org.geogebra.common.io.CarotaJSONUtil;
 import org.geogebra.common.kernel.geos.GProperty;
 import org.geogebra.common.kernel.geos.GeoInline;
 import org.geogebra.common.kernel.geos.GeoInlineTable;
 import org.geogebra.common.kernel.geos.properties.BorderType;
 import org.geogebra.common.kernel.geos.properties.HorizontalAlignment;
 import org.geogebra.common.kernel.geos.properties.VerticalAlignment;
-import org.geogebra.common.move.ggtapi.models.json.JSONArray;
+import org.geogebra.common.main.settings.FontSettings;
 import org.geogebra.common.move.ggtapi.models.json.JSONException;
 import org.geogebra.common.move.ggtapi.models.json.JSONObject;
 import org.geogebra.common.util.debug.Log;
-import org.geogebra.web.html5.awt.GGraphics2DW;
+import org.geogebra.web.awt.GGraphics2DW;
 import org.geogebra.web.html5.euclidian.FontLoader;
 import org.geogebra.web.html5.gui.util.Dom;
 import org.geogebra.web.html5.main.AppW;
@@ -37,7 +55,7 @@ import org.gwtproject.user.client.DOM;
 import elemental2.core.Global;
 import jsinterop.base.Js;
 
-public class InlineTableControllerW implements InlineTableController {
+public final class InlineTableControllerW implements InlineTableController {
 
 	private final GeoInlineTable table;
 	private final EuclidianView view;
@@ -56,7 +74,7 @@ public class InlineTableControllerW implements InlineTableController {
 	public InlineTableControllerW(GeoInlineTable table, EuclidianView view, Element parent) {
 		this.table = table;
 		this.view = view;
-		CarotaUtil.ensureInitialized(view.getFontSize());
+		CarotaUtil.ensureInitialized(FontSettings.DEFAULT_FONT_SIZE);
 		if (view.getApplication().isByCS()) {
 			CarotaUtil.setSelectionColor(GColor.MOW_SELECTION_COLOR.toString());
 		}
@@ -69,18 +87,10 @@ public class InlineTableControllerW implements InlineTableController {
 	private void checkFonts() {
 		try {
 			JSONObject tableData = new JSONObject(table.getContent());
-			JSONArray tableContent = tableData.getJSONArray("content");
-			for (int i = 0; i < tableContent.length(); i++) {
-				JSONArray row = tableContent.getJSONArray(i);
-				for (int j = 0; j < row.length(); j++) {
-					JSONObject cell = row.getJSONObject(j);
-					if (cell.has("content")) {
-						InlineTextControllerW
-								.checkFonts(cell.getJSONArray("content"),
-										getWebFontsUrl(), this::onFontLoaded);
-					}
-				}
-			}
+			CarotaJSONUtil.forEachCell(
+					tableData,
+					cellContent ->
+							InlineTextControllerW.checkFonts(cellContent, getWebFontsUrl(), this::onFontLoaded));
 		} catch (JSONException | RuntimeException e) {
 			Log.debug("cannot parse fonts");
 		}
@@ -105,8 +115,8 @@ public class InlineTableControllerW implements InlineTableController {
 
 	@Override
 	public void setBackgroundColor(GColor backgroundColor) {
-		tableImpl.setCellProperty("bgcolor",
-				backgroundColor == null ? null : backgroundColor.toString());
+		tableImpl.setCellProperty(
+				"bgcolor", backgroundColor == null ? null : backgroundColor.toString());
 		saveContent();
 	}
 
@@ -125,8 +135,7 @@ public class InlineTableControllerW implements InlineTableController {
 		if (style != null && table.getLocation() != null) {
 			GPoint2D location = table.getLocation();
 
-			setLocation(view.toScreenCoordX(location.x),
-					view.toScreenCoordY(location.y));
+			setLocation(view.toScreenCoordX(location.x), view.toScreenCoordY(location.y));
 
 			setWidth(table.getContentWidth());
 			setHeight(table.getContentHeight());
@@ -175,7 +184,7 @@ public class InlineTableControllerW implements InlineTableController {
 	}
 
 	@Override
-	public void toBackground() {
+	public void toBackground(DrawInline.SuspensionTrigger trigger) {
 		if (style != null) {
 			if (isInEditMode()) {
 				table.unlockForMultiuser();
@@ -196,6 +205,21 @@ public class InlineTableControllerW implements InlineTableController {
 		if ("font".equals(key)) {
 			FontLoader.loadFont(String.valueOf(val), getWebFontsUrl(), this::onFontLoaded);
 		}
+	}
+
+	@Override
+	public void formatFont(String val) {
+		format("font", val);
+		if (val != null && val.contains("By")) {
+			format("bold", false);
+			format("italic", false);
+			format("underline", false);
+		}
+	}
+
+	@Override
+	public boolean hasIndeterminableFont() {
+		return tableImpl.getFormatting("font", "").isEmpty();
 	}
 
 	@Override
@@ -417,7 +441,7 @@ public class InlineTableControllerW implements InlineTableController {
 	private void initTable(Element parent) {
 		tableElement = DOM.createDiv();
 		tableElement.addClassName("mowWidget");
-		EventUtil.stopPointerEvents(tableElement, btn  -> btn <= 0);
+		EventUtil.stopPointerEvents(tableElement, btn -> btn <= 0);
 		parent.appendChild(tableElement);
 
 		style = tableElement.getStyle();
@@ -455,7 +479,7 @@ public class InlineTableControllerW implements InlineTableController {
 
 			@Override
 			public void onEscape() {
-				toBackground();
+				toBackground(DrawInline.SuspensionTrigger.BLUR);
 			}
 		});
 		tableImpl.sizeChanged(() -> changeContent(getContent()));
@@ -489,6 +513,7 @@ public class InlineTableControllerW implements InlineTableController {
 	public void setTransform(double angle, double sx, double sy) {
 		style.setProperty("transform", "rotate(" + angle + "rad) scale(" + sx + "," + sy + ")");
 		tableImpl.setExternalScale(sx);
+		tableElement.setAttribute("data-transform-label", table.getLabelSimple());
 	}
 
 	@Override

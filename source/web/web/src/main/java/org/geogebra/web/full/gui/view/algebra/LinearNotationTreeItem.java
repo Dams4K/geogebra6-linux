@@ -1,26 +1,43 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import org.geogebra.common.gui.AccessibilityGroup;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.geos.GeoElement;
+import org.geogebra.editor.share.util.GWTKeycodes;
+import org.geogebra.gwtutil.NavigatorUtil;
 import org.geogebra.web.full.gui.inputbar.AlgebraInputW;
 import org.geogebra.web.html5.gui.inputfield.AutoCompleteTextFieldW;
 import org.geogebra.web.html5.gui.util.AriaHelper;
+import org.geogebra.web.html5.gui.util.FocusUtil;
 import org.geogebra.web.html5.gui.zoompanel.FocusableWidget;
 import org.gwtproject.core.client.Scheduler;
 import org.gwtproject.event.dom.client.KeyDownEvent;
 import org.gwtproject.event.dom.client.KeyDownHandler;
 import org.gwtproject.user.client.ui.Widget;
 
-import com.himamis.retex.editor.share.util.GWTKeycodes;
+public final class LinearNotationTreeItem extends RadioTreeItem implements KeyDownHandler {
 
-public class LinearNotationTreeItem extends RadioTreeItem implements KeyDownHandler {
-
-	private AutoCompleteTextFieldW textField;
+	AutoCompleteTextFieldW textField;
 
 	/**
-	 * Minimal constructor
+	 * Creates an item for the input.
 	 * @param kernel {@link Kernel}
 	 * @param av {@link AlgebraViewW}
 	 */
@@ -29,28 +46,46 @@ public class LinearNotationTreeItem extends RadioTreeItem implements KeyDownHand
 		ensureTextField();
 	}
 
+	/**
+	 * Creates an item for an existing object.
+	 * @param geo construction element
+	 */
 	public LinearNotationTreeItem(GeoElement geo) {
 		super(geo);
+		buildGui();
 	}
 
 	private void createTextField() {
-		textField = new AutoCompleteTextFieldW(app);
+		textField = new AutoCompleteTextFieldW(0, app, false, null);
 		textField.setAutoComplete(false);
 		textField.setAutoCloseParentheses(false);
 		updateInputText();
 		textField.getTextField().addKeyDownHandler(this);
-		textField.addFocusHandler(ignore -> getAV().startEditItem(geo));
+		textField.addInsertHandler(ignore -> updateInputText());
+		textField.addFocusHandler(ignore -> {
+			AriaHelper.setLabel(textField, null);
+			getAV().startEditItem(geo);
+		});
 		textField.addBlurHandler(controller);
+		FocusUtil.makeFocusable(textField.getElement());
 		setDefaultAriaLabel();
+		setupMobileLiveRegion();
 	}
 
 	private void setDefaultAriaLabel() {
-		AriaHelper.setLabel(textField.getTextField(),
-				app.getLocalization().getMenu(geo != null ? "Definition" : "EnterExpression"));
+		AriaHelper.setLabel(
+				textField.getTextField(),
+				geo != null ? null : app.getLocalization().getMenu("EnterExpression"));
 	}
 
 	private void updateInputText() {
 		setText(getTextForEditing(false, StringTemplate.linearNotation));
+	}
+
+	private void setupMobileLiveRegion() {
+		if (NavigatorUtil.isMobile() || NavigatorUtil.isMacOS()) {
+			textField.getTextField().getElement().setAttribute("role", "status");
+		}
 	}
 
 	private void ensureTextField() {
@@ -105,7 +140,7 @@ public class LinearNotationTreeItem extends RadioTreeItem implements KeyDownHand
 		insertHelpToggle();
 		new FocusableWidget(AccessibilityGroup.ALGEBRA_ITEM, null, content) {
 			@Override
-			public void focus(Widget widget) {
+			protected void focus(Widget widget) {
 				setFocus(true);
 			}
 
@@ -139,6 +174,7 @@ public class LinearNotationTreeItem extends RadioTreeItem implements KeyDownHand
 		updatePreview();
 		adjustStyleBar();
 		setFocus(true);
+		getController().storeInitialInput();
 		return true;
 	}
 
@@ -176,7 +212,7 @@ public class LinearNotationTreeItem extends RadioTreeItem implements KeyDownHand
 		if (geo == null) {
 			initInput();
 		}
-		setFocusedStyle(focus);
+		setFocusedStyle(focus, !app.getSelectionManager().hasPointerFocus());
 		textField.setFocus(focus);
 	}
 
@@ -197,6 +233,9 @@ public class LinearNotationTreeItem extends RadioTreeItem implements KeyDownHand
 	public void setText(String text) {
 		textField.setText(text);
 		setDefaultAriaLabel();
+		if (getController().isEditing()) {
+			updatePreview();
+		}
 	}
 
 	@Override
@@ -234,8 +273,13 @@ public class LinearNotationTreeItem extends RadioTreeItem implements KeyDownHand
 			getController().onEnter(true);
 			event.preventDefault();
 			return;
-		} else if (event.getNativeKeyCode() == GWTKeycodes.KEY_TAB) {
+		} else if (event.getNativeKeyCode() == GWTKeycodes.KEY_TAB
+				&& !isInputTreeItem()) { // skip input, let the text field handle it
 			getController().onTab(event.getNativeEvent().getShiftKey());
+			event.preventDefault();
+			return;
+		} else if (event.getNativeKeyCode() == GWTKeycodes.KEY_ESCAPE) {
+			getController().onEscape();
 			event.preventDefault();
 			return;
 		}
@@ -244,15 +288,16 @@ public class LinearNotationTreeItem extends RadioTreeItem implements KeyDownHand
 
 	@Override
 	protected void updatePreview() {
-		kernel.getInputPreviewHelper().updatePreviewFromInputBar(
-				textField.getText(), AlgebraInputW.getWarningHandler(this, app));
+		kernel
+				.getInputPreviewHelper()
+				.updatePreviewFromInputBar(textField.getText(), AlgebraInputW.getWarningHandler(this, app));
 	}
 
 	@Override
 	protected void showPreview(GeoElement previewGeo) {
 		String text = previewGeo.toValueString(StringTemplate.linearNotation);
 		outputPanel.showPlainTextPreview(text);
-		AriaHelper.setLabel(textField.getTextField(), text);
+		AriaHelper.setLabel(textField.getTextField(), "=" + text);
 	}
 
 	@Override
@@ -263,5 +308,17 @@ public class LinearNotationTreeItem extends RadioTreeItem implements KeyDownHand
 	@Override
 	public void insertString(String text) {
 		textField.insertString(text);
+	}
+
+	@Override
+	protected LinearNotationFocusAccess createFocusAccess() {
+		return new LinearNotationFocusAccess(this);
+	}
+
+	@Override
+	protected void rebuild() {
+		unregisterCompositeFocus();
+		createCompositeFocus(app.getAccessibilityManager());
+		super.rebuild();
 	}
 }

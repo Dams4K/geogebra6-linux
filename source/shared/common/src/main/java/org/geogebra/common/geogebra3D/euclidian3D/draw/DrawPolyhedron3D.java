@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import java.util.ArrayList;
@@ -24,12 +40,11 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * Class for drawing 3D polygons.
- * 
+ *
  * @author matthieu
  *
  */
-public class DrawPolyhedron3D extends Drawable3DSurfaces
-		implements Previewable {
+public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable {
 
 	private DrawPolygon3D drawPolygon3D;
 	private Coords[] vertices = new Coords[0];
@@ -48,7 +63,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 
 	/**
 	 * Common constructor
-	 * 
+	 *
 	 * @param a_view3D
 	 *            view
 	 * @param poly
@@ -63,7 +78,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 
 	/**
 	 * Preview constructor
-	 * 
+	 *
 	 * @param a_view3D
 	 *            view
 	 * @param selectedPoints
@@ -73,9 +88,11 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 	 * @param mode
 	 *            preview mode
 	 */
-	public DrawPolyhedron3D(EuclidianView3D a_view3D,
+	public DrawPolyhedron3D(
+			EuclidianView3D a_view3D,
 			ArrayList<GeoPointND> selectedPoints,
-			ArrayList<GeoPolygon> selectedPolygons, int mode) {
+			ArrayList<GeoPolygon> selectedPolygons,
+			int mode) {
 
 		super(a_view3D);
 
@@ -106,13 +123,11 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 
 			setHighlightingColor();
 
-			renderer.getTextures()
-					.setDashFromLineType(getGeoElement().getLineType());
+			renderer.getTextures().setDashFromLineType(getGeoElement().getLineType());
 			drawGeometry(renderer);
 		}
 
 		drawTracesOutline(renderer, false);
-
 	}
 
 	@Override
@@ -131,7 +146,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 			drawGeometry(renderer);
 		} else {
 			if (getAlpha() > 0) { // surface is pickable only if not totally
-									// transparent
+				// transparent
 				drawSurfaceGeometry(renderer);
 			}
 		}
@@ -154,7 +169,6 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 
 		addToDrawable3DLists(lists, DRAW_TYPE_CLOSED_SURFACES_NOT_CURVED);
 		addToDrawable3DLists(lists, DRAW_TYPE_CURVES);
-
 	}
 
 	@Override
@@ -162,7 +176,6 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 
 		removeFromDrawable3DLists(lists, DRAW_TYPE_CLOSED_SURFACES_NOT_CURVED);
 		removeFromDrawable3DLists(lists, DRAW_TYPE_CURVES);
-
 	}
 
 	@Override
@@ -184,13 +197,11 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 		updateSurface(renderer);
 
 		return true;
-
 	}
 
 	private void updateSurface(Renderer renderer) {
 		int index = renderer.getGeometryManager().startPolygons(this);
-		for (GeoPolygon p : ((GeoPolyhedron) getGeoElement())
-				.getPolygonsLinked()) {
+		for (GeoPolygon p : ((GeoPolyhedron) getGeoElement()).getPolygonsLinked()) {
 			drawPolygon(renderer, p);
 		}
 		for (GeoPolygon p : ((GeoPolyhedron) getGeoElement()).getPolygons()) {
@@ -230,7 +241,6 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 		}
 
 		endPacking();
-
 	}
 
 	private void drawSegment(PlotterBrush brush, GeoSegmentND seg) {
@@ -246,7 +256,6 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 		enlargeBounds(boundsMin, boundsMax, p1);
 		enlargeBounds(boundsMin, boundsMax, p2);
 		brush.segment(p1, p2);
-
 	}
 
 	private void drawPolygon(Renderer renderer, GeoPolygon polygon) {
@@ -274,9 +283,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 			enlargeBounds(boundsMin, boundsMax, vertices[i]);
 		}
 
-		DrawPolygon3D.drawPolygon(renderer, polygon, vertices,
-				polygon.getPointsLength());
-
+		DrawPolygon3D.drawPolygon(renderer, polygon, vertices, polygon.getPointsLength());
 	}
 
 	@Override
@@ -319,12 +326,12 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 			switch (previewMode) {
 				default:
 				case EuclidianConstants.MODE_PYRAMID:
-					previewAlgo = new AlgoPolyhedronPointsPyramid(cons, null,
-							selectedPolygons.get(0), getView3D().getCursor3D());
+					previewAlgo = new AlgoPolyhedronPointsPyramid(
+							cons, null, selectedPolygons.get(0), getView3D().getCursor3D());
 					break;
 				case EuclidianConstants.MODE_PRISM:
-					previewAlgo = new AlgoPolyhedronPointsPrism(cons, null,
-							selectedPolygons.get(0), getView3D().getCursor3D());
+					previewAlgo = new AlgoPolyhedronPointsPrism(
+							cons, null, selectedPolygons.get(0), getView3D().getCursor3D());
 					break;
 			}
 
@@ -341,7 +348,6 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 		} else {
 			drawPolygon3D.updatePreview();
 		}
-
 	}
 
 	@Override
@@ -358,7 +364,6 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 		} else {
 			drawPolygon3D.disposePreview();
 		}
-
 	}
 
 	@Override
@@ -387,8 +392,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 		switch (previewMode) {
 			default:
 			case EuclidianConstants.MODE_PYRAMID:
-				previewAlgo = new AlgoPolyhedronPointsPyramid(cons, null,
-						points);
+				previewAlgo = new AlgoPolyhedronPointsPyramid(cons, null, points);
 				break;
 			case EuclidianConstants.MODE_PRISM:
 				previewAlgo = new AlgoPolyhedronPointsPrism(cons, null, points);
@@ -420,8 +424,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 		}
 
 		double d = Double.NaN;
-		for (GeoPolygon p : ((GeoPolyhedron) getGeoElement())
-				.getPolygonsLinked()) {
+		for (GeoPolygon p : ((GeoPolyhedron) getGeoElement()).getPolygonsLinked()) {
 			d = hitPolygon(d, hitting, p, globalCoords, inPlaneCoords);
 		}
 		for (GeoPolygon p : ((GeoPolyhedron) getGeoElement()).getPolygons()) {
@@ -437,15 +440,23 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 		return false;
 	}
 
-	static private double hitPolygon(double currentDistance, Hitting hitting,
-			GeoPolygon polygon, Coords globalCoords, Coords inPlaneCoords) {
+	private static double hitPolygon(
+			double currentDistance,
+			Hitting hitting,
+			GeoPolygon polygon,
+			Coords globalCoords,
+			Coords inPlaneCoords) {
 		if (!polygon.isEuclidianVisible() || polygon.isLabelSet()) {
 			return currentDistance;
 		}
 
-		hitting.getOrigin().projectPlaneThruVIfPossible(
-				polygon.getCoordSys().getMatrixOrthonormal(), hitting.getDirection(),
-				globalCoords, inPlaneCoords);
+		hitting
+				.getOrigin()
+				.projectPlaneThruVIfPossible(
+						polygon.getCoordSys().getMatrixOrthonormal(),
+						hitting.getDirection(),
+						globalCoords,
+						inPlaneCoords);
 
 		if (!hitting.isInsideClipping(globalCoords)) {
 			return currentDistance;
@@ -457,7 +468,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 			// -hitting.origin.distance(project[0]);
 			double parameterOnHitting = inPlaneCoords.getZ();
 			if (parameterOnHitting < currentDistance) { // currentDistance may
-														// be NaN
+				// be NaN
 				return currentDistance;
 			}
 			return parameterOnHitting;
@@ -471,24 +482,21 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 		if (isVisible()) {
 			if (exportSurface) {
 				// faces
-				for (GeoPolygon p : ((GeoPolyhedron) getGeoElement())
-						.getPolygonsLinked()) {
+				for (GeoPolygon p : ((GeoPolyhedron) getGeoElement()).getPolygonsLinked()) {
 					exportToPrinter3D(exportToPrinter3D, p);
 				}
-				for (GeoPolygon p : ((GeoPolyhedron) getGeoElement())
-						.getPolygons()) {
+				for (GeoPolygon p : ((GeoPolyhedron) getGeoElement()).getPolygons()) {
 					exportToPrinter3D(exportToPrinter3D, p);
 				}
 			} else {
 				// edges
-				exportToPrinter3D.exportCurve(getGeometryIndex(), Export3DType.CURVE,
-						"SEGMENT", getGeoElement());
+				exportToPrinter3D.exportCurve(
+						getGeometryIndex(), Export3DType.CURVE, "SEGMENT", getGeoElement());
 			}
 		}
 	}
 
-	private void exportToPrinter3D(ExportToPrinter3D exportToPrinter3D,
-			GeoPolygon polygon) {
+	private void exportToPrinter3D(ExportToPrinter3D exportToPrinter3D, GeoPolygon polygon) {
 		// export only polygons that have no label
 		if (!polygon.isEuclidianVisible() || polygon.isLabelSet()) {
 			return;
@@ -511,8 +519,8 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 			vertices[i].setValues(polygon.getPoint3D(i), 3);
 		}
 
-		exportToPrinter3D.export(polygon, vertices, getGeoElement().getObjectColor(),
-				getGeoElement().getAlphaValue());
+		exportToPrinter3D.export(
+				polygon, vertices, getGeoElement().getObjectColor(), getGeoElement().getAlphaValue());
 	}
 
 	@Override
@@ -521,24 +529,24 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 		if (prop == GProperty.LINE_STYLE) {
 			// also update for line width (e.g when translated)
 			setWaitForUpdate();
-        } else {
-            if (prop == GProperty.COLOR) {
-                setWaitForUpdateColor();
-            } else if (prop == GProperty.HIGHLIGHT) {
-                setWaitForUpdateColor();
-                // highlight faces and edges
-                GeoPolyhedron poly = (GeoPolyhedron) getGeoElement();
-                EuclidianView3D view3D = getView3D();
-                for (GeoPolygon p : poly.getPolygons()) {
-                    if (p.isLabelSet()) {
-                        view3D.updateHighlight(p);
+		} else {
+			if (prop == GProperty.COLOR) {
+				setWaitForUpdateColor();
+			} else if (prop == GProperty.HIGHLIGHT) {
+				setWaitForUpdateColor();
+				// highlight faces and edges
+				GeoPolyhedron poly = (GeoPolyhedron) getGeoElement();
+				EuclidianView3D view3D = getView3D();
+				for (GeoPolygon p : poly.getPolygons()) {
+					if (p.isLabelSet()) {
+						view3D.updateHighlight(p);
 						DrawPolygon3D.updateSegmentHighlighting(p, view3D);
-                    }
-                }
-                DrawPolygon3D.updateSegmentHighlighting(poly, view3D);
-            } else if (prop == GProperty.VISIBLE) {
-                setWaitForUpdateVisibility();
-            }
+					}
+				}
+				DrawPolygon3D.updateSegmentHighlighting(poly, view3D);
+			} else if (prop == GProperty.VISIBLE) {
+				setWaitForUpdateVisibility();
+			}
 		}
 	}
 
@@ -548,8 +556,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces
 	}
 
 	@Override
-	public void enlargeBounds(Coords min, Coords max,
-			boolean dontExtend) {
+	public void enlargeBounds(Coords min, Coords max, boolean dontExtend) {
 		if (!Double.isNaN(boundsMin.getX())) {
 			enlargeBounds(min, max, boundsMin, boundsMax);
 		}

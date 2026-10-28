@@ -1,10 +1,26 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.openGL;
 
 import org.geogebra.common.awt.GColor;
 
 /**
  * Buffer for big curves (e.g. cartesian curves)
- * 
+ *
  *
  */
 public class BufferPackBigCurve extends BufferPackAbstract {
@@ -12,30 +28,37 @@ public class BufferPackBigCurve extends BufferPackAbstract {
 	/**
 	 * max size for a curve
 	 */
-	public static final int CURVE_SIZE_MAX = (Short.MAX_VALUE + 1)
-			/ PlotterBrush.LATITUDES - 1;
+	public final int curveSizeMax;
 
-	private static final int INDICES_LENGTH_MAX = GLBufferManager
-			.getIndicesLengthForCurve(CURVE_SIZE_MAX);
+	private final int indicesLengthMax;
 
-	private GLBufferManager manager;
+	private final GLBufferManager manager;
 	private BufferPack[] bufferPacks;
 	private BufferPack lastBuffer;
 	private int bufferCount;
-	private int lastBufferSize;
 	private int lastBufferElementsLength;
 	private int lastBufferIndicesLength;
 
 	/**
 	 * creates a new buffer pack for big geometries
-	 * 
+	 *
 	 * @param manager
 	 *            geometries manager
 	 */
-	public BufferPackBigCurve(GLBufferManager manager) {
+	BufferPackBigCurve(GLBufferManager manager) {
 		this.manager = manager;
+		curveSizeMax = getCurveSizeMax(manager);
+		indicesLengthMax = manager.getIndicesLengthForCurve(curveSizeMax);
 		elementsLength = 0;
 		indicesLength = 0;
+	}
+
+	/**
+	 * @param manager3D geometry manager
+	 * @return maximum length of a curve
+	 */
+	static int getCurveSizeMax(GLBufferManager manager3D) {
+		return (Short.MAX_VALUE + 1) / manager3D.getCurveLatitudeSplits() - 1;
 	}
 
 	@Override
@@ -47,29 +70,23 @@ public class BufferPackBigCurve extends BufferPackAbstract {
 	public void addToLength(int elementsLengthToAdd, int indicesLengthToAdd) {
 		elementsLength = elementsLengthToAdd;
 		indicesLength = indicesLengthToAdd;
-		int size = elementsLength / PlotterBrush.LATITUDES - 1;
-		bufferCount = size / CURVE_SIZE_MAX;
+		int size = elementsLength / manager.getCurveLatitudeSplits() - 1;
+		bufferCount = size / curveSizeMax;
 		bufferPacks = new BufferPack[bufferCount];
 		for (int i = 0; i < bufferCount; i++) {
-			bufferPacks[i] = new BufferPack(manager, ELEMENT_SIZE_MAX,
-					INDICES_LENGTH_MAX);
-			bufferPacks[i].addToLength(ELEMENT_SIZE_MAX, INDICES_LENGTH_MAX);
+			bufferPacks[i] = new BufferPack(manager, ELEMENT_SIZE_MAX, indicesLengthMax);
+			bufferPacks[i].addToLength(ELEMENT_SIZE_MAX, indicesLengthMax);
 		}
-		lastBufferSize = size % CURVE_SIZE_MAX;
+		int lastBufferSize = size % curveSizeMax;
 		if (lastBufferSize > 0) {
-			lastBufferElementsLength = GLBufferManager
-					.getElementsLengthForCurve(lastBufferSize);
-			lastBufferIndicesLength = GLBufferManager
-					.getIndicesLengthForCurve(lastBufferSize);
-			lastBuffer = new BufferPack(manager, lastBufferElementsLength,
-					lastBufferIndicesLength);
-			lastBuffer.addToLength(lastBufferElementsLength,
-					lastBufferIndicesLength);
+			lastBufferElementsLength = manager.getElementsLengthForCurve(lastBufferSize);
+			lastBufferIndicesLength = manager.getIndicesLengthForCurve(lastBufferSize);
+			lastBuffer = new BufferPack(manager, lastBufferElementsLength, lastBufferIndicesLength);
+			lastBuffer.addToLength(lastBufferElementsLength, lastBufferIndicesLength);
 		} else {
 			lastBufferElementsLength = 0;
 			lastBufferIndicesLength = 0;
 		}
-
 	}
 
 	@Override
@@ -78,8 +95,7 @@ public class BufferPackBigCurve extends BufferPackAbstract {
 			bufferPacks[i].setElementsForBigCurve(i, ELEMENT_SIZE_MAX);
 		}
 		if (lastBufferElementsLength > 0) {
-			lastBuffer.setElementsForBigCurve(bufferCount,
-					lastBufferElementsLength);
+			lastBuffer.setElementsForBigCurve(bufferCount, lastBufferElementsLength);
 		}
 	}
 
@@ -102,8 +118,7 @@ public class BufferPackBigCurve extends BufferPackAbstract {
 	}
 
 	@Override
-	public void setElements(float[] translate, float scale,
-			boolean reuseSegment) {
+	public void setElements(float[] translate, float scale, boolean reuseSegment) {
 		// not used
 	}
 
@@ -138,7 +153,7 @@ public class BufferPackBigCurve extends BufferPackAbstract {
 	}
 
 	@Override
-	public void reset() {
+	protected void reset() {
 		// no need
 	}
 
@@ -179,5 +194,4 @@ public class BufferPackBigCurve extends BufferPackAbstract {
 	public boolean isBigBuffer() {
 		return true;
 	}
-
 }

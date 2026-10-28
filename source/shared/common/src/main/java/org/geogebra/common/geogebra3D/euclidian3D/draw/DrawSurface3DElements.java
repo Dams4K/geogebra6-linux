@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import org.geogebra.common.awt.GColor;
@@ -13,7 +29,7 @@ import org.geogebra.common.plugin.Geometry3DGetter.GeometryType;
 
 /**
  * Draw 3D surface with GL drawElements()
- * 
+ *
  * @author mathieu
  *
  */
@@ -22,20 +38,18 @@ public class DrawSurface3DElements extends DrawSurface3D {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param a_view3d
 	 *            view
 	 * @param surface
 	 *            surface
 	 */
-	public DrawSurface3DElements(EuclidianView3D a_view3d,
-			SurfaceEvaluable surface) {
+	public DrawSurface3DElements(EuclidianView3D a_view3d, SurfaceEvaluable surface) {
 		super(a_view3d, surface);
 	}
 
 	@Override
-	protected void drawTriangle(PlotterSurface surface, CornerAndCenter cc,
-			Corner c1, Corner c2) {
+	protected void drawTriangle(PlotterSurface surface, CornerAndCenter cc, Corner c1, Corner c2) {
 
 		if (!checkIdsAreShort(cornerListIndex + cc.id, c1.id, c2.id)) {
 			return;
@@ -60,12 +74,11 @@ public class DrawSurface3DElements extends DrawSurface3D {
 		}
 
 		lastIndex = cornerListIndex + drawListIndex;
-
 	}
 
 	@Override
-	protected void drawTriangle(PlotterSurface surface, Coords3 p0, Coords3 n0,
-			Corner c1, Corner c2) {
+	protected void drawTriangle(
+			PlotterSurface surface, Coords3 p0, Coords3 n0, Corner c1, Corner c2) {
 
 		if (!checkIdsAreShort(lastIndex, c1.id, c2.id)) {
 			return;
@@ -75,10 +88,9 @@ public class DrawSurface3DElements extends DrawSurface3D {
 		draw(surface, p0, n0);
 		draw(surface, c2);
 		draw(surface, c1);
-
 	}
 
-	final private void draw(PlotterSurface surface, Coords3 p0, Coords3 n0) {
+	private void draw(PlotterSurface surface, Coords3 p0, Coords3 n0) {
 		// add normal and vertex
 		surface.normalDirect(n0);
 		surface.vertexDirect(p0);
@@ -88,21 +100,20 @@ public class DrawSurface3DElements extends DrawSurface3D {
 		lastIndex++;
 	}
 
-	final private void draw(PlotterSurface surface, Corner c) {
+	private void draw(PlotterSurface surface, Corner c) {
 
 		if (c.id < 0) { // needs new id
 			draw(surface, c.p, c.normal);
 		} else {
 			((PlotterSurfaceElements) surface).drawIndex(c.id);
 		}
-
 	}
 
-	final private static boolean checkIdsAreShort(int id1, int id2, int id3) {
+	private static boolean checkIdsAreShort(int id1, int id2, int id3) {
 		return checkIdIsShort(id1) && checkIdIsShort(id2) && checkIdIsShort(id3);
 	}
 
-	final private static boolean checkIdIsShort(int id) {
+	private static boolean checkIdIsShort(int id) {
 		return id <= Short.MAX_VALUE;
 	}
 
@@ -118,13 +129,15 @@ public class DrawSurface3DElements extends DrawSurface3D {
 		if (isVisible()) {
 			GeoElement geo = getGeoElement();
 			if (exportSurface) {
-				manager.export(geo, getSurfaceIndex(), geo.getObjectColor(),
-						geo.getAlphaValue(), GeometryType.SURFACE);
+				manager.export(
+						geo,
+						getSurfaceIndex(),
+						geo.getObjectColor(),
+						geo.getAlphaValue(),
+						GeometryType.SURFACE);
 			} else {
-				manager.export(geo, getGeometryIndex(), GColor.BLACK, 1,
-						GeometryType.CURVE);
+				manager.export(geo, getGeometryIndex(), GColor.BLACK, 1, GeometryType.CURVE);
 			}
 		}
 	}
-
 }

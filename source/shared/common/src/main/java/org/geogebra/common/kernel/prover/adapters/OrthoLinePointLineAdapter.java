@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.prover.adapters;
 
 import org.geogebra.common.kernel.Kernel;
@@ -9,6 +25,11 @@ import org.geogebra.common.kernel.prover.polynomial.PVariable;
 import org.geogebra.common.util.debug.Log;
 
 public class OrthoLinePointLineAdapter extends ProverAdapter {
+
+	/**
+	 * @return Botana polynomials
+	 * @throws NoSymbolicParametersException if suitable polynomials cannot be obtained
+	 */
 	public PPolynomial[] getBotanaPolynomials(GeoLine l, GeoPoint P)
 			throws NoSymbolicParametersException {
 		if (botanaPolynomials != null) {
@@ -21,7 +42,7 @@ public class OrthoLinePointLineAdapter extends ProverAdapter {
 
 			if (botanaVars == null) {
 				botanaVars = new PVariable[4]; // storing 2 new variables, plus
-												// the coordinates of P
+				// the coordinates of P
 				botanaVars[0] = new PVariable(kernel);
 				botanaVars[1] = new PVariable(kernel);
 				botanaVars[2] = vP[0];

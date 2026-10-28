@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -29,9 +33,9 @@ public class AlgoFractionTextPoint extends AlgoElement {
 	private GeoPointND p; // input
 	private GeoText text; // output
 
-	private double[] xCoord = { 0, 0 };
-	private double[] yCoord = { 0, 0 };
-	private double[] zCoord = { 0, 0 };
+	private double[] xCoord = {0, 0};
+	private double[] yCoord = {0, 0};
+	private double[] zCoord = {0, 0};
 
 	private StringBuilder sb = new StringBuilder();
 
@@ -41,7 +45,6 @@ public class AlgoFractionTextPoint extends AlgoElement {
 	 * @param p
 	 *            point
 	 */
-
 	public AlgoFractionTextPoint(Construction cons, GeoPointND p) {
 		super(cons);
 		this.p = p;
@@ -84,12 +87,9 @@ public class AlgoFractionTextPoint extends AlgoElement {
 
 			Coords coords = p.getInhomCoords();
 
-			xCoord = AlgoFractionText.decimalToFraction(coords.getX(),
-					Kernel.STANDARD_PRECISION);
-			yCoord = AlgoFractionText.decimalToFraction(coords.getY(),
-					Kernel.STANDARD_PRECISION);
-			zCoord = AlgoFractionText.decimalToFraction(coords.getZ(),
-					Kernel.STANDARD_PRECISION);
+			xCoord = AlgoFractionText.decimalToFraction(coords.getX(), Kernel.STANDARD_PRECISION);
+			yCoord = AlgoFractionText.decimalToFraction(coords.getY(), Kernel.STANDARD_PRECISION);
+			zCoord = AlgoFractionText.decimalToFraction(coords.getZ(), Kernel.STANDARD_PRECISION);
 
 			sb.setLength(0);
 			sb.append("{ \\left( ");
@@ -113,5 +113,4 @@ public class AlgoFractionTextPoint extends AlgoElement {
 	public boolean isLaTeXTextCommand() {
 		return true;
 	}
-
 }

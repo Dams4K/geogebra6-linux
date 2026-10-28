@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.advanced;
 
 import org.geogebra.common.kernel.Construction;
@@ -27,8 +43,8 @@ public class AlgoDivision extends AlgoElement {
 	 * @param divisor
 	 *            divisor
 	 */
-	public AlgoDivision(Construction cons, String label,
-			GeoNumberValue dividend, GeoNumberValue divisor) {
+	public AlgoDivision(
+			Construction cons, String label, GeoNumberValue dividend, GeoNumberValue divisor) {
 		super(cons);
 		a = dividend;
 		b = divisor;
@@ -40,13 +56,12 @@ public class AlgoDivision extends AlgoElement {
 		setInputOutput();
 		compute();
 		result.setLabel(label);
-
 	}
 
 	@Override
 	protected void setInputOutput() {
 		setOnlyOutput(result);
-		input = new GeoElement[] { a.toGeoElement(), b.toGeoElement() };
+		input = new GeoElement[] {a.toGeoElement(), b.toGeoElement()};
 		setDependencies();
 	}
 
@@ -73,7 +88,6 @@ public class AlgoDivision extends AlgoElement {
 		} else {
 			result.setUndefined();
 		}
-
 	}
 
 	@Override
@@ -84,5 +98,4 @@ public class AlgoDivision extends AlgoElement {
 	public GeoElement getResult() {
 		return result;
 	}
-
 }

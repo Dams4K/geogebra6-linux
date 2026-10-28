@@ -1,16 +1,20 @@
-package org.geogebra.common.kernel.statistics;
-
-/* 
- GeoGebra - Dynamic Mathematics for Everyone
- http://www.geogebra.org
-
- This file is part of GeoGebra.
-
- This program is free software; you can redistribute it and/or modify it 
- under the terms of the GNU General Public License as published by 
- the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
+
+package org.geogebra.common.kernel.statistics;
 
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.algos.AlgoElement;
@@ -29,11 +33,10 @@ import org.geogebra.common.plugin.Operation;
  * Fits an a*b^x to a list of points. Needed for pupils who don't know about e,
  * but in their curriculum are doing mathematical models with growth
  * (exponential) functions.
- * 
+ *
  * @author Hans-Petter Ulven
  * @version 2010-02-2010
  */
-
 public class AlgoFitGrowth extends AlgoElement implements FitAlgo {
 
 	private GeoList geolist; // input
@@ -95,23 +98,19 @@ public class AlgoFitGrowth extends AlgoElement implements FitAlgo {
 			MyDouble A = new MyDouble(kernel, a);
 			MyDouble B = new MyDouble(kernel, b);
 			FunctionVariable X = new FunctionVariable(kernel);
-			ExpressionValue expr = new ExpressionNode(kernel, B,
-					Operation.POWER, X);
-			ExpressionNode node = new ExpressionNode(kernel, A,
-					Operation.MULTIPLY, expr);
+			ExpressionValue expr = new ExpressionNode(kernel, B, Operation.POWER, X);
+			ExpressionNode node = new ExpressionNode(kernel, A, Operation.MULTIPLY, expr);
 			Function f = new Function(node, X);
 			geofunction.setFunction(f);
 			geofunction.setDefined(true);
 		} else {
 			geofunction.setUndefined();
-			return;
 		}
 	}
 
 	@Override
 	public double[] getCoeffs() {
-		double[] ret = { regMath.getP1(), Math.exp(regMath.getP2()) };
+		double[] ret = {regMath.getP1(), Math.exp(regMath.getP2())};
 		return ret;
 	}
-
 }

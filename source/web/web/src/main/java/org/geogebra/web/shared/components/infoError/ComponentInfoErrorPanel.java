@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.shared.components.infoError;
 
 import org.geogebra.common.main.Localization;
@@ -8,7 +24,7 @@ import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Label;
 
-public class ComponentInfoErrorPanel extends FlowPanel {
+public final class ComponentInfoErrorPanel extends FlowPanel {
 	private final Localization loc;
 	private StandardButton actionButton;
 
@@ -18,8 +34,7 @@ public class ComponentInfoErrorPanel extends FlowPanel {
 	 * @param data - data of the panel including title, subtext, icon and button text
 	 * @param buttonAction - handler for the button
 	 */
-	public ComponentInfoErrorPanel(Localization loc, InfoErrorData data,
-			Runnable buttonAction) {
+	public ComponentInfoErrorPanel(Localization loc, InfoErrorData data, Runnable buttonAction) {
 		this.loc = loc;
 		addStyleName("infoErrorPanel");
 		buildGUI(data, buttonAction);
@@ -39,25 +54,24 @@ public class ComponentInfoErrorPanel extends FlowPanel {
 		add(infoImage);
 
 		if (data.getTitle() != null) {
-			Label titleLabel = BaseWidgetFactory.INSTANCE.newPrimaryText(
-					loc.getMenu(data.getTitle()), "title");
+			Label titleLabel =
+					BaseWidgetFactory.INSTANCE.newPrimaryText(loc.getMenu(data.getTitle()), "title");
 			add(titleLabel);
 		}
 
 		if (data.getSubtext() != null) {
-			Label subtextLabel = BaseWidgetFactory.INSTANCE.newSecondaryText(
-					loc.getMenu(data.getSubtext()), "subtext");
+			Label subtextLabel =
+					BaseWidgetFactory.INSTANCE.newSecondaryText(loc.getMenu(data.getSubtext()), "subtext");
 			add(subtextLabel);
 		}
 
 		if (data.getActionButtonText() != null) {
 			actionButton =
-					new StandardButton(loc.getMenu(data.getActionButtonText()));
-			actionButton.addStyleName("dialogContainedButton");
+					BaseWidgetFactory.INSTANCE.newFilledButton(loc.getMenu(data.getActionButtonText()));
 			actionButton.addFastClickHandler(source -> {
-					if (!actionButton.getStyleName().contains("disabled")) {
-						buttonAction.run();
-					}
+				if (!actionButton.getStyleName().contains("disabled")) {
+					buttonAction.run();
+				}
 			});
 			add(actionButton);
 		}

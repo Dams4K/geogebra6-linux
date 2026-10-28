@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel;
@@ -19,8 +23,7 @@ import org.geogebra.common.io.XMLParseException;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.debug.Log;
-
-import com.himamis.retex.editor.share.input.Character;
+import org.geogebra.editor.share.input.Character;
 
 /**
  * Construction for macros.
@@ -33,7 +36,7 @@ public class MacroConstruction extends Construction {
 
 	/**
 	 * Creates new macro construction
-	 * 
+	 *
 	 * @param kernel
 	 *            Kernel
 	 */
@@ -47,7 +50,7 @@ public class MacroConstruction extends Construction {
 
 	/**
 	 * Set construction via XML string.
-	 * 
+	 *
 	 * @param xmlString
 	 *            XML string of the construction
 	 * @throws XMLParseException
@@ -60,7 +63,7 @@ public class MacroConstruction extends Construction {
 	/**
 	 * Adds label to the list of reserved labels. Such labels will not be looked
 	 * up in the parent construction in lookup();
-	 * 
+	 *
 	 * @param label
 	 *            reserved label
 	 */
@@ -74,7 +77,7 @@ public class MacroConstruction extends Construction {
 	 * Returns a GeoElement for the given label. Note: construction index is
 	 * ignored here. If no geo is found for the specified label a lookup is made
 	 * in the parent construction.
-	 * 
+	 *
 	 * @return may return null
 	 */
 	@Override
@@ -115,8 +118,7 @@ public class MacroConstruction extends Construction {
 		 * remove all "$" signs from label and try again.
 		 */
 		if (label1.indexOf('$') > -1 && label1.length() > 1) {
-			StringBuilder labelWithoutDollar = new StringBuilder(
-					label1.length() - 1);
+			StringBuilder labelWithoutDollar = new StringBuilder(label1.length() - 1);
 			for (int i = 0; i < label1.length(); i++) {
 				char ch = label1.charAt(i);
 				if (ch != '$') {
@@ -169,7 +171,7 @@ public class MacroConstruction extends Construction {
 
 	/**
 	 * Returns true if geos of parent construction can be referenced
-	 * 
+	 *
 	 * @return true if geos of parent construction can be referenced
 	 */
 	public boolean isGlobalVariableLookup() {
@@ -178,7 +180,7 @@ public class MacroConstruction extends Construction {
 
 	/**
 	 * Set to true if geos of parent construction should be referenced
-	 * 
+	 *
 	 * @param globalVariableLookup
 	 *            true if geos of parent construction should be referenced
 	 */

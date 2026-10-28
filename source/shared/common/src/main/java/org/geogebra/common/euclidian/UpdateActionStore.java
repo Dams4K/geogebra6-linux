@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
 import java.util.ArrayList;
@@ -7,17 +23,26 @@ import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoImage;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.main.SelectionManager;
+import org.geogebra.common.main.undo.UndoCommandBuilder;
 import org.geogebra.common.main.undo.UndoManager;
 import org.geogebra.common.plugin.ActionType;
 
 import com.google.j2objc.annotations.Weak;
 
+/**
+ * Converts changes (updates) to currently selected elements into
+ * {@link org.geogebra.common.main.undo.UndoCommand UndoCommand}s (by snapshotting their definition)
+ * and stores the resulting undo commands in the {@link UndoManager}.
+ */
 public class UpdateActionStore {
 	private final List<UndoItem> undoItems = new ArrayList<>();
 
 	@Weak
 	protected final SelectionManager selection;
+
 	private final UndoManager undoManager;
+	private boolean stitching;
+	private boolean hasMeasurementTools;
 
 	/**
 	 * Constructor
@@ -44,25 +69,23 @@ public class UpdateActionStore {
 			if (geo.hasChangeableParent3D()) {
 				GeoNumeric num = geo.getChangeableParent3D().getNumber();
 				if (num.isLabelSet()) {
-					undoItems.add(new UndoItem(num, MoveMode.NUMERIC));
+					addUndoItem(num, MoveMode.NUMERIC);
 				} else {
-					undoItems.add(new UndoItem(geo.getChangeableParent3D().getSurface(),
-							defaultMode));
+					addUndoItem(geo.getChangeableParent3D().getSurface(), defaultMode);
 				}
 				continue;
 			}
-			if (geo.getParentAlgorithm() != null
-					&& !geo.isPointOnPath() && !geo.isPointInRegion()) {
+			if (geo.getParentAlgorithm() != null && !geo.isPointOnPath() && !geo.isPointInRegion()) {
 				addAll(geo.getParentAlgorithm().getDefinedAndLabeledInput(), defaultMode);
-			} else if (geo instanceof GeoImage) {
-				addAll(((GeoImage) geo).getDefinedAndLabeledStartPoints(), defaultMode);
+			} else if (geo instanceof GeoImage image) {
+				addAll(image.getDefinedAndLabeledStartPoints(), defaultMode);
 			}
-			undoItems.add(new UndoItem(geo, defaultMode));
+			addUndoItem(geo, defaultMode);
 		}
 	}
 
 	private void addAll(List<? extends GeoElement> geos, MoveMode mode) {
-		geos.forEach(geo -> undoItems.add(new UndoItem(geo, mode)));
+		geos.forEach(geo -> addUndoItem(geo, mode));
 	}
 
 	/**
@@ -72,7 +95,15 @@ public class UpdateActionStore {
 	 */
 	public void addIfNotPresent(GeoElement geo, MoveMode mode) {
 		if (undoItems.stream().noneMatch(it -> it.hasGeo(geo))) {
+			addUndoItem(geo, mode);
+		}
+	}
+
+	private void addUndoItem(GeoElement geo, MoveMode mode) {
+		if (!geo.isMeasurementTool()) {
 			undoItems.add(new UndoItem(geo, mode));
+		} else {
+			hasMeasurementTools = true;
 		}
 	}
 
@@ -89,6 +120,7 @@ public class UpdateActionStore {
 	 */
 	public void clear() {
 		undoItems.clear();
+		hasMeasurementTools = false;
 	}
 
 	/**
@@ -98,26 +130,31 @@ public class UpdateActionStore {
 		List<String> actions = new ArrayList<>(undoItems.size());
 		List<String> undoActions = new ArrayList<>(undoItems.size());
 		List<String> labels = new ArrayList<>(undoItems.size());
-		for (UndoItem item: undoItems) {
+		for (UndoItem item : undoItems) {
 			actions.add(item.content());
 			undoActions.add(item.previousContent());
 			labels.add(item.getLabel());
 		}
-		undoManager.buildAction(ActionType.UPDATE, actions.toArray(new String[0]))
+		UndoCommandBuilder builder = undoManager
+				.buildAction(ActionType.UPDATE, actions.toArray(new String[0]))
 				.withUndo(ActionType.UPDATE, undoActions.toArray(new String[0]))
-				.withLabels(labels.toArray(new String[0]))
-				.storeAndNotifyUnsaved();
+				.withLabels(labels.toArray(new String[0]));
+		if (stitching) {
+			builder.withStitchToNext();
+		}
+		builder.storeAndNotifyUnsaved();
 	}
 
 	/**
-	 * Store undo
-	 * @return if there is items in undo list.
+	 * Store undo action.
+	 * @return {@code true} if there were any updated elements
+	 * (measurement tools count but do not produce an undo point themselves).
 	 */
 	public boolean storeUndo() {
 		if (!undoItems.isEmpty()) {
 			storeUpdateAction();
 		}
-		return undoItems.isEmpty();
+		return !undoItems.isEmpty() || hasMeasurementTools;
 	}
 
 	/**
@@ -126,5 +163,9 @@ public class UpdateActionStore {
 	 */
 	public boolean isEmpty() {
 		return undoItems.isEmpty();
+	}
+
+	public void setStitching(boolean stitching) {
+		this.stitching = stitching;
 	}
 }

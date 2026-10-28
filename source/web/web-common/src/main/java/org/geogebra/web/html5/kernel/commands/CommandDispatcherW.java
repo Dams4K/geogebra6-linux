@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.kernel.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -34,21 +50,20 @@ public class CommandDispatcherW extends CommandDispatcher {
 	@Override
 	public CommandProcessorFactory getDiscreteCommandProcessorFactory() {
 		if (discreteFactory == null) {
-			GWT.runAsync(DiscreteCommandProcessorFactory.class,
-					new RunAsyncCallback() {
-						@Override
-						public void onFailure(Throwable reason) {
-							Log.error("Loading failed for discrete commands");
-						}
+			GWT.runAsync(DiscreteCommandProcessorFactory.class, new RunAsyncCallback() {
+				@Override
+				public void onFailure(Throwable reason) {
+					Log.error("Loading failed for discrete commands");
+				}
 
-						@Override
-						public void onSuccess() {
-							LoggerW.loaded("discrete commands");
-							discreteFactory = new DiscreteCommandProcessorFactory();
-							initCmdTable();
-							((AppW) app).commandsLoaded();
-						}
-					});
+				@Override
+				public void onSuccess() {
+					LoggerW.loaded("discrete commands");
+					discreteFactory = new DiscreteCommandProcessorFactory();
+					initCmdTable();
+					((AppW) app).commandsLoaded();
+				}
+			});
 			throw new CommandNotLoadedError("Discrete commands not loaded yet");
 		}
 
@@ -58,23 +73,21 @@ public class CommandDispatcherW extends CommandDispatcher {
 	@Override
 	public CommandProcessorFactory getScriptingCommandProcessorFactory() {
 		if (scriptingFactory == null) {
-			GWT.runAsync(ScriptingCommandProcessorFactory.class,
-					new RunAsyncCallback() {
-						@Override
-						public void onFailure(Throwable reason) {
-							Log.error("Loading failed for scripting commands");
-						}
+			GWT.runAsync(ScriptingCommandProcessorFactory.class, new RunAsyncCallback() {
+				@Override
+				public void onFailure(Throwable reason) {
+					Log.error("Loading failed for scripting commands");
+				}
 
-						@Override
-						public void onSuccess() {
-							LoggerW.loaded("scripting commands");
-							scriptingFactory = new ScriptingCommandProcessorFactory();
-							initCmdTable();
-							((AppW) app).commandsLoaded();
-						}
-					});
-			throw new CommandNotLoadedError(
-					"Scripting commands not loaded yet");
+				@Override
+				public void onSuccess() {
+					LoggerW.loaded("scripting commands");
+					scriptingFactory = new ScriptingCommandProcessorFactory();
+					initCmdTable();
+					((AppW) app).commandsLoaded();
+				}
+			});
+			throw new CommandNotLoadedError("Scripting commands not loaded yet");
 		}
 
 		return scriptingFactory;
@@ -83,21 +96,20 @@ public class CommandDispatcherW extends CommandDispatcher {
 	@Override
 	public CommandProcessorFactory getAdvancedCommandProcessorFactory() {
 		if (advancedFactory == null) {
-			GWT.runAsync(AdvancedCommandProcessorFactory.class,
-					new RunAsyncCallback() {
-						@Override
-						public void onFailure(Throwable reason) {
-							Log.error("Loading failed for advanced commands");
-						}
+			GWT.runAsync(AdvancedCommandProcessorFactory.class, new RunAsyncCallback() {
+				@Override
+				public void onFailure(Throwable reason) {
+					Log.error("Loading failed for advanced commands");
+				}
 
-						@Override
-						public void onSuccess() {
-							LoggerW.loaded("advanced commands");
-							advancedFactory = new AdvancedCommandProcessorFactory();
-							initCmdTable();
-							((AppW) app).commandsLoaded();
-						}
-					});
+				@Override
+				public void onSuccess() {
+					LoggerW.loaded("advanced commands");
+					advancedFactory = new AdvancedCommandProcessorFactory();
+					initCmdTable();
+					((AppW) app).commandsLoaded();
+				}
+			});
 			throw new CommandNotLoadedError("Advanced commands not loaded yet");
 		}
 

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.prover;
 
 import java.math.BigInteger;
@@ -20,7 +36,7 @@ import org.geogebra.common.kernel.prover.polynomial.PVariable;
 /**
  * Decides if the lines are concurrent. Can be embedded into the Prove command
  * to work symbolically.
- * 
+ *
  * @author Simon Weitzhofer 18th April 2012
  * @author Zoltan Kovacs
  */
@@ -35,7 +51,7 @@ public class AlgoAreConcurrent extends AlgoElement
 
 	/**
 	 * Creates a new AlgoAreConcurrent function
-	 * 
+	 *
 	 * @param cons
 	 *            the Construction
 	 * @param inputLine1
@@ -45,8 +61,11 @@ public class AlgoAreConcurrent extends AlgoElement
 	 * @param inputLine3
 	 *            the third line
 	 */
-	public AlgoAreConcurrent(final Construction cons, final GeoLine inputLine1,
-			final GeoLine inputLine2, final GeoLine inputLine3) {
+	public AlgoAreConcurrent(
+			final Construction cons,
+			final GeoLine inputLine1,
+			final GeoLine inputLine2,
+			final GeoLine inputLine3) {
 		super(cons);
 		this.inputLine1 = inputLine1;
 		this.inputLine2 = inputLine2;
@@ -60,7 +79,7 @@ public class AlgoAreConcurrent extends AlgoElement
 
 	/**
 	 * Creates a new AlgoAreConcurrent function
-	 * 
+	 *
 	 * @param cons
 	 *            the Construction
 	 * @param label
@@ -72,8 +91,11 @@ public class AlgoAreConcurrent extends AlgoElement
 	 * @param inputLine3
 	 *            the third line
 	 */
-	public AlgoAreConcurrent(final Construction cons, final String label,
-			final GeoLine inputLine1, final GeoLine inputLine2,
+	public AlgoAreConcurrent(
+			final Construction cons,
+			final String label,
+			final GeoLine inputLine1,
+			final GeoLine inputLine2,
 			final GeoLine inputLine3) {
 		this(cons, inputLine1, inputLine2, inputLine3);
 		outputBoolean.setLabel(label);
@@ -97,7 +119,7 @@ public class AlgoAreConcurrent extends AlgoElement
 
 	/**
 	 * Returns the result of the test
-	 * 
+	 *
 	 * @return true if the three lines are concurrent i.e. they intersect in a
 	 *         common point, false otherwise
 	 */
@@ -107,8 +129,7 @@ public class AlgoAreConcurrent extends AlgoElement
 
 	@Override
 	public final void compute() {
-		outputBoolean.setValue(
-				GeoLine.concurrent(inputLine1, inputLine2, inputLine3));
+		outputBoolean.setValue(GeoLine.concurrent(inputLine1, inputLine2, inputLine3));
 	}
 
 	@Override
@@ -117,8 +138,7 @@ public class AlgoAreConcurrent extends AlgoElement
 	}
 
 	@Override
-	public void getFreeVariables(HashSet<PVariable> variables)
-			throws NoSymbolicParametersException {
+	public void getFreeVariables(HashSet<PVariable> variables) throws NoSymbolicParametersException {
 		if ((inputLine1 instanceof GeoSegment)
 				|| (inputLine2 instanceof GeoSegment)
 				|| (inputLine3 instanceof GeoSegment)) {
@@ -134,8 +154,7 @@ public class AlgoAreConcurrent extends AlgoElement
 	}
 
 	@Override
-	public int[] getDegrees(AbstractProverReciosMethod a)
-			throws NoSymbolicParametersException {
+	public int[] getDegrees(AbstractProverReciosMethod a) throws NoSymbolicParametersException {
 		if ((inputLine1 instanceof GeoSegment)
 				|| (inputLine2 instanceof GeoSegment)
 				|| (inputLine3 instanceof GeoSegment)) {
@@ -146,20 +165,24 @@ public class AlgoAreConcurrent extends AlgoElement
 			int[] degree2 = inputLine2.getDegrees(a);
 			int[] degree3 = inputLine3.getDegrees(a);
 			int[] result = new int[1];
-			result[0] = Math.max(degree1[0] + degree2[1] + degree3[2], Math.max(
-					degree2[0] + degree3[1] + degree1[2],
-					Math.max(degree3[0] + degree1[1] + degree2[2], Math.max(
-							degree3[0] + degree2[1] + degree1[2], Math.max(
-									degree2[0] + degree1[1] + degree3[2],
-									degree1[0] + degree3[1] + degree2[2])))));
+			result[0] = Math.max(
+					degree1[0] + degree2[1] + degree3[2],
+					Math.max(
+							degree2[0] + degree3[1] + degree1[2],
+							Math.max(
+									degree3[0] + degree1[1] + degree2[2],
+									Math.max(
+											degree3[0] + degree2[1] + degree1[2],
+											Math.max(
+													degree2[0] + degree1[1] + degree3[2],
+													degree1[0] + degree3[1] + degree2[2])))));
 			return result;
 		}
 		throw new NoSymbolicParametersException();
 	}
 
 	@Override
-	public BigInteger[] getExactCoordinates(
-			final HashMap<PVariable, BigInteger> values)
+	public BigInteger[] getExactCoordinates(final HashMap<PVariable, BigInteger> values)
 			throws NoSymbolicParametersException {
 		if ((inputLine1 instanceof GeoSegment)
 				|| (inputLine2 instanceof GeoSegment)
@@ -171,16 +194,16 @@ public class AlgoAreConcurrent extends AlgoElement
 			BigInteger[] coords2 = inputLine2.getExactCoordinates(values);
 			BigInteger[] coords3 = inputLine3.getExactCoordinates(values);
 			BigInteger[] coords = new BigInteger[1];
-			coords[0] = coords1[0].multiply(coords2[1]).multiply(coords3[2])
+			coords[0] = coords1[0]
+					.multiply(coords2[1])
+					.multiply(coords3[2])
 					.add(coords2[0].multiply(coords3[1]).multiply(coords1[2]))
 					.add(coords3[0].multiply(coords1[1]).multiply(coords2[2]))
-					.subtract(
-
-							coords3[0].multiply(coords2[1]).multiply(coords1[2])
-									.add(coords2[0].multiply(coords1[1])
-											.multiply(coords3[2]))
-									.add(coords1[0].multiply(coords3[1])
-											.multiply(coords2[2])));
+					.subtract(coords3[0]
+							.multiply(coords2[1])
+							.multiply(coords1[2])
+							.add(coords2[0].multiply(coords1[1]).multiply(coords3[2]))
+							.add(coords1[0].multiply(coords3[1]).multiply(coords2[2])));
 			return coords;
 		}
 		throw new NoSymbolicParametersException();
@@ -201,25 +224,23 @@ public class AlgoAreConcurrent extends AlgoElement
 			PPolynomial[] coords2 = inputLine2.getPolynomials();
 			PPolynomial[] coords3 = inputLine3.getPolynomials();
 			polynomials = new PPolynomial[1];
-			polynomials[0] = coords1[0].multiply(coords2[1])
+			polynomials[0] = coords1[0]
+					.multiply(coords2[1])
 					.multiply(coords3[2])
 					.add(coords2[0].multiply(coords3[1]).multiply(coords1[2]))
 					.add(coords3[0].multiply(coords1[1]).multiply(coords2[2]))
-					.subtract(
-
-							coords3[0].multiply(coords2[1]).multiply(coords1[2])
-									.add(coords2[0].multiply(coords1[1])
-											.multiply(coords3[2]))
-									.add(coords1[0].multiply(coords3[1])
-											.multiply(coords2[2])));
+					.subtract(coords3[0]
+							.multiply(coords2[1])
+							.multiply(coords1[2])
+							.add(coords2[0].multiply(coords1[1]).multiply(coords3[2]))
+							.add(coords1[0].multiply(coords3[1]).multiply(coords2[2])));
 			return polynomials;
 		}
 		throw new NoSymbolicParametersException();
 	}
 
 	@Override
-	public PPolynomial[][] getBotanaPolynomials()
-			throws NoSymbolicParametersException {
+	public PPolynomial[][] getBotanaPolynomials() throws NoSymbolicParametersException {
 		if (botanaPolynomials != null) {
 			return botanaPolynomials;
 		}
@@ -238,14 +259,12 @@ public class AlgoAreConcurrent extends AlgoElement
 			// We need three collinearities with an extra point.
 			botanaPolynomials = new PPolynomial[1][3];
 			for (int i = 0; i < 3; ++i) {
-				botanaPolynomials[0][i] = PPolynomial.collinear(v[i][0], v[i][1],
-						v[i][2], v[i][3], nv[0], nv[1]);
+				botanaPolynomials[0][i] =
+						PPolynomial.collinear(v[i][0], v[i][1], v[i][2], v[i][3], nv[0], nv[1]);
 			}
 
 			return botanaPolynomials;
-
 		}
 		throw new NoSymbolicParametersException();
 	}
-
 }

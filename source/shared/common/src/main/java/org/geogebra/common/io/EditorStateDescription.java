@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.io;
 
 import java.util.ArrayList;
@@ -40,7 +56,7 @@ public class EditorStateDescription {
 			}
 			jso.put("caret", caretPathJson);
 			return jso.toString();
-		} catch (JSONException e) {
+		} catch (JSONException ignored) {
 			// only if integers are not valid doubles
 		}
 		return "";
@@ -61,8 +77,7 @@ public class EditorStateDescription {
 					caretPath.add(caretPathJson.getInt(index));
 				}
 			}
-			return new EditorStateDescription(jso.getString("content"),
-					caretPath);
+			return new EditorStateDescription(jso.getString("content"), caretPath);
 		} catch (JSONException e) {
 			Log.debug(e);
 		}
@@ -82,5 +97,4 @@ public class EditorStateDescription {
 	public ArrayList<Integer> getCaretPath() {
 		return caretPath;
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.implicit;
 
 import org.geogebra.common.kernel.kernelND.GeoPointND;
@@ -21,11 +37,11 @@ class AdaptiveQuadTree extends QuadTree {
 	private final Timer timer = new Timer();
 	private static int fastDrawThreshold = 10;
 
-	public static void setFastDrawThreshold(int threshold) {
+	static void setFastDrawThreshold(int threshold) {
 		fastDrawThreshold = threshold;
 	}
 
-	private static class Timer {
+	private static final class Timer {
 		private long now;
 		private long elapse;
 
@@ -33,18 +49,18 @@ class AdaptiveQuadTree extends QuadTree {
 			this.now = System.currentTimeMillis();
 		}
 
-        void record() {
+		void record() {
 			this.elapse = System.currentTimeMillis() - now;
 		}
 	}
 
-	public AdaptiveQuadTree(GeoImplicitCurve curve) {
+	AdaptiveQuadTree(GeoImplicitCurve curve) {
 		super();
 		this.curve = curve;
 	}
 
 	@Override
-	public void updatePath() {
+	void updatePath() {
 		for (int factor = 0; factor < curve.factorLength(); ++factor) {
 			try {
 				curve.evaluateImplicitCurve(0, 0, factor);
@@ -76,8 +92,7 @@ class AdaptiveQuadTree extends QuadTree {
 			}
 
 			for (int i = 0; i <= sw; i++) {
-				vertices[i] = curve.evaluateImplicitCurve(xcoords[i], ycoords[0],
-						factor);
+				vertices[i] = curve.evaluateImplicitCurve(xcoords[i], ycoords[0], factor);
 			}
 
 			// initialize grid configuration at the search depth
@@ -86,14 +101,12 @@ class AdaptiveQuadTree extends QuadTree {
 			// debug = true;
 			timer.reset();
 			for (i = 1; i <= sh; i++) {
-				prev = curve.evaluateImplicitCurve(xcoords[0], ycoords[i],
-						factor);
+				prev = curve.evaluateImplicitCurve(xcoords[0], ycoords[i], factor);
 				fy = ycoords[i] - 0.5 * fry;
 				for (j = 1; j <= sw; j++) {
-					cur = curve.evaluateImplicitCurve(xcoords[j], ycoords[i],
-							factor);
-					ImplicitCurveMarchingRect
-							rect = new ImplicitCurveMarchingRect(j - 1, i - 1, frx, fry, false);
+					cur = curve.evaluateImplicitCurve(xcoords[j], ycoords[i], factor);
+					ImplicitCurveMarchingRect rect =
+							new ImplicitCurveMarchingRect(j - 1, i - 1, frx, fry, false);
 					rect.coords.val[0] = xcoords[j - 1];
 					rect.coords.val[1] = ycoords[i - 1];
 					rect.evals[0] = vertices[j - 1];
@@ -164,7 +177,7 @@ class AdaptiveQuadTree extends QuadTree {
 		return false;
 	}
 
-	public void createTree(ImplicitCurveMarchingRect r, int depth, int factor) {
+	void createTree(ImplicitCurveMarchingRect r, int depth, int factor) {
 		ImplicitCurveMarchingRect[] n = r.split(curve, factor);
 		plot(n[0], depth, factor);
 		plot(n[1], depth, factor);
@@ -172,7 +185,7 @@ class AdaptiveQuadTree extends QuadTree {
 		plot(n[3], depth, factor);
 	}
 
-	public void plot(ImplicitCurveMarchingRect r, int depth, int factor) {
+	void plot(ImplicitCurveMarchingRect r, int depth, int factor) {
 		if (depth < segmentCheckDepth) {
 			createTree(r, depth + 1, factor);
 			return;
@@ -182,13 +195,12 @@ class AdaptiveQuadTree extends QuadTree {
 		int e = edgeConfig(r);
 		if (grid[r.y][r.x].singular || e != QuadTreeEdgeConfig.EMPTY.flag()) {
 			if (depth >= plotDepth) {
-				if (segments().add(r, configProvider) == QuadTreeEdgeConfig.T0101.flag()) {
+				if (contour().add(r, configProvider) == QuadTreeEdgeConfig.T0101.flag()) {
 					createTree(r, depth + 1, factor);
 					return;
 				}
 				if (r.x != 0 && (e & r.shares & 0x1) != 0) {
 					nonempty(r.y, r.x - 1);
-
 				}
 				if (r.x + 1 != sw && (e & r.shares & 0x4) != 0) {
 					nonempty(r.y, r.x + 1);
@@ -212,7 +224,7 @@ class AdaptiveQuadTree extends QuadTree {
 	}
 
 	@Override
-	public void polishPointOnPath(GeoPointND pt) {
+	void polishPointOnPath(GeoPointND pt) {
 		pt.updateCoords();
 		double x1 = onScreen(pt.getInhomX(), this.x, this.x + this.w);
 		double y1 = onScreen(pt.getInhomY(), this.y, this.y + this.h);

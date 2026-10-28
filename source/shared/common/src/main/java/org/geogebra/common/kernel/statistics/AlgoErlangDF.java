@@ -1,18 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * Area of polygon P[0], ..., P[n]
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -30,7 +29,7 @@ import org.geogebra.common.plugin.Operation;
 
 /**
  * algorithm for FDistribution[0,1,x]
- * 
+ *
  * @author Michael
  */
 public class AlgoErlangDF extends AlgoElement {
@@ -41,7 +40,7 @@ public class AlgoErlangDF extends AlgoElement {
 	private GeoFunction ret; // output
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -53,14 +52,18 @@ public class AlgoErlangDF extends AlgoElement {
 	 * @param cumulative
 	 *            cumulative?
 	 */
-	public AlgoErlangDF(Construction cons, String label, GeoNumberValue mean,
-			GeoNumberValue sd, BooleanValue cumulative) {
+	public AlgoErlangDF(
+			Construction cons,
+			String label,
+			GeoNumberValue mean,
+			GeoNumberValue sd,
+			BooleanValue cumulative) {
 		this(cons, mean, sd, cumulative);
 		ret.setLabel(label);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param mean
@@ -70,8 +73,8 @@ public class AlgoErlangDF extends AlgoElement {
 	 * @param cumulative
 	 *            cumulative?
 	 */
-	public AlgoErlangDF(Construction cons, GeoNumberValue mean,
-			GeoNumberValue sd, BooleanValue cumulative) {
+	public AlgoErlangDF(
+			Construction cons, GeoNumberValue mean, GeoNumberValue sd, BooleanValue cumulative) {
 		super(cons);
 		this.k = mean;
 		this.l = sd;
@@ -137,7 +140,8 @@ public class AlgoErlangDF extends AlgoElement {
 
 		} else {
 
-			en = lEn.power(k).multiply(fvEn.power(kEn.subtract(1)))
+			en = lEn.power(k)
+					.multiply(fvEn.power(kEn.subtract(1)))
 					.multiply(lEn.multiplyR(fv).reverseSign().exp())
 					.divide(kEn.subtract(1).factorial());
 
@@ -147,7 +151,5 @@ public class AlgoErlangDF extends AlgoElement {
 		}
 
 		ret.getFunctionExpression().setRight(en);
-
 	}
-
 }

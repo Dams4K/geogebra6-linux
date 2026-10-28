@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.cas;
@@ -31,7 +35,7 @@ import org.geogebra.common.kernel.geos.GeoNumeric;
 
 /**
  * Integral of a function
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class AlgoIntegral extends AlgoCasBase {
@@ -56,8 +60,12 @@ public class AlgoIntegral extends AlgoCasBase {
 	 * @param numeric
 	 *            whether NIntegral command was used
 	 */
-	public AlgoIntegral(Construction cons, CasEvaluableFunction f,
-			GeoNumeric var, boolean allowConstant, EvalInfo info,
+	public AlgoIntegral(
+			Construction cons,
+			CasEvaluableFunction f,
+			GeoNumeric var,
+			boolean allowConstant,
+			EvalInfo info,
 			boolean numeric) {
 		super(cons, f, numeric ? Commands.NIntegral : Commands.Integral, info);
 		this.var = var;
@@ -111,8 +119,7 @@ public class AlgoIntegral extends AlgoCasBase {
 			if (polyDeriv != null) {
 				// ... we can calculate the derivative without loading the CAS
 				// (*much* faster, especially in web)
-				Function funDeriv = polyDeriv.getFunction(kernel,
-						inFun.getFunctionVariable(), true);
+				Function funDeriv = polyDeriv.getFunction(kernel, inFun.getFunctionVariable(), true);
 
 				// Log.debug(f.toString());
 				// Log.debug(funDeriv.toString());
@@ -133,7 +140,8 @@ public class AlgoIntegral extends AlgoCasBase {
 			}
 			FunctionVariable fv = inFun.getFunctionVariables()[0];
 			for (int i = 1; i < inFun.getVarNumber(); i++) {
-				if (inFun.getFunctionVariables()[i]
+				if (inFun
+						.getFunctionVariables()[i]
 						.toString(StringTemplate.defaultTemplate)
 						.equals(var.getLabel(StringTemplate.defaultTemplate))) {
 					fv = inFun.getFunctionVariables()[i];
@@ -160,8 +168,7 @@ public class AlgoIntegral extends AlgoCasBase {
 		sbAE.append("]");
 
 		// find symbolic derivative of f
-		g.setUsingCasCommand(sbAE.toString(), f, true,
-				this.allowConstant ? arbconst : null);
+		g.setUsingCasCommand(sbAE.toString(), f, true, this.allowConstant ? arbconst : null);
 		updateSecret();
 	}
 
@@ -169,11 +176,10 @@ public class AlgoIntegral extends AlgoCasBase {
 		if (g instanceof FunctionalNVar) {
 			((FunctionalNVar) g).setSecret(numeric ? this : null);
 		}
-
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		StringBuilder sb = new StringBuilder();
 
 		if (var != null) {
@@ -182,12 +188,12 @@ public class AlgoIntegral extends AlgoCasBase {
 		} else {
 			// Michael Borcherds 2008-03-30
 			// simplified to allow better Chinese translation
-			sb.append(getLoc().getPlainDefault("IntegralOfA", "Integral of %0",
-					f.toGeoElement().getLabel(tpl)));
+			sb.append(getLoc()
+					.getPlainDefault("IntegralOfA", "Integral of %0", f.toGeoElement().getLabel(tpl)));
 		}
 
 		if (!f.toGeoElement().isIndependent()) { // show the symbolic
-													// representation too
+			// representation too
 			sb.append(": ");
 			sb.append(g.toGeoElement().getLabel(tpl));
 			if (g.toGeoElement() instanceof GeoFunction) {
@@ -209,5 +215,4 @@ public class AlgoIntegral extends AlgoCasBase {
 	public boolean isComputedSymbolically() {
 		return computedSymbolically;
 	}
-
 }

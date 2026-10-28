@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5;
 
 import java.util.Locale;
@@ -6,6 +22,8 @@ import java.util.Objects;
 import org.geogebra.common.util.DoubleUtil;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.debug.Log;
+import org.geogebra.editor.share.util.GWTKeycodes;
+import org.geogebra.gwtutil.JsObject;
 import org.geogebra.gwtutil.NavigatorUtil;
 import org.geogebra.web.html5.bridge.GeoGebraJSNativeBridge;
 import org.geogebra.web.html5.gui.util.Dom;
@@ -14,8 +32,6 @@ import org.gwtproject.dom.client.Element;
 import org.gwtproject.dom.client.NativeEvent;
 import org.gwtproject.dom.client.Style;
 import org.gwtproject.event.shared.HandlerRegistration;
-
-import com.himamis.retex.editor.share.util.GWTKeycodes;
 
 import elemental2.core.Function;
 import elemental2.core.Global;
@@ -46,7 +62,7 @@ public class Browser {
 	 * @return true if Safari browser
 	 */
 	public static boolean isSafariByVendor() {
-		String vendorString = (String) Js.asPropertyMap(DomGlobal.navigator).get("vendor");
+		String vendorString = (String) JsObject.of(DomGlobal.navigator).get("vendor");
 		return "Apple Computer, Inc.".equals(vendorString) && !isChrome();
 	}
 
@@ -60,8 +76,7 @@ public class Browser {
 	 */
 	public static boolean externalCAS() {
 		Function evalFn = GeoGebraGlobal.evalGeoGebraCASExternal;
-		return "function".equals(Js.typeof(evalFn))
-				&& "2".equals(evalFn.call(DomGlobal.window, "1+1"));
+		return "function".equals(Js.typeof(evalFn)) && "2".equals(evalFn.call(DomGlobal.window, "1+1"));
 	}
 
 	/**
@@ -86,7 +101,7 @@ public class Browser {
 	 * @return whether given object has a truthy property with given name
 	 */
 	public static boolean hasProperty(Object base, String propertyName) {
-		return base != null && Js.isTruthy(Js.asPropertyMap(base).get(propertyName));
+		return base != null && Js.isTruthy(JsObject.of(base).get(propertyName));
 	}
 
 	/**
@@ -95,7 +110,7 @@ public class Browser {
 	 * @return whether property is declared for given object (may be falsy)
 	 */
 	public static boolean hasDeclaredProperty(Object base, String propertyName) {
-		return base != null && Js.asPropertyMap(base).has(propertyName);
+		return base != null && JsObject.of(base).has(propertyName);
 	}
 
 	/**
@@ -105,8 +120,8 @@ public class Browser {
 	 */
 	public static String normalizeURL(String thumb) {
 		// plain http needed in MOW test environment
-		if (thumb.startsWith("data:") || (thumb.startsWith("http://")
-				&& "http:".equals(DomGlobal.location.protocol))) {
+		if (thumb.startsWith("data:")
+				|| (thumb.startsWith("http://") && "http:".equals(DomGlobal.location.protocol))) {
 			return thumb;
 		}
 		String url;
@@ -130,7 +145,7 @@ public class Browser {
 		if (webglSupported == null) {
 			webglSupported = supportsWebGLNative();
 		}
-		return webglSupported.booleanValue();
+		return webglSupported;
 	}
 
 	/**
@@ -150,9 +165,7 @@ public class Browser {
 	public static boolean supportsWebGLNative() {
 		try {
 			Canvas canvas = Canvas.createIfSupported();
-			return hasGlobal("WebGLRenderingContext")
-					&& (canvas.getContext("webgl") != null
-						|| canvas.getContext("experimental-webgl") != null);
+			return canvas.getContext("webgl2") != null;
 		} catch (Throwable t) {
 			return false;
 		}
@@ -173,11 +186,12 @@ public class Browser {
 		String host = DomGlobal.location.host;
 		return host != null
 				&& (host.contains("www.geogebra.org")
-					|| host.contains("beta.geogebra.org")
-					|| host.contains("stage.geogebra.org")
-					|| host.contains("localhost")
-					|| host.contains("apps-builds.s3-eu-central-1.amazonaws.com"))
-				&& !host.contains("test.geogebra.org") && !host.contains("file://");
+						|| host.contains("beta.geogebra.org")
+						|| host.contains("stage.geogebra.org")
+						|| host.contains("localhost")
+						|| host.contains("apps-builds.s3-eu-central-1.amazonaws.com"))
+				&& !host.contains("test.geogebra.org")
+				&& !host.contains("file://");
 	}
 
 	/**
@@ -262,8 +276,7 @@ public class Browser {
 	public static String encodeSVG(String svg) {
 		// can't use data:image/svg+xml;utf8 in IE11 / Edge
 		// so encode as Base64
-		return StringUtil.svgMarker + DomGlobal.btoa(
-				Global.unescape(Global.encodeURIComponent(svg)));
+		return StringUtil.svgMarker + DomGlobal.btoa(Global.unescape(Global.encodeURIComponent(svg)));
 	}
 
 	/**
@@ -274,7 +287,7 @@ public class Browser {
 	public static void exportImage(String url, String title) {
 		String extension;
 
-		//global function in Chrome Kiosk App
+		// global function in Chrome Kiosk App
 		if (GeoGebraGlobal.getGgbExportFile() != null) {
 			GeoGebraGlobal.getGgbExportFile().call(DomGlobal.window, url, title);
 			return;
@@ -319,7 +332,8 @@ public class Browser {
 		// Chrome limits to 2Mb so use Blob
 		// https://stackoverflow.com/questions/695151/data-protocol-url-size-limitations/41755526#41755526
 		// https://stackoverflow.com/questions/38781968/problems-downloading-big-filemax-15-mb-on-google-chrome/38845151#38845151
-		// idea from http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768
+		// idea from
+		// http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768
 		if (isChrome()) {
 
 			String byteCharacters = url.substring(url.indexOf(',') + 1);
@@ -330,8 +344,8 @@ public class Browser {
 			int sliceSize = 512;
 			JsArray<Blob.ConstructorBlobPartsArrayUnionType> byteArrays = JsArray.of();
 			for (int offset = 0; offset < byteCharacters.length(); offset += sliceSize) {
-				String slice = byteCharacters.substring(offset, Math.min(byteCharacters.length(),
-						offset + sliceSize));
+				String slice =
+						byteCharacters.substring(offset, Math.min(byteCharacters.length(), offset + sliceSize));
 
 				double[] byteNumbers = new double[slice.length()];
 				for (int i = 0; i < slice.length(); i++) {
@@ -362,9 +376,11 @@ public class Browser {
 			DomGlobal.requestAnimationFrame(ignore -> URL.revokeObjectURL(url));
 			return true;
 		};
-		DomGlobal.setTimeout((ignore) -> {
-			a.click();
-		}, 10);
+		DomGlobal.setTimeout(
+				(ignore) -> {
+					a.click();
+				},
+				10);
 	}
 
 	/**
@@ -401,7 +417,7 @@ public class Browser {
 		if (!StringUtil.empty(name)) {
 			try {
 				DomGlobal.history.pushState(JsPropertyMap.of(), "GeoGebra", name);
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 				// on dev server trying to push production URL
 			}
 		}
@@ -462,6 +478,9 @@ public class Browser {
 		});
 	}
 
+	/**
+	 * @return whether this is a browser running on Android
+	 */
 	public static boolean isAndroid() {
 		return DomGlobal.navigator.userAgent.contains("Android");
 	}
@@ -487,10 +506,16 @@ public class Browser {
 		return isAndroid() || NavigatorUtil.isiOS();
 	}
 
+	/**
+	 * @return screen width in pixels
+	 */
 	public static int getScreenWidth() {
 		return DomGlobal.screen.width;
 	}
 
+	/**
+	 * @return screen height in pixels
+	 */
 	public static int getScreenHeight() {
 		return DomGlobal.screen.height;
 	}
@@ -502,9 +527,8 @@ public class Browser {
 	 *            element to be scaled
 	 */
 	public static void toggleFullscreen(boolean full, Element element) {
-		elemental2.dom.HTMLElement el = element != null
-				? Js.uncheckedCast(element)
-				: DomGlobal.document.documentElement;
+		elemental2.dom.HTMLElement el =
+				element != null ? Js.uncheckedCast(element) : DomGlobal.document.documentElement;
 		if (full) { // current working methods
 			if (hasProperty(el, "requestFullscreen")) {
 				el.requestFullscreen();
@@ -579,11 +603,10 @@ public class Browser {
 
 				observer.observe(current, init);
 				current = current.parentElement;
-
 			}
 			return observer::disconnect;
-		} catch (Throwable t) {
-			//Mutation observer not supported
+		} catch (Throwable ignored) {
+			// Mutation observer not supported
 		}
 		return () -> {};
 	}
@@ -599,16 +622,16 @@ public class Browser {
 	public static int getIOSArrowKeys(NativeEvent event) {
 		String key = Js.<KeyboardEvent>uncheckedCast(event).key;
 		switch (key) {
-		case "UIKeyInputUpArrow":
-			return GWTKeycodes.KEY_UP;
-		case "UIKeyInputDownArrow":
-			return GWTKeycodes.KEY_DOWN;
-		case "UIKeyInputLeftArrow":
-			return GWTKeycodes.KEY_LEFT;
-		case "UIKeyInputRightArrow":
-			return GWTKeycodes.KEY_RIGHT;
-		default:
-			return -1;
+			case "UIKeyInputUpArrow":
+				return GWTKeycodes.KEY_UP;
+			case "UIKeyInputDownArrow":
+				return GWTKeycodes.KEY_DOWN;
+			case "UIKeyInputLeftArrow":
+				return GWTKeycodes.KEY_LEFT;
+			case "UIKeyInputRightArrow":
+				return GWTKeycodes.KEY_RIGHT;
+			default:
+				return -1;
 		}
 	}
 
@@ -648,11 +671,10 @@ public class Browser {
 			return true;
 		}
 		try {
-			if (Objects.equals(DomGlobal.window.location.host,
-					DomGlobal.window.parent.location.host)) {
+			if (Objects.equals(DomGlobal.window.location.host, DomGlobal.window.parent.location.host)) {
 				return true;
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			// parent sandboxed, just return false below
 		}
 		return false;

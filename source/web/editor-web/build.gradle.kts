@@ -1,20 +1,19 @@
-import org.docstr.gradle.plugins.gwt.GwtDev
-import org.docstr.gradle.plugins.gwt.LogLevel
-
+import org.docstr.gwt.GwtDevModeTask
 plugins {
     alias(libs.plugins.geogebra.java.library)
     alias(libs.plugins.geogebra.pmd)
-    alias(libs.plugins.geogebra.checkstyle)
     alias(libs.plugins.geogebra.gwt)
-    alias(libs.plugins.geogebra.javadoc.workaround)
     alias(libs.plugins.geogebra.gwt.dist)
 }
 
+
 gwt {
     // only compilable module
-    modules("com.himamis.retex.editor.JLMEditorExportedLibrary")
-    devModules("com.himamis.retex.editor.JLMEditorGWTDev")
-    logLevel = LogLevel.DEBUG
+    modules.add("org.geogebra.editor.JLMEditorExportedLibrary")
+    war = file("war")
+    devMode {
+        modules.add("org.geogebra.editor.JLMEditorGWTDev")
+    }
 }
 
 gwtDistribution {
@@ -23,7 +22,7 @@ gwtDistribution {
 
 dependencies {
     api(project(":renderer-web"))
-    api("com.himamis.retex:editor-base")
+    api("org.geogebra:editor-base")
     api(project(":gwtutil"))
     api(libs.gwt.dev)
     api(libs.gwt.user)
@@ -32,13 +31,8 @@ dependencies {
 
     testImplementation(libs.gwt.user)
     testImplementation(libs.gwt.dom)
+    compileOnly(libs.jakarta.servlet.api)
 
-}
-
-tasks.register<GwtDev>("run") {
-    dependsOn(tasks.jar)
-    war = file("war")
-    description = "Starts a codeserver, and a simple webserver for development"
 }
 
 tasks.register<Jar>("jarSources") {
@@ -46,4 +40,3 @@ tasks.register<Jar>("jarSources") {
     archiveClassifier = "sources"
     from(sourceSets.main.get().allSource)
 }
-

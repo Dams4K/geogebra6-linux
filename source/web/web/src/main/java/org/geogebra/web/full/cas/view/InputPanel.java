@@ -1,7 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.cas.view;
 
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.main.App;
+import org.geogebra.common.util.StringUtil;
+import org.geogebra.editor.share.util.Unicode;
 import org.geogebra.web.html5.main.DrawEquationW;
 import org.gwtproject.canvas.client.Canvas;
 import org.gwtproject.dom.client.Element;
@@ -21,6 +39,11 @@ public interface InputPanel extends IsWidget, HasText {
 	class InputPanelLabel extends Label implements InputPanel {
 
 		@Override
+		public void repaint() {
+			// not needed
+		}
+
+		@Override
 		public void setLaTeX(String laTeX) {
 			// not needed
 		}
@@ -36,8 +59,8 @@ public interface InputPanel extends IsWidget, HasText {
 	 */
 	class InputPanelCanvas implements InputPanel {
 		private String text;
-		private Canvas c;
-		private App app;
+		private final Canvas canvas;
+		private final App app;
 		private String laTex;
 
 		/**
@@ -46,10 +69,10 @@ public interface InputPanel extends IsWidget, HasText {
 		 */
 		public InputPanelCanvas(App app) {
 			this.app = app;
-			c = Canvas.createIfSupported();
+			canvas = Canvas.createIfSupported();
 			// if shown on init, make sure it's not huge
-			c.setCoordinateSpaceHeight(1);
-			c.setCoordinateSpaceWidth(1);
+			canvas.setCoordinateSpaceHeight(1);
+			canvas.setCoordinateSpaceWidth(1);
 		}
 
 		@Override
@@ -64,41 +87,48 @@ public interface InputPanel extends IsWidget, HasText {
 
 		@Override
 		public void addStyleName(String style) {
-			c.addStyleName(style);
+			canvas.addStyleName(style);
 		}
 
 		@Override
 		public Widget asWidget() {
-			return c;
+			return canvas;
 		}
 
 		@Override
 		public void removeStyleName(String string) {
-			c.removeStyleName(string);
+			canvas.removeStyleName(string);
 		}
 
 		@Override
 		public Element getElement() {
-			return c.getElement();
+			return canvas.getElement();
 		}
 
 		@Override
 		public void setLaTeX(String laTeX) {
 			this.laTex = laTeX;
-			if (laTeX == null) {
-				c.setCoordinateSpaceHeight(1);
-				c.setCoordinateSpaceWidth(1);
+			repaint();
+		}
+
+		@Override
+		public void repaint() {
+			if (laTex == null) {
+				canvas.setCoordinateSpaceHeight(1);
+				canvas.setCoordinateSpaceWidth(1);
 				return;
 			}
-			DrawEquationW.paintOnCanvas(new GeoNumeric(app.getKernel()
-					.getConstruction()), laTeX, c, app.getFontSize());
+			String toRender = laTex;
+			if ("\\nbsp{}".equals(laTex) && StringUtil.empty(text)) {
+				toRender = "\\text{" + app.getLocalization().getMenu("InputLabel") + Unicode.ELLIPSIS + "}";
+			}
+			DrawEquationW.paintOnCanvas(
+					new GeoNumeric(app.getKernel().getConstruction()), toRender, canvas, app.getFontSize());
 		}
 
 		@Override
 		public void setPixelRatio(double ratio) {
-			if (this.laTex != null) {
-				setLaTeX(laTex);
-			}
+			repaint();
 		}
 	}
 
@@ -130,4 +160,9 @@ public interface InputPanel extends IsWidget, HasText {
 	 *            pixel ratio
 	 */
 	void setPixelRatio(double ratio);
+
+	/**
+	 * Refresh content.
+	 */
+	void repaint();
 }

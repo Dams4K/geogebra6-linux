@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import org.geogebra.common.annotation.MissingDoc;
@@ -12,21 +28,18 @@ public class ViewLocationModel extends OptionsModel {
 
 	public interface IGraphicsViewLocationListener extends PropertyListener {
 		@MissingDoc
-		public void selectView(int index, boolean isSelected);
+		void selectView(int index, boolean isSelected);
 
 		@MissingDoc
-		public void setCheckBox3DVisible(boolean flag);
+		void setCheckBox3DVisible(boolean flag);
 
 		@MissingDoc
-		public void setCheckBoxForPlaneVisible(boolean flag);
-
-		// public void setCheckBoxAlgebraVisible(boolean flag);
+		void setCheckBoxForPlaneVisible(boolean flag);
 	}
 
 	public ViewLocationModel(App app, IGraphicsViewLocationListener listener) {
 		super(app);
 		this.listener = listener;
-
 	}
 
 	@Override
@@ -60,7 +73,6 @@ public class ViewLocationModel extends OptionsModel {
 			if (geo.isAlgebraVisible()) {
 				isInAV = true;
 			}
-
 		}
 
 		listener.selectView(0, isInEV);
@@ -69,7 +81,6 @@ public class ViewLocationModel extends OptionsModel {
 		listener.selectView(3, isInEVForPlane);
 
 		listener.selectView(4, isInAV);
-
 	}
 
 	public void applyToEuclidianView1(boolean value) {
@@ -95,7 +106,6 @@ public class ViewLocationModel extends OptionsModel {
 				geo.removeView(App.VIEW_EUCLIDIAN2);
 				ev2.remove(geo);
 			}
-
 		}
 		storeUndoInfo();
 	}
@@ -117,7 +127,6 @@ public class ViewLocationModel extends OptionsModel {
 				geo.removeViews3D();
 				ev3D.remove(geo);
 			}
-
 		}
 		storeUndoInfo();
 	}
@@ -133,7 +142,6 @@ public class ViewLocationModel extends OptionsModel {
 				geo.setVisibleInViewForPlane(false);
 				app.removeFromViewsForPlane(geo);
 			}
-
 		}
 		storeUndoInfo();
 	}
@@ -150,7 +158,6 @@ public class ViewLocationModel extends OptionsModel {
 				av.remove(geo);
 			}
 			geo.updateRepaint();
-
 		}
 		storeUndoInfo();
 	}
@@ -196,5 +203,4 @@ public class ViewLocationModel extends OptionsModel {
 	public PropertyListener getListener() {
 		return listener;
 	}
-
 }

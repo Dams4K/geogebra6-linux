@@ -1,13 +1,17 @@
 /*
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by
-the Free Software Foundation.
-
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.advanced;
@@ -49,8 +53,12 @@ public class AlgoIntegralNumericInterval extends AlgoElement {
 	 * @param f
 	 *            function
 	 */
-	public AlgoIntegralNumericInterval(Construction cons, GeoFunctionable f,
-			GeoNumberValue startX, GeoNumberValue startY, GeoNumberValue endX) {
+	public AlgoIntegralNumericInterval(
+			Construction cons,
+			GeoFunctionable f,
+			GeoNumberValue startX,
+			GeoNumberValue startY,
+			GeoNumberValue endX) {
 		super(cons);
 		this.startX = startX;
 		this.endX = endX;
@@ -63,8 +71,9 @@ public class AlgoIntegralNumericInterval extends AlgoElement {
 
 	@Override
 	protected void setInputOutput() {
-		input = new GeoElement[] {f.toGeoElement(), startX.toGeoElement(),
-				startY.toGeoElement(), endX.toGeoElement()};
+		input = new GeoElement[] {
+			f.toGeoElement(), startX.toGeoElement(), startY.toGeoElement(), endX.toGeoElement()
+		};
 		setOnlyOutput(g);
 		setDependencies();
 	}
@@ -79,19 +88,18 @@ public class AlgoIntegralNumericInterval extends AlgoElement {
 		Function inFun = f.getFunction();
 		FunctionVariable[] fVars = inFun.getFunctionVariables();
 		// for conditional expressions the symbolic integral may not be continuous
-		boolean skipIntegration = inFun.getExpression().includesFreehandOrData()
-				|| inFun.getExpression().isConditional();
-		ExpressionNode integral = skipIntegration
-				? null : inFun.integral(fVars[0], kernel);
+		boolean skipIntegration =
+				inFun.getExpression().includesFreehandOrData() || inFun.getExpression().isConditional();
+		ExpressionNode integral = skipIntegration ? null : inFun.integral(fVars[0], kernel);
 		if (isInvalid(integral)) {
 			integral = numericIntegral(inFun);
 		} else {
 			fVars[0].set(startX.getDouble());
-			ExpressionNode condition = new ExpressionNode(kernel, fVars[0],
-					Operation.GREATER_EQUAL, startX).and(new ExpressionNode(kernel, fVars[0],
-					Operation.LESS_EQUAL, endX));
-			integral = condition.apply(Operation.IF,
-					integral.plus(startY.evaluateDouble() - integral.evaluateDouble()));
+			ExpressionNode condition = new ExpressionNode(
+							kernel, fVars[0], Operation.GREATER_EQUAL, startX)
+					.and(new ExpressionNode(kernel, fVars[0], Operation.LESS_EQUAL, endX));
+			integral = condition.apply(
+					Operation.IF, integral.plus(startY.evaluateDouble() - integral.evaluateDouble()));
 		}
 		inFun = new Function(integral, fVars[0]);
 		inFun.setSecret(this);
@@ -105,16 +113,16 @@ public class AlgoIntegralNumericInterval extends AlgoElement {
 	}
 
 	private boolean isInvalid(ExpressionNode integral) {
-		return integral == null || integral.any(v -> v instanceof MyDouble
-				&& Double.isNaN(((MyDouble) v).getDouble()));
+		return integral == null
+				|| integral.any(v -> v instanceof MyDouble && Double.isNaN(((MyDouble) v).getDouble()));
 	}
 
 	private ExpressionNode numericIntegral(Function inFun) {
 		MyList xVal = new MyList(kernel);
 		MyList yVal = new MyList(kernel);
 		MyNumberPair xyVal = new MyNumberPair(kernel, xVal, yVal);
-		ExpressionNode node = new ExpressionNode(kernel, inFun.getFunctionVariable(),
-				Operation.DATA, xyVal);
+		ExpressionNode node =
+				new ExpressionNode(kernel, inFun.getFunctionVariable(), Operation.DATA, xyVal);
 		double value = startY.evaluateDouble();
 		double step = 0.1;
 		double xMax = endX.evaluateDouble();
@@ -124,8 +132,8 @@ public class AlgoIntegralNumericInterval extends AlgoElement {
 		while (x < xMax) {
 			double delta = step;
 			for (int bisections = 0; bisections < 5; bisections++) {
-				double increment = AlgoIntegralDefinite.doGaussQuadSimple(inFun, x,
-						x + delta, Kernel.MIN_PRECISION);
+				double increment =
+						AlgoIntegralDefinite.doGaussQuadSimple(inFun, x, x + delta, Kernel.MIN_PRECISION);
 				if (!Double.isNaN(increment) || Double.isNaN(inFun.value(x))) {
 					value += increment;
 					xVal.addListElement(new MyDouble(kernel, x + delta));
@@ -141,5 +149,4 @@ public class AlgoIntegralNumericInterval extends AlgoElement {
 		}
 		return node;
 	}
-
 }

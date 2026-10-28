@@ -1,5 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GDimension;
 import org.geogebra.common.awt.GFont;
@@ -8,11 +25,11 @@ import org.geogebra.common.awt.GPoint;
 import org.geogebra.common.awt.GRectangle;
 import org.geogebra.common.euclidian.Drawable;
 import org.geogebra.common.euclidian.EuclidianStatic;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoInputBox;
 import org.geogebra.common.kernel.geos.TextProperties;
 import org.geogebra.common.main.App;
+import org.geogebra.common.main.GeoGebraColorConstants;
 import org.geogebra.common.util.StringUtil;
 
 /**
@@ -38,7 +55,9 @@ public abstract class CanvasDrawable extends Drawable {
 	 * @return whether text starts and ends with $
 	 */
 	public static boolean isLatexString(String text) {
-		return text != null && text.length() > 1 && text.startsWith("$")
+		return text != null
+				&& text.length() > 1
+				&& text.startsWith("$")
 				&& text.trim().endsWith("$");
 	}
 
@@ -51,10 +70,8 @@ public abstract class CanvasDrawable extends Drawable {
 	 *            content
 	 * @return size
 	 */
-	protected GDimension measureLatex(GeoElement geo0,
-			GFont font, String text, boolean isContent) {
-		return measureLatex(view.getApplication(), font, text,
-				shouldBeSerif(text, geo0, isContent));
+	protected GDimension measureLatex(GeoElement geo0, GFont font, String text, boolean isContent) {
+		return measureLatex(view.getApplication(), font, text, shouldBeSerif(text, geo0, isContent));
 	}
 
 	/**
@@ -72,21 +89,38 @@ public abstract class CanvasDrawable extends Drawable {
 	 *            screen y-coord
 	 * @return size
 	 */
-	public GDimension drawLatex(GGraphics2D g2, GeoElement geo0, GFont font,
-			String text, int x, int y) {
+	public GDimension drawLatex(
+			GGraphics2D g2, GeoElement geo0, GFont font, String text, int x, int y) {
 		return drawLatex(g2, geo0, font, text, x, y, false);
 	}
 
-	protected GDimension drawLatex(GGraphics2D g2, GeoElement geo0, GFont font,
-			String text, int x, int y, boolean isContentOfInputBox) {
+	protected GDimension drawLatex(
+			GGraphics2D g2,
+			GeoElement geo0,
+			GFont font,
+			String text,
+			int x,
+			int y,
+			boolean isContentOfInputBox) {
 		App app = view.getApplication();
 		// eg $\math{x}$ for nice x
 		boolean serif = shouldBeSerif(text, geo0, isContentOfInputBox);
 
-		GDimension ret = app.getDrawEquation().drawEquation(app, geo0, g2, x, y,
-				text,
-				font, serif, geo.getObjectColor(), geo.getBackgroundColor(),
-				false, false, view.getCallBack(geo, firstCall));
+		GDimension ret = app.getDrawEquation()
+				.drawEquation(
+						app,
+						geo0,
+						g2,
+						x,
+						y,
+						text,
+						font,
+						serif,
+						geo.usesDisabledStyle(null) ? GeoGebraColorConstants.NEUTRAL_500 : geo.getObjectColor(),
+						geo.getBackgroundColor(),
+						false,
+						false,
+						view.getCallBack(geo, firstCall));
 		firstCall = false;
 		return ret;
 	}
@@ -119,8 +153,7 @@ public abstract class CanvasDrawable extends Drawable {
 	 * @return size of text with given font
 	 */
 	public static GDimension measureLatex(App app, GFont font, String text) {
-		return app.getDrawEquation().measureEquation(app, text, font,
-				false);
+		return app.getDrawEquation().measureEquation(app, text, font, false);
 	}
 
 	/**
@@ -134,8 +167,7 @@ public abstract class CanvasDrawable extends Drawable {
 	 *            serif or sans-serif
 	 * @return size of text with given font
 	 */
-	public static GDimension measureLatex(App app, GFont font,
-			String text, boolean serif) {
+	public static GDimension measureLatex(App app, GFont font, String text, boolean serif) {
 		return app.getDrawEquation().measureEquation(app, text, font, serif);
 	}
 
@@ -146,8 +178,7 @@ public abstract class CanvasDrawable extends Drawable {
 	 *            text
 	 * @return whether it's LaTeX
 	 */
-	protected boolean measureLabel(GeoElement geo0,
-			String text) {
+	protected boolean measureLabel(GeoElement geo0, String text) {
 		if (getDynamicCaption() != null && getDynamicCaption().isEnabled()) {
 			getDynamicCaption().measure();
 			return getDynamicCaption().setLabelSize();
@@ -162,9 +193,8 @@ public abstract class CanvasDrawable extends Drawable {
 				labelSize.y = d.getHeight();
 			} else {
 				GGraphics2D g2 = view.getTempGraphics2D(getLabelFont());
-				setLabelSize(
-						EuclidianStatic.drawIndexedString(view.getApplication(),
-								g2, text, 0, 0, false, false, null, null));
+				setLabelSize(EuclidianStatic.drawIndexedString(
+						view.getApplication(), g2, text, 0, 0, false, false, null, null));
 			}
 			calculateBoxBounds(latex);
 		} else {
@@ -175,7 +205,7 @@ public abstract class CanvasDrawable extends Drawable {
 
 	/**
 	 * Update box bounds.
-	 * 
+	 *
 	 * @param latex
 	 *            whether the caption is latex
 	 */
@@ -184,9 +214,7 @@ public abstract class CanvasDrawable extends Drawable {
 			return;
 		}
 		boxLeft = xLabel + labelSize.x + getLabelGap();
-		boxTop = latex
-				? yLabel + (labelSize.y - getPreferredHeight()) / 2
-				: yLabel;
+		boxTop = latex ? yLabel + (labelSize.y - getPreferredHeight()) / 2 : yLabel;
 		boxWidth = getPreferredWidth();
 		boxHeight = getPreferredHeight();
 	}
@@ -229,8 +257,8 @@ public abstract class CanvasDrawable extends Drawable {
 
 	protected int getLabelTextHeight() {
 		return getDynamicCaption() != null && getDynamicCaption().isEnabled()
-				? getDynamicCaption().getHeight() : (int) (getLabelFontSize()
-				* LABEL_FONT_MULTIPLIER + HIGHLIGHT_MARGIN);
+				? getDynamicCaption().getHeight()
+				: (int) (getLabelFontSize() * LABEL_FONT_MULTIPLIER + HIGHLIGHT_MARGIN);
 	}
 
 	/**
@@ -250,7 +278,7 @@ public abstract class CanvasDrawable extends Drawable {
 
 	/**
 	 * Draw the shape and update the widget.
-	 * 
+	 *
 	 * @param g2
 	 *            graphics
 	 */
@@ -269,6 +297,9 @@ public abstract class CanvasDrawable extends Drawable {
 		return hitDynCaption || hitLabelBounds(x, y) || hitWidgetBounds(x, y);
 	}
 
+	/**
+	 * @return y-coordinate of the bottom of the caption text
+	 */
 	public int getTextBottom() {
 		return (getPreferredHeight() / 2) + (int) (getLabelFontSize() * 0.4);
 	}
@@ -293,8 +324,7 @@ public abstract class CanvasDrawable extends Drawable {
 		}
 		double top = getLabelTop();
 		int height = getLabelHeight();
-		return x > xLabel && x < xLabel + labelSize.x && y > top
-				&& y < top + height;
+		return x > xLabel && x < xLabel + labelSize.x && y > top && y < top + height;
 	}
 
 	/**
@@ -312,8 +342,8 @@ public abstract class CanvasDrawable extends Drawable {
 	 *            label text
 	 */
 	protected void setLabelFont(String text) {
-		this.labelFont = view.getApplication().getFontCanDisplay(text, false, GFont.PLAIN,
-				getLabelFontSize());
+		this.labelFont =
+				view.getApplication().getFontCanDisplay(text, false, GFont.PLAIN, getLabelFontSize());
 	}
 
 	private void setLabelSize(GPoint labelSize) {
@@ -381,5 +411,4 @@ public abstract class CanvasDrawable extends Drawable {
 		}
 		hitRect.setBounds(left, boxTop, width, boxHeight);
 	}
-
 }

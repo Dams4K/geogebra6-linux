@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw.dropdown;
 
 import java.util.HashMap;
@@ -29,8 +45,10 @@ class DrawOptions implements MoveSelector {
 	private boolean visible;
 	private boolean clickStarted;
 
-	DrawOptions(DrawDropDownList drawDropDownList,
-			DropDownModel model, EuclidianView view,
+	DrawOptions(
+			DrawDropDownList drawDropDownList,
+			DropDownModel model,
+			EuclidianView view,
 			OptionScroller scroller) {
 		this.drawDropDownList = drawDropDownList;
 		this.view = view;
@@ -100,7 +118,7 @@ class DrawOptions implements MoveSelector {
 		return false;
 	}
 
-	public void setHighlightIndex(int idx) {
+	void setHighlightIndex(int idx) {
 		if (model.itemCount() <= idx) {
 			items.update(model);
 		}
@@ -113,11 +131,11 @@ class DrawOptions implements MoveSelector {
 		}
 	}
 
-	public void setKeyboardFocus(boolean keyboardFocus) {
+	void setKeyboardFocus(boolean keyboardFocus) {
 		selector.setKeyboardFocus(keyboardFocus);
 	}
 
-	public int getItemCount() {
+	int getItemCount() {
 		return items.size();
 	}
 
@@ -253,8 +271,7 @@ class DrawOptions implements MoveSelector {
 	}
 
 	private void updateHighlighting() {
-		selector.setHighlighted(model.isScrollBoundsValid()
-				? items.get(range.getSelected()) : null);
+		selector.setHighlighted(model.isScrollBoundsValid() ? items.get(range.getSelected()) : null);
 		selector.setKeyboardFocus(true);
 	}
 
@@ -317,7 +334,7 @@ class DrawOptions implements MoveSelector {
 		setDragging(false);
 	}
 
-	public int indexOf(OptionItem item) {
+	int indexOf(OptionItem item) {
 		return items.indexOf(item);
 	}
 
@@ -332,11 +349,11 @@ class DrawOptions implements MoveSelector {
 		return evt;
 	}
 
-	public void scrollUp() {
+	void scrollUp() {
 		scroller.scroll(DropDownScrollMode.UP);
 	}
 
-	public void scrollDown() {
+	void scrollDown() {
 		scroller.scroll(DropDownScrollMode.DOWN);
 	}
 

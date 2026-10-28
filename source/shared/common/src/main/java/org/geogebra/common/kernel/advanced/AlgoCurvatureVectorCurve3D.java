@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.advanced;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoConic3D;
@@ -21,7 +37,6 @@ import org.geogebra.common.kernel.matrix.Coords;
  * sqrt(a'(t)^2+b'(t)^2)
  * <a href="http://en.wikipedia.org/w/index.php?title=Curvature&amp;section=8#Local_expressions_2">wiki</a>
  */
-
 public class AlgoCurvatureVectorCurve3D extends AlgoElement {
 
 	private GeoPointND A; // input
@@ -47,8 +62,8 @@ public class AlgoCurvatureVectorCurve3D extends AlgoElement {
 	 * @param f
 	 *            curve
 	 */
-	public AlgoCurvatureVectorCurve3D(Construction cons, String label,
-			GeoPointND pt, GeoCurveCartesian3D f) {
+	public AlgoCurvatureVectorCurve3D(
+			Construction cons, String label, GeoPointND pt, GeoCurveCartesian3D f) {
 		this(cons, pt, f);
 
 		if (label != null) {
@@ -59,8 +74,7 @@ public class AlgoCurvatureVectorCurve3D extends AlgoElement {
 		}
 	}
 
-	AlgoCurvatureVectorCurve3D(Construction cons, GeoPointND A,
-			GeoCurveCartesian3D f) {
+	AlgoCurvatureVectorCurve3D(Construction cons, GeoPointND A, GeoCurveCartesian3D f) {
 		super(cons);
 		this.A = A;
 		this.f = f;
@@ -69,7 +83,7 @@ public class AlgoCurvatureVectorCurve3D extends AlgoElement {
 		v = new GeoVector3D(cons);
 		try {
 			v.setStartPoint(A);
-		} catch (CircularDefinitionException e) {
+		} catch (CircularDefinitionException ignored) {
 			// can't happen with new vector
 		}
 
@@ -87,8 +101,7 @@ public class AlgoCurvatureVectorCurve3D extends AlgoElement {
 	 * @param geoConic3D
 	 *            conic
 	 */
-	public AlgoCurvatureVectorCurve3D(Construction cons,
-			GeoPoint3D arg, GeoConic3D geoConic3D) {
+	public AlgoCurvatureVectorCurve3D(Construction cons, GeoPoint3D arg, GeoConic3D geoConic3D) {
 		super(cons);
 		this.gc = geoConic3D;
 		this.A = arg;
@@ -96,7 +109,7 @@ public class AlgoCurvatureVectorCurve3D extends AlgoElement {
 		v = new GeoVector3D(cons);
 		try {
 			v.setStartPoint(A);
-		} catch (CircularDefinitionException e) {
+		} catch (CircularDefinitionException ignored) {
 			// can't happen with new vectors
 		}
 
@@ -157,8 +170,7 @@ public class AlgoCurvatureVectorCurve3D extends AlgoElement {
 				w2[1] = rw.getY();
 				w2[2] = rw.getZ();
 			} else {
-				double tvalue = f.getClosestParameterForCurvature(A,
-						f.getMinParameter());
+				double tvalue = f.getClosestParameterForCurvature(A, f.getMinParameter());
 				f1.evaluateCurve(tvalue, f1eval);
 				f2.evaluateCurve(tvalue, f2eval);
 				curvature = f.evaluateCurvature(tvalue);
@@ -199,5 +211,4 @@ public class AlgoCurvatureVectorCurve3D extends AlgoElement {
 		A.removeAlgorithm(algoCAS2);
 		f.removeAlgorithm(algoCAS2);
 	}
-
 }

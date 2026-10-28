@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.prover.polynomial;
 
 import java.util.HashSet;
@@ -8,9 +24,9 @@ import java.util.TreeMap;
 
 /**
  * A simple class for terms which are a products of potences of variables.
- * 
+ *
  * @author Simon Weitzhofer
- * 
+ *
  */
 public class PTerm implements Comparable<PTerm> {
 	private TreeMap<PVariable, Integer> variables;
@@ -24,7 +40,7 @@ public class PTerm implements Comparable<PTerm> {
 
 	/**
 	 * Copies a term
-	 * 
+	 *
 	 * @param t
 	 *            the term to copy
 	 */
@@ -35,7 +51,7 @@ public class PTerm implements Comparable<PTerm> {
 	/**
 	 * Creates a Term out of a map from variables to integers. The term is the
 	 * product of the variables raised by the corresponding integers.
-	 * 
+	 *
 	 * @param variables
 	 *            The map
 	 */
@@ -45,7 +61,7 @@ public class PTerm implements Comparable<PTerm> {
 
 	/**
 	 * Creates a term which consist only of one variable
-	 * 
+	 *
 	 * @param variable
 	 *            the variable
 	 */
@@ -56,7 +72,7 @@ public class PTerm implements Comparable<PTerm> {
 
 	/**
 	 * Creates a term variable^exponent
-	 * 
+	 *
 	 * @param variable
 	 *            the variable
 	 * @param exponent
@@ -69,14 +85,13 @@ public class PTerm implements Comparable<PTerm> {
 
 	/**
 	 * Calculates the product of the term and another term
-	 * 
+	 *
 	 * @param term
 	 *            the other term
 	 * @return the product
 	 */
 	public PTerm times(final PTerm term) {
-		TreeMap<PVariable, Integer> productTerm = new TreeMap<>(
-				variables);
+		TreeMap<PVariable, Integer> productTerm = new TreeMap<>(variables);
 
 		TreeMap<PVariable, Integer> variables2 = term.getTerm();
 		Iterator<PVariable> it = term.getTerm().keySet().iterator();
@@ -93,7 +108,7 @@ public class PTerm implements Comparable<PTerm> {
 
 	/**
 	 * Getter for the map containing the variables and the exponent
-	 * 
+	 *
 	 * @return the map
 	 */
 	public TreeMap<PVariable, Integer> getTerm() {
@@ -102,7 +117,7 @@ public class PTerm implements Comparable<PTerm> {
 
 	/**
 	 * Gets the variable with the highest order
-	 * 
+	 *
 	 * @return the variable with the highest order
 	 */
 	public PVariable getHighestVariable() {
@@ -131,8 +146,7 @@ public class PTerm implements Comparable<PTerm> {
 		int compare = variablesLastKey.compareTo(tLastKey);
 
 		if (compare == 0) {
-			compare = variables.get(variablesLastKey)
-					.compareTo(t.get(tLastKey));
+			compare = variables.get(variablesLastKey).compareTo(t.get(tLastKey));
 		}
 
 		if (compare != 0) {
@@ -140,8 +154,7 @@ public class PTerm implements Comparable<PTerm> {
 		}
 
 		do {
-			SortedMap<PVariable, Integer> variablesSub = variables
-					.headMap(variablesLastKey);
+			SortedMap<PVariable, Integer> variablesSub = variables.headMap(variablesLastKey);
 			SortedMap<PVariable, Integer> oSub = t.headMap(tLastKey);
 			if (variablesSub.isEmpty()) {
 				if (oSub.isEmpty()) {
@@ -156,8 +169,7 @@ public class PTerm implements Comparable<PTerm> {
 			tLastKey = oSub.lastKey();
 			compare = variablesLastKey.compareTo(tLastKey);
 			if (compare == 0) {
-				compare = variablesSub.get(variablesLastKey)
-						.compareTo(oSub.get(tLastKey));
+				compare = variablesSub.get(variablesLastKey).compareTo(oSub.get(tLastKey));
 			}
 		} while (compare == 0);
 
@@ -195,7 +207,7 @@ public class PTerm implements Comparable<PTerm> {
 
 	/**
 	 * Exports the term into LaTeX
-	 * 
+	 *
 	 * @return LaTeX formatted polynomial
 	 */
 	public String toTeX() {
@@ -215,7 +227,7 @@ public class PTerm implements Comparable<PTerm> {
 
 	/**
 	 * The set of variables in this term
-	 * 
+	 *
 	 * @return the set of variables
 	 */
 	public HashSet<PVariable> getVars() {
@@ -233,13 +245,12 @@ public class PTerm implements Comparable<PTerm> {
 		if (variables.isEmpty()) {
 			return 0;
 		}
-		return variables.firstKey().hashCode() >> variables.lastKey()
-				.hashCode();
+		return variables.firstKey().hashCode() >> variables.lastKey().hashCode();
 	}
 
 	/**
 	 * Test whether the term f is a multiple of term g
-	 * 
+	 *
 	 * @param f
 	 *            the dividend
 	 * @param g
@@ -259,5 +270,4 @@ public class PTerm implements Comparable<PTerm> {
 		}
 		return true;
 	}
-
 }

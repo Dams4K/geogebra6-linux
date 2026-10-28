@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.menubar;
 
 import org.geogebra.common.gui.view.algebra.contextmenu.MenuAction;
@@ -87,13 +103,13 @@ public abstract class Submenu extends GMenuBar {
 	 * @return reference to menu item
 	 */
 	public AriaMenuItem addItem(String transKey, MenuAction<AppWFull> action, IconSpec icon) {
-		return addItem(
-				MainMenu.getMenuBarItem(icon,
+		return addItem(MainMenu.getMenuBarItem(
+				icon,
 				getApp().getLocalization().getMenu(transKey),
 				new MenuCommand(getApp()) { // Close
 
 					@Override
-					public void doExecute() {
+					void doExecute() {
 						action.execute((AppWFull) getApp());
 					}
 				}));

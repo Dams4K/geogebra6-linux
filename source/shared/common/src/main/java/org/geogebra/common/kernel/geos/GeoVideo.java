@@ -1,11 +1,27 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.geos;
 
 import org.geogebra.common.awt.MyImage;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.media.MediaFormat;
 import org.geogebra.common.plugin.GeoClass;
-import org.geogebra.common.util.StringUtil;
 
 /**
  *
@@ -19,21 +35,23 @@ public class GeoVideo extends GeoMedia {
 	private static final int VIDEO_WIDTH = 420;
 	private static final int VIDEO_HEIGHT = 345;
 
-	public final static int VIDEO_SIZE_THRESHOLD = 100;
+	public static final int VIDEO_SIZE_THRESHOLD = 100;
 
-	private static final String WMODE_TRANSPARENT = "&wmode=transparent";
+	private static final String WMODE_TRANSPARENT = "wmode=transparent";
 
 	/**
 	 * Test video URL.
 	 */
 	private static final String YOUTUBE_EMBED = "https://www.youtube.com/embed/";
-	private static final String YOUTUBE_PREVIEW = "/apps/crossorigin/?url=https://img.youtube.com/vi/%ID%/0.jpg";
-	private static final String MEBIS_PREVIEW = "/apps/crossorigin/?url=https://sodis.de/mediathek/thumbsCache_16_9/%ID%___.jpg";
+
+	private static final String YOUTUBE_PREVIEW =
+			"/apps/crossorigin/?url=https://img.youtube.com/vi/%ID%/0.jpg";
+	private static final String MEBIS_PREVIEW =
+			"/apps/crossorigin/?url=https://sodis.de/mediathek/thumbsCache_16_9/%ID%___.jpg";
 
 	private static final String TIME_PARAM_A = "&t=";
 	private static final String TIME_PARAM_Q = "?t=";
 	private static final String TIME_PARAM_S = "start=";
-	private static final String JAVASCRIPT_API = "enablejsapi=1";
 
 	private String youtubeId = null;
 	private String previewUrl = null;
@@ -68,7 +86,8 @@ public class GeoVideo extends GeoMedia {
 	public GeoVideo(Construction c, String url, MediaFormat format) {
 		super(c, url, format);
 		setLabel("video" + c.getLabelManager().getMultiuserSuffix());
-		setSize(format == MediaFormat.VIDEO_YOUTUBE ? VIDEO_WIDTH : -1,
+		setSize(
+				format == MediaFormat.VIDEO_YOUTUBE ? VIDEO_WIDTH : -1,
 				format == MediaFormat.VIDEO_YOUTUBE ? VIDEO_HEIGHT : -1);
 	}
 
@@ -128,17 +147,16 @@ public class GeoVideo extends GeoMedia {
 	private void initStartTime() {
 		String url = getSrc();
 
-		int startIdx = url.contains(TIME_PARAM_A) ? url.indexOf(TIME_PARAM_A)
-				: url.contains(TIME_PARAM_Q) ? url.indexOf(TIME_PARAM_Q)
-				: url.indexOf(TIME_PARAM_S);
+		int startIdx = url.contains(TIME_PARAM_A)
+				? url.indexOf(TIME_PARAM_A)
+				: url.contains(TIME_PARAM_Q) ? url.indexOf(TIME_PARAM_Q) : url.indexOf(TIME_PARAM_S);
 		if (startIdx != -1) {
 			String t = url.contains(TIME_PARAM_S)
 					? url.substring(startIdx + TIME_PARAM_S.length())
 					: url.substring(startIdx + TIME_PARAM_A.length());
 
-			int endIdx = t.contains("&") ? t.indexOf("&")
-					: t.contains("?") ? t.indexOf("?")
-					: t.indexOf("\"");
+			int endIdx =
+					t.contains("&") ? t.indexOf("&") : t.contains("?") ? t.indexOf("?") : t.indexOf("\"");
 
 			String time = endIdx == -1 ? t : t.substring(0, endIdx);
 
@@ -150,8 +168,7 @@ public class GeoVideo extends GeoMedia {
 				startTime = Integer.parseInt(minutes) * 60;
 			}
 			if (idxS != -1) {
-				String seconds = idxM == -1 ? time.substring(0, idxS)
-						: time.substring(idxM + 1, idxS);
+				String seconds = idxM == -1 ? time.substring(0, idxS) : time.substring(idxM + 1, idxS);
 				startTime += Integer.parseInt(seconds);
 			}
 			if (idxM == -1 && idxS == -1) {
@@ -208,7 +225,6 @@ public class GeoVideo extends GeoMedia {
 			sb.append(startTime);
 			sb.append("&");
 		}
-		sb.append(JAVASCRIPT_API);
 		sb.append(WMODE_TRANSPARENT);
 		return sb.toString();
 	}
@@ -230,19 +246,18 @@ public class GeoVideo extends GeoMedia {
 	}
 
 	@Override
-	protected void getStyleXML(StringBuilder sb) {
+	protected void getStyleXML(XMLStringBuilder sb) {
 		super.getStyleXML(sb);
-		sb.append("\t<video src=\"");
+		sb.startTag("video");
 		if (getFormat() == MediaFormat.VIDEO_YOUTUBE) {
-			StringUtil.encodeXML(sb, getEmbeddedUrl());
+			sb.attr("src", getEmbeddedUrl());
 		} else if (getSrc() != null) {
-			StringUtil.encodeXML(sb, getSrc());
+			sb.attr("src", getSrc());
 		}
 		if (getFormat() != null) {
-			sb.append("\" type=\"");
-			sb.append(getFormat());
+			sb.attrRaw("type", getFormat().toString());
 		}
-		sb.append("\"/>\n");
+		sb.endTag();
 	}
 
 	/**
@@ -257,12 +272,12 @@ public class GeoVideo extends GeoMedia {
 	 * @param type
 	 *            hit type
 	 */
-	final public void setLastHitType(HitType type) {
+	public final void setLastHitType(HitType type) {
 		lastHitType = type;
 	}
 
 	@Override
-	final public HitType getLastHitType() {
+	public final HitType getLastHitType() {
 		return lastHitType;
 	}
 
@@ -292,7 +307,7 @@ public class GeoVideo extends GeoMedia {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return if video is in background.
 	 */
 	public boolean isBackground() {
@@ -302,7 +317,7 @@ public class GeoVideo extends GeoMedia {
 	/**
 	 * Sets the video to the background, thus
 	 * you can draw on it.
-	 * 
+	 *
 	 * @param background
 	 *            to set;
 	 */
@@ -319,7 +334,7 @@ public class GeoVideo extends GeoMedia {
 
 	/**
 	 * Runs callback once after size is set
-	 * 
+	 *
 	 * @param sizeCallback
 	 *            size callback
 	 */

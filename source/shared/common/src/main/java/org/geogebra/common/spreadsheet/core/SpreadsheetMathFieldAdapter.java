@@ -1,19 +1,34 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.spreadsheet.core;
 
-import javax.annotation.Nonnull;
-
-import com.himamis.retex.editor.share.editor.MathFieldInternal;
-import com.himamis.retex.editor.share.editor.MathFieldInternalListener;
-import com.himamis.retex.editor.share.editor.UnhandledArrowListener;
-import com.himamis.retex.editor.share.event.KeyEvent;
-import com.himamis.retex.editor.share.event.MathFieldListener;
-import com.himamis.retex.editor.share.util.JavaKeyCodes;
+import org.geogebra.editor.share.editor.MathFieldInternal;
+import org.geogebra.editor.share.editor.MathFieldInternalListener;
+import org.geogebra.editor.share.editor.UnhandledKeyListener;
+import org.geogebra.editor.share.event.KeyEvent;
+import org.geogebra.editor.share.event.MathFieldListener;
+import org.geogebra.editor.share.util.JavaKeyCodes;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Adapts between a MathFieldInternal, spreadsheet input processing, and the SpreadsheetController.
  */
-final class SpreadsheetMathFieldAdapter implements MathFieldListener, UnhandledArrowListener,
-		MathFieldInternalListener {
+final class SpreadsheetMathFieldAdapter
+		implements MathFieldListener, UnhandledKeyListener, MathFieldInternalListener {
 
 	private final MathFieldInternal mathField;
 	private final int row, column;
@@ -24,10 +39,12 @@ final class SpreadsheetMathFieldAdapter implements MathFieldListener, UnhandledA
 	 * @param mathField math input
 	 *
 	 */
-	SpreadsheetMathFieldAdapter(@Nonnull MathFieldInternal mathField,
-			int row, int column,
-			@Nonnull SpreadsheetCellProcessor cellProcessor,
-			@Nonnull SpreadsheetController spreadsheetController) {
+	SpreadsheetMathFieldAdapter(
+			@NonNull MathFieldInternal mathField,
+			int row,
+			int column,
+			@NonNull SpreadsheetCellProcessor cellProcessor,
+			@NonNull SpreadsheetController spreadsheetController) {
 		this.mathField = mathField;
 		this.row = row;
 		this.column = column;

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.geogebra3D.web.euclidian3D;
 
 import java.util.ArrayList;
@@ -23,7 +39,7 @@ import org.geogebra.web.resources.SVGResource;
 /**
  * style bar for 3D view
  */
-public class EuclidianStyleBar3DW extends EuclidianStyleBarW {
+public final class EuclidianStyleBar3DW extends EuclidianStyleBarW {
 
 	private RotateViewPopup btnRotateView;
 	private ToggleButton btnShowGrid3D;
@@ -59,18 +75,20 @@ public class EuclidianStyleBar3DW extends EuclidianStyleBarW {
 		getBtnPointStyle().setEuclidian3D(true);
 
 		btnRotateView = new RotateViewPopup(
-				this, MaterialDesignResources.INSTANCE.rotateViewPlay(),
+				this,
+				MaterialDesignResources.INSTANCE.rotateViewPlay(),
 				MaterialDesignResources.INSTANCE.rotateViewPause());
 
 		ImageOrText[] projectionIcons = ImageOrText.convert(
 				new SVGResource[] {
-						MaterialDesignResources.INSTANCE.projection_orthographic(),
-						MaterialDesignResources.INSTANCE.projection_perspective(),
-						MaterialDesignResources.INSTANCE.projection_glasses(),
-						MaterialDesignResources.INSTANCE.projection_oblique() }, 24);
+					MaterialDesignResources.INSTANCE.projection_orthographic(),
+					MaterialDesignResources.INSTANCE.projection_perspective(),
+					MaterialDesignResources.INSTANCE.projection_glasses(),
+					MaterialDesignResources.INSTANCE.projection_oblique()
+				},
+				24);
 		btnViewProjection = new ProjectionPopup(app, projectionIcons);
-		btnViewProjection.setSelectedIndex(((EuclidianSettings3D) ev
-				.getSettings()).getProjection());
+		btnViewProjection.setSelectedIndex(((EuclidianSettings3D) ev.getSettings()).getProjection());
 		setPopupHandlerWithUndoPoint(btnViewProjection, this::updateProjection);
 	}
 
@@ -83,47 +101,52 @@ public class EuclidianStyleBar3DW extends EuclidianStyleBarW {
 
 	@Override
 	protected void createChangeViewButtons() {
-		ImageOrText[] directionIcons = ImageOrText.convert(new SVGResource[] {
-				MaterialDesignResources.INSTANCE.home_black(),
-				MaterialDesignResources.INSTANCE.show_all_objects_black(),
-				MaterialDesignResources.INSTANCE.standardViewRotate(),
-				MaterialDesignResources.INSTANCE.viewXY(),
-				MaterialDesignResources.INSTANCE.viewXZ(),
-				MaterialDesignResources.INSTANCE.viewYZ() }, 24);
+		ImageOrText[] directionIcons = ImageOrText.convert(
+				new SVGResource[] {
+					MaterialDesignResources.INSTANCE.home_black(),
+					MaterialDesignResources.INSTANCE.show_all_objects_black(),
+					MaterialDesignResources.INSTANCE.standardViewRotate(),
+					MaterialDesignResources.INSTANCE.viewXY(),
+					MaterialDesignResources.INSTANCE.viewXZ(),
+					MaterialDesignResources.INSTANCE.viewYZ()
+				},
+				24);
 
 		btnChangeView = new ProjectionPopup(app, directionIcons);
-		btnChangeView.setFixedIcon(new ImageOrText(MaterialDesignResources.INSTANCE.home_black(),
-				24));
+		btnChangeView.setFixedIcon(new ImageOrText(MaterialDesignResources.INSTANCE.home_black(), 24));
 		setPopupHandlerWithUndoPoint(btnChangeView, this::processChangeView);
 	}
 
-	protected boolean processAxesPlane(Object source) {
+	private boolean processAxesPlane(Object ignored) {
 		return btnShowAxesAndPlane.setEVFromIndex();
 	}
 
 	@Override
 	protected void setDirection(int si) {
 		switch (si) {
-		default:
-		case 0:
-			getView().setStandardView(true);
-			break;
-		case 1:
-			getView().setViewShowAllObjects(true, false);
-			break;
-		case 2:
-			getView().setRotAnimation(EuclidianView3DInterface.ANGLE_ROT_OZ,
-					EuclidianView3DInterface.ANGLE_ROT_XOY, false);
-			break;
-		case 3:
-			getView().setRotAnimation(-90, 90, true);
-			break;
-		case 4:
-			getView().setRotAnimation(-90, 0, true);
-			break;
-		case 5:
-			getView().setRotAnimation(0, 0, true);
-			break;
+			default:
+			case 0:
+				getView().setStandardView(true);
+				break;
+			case 1:
+				getView().setViewShowAllObjects(true, false);
+				break;
+			case 2:
+				getView()
+						.setRotAnimation(
+								EuclidianView3DInterface.ANGLE_ROT_OZ,
+								EuclidianView3DInterface.ANGLE_ROT_XOY,
+								false);
+				break;
+			case 3:
+				getView().setRotAnimation(-90, 90, true);
+				break;
+			case 4:
+				getView().setRotAnimation(-90, 0, true);
+				break;
+			case 5:
+				getView().setRotAnimation(0, 0, true);
+				break;
 		}
 	}
 
@@ -131,20 +154,20 @@ public class EuclidianStyleBar3DW extends EuclidianStyleBarW {
 	protected void createAxesAndGridButtons() {
 		ImageOrText[] axesAndPlaneIcons = ImageOrText.convert(
 				new SVGResource[] {
-						MaterialDesignResources.INSTANCE.stylebar_empty(),
-						MaterialDesignResources.INSTANCE.axes_black(),
-						MaterialDesignResources.INSTANCE.plane(),
-						MaterialDesignResources.INSTANCE.axes_plane() }, 24);
+					MaterialDesignResources.INSTANCE.stylebar_empty(),
+					MaterialDesignResources.INSTANCE.axes_black(),
+					MaterialDesignResources.INSTANCE.plane(),
+					MaterialDesignResources.INSTANCE.axes_plane()
+				},
+				24);
 
-		btnShowAxesAndPlane = new AxesAndPlanePopup(app, axesAndPlaneIcons,
-				getView());
+		btnShowAxesAndPlane = new AxesAndPlanePopup(app, axesAndPlaneIcons, getView());
 		setPopupHandlerWithUndoPoint(btnShowAxesAndPlane, this::processAxesPlane);
 
-		btnShowGrid3D = new ToggleButtonWforEV(
-				MaterialDesignResources.INSTANCE.grid_black(), this);
+		btnShowGrid3D = new ToggleButtonWforEV(MaterialDesignResources.INSTANCE.grid_black(), this);
 		btnShowGrid3D.setSelected(ev.getShowGrid());
-		addFastClickHandlerWithUndoPoint(btnShowGrid3D,
-				geos -> EuclidianStyleBarStatic.processGrid(getView()));
+		addFastClickHandlerWithUndoPoint(
+				btnShowGrid3D, geos -> EuclidianStyleBarStatic.processGrid(getView()));
 	}
 
 	@Override
@@ -180,16 +203,14 @@ public class EuclidianStyleBar3DW extends EuclidianStyleBarW {
 		super.setToolTips();
 
 		Localization loc = app.getLocalization();
-		btnRotateView
-				.setTitle(loc.getPlainTooltip("stylebar.RotateView"));
-		btnViewProjection.setTitle(loc
-				.getPlainTooltip("stylebar.ViewProjection"));
+		btnRotateView.setTitle(loc.getPlainTooltip("stylebar.RotateView"));
+		btnViewProjection.setTitle(loc.getPlainTooltip("stylebar.ViewProjection"));
 	}
 
 	@Override
 	protected ToggleButton[] newToggleBtnList() {
 		ToggleButton[] superList = super.newToggleBtnList();
-		
+
 		if (!app.isUnbundledOrWhiteboard()) {
 			return superList;
 		}

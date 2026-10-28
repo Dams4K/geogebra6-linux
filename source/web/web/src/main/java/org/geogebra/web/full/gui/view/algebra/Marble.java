@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import org.geogebra.common.awt.GColor;
@@ -15,7 +31,7 @@ import org.gwtproject.user.client.ui.SimplePanel;
  * Algebra view marble to show or hide geos
  *
  */
-public class Marble extends SimplePanel {
+public final class Marble extends SimplePanel {
 	private RadioTreeItem gc;
 	private Image imgText = null;
 
@@ -31,27 +47,24 @@ public class Marble extends SimplePanel {
 		geo.getKernel().notifyRepaint();
 		setChecked(geo.isEuclidianVisible());
 	}
-	
+
 	/**
 	 * @param gc object providing the GeoElement
 	 */
 	public Marble(final RadioTreeItem gc) {
 		this.gc = gc;
-		if (gc.getApplication().isUnbundledOrWhiteboard()
-				&& !NavigatorUtil.isMobile()) {
+		if (gc.getApplication().isUnbundledOrWhiteboard() && !NavigatorUtil.isMobile()) {
 			this.getElement().removeAttribute("title");
 		}
 		if (gc.isTextItem()) {
-			imgText = new NoDragImage(
-					MaterialDesignResources.INSTANCE.icon_quote_black(), 20);
+			imgText = new NoDragImage(MaterialDesignResources.INSTANCE.icon_quote_black(), 20);
 			imgText.addStyleName("textOverMarble");
 			add(imgText);
 		}
 		// stopPropagation activated (parameters for the constructor)
 		ClickStartHandler.init(this, new ClickStartHandler(false, true) {
 			@Override
-			public boolean onClickStart(int x, int y, PointerEventType type,
-					boolean right) {
+			public boolean onClickStart(int x, int y, PointerEventType type, boolean right) {
 				if (type == PointerEventType.TOUCH) {
 
 					return false;
@@ -66,7 +79,7 @@ public class Marble extends SimplePanel {
 			@Override
 			public void onClickStart(int x, int y, PointerEventType type) {
 				if (type == PointerEventType.TOUCH) {
-						toggleVisibility();
+					toggleVisibility();
 				}
 			}
 		});
@@ -83,7 +96,7 @@ public class Marble extends SimplePanel {
 	/**
 	 * Steffi, 17/8/2015 Function to set the marble style for visible and
 	 * unvisible geo (Background color changes, depending on visibility)
-	 * 
+	 *
 	 * @param value
 	 *            true for visible, false for invisible geo
 	 */
@@ -91,23 +104,18 @@ public class Marble extends SimplePanel {
 		if (value) {
 			// Filling color should be the same color but 40% opacity (102)
 			GColor c = gc.getGeo().getAlgebraColor();
-			GColor fillColor = this.gc.getGeo().getObjectColor()
-					.deriveWithAlpha(102);
-			this.getElement().getStyle()
-					.setBorderColor(GColor.getColorString(c));
-			this.getElement().getStyle()
-					.setBackgroundColor(GColor
-							.getColorString(fillColor));
-		}
-		else {
+			GColor fillColor = this.gc.getGeo().getObjectColor().deriveWithAlpha(102);
+			this.getElement().getStyle().setBorderColor(GColor.getColorString(c));
+			this.getElement().getStyle().setBackgroundColor(GColor.getColorString(fillColor));
+		} else {
 			this.getElement().getStyle().setBackgroundColor(GColor.getColorString(GColor.WHITE));
 		}
 		setAltText(value ? "visible" : "not visible");
 	}
-	
+
 	/**
 	 * Enable or disable this control
-	 * 
+	 *
 	 * @param euclidianShowable
 	 *            whether the geo may be shown/hidden
 	 */

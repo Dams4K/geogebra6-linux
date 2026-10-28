@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoCircleTwoPoints.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 15. November 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -41,8 +39,7 @@ public abstract class AlgoSphereNDTwoPoints extends AlgoElement {
 	 * @param P
 	 *            point on sphere
 	 */
-	public AlgoSphereNDTwoPoints(Construction cons, GeoPointND M,
-			GeoPointND P) {
+	public AlgoSphereNDTwoPoints(Construction cons, GeoPointND M, GeoPointND P) {
 		super(cons);
 		this.M = M;
 		this.P = P;
@@ -54,10 +51,9 @@ public abstract class AlgoSphereNDTwoPoints extends AlgoElement {
 		sphereND.setToSpecificForm();
 	}
 
-	abstract protected GeoQuadricND createSphereND(Construction cons1);
+	protected abstract GeoQuadricND createSphereND(Construction cons1);
 
-	protected AlgoSphereNDTwoPoints(Construction cons, String label,
-			GeoPointND M, GeoPointND P) {
+	protected AlgoSphereNDTwoPoints(Construction cons, String label, GeoPointND M, GeoPointND P) {
 		this(cons, M, P);
 		sphereND.setLabel(label);
 	}
@@ -82,7 +78,7 @@ public abstract class AlgoSphereNDTwoPoints extends AlgoElement {
 
 	/**
 	 * Method added for LocusEqu project.
-	 * 
+	 *
 	 * @return center of sphere.
 	 */
 	public GeoPointND getCenter() {
@@ -95,7 +91,7 @@ public abstract class AlgoSphereNDTwoPoints extends AlgoElement {
 
 	/**
 	 * Method added for LocusEqu project.
-	 * 
+	 *
 	 * @return external point of sphere.
 	 */
 	public GeoPointND getExternalPoint() {
@@ -111,5 +107,4 @@ public abstract class AlgoSphereNDTwoPoints extends AlgoElement {
 	public final void compute() {
 		sphereND.setSphereND(M, P);
 	}
-
 }

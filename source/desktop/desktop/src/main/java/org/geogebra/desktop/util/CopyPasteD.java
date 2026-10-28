@@ -1,13 +1,17 @@
 /*
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by
-the Free Software Foundation.
-
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.desktop.util;
@@ -20,10 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
 import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.euclidian.EuclidianViewInterfaceCommon;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.Macro;
@@ -36,6 +39,7 @@ import org.geogebra.common.main.undo.AppState;
 import org.geogebra.common.util.CopyPaste;
 import org.geogebra.common.util.InternalClipboard;
 import org.geogebra.common.util.debug.Log;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This class saves the given geos (which are usually the selected ones) into an
@@ -49,10 +53,10 @@ public class CopyPasteD extends CopyPaste {
 
 	protected HashSet<Macro> copiedMacros;
 	protected StringBuilder copiedXML;
-	protected ArrayList<String> copiedXMLlabels;
+	protected ArrayList<String> copiedXMLLabels;
 
-	protected StringBuilder copiedXMLforSameWindow;
-	protected ArrayList<String> copiedXMLlabelsforSameWindow;
+	protected StringBuilder copiedXMLForSameWindow;
+	protected ArrayList<String> copiedXMLLabelsForSameWindow;
 	protected EuclidianViewInterfaceCommon copySource;
 	protected AppState copyObject;
 	protected AppState copyObject2;
@@ -84,8 +88,7 @@ public class CopyPasteD extends CopyPaste {
 		}
 	}
 
-	protected void removeHavingMacroPredecessors(
-			ArrayList<ConstructionElement> geos) {
+	protected void removeHavingMacroPredecessors(ArrayList<ConstructionElement> geos) {
 		boolean found;
 		for (int i = geos.size() - 1; i >= 0; i--) {
 			if (geos.get(i).isGeoElement()) {
@@ -132,16 +135,14 @@ public class CopyPasteD extends CopyPaste {
 	 *            selected elements
 	 */
 	protected ArrayList<ConstructionElement> removeFreeNonselectedGeoNumerics(
-			List<ConstructionElement> conels,
-			List<GeoElement> selected) {
+			List<ConstructionElement> conels, List<GeoElement> selected) {
 
 		ArrayList<ConstructionElement> ret = new ArrayList<>(conels);
 		GeoElement geo;
 		for (int i = ret.size() - 1; i >= 0; i--) {
 			if (ret.get(i).isGeoElement()) {
 				geo = (GeoElement) ret.get(i);
-				if (geo.isGeoNumeric() && geo.isIndependent()
-						&& !selected.contains(geo)) {
+				if (geo.isGeoNumeric() && geo.isIndependent() && !selected.contains(geo)) {
 					ret.remove(i);
 				}
 			}
@@ -160,14 +161,16 @@ public class CopyPasteD extends CopyPaste {
 	 * @param geostohide
 	 *            geos to be hidden
 	 */
-	protected void beforeSavingToXML(ArrayList<ConstructionElement> conels,
-			ArrayList<ConstructionElement> geostohide, boolean samewindow,
+	protected void beforeSavingToXML(
+			ArrayList<ConstructionElement> conels,
+			ArrayList<ConstructionElement> geostohide,
+			boolean samewindow,
 			boolean putdown) {
 
 		if (samewindow) {
-			copiedXMLlabelsforSameWindow = new ArrayList<>();
+			copiedXMLLabelsForSameWindow = new ArrayList<>();
 		} else {
-			copiedXMLlabels = new ArrayList<>();
+			copiedXMLLabels = new ArrayList<>();
 		}
 
 		ConstructionElement geo;
@@ -180,16 +183,13 @@ public class CopyPasteD extends CopyPaste {
 					((GeoElement) geo).addLabelPrefix(labelPrefix);
 
 					if (samewindow) {
-						copiedXMLlabelsforSameWindow
-								.add(((GeoElement) geo).getLabelSimple());
+						copiedXMLLabelsForSameWindow.add(((GeoElement) geo).getLabelSimple());
 					} else {
-						copiedXMLlabels
-								.add(((GeoElement) geo).getLabelSimple());
+						copiedXMLLabels.add(((GeoElement) geo).getLabelSimple());
 					}
 
 					if (putdown) {
-						geo.getKernel().renameLabelInScripts(label,
-								labelPrefix + label);
+						geo.getKernel().renameLabelInScripts(label, labelPrefix + label);
 					}
 
 					// TODO: check possible realLabel issues
@@ -221,8 +221,10 @@ public class CopyPasteD extends CopyPaste {
 	 * @param geostoshow
 	 *            geos to be shown
 	 */
-	protected void afterSavingToXML(ArrayList<ConstructionElement> conels,
-			ArrayList<ConstructionElement> geostoshow, boolean putdown) {
+	protected void afterSavingToXML(
+			ArrayList<ConstructionElement> conels,
+			ArrayList<ConstructionElement> geostoshow,
+			boolean putdown) {
 
 		ConstructionElement geo;
 		String label;
@@ -232,12 +234,10 @@ public class CopyPasteD extends CopyPaste {
 				label = ((GeoElement) geo).getLabelSimple();
 				if (label != null && label.startsWith(labelPrefix)) {
 					try {
-						((GeoElement) geo).setLabelSimple(
-								label.substring(labelPrefix.length()));
+						((GeoElement) geo).setLabelSimple(label.substring(labelPrefix.length()));
 
 						if (putdown) {
-							geo.getKernel().renameLabelInScripts(label,
-									label.substring(labelPrefix.length()));
+							geo.getKernel().renameLabelInScripts(label, label.substring(labelPrefix.length()));
 						}
 					} catch (Exception e) {
 						Log.debug(e);
@@ -264,8 +264,7 @@ public class CopyPasteD extends CopyPaste {
 	 * @param putdown
 	 *            boolean which means the InsertFile case
 	 */
-	public void copyToXML(App app, List<GeoElement> geos,
-			boolean putdown) {
+	public void copyToXML(App app, List<GeoElement> geos, boolean putdown) {
 		if (geos.isEmpty()) {
 			return;
 		}
@@ -274,9 +273,9 @@ public class CopyPasteD extends CopyPaste {
 		app.setBlockUpdateScripts(true);
 
 		copiedXML = new StringBuilder();
-		copiedXMLlabels = new ArrayList<>();
-		copiedXMLforSameWindow = new StringBuilder();
-		copiedXMLlabelsforSameWindow = new ArrayList<>();
+		copiedXMLLabels = new ArrayList<>();
+		copiedXMLForSameWindow = new StringBuilder();
+		copiedXMLLabelsForSameWindow = new ArrayList<>();
 		copySource = app.getActiveEuclidianView();
 		copyObject = app.getUndoManager().getCurrentUndoInfo();
 		copiedMacros = new HashSet<>();
@@ -309,8 +308,7 @@ public class CopyPasteD extends CopyPaste {
 			return;
 		}
 
-		ArrayList<ConstructionElement> geostohide = addPredecessorGeos(
-				geoslocal);
+		ArrayList<ConstructionElement> geostohide = addPredecessorGeos(geoslocal);
 
 		// what about a GeoElement which is the result of an algo with no input?
 		// this is especially important if the GeoElement cannot be shown,
@@ -320,13 +318,11 @@ public class CopyPasteD extends CopyPaste {
 		// too.
 		// it is okay to handle it after this, as algos are resistant to hiding
 
-		geostohide.addAll(addAlgosDependentFromInside(geoslocal
-		));
+		geostohide.addAll(addAlgosDependentFromInside(geoslocal));
 
-		ArrayList<ConstructionElement> geoslocalsw = removeFreeNonselectedGeoNumerics(
-				geoslocal, geos);
-		ArrayList<ConstructionElement> geostohidesw = removeFreeNonselectedGeoNumerics(
-				geostohide, geos);
+		ArrayList<ConstructionElement> geoslocalsw = removeFreeNonselectedGeoNumerics(geoslocal, geos);
+		ArrayList<ConstructionElement> geostohidesw =
+				removeFreeNonselectedGeoNumerics(geostohide, geos);
 
 		Kernel kernel = app.getKernel();
 
@@ -345,11 +341,12 @@ public class CopyPasteD extends CopyPaste {
 
 			// loop through Construction to keep the good order of
 			// ConstructionElements
+			XMLStringBuilder xmlBuilder = new XMLStringBuilder(copiedXML);
 			Construction cons = app.getKernel().getConstruction();
 			for (int i = 0; i < cons.steps(); ++i) {
 				ce = cons.getConstructionElement(i);
 				if (geoslocal.contains(ce)) {
-					ce.getXML(false, copiedXML);
+					ce.getXML(false, xmlBuilder);
 				}
 			}
 		} catch (Exception e) {
@@ -370,21 +367,22 @@ public class CopyPasteD extends CopyPaste {
 			kernel.setSaveScriptsToXML(false);
 			try {
 				// step 5
-				copiedXMLforSameWindow = new StringBuilder();
+				copiedXMLForSameWindow = new StringBuilder();
 				ConstructionElement ce;
 
 				// loop through Construction to keep the good order of
 				// ConstructionElements
 				Construction cons = app.getKernel().getConstruction();
+				XMLStringBuilder xmlBuilder = new XMLStringBuilder(copiedXMLForSameWindow);
 				for (int i = 0; i < cons.steps(); ++i) {
 					ce = cons.getConstructionElement(i);
 					if (geoslocalsw.contains(ce)) {
-						ce.getXML(false, copiedXMLforSameWindow);
+						ce.getXML(false, xmlBuilder);
 					}
 				}
 			} catch (Exception e) {
 				Log.debug(e);
-				copiedXMLforSameWindow = new StringBuilder();
+				copiedXMLForSameWindow = new StringBuilder();
 			}
 			// restore kernel settings
 			// kernel.setCASPrintForm(oldPrintForm);
@@ -400,7 +398,7 @@ public class CopyPasteD extends CopyPaste {
 	}
 
 	/**
-	 * Checks whether the copyXMLforSameWindow may be used
+	 * Checks whether the {@code copiedXMLForSameWindow} may be used
 	 *
 	 * @param app
 	 *            application
@@ -428,14 +426,13 @@ public class CopyPasteD extends CopyPaste {
 		copyObject2 = app.getUndoManager().getCurrentUndoInfo();
 
 		if (pasteFast(app) && !putdown) {
-			if (copiedXMLforSameWindow == null
-					|| copiedXMLforSameWindow.length() == 0) {
+			if (copiedXMLForSameWindow == null || copiedXMLForSameWindow.length() == 0) {
 				return;
 			}
 		}
 
 		if (pasteFast(app)) {
-			app.getKernel().notifyPaste(copiedXMLforSameWindow.toString());
+			app.getKernel().notifyPaste(copiedXMLForSameWindow.toString());
 		} else {
 			app.getKernel().notifyPaste(copiedXML.toString());
 		}
@@ -445,15 +442,14 @@ public class CopyPasteD extends CopyPaste {
 		app.setBlockUpdateScripts(true);
 
 		// don't update selection
-		app.getActiveEuclidianView().getEuclidianController()
-				.clearSelections(true, false);
+		app.getActiveEuclidianView().getEuclidianController().clearSelections(true, false);
 		// don't update properties view
 		app.updateSelection(false);
 
 		ArrayList<GeoElement> createdGeos;
 		if (pasteFast(app) && !putdown) {
 			EuclidianViewInterfaceCommon ev = app.getActiveEuclidianView();
-			app.getGgbApi().evalXML(copiedXMLforSameWindow.toString());
+			app.getGgbApi().evalXML(copiedXMLForSameWindow.toString());
 			app.getKernel().getConstruction().updateConstruction(false);
 			if (ev == app.getEuclidianView1()) {
 				app.setActiveView(App.VIEW_EUCLIDIAN);
@@ -462,8 +458,7 @@ public class CopyPasteD extends CopyPaste {
 			} else {
 				app.setActiveView(App.VIEW_EUCLIDIAN2);
 			}
-			createdGeos = handleLabels(app, copiedXMLlabelsforSameWindow,
-					duplicateLabels, putdown);
+			createdGeos = handleLabels(app, copiedXMLLabelsForSameWindow, duplicateLabels, putdown);
 		} else {
 			// here the possible macros should be copied as well,
 			// in case we should copy any macros
@@ -477,12 +472,12 @@ public class CopyPasteD extends CopyPaste {
 					// false, true);
 
 					// alternative solution
-					app.addMacroXML(copySource.getApplication().getXMLio()
-							.getFullMacroXML(
-									new ArrayList<>(copiedMacros)));
+					app.addMacroXML(copySource
+							.getApplication()
+							.getXMLio()
+							.getFullMacroXML(new ArrayList<>(copiedMacros)));
 				} catch (Exception ex) {
-					Log.debug(
-							"Could not load any macros at \"Paste from XML\"");
+					Log.debug("Could not load any macros at \"Paste from XML\"");
 					Log.debug(ex);
 				}
 			}
@@ -497,8 +492,7 @@ public class CopyPasteD extends CopyPaste {
 			} else {
 				app.setActiveView(App.VIEW_EUCLIDIAN2);
 			}
-			createdGeos = handleLabels(app, copiedXMLlabels,
-					duplicateLabels, putdown);
+			createdGeos = handleLabels(app, copiedXMLLabels, duplicateLabels, putdown);
 		}
 
 		app.setBlockUpdateScripts(scriptsBlocked);
@@ -529,15 +523,14 @@ public class CopyPasteD extends CopyPaste {
 		if (copiedXML != null) {
 			copiedXML.setLength(0);
 		}
-		if (copiedXMLforSameWindow != null) {
-			copiedXMLforSameWindow.setLength(0);
+		if (copiedXMLForSameWindow != null) {
+			copiedXMLForSameWindow.setLength(0);
 		}
 	}
 
 	@Override
 	public void copyTextToSystemClipboard(String text) {
-		Toolkit.getDefaultToolkit().getSystemClipboard()
-				.setContents(new StringSelection(text), null);
+		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
 	}
 
 	/**
@@ -547,19 +540,18 @@ public class CopyPasteD extends CopyPaste {
 	 * @param duplicateLabels Set of duplicated labels that may need renaming
 	 * @param overwrite Whether duplicated elements should be overwritten
 	 */
-	public void insertFrom(App fromApp, App toApp,
-			@Nonnull Set<String> duplicateLabels, boolean overwrite) {
+	public void insertFrom(
+			App fromApp, App toApp, @NonNull Set<String> duplicateLabels, boolean overwrite) {
 		Construction fromConstruction = fromApp.getKernel().getConstruction();
 		fromConstruction.getGeoSetConstructionOrder().stream()
 				.map(GeoElement::getLabelSimple)
 				.forEach(toApp.getKernel().getConstruction()::addProtectedLabel);
-		copyToXML(fromApp,
-						new ArrayList<>(fromConstruction.getGeoSetWithCasCellsConstructionOrder()),
-						true);
+		copyToXML(
+				fromApp, new ArrayList<>(fromConstruction.getGeoSetWithCasCellsConstructionOrder()), true);
 
 		this.duplicateLabels = duplicateLabels;
 		if (overwrite) {
-			for (String label: duplicateLabels) {
+			for (String label : duplicateLabels) {
 				GeoElement toRemove = toApp.getKernel().lookupLabel(label);
 				toRemove.remove();
 			}

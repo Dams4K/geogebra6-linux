@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.geogebra3D.web.euclidianForPlane;
 
 import org.geogebra.common.euclidian.EuclidianController;
@@ -14,17 +30,17 @@ import org.gwtproject.user.client.ui.Widget;
 
 /**
  * 2D view for plane.
- * 
+ *
  * @author Mathieu
  *
  */
-public class EuclidianViewForPlaneW extends EuclidianViewW implements
-        EuclidianViewForPlaneInterface {
+public final class EuclidianViewForPlaneW extends EuclidianViewW
+		implements EuclidianViewForPlaneInterface {
 
 	private int panelID;
 
 	/**
-	 * 
+	 *
 	 * @param euclidianViewPanel
 	 *            view panel
 	 * @param ec
@@ -36,9 +52,12 @@ public class EuclidianViewForPlaneW extends EuclidianViewW implements
 	 * @param panelID
 	 *            id of the view
 	 */
-	public EuclidianViewForPlaneW(EuclidianPanelWAbstract euclidianViewPanel,
-	        EuclidianController ec, ViewCreator plane,
-	        EuclidianSettings settings, int panelID) {
+	public EuclidianViewForPlaneW(
+			EuclidianPanelWAbstract euclidianViewPanel,
+			EuclidianController ec,
+			ViewCreator plane,
+			EuclidianSettings settings,
+			int panelID) {
 		super(euclidianViewPanel, ec, EVNO_GENERAL, settings);
 		this.panelID = panelID;
 		((EuclidianViewForPlaneCompanion) companion).initView(plane);
@@ -69,7 +88,7 @@ public class EuclidianViewForPlaneW extends EuclidianViewW implements
 	// }
 
 	/**
-	 * 
+	 *
 	 * @return dock panel
 	 */
 	@Override
@@ -89,5 +108,4 @@ public class EuclidianViewForPlaneW extends EuclidianViewW implements
 	public int getViewID() {
 		return panelID;
 	}
-
 }

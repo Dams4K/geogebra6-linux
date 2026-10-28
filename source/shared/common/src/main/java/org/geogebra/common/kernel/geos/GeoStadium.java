@@ -1,8 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.geos;
 
 import java.util.List;
 
 import org.geogebra.common.awt.GColor;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.MatrixTransformable;
 import org.geogebra.common.kernel.arithmetic.NumberValue;
@@ -12,8 +29,8 @@ import org.geogebra.common.main.GeoGebraColorConstants;
 import org.geogebra.common.plugin.EuclidianStyleConstants;
 import org.geogebra.common.plugin.GeoClass;
 
-public final class GeoStadium extends GeoLocus implements MatrixTransformable, Translateable,
-		Transformable {
+public final class GeoStadium extends GeoLocus
+		implements MatrixTransformable, Translateable, Transformable {
 	private GeoPoint p;
 	private GeoPoint q;
 	private GeoNumeric height;
@@ -47,7 +64,7 @@ public final class GeoStadium extends GeoLocus implements MatrixTransformable, T
 	}
 
 	@Override
-	public void getXMLtags(StringBuilder builder) {
+	public void getXMLTags(XMLStringBuilder builder) {
 		getStyleXML(builder);
 	}
 
@@ -132,14 +149,21 @@ public final class GeoStadium extends GeoLocus implements MatrixTransformable, T
 	}
 
 	@Override
-	public void matrixTransform(double a00, double a01, double a02, double a10, double a11,
-			double a12, double a20, double a21, double a22) {
+	public void matrixTransform(
+			double a00,
+			double a01,
+			double a02,
+			double a10,
+			double a11,
+			double a12,
+			double a20,
+			double a21,
+			double a22) {
 		for (GeoPoint pt : keyPoints) {
 			double x = pt.x;
 			double y = pt.y;
 			double z = a20 * x + a21 * y + a22;
-			pt.setCoords((a00 * x + a01 * y + a02) / z,
-					(a10 * x + a11 * y + a12) / z, 1);
+			pt.setCoords((a00 * x + a01 * y + a02) / z, (a10 * x + a11 * y + a12) / z, 1);
 		}
 	}
 

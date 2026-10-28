@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main;
 
 import org.geogebra.common.util.lang.Language;
@@ -15,26 +31,26 @@ public class OrdinalConverter {
 	 */
 	public static String getOrdinalNumber(Language language, int number) {
 		switch (language) {
-		case Bulgarian:
-			return getOrdinalNumberForBulgarian(number);
-		case Catalan:
-		case Valencian:
-			return getOrdinalNumberForCatalan(number);
-		case French:
-			return getOrdinalNumberForFrench(number);
-		case English_Australia:
-		case English_UK:
-		case English_US:
-			return getOrdinalNumberForEnglish(number);
-		case Hebrew:
-		case Yiddish:
-			return getOrdinalNumberForHebrew(number);
-		case Indonesian:
-			return getOrdinalNumberForIndonesian(number);
-		case Swedish:
-			return getOrdinalNumberForSwedish(number);
-		default:
-			return number + "";
+			case Bulgarian:
+				return getOrdinalNumberForBulgarian(number);
+			case Catalan:
+			case Valencian:
+				return getOrdinalNumberForCatalan(number);
+			case French:
+				return getOrdinalNumberForFrench(number);
+			case English_Australia:
+			case English_UK:
+			case English_US:
+				return getOrdinalNumberForEnglish(number);
+			case Hebrew:
+			case Yiddish:
+				return getOrdinalNumberForHebrew(number);
+			case Indonesian:
+				return getOrdinalNumberForIndonesian(number);
+			case Swedish:
+				return getOrdinalNumberForSwedish(number);
+			default:
+				return number + "";
 		}
 	}
 
@@ -45,12 +61,12 @@ public class OrdinalConverter {
 	 */
 	private static String getOrdinalNumberForBulgarian(int number) {
 		switch (number % 10) {
-		case 1:
-			return number + "-\u0432\u0438";
-		case 2:
-			return number + "-\u0440\u0438";
-		default:
-			return number + "-\u0442\u0438";
+			case 1:
+				return number + "-\u0432\u0438";
+			case 2:
+				return number + "-\u0440\u0438";
+			default:
+				return number + "-\u0442\u0438";
 		}
 	}
 
@@ -61,18 +77,18 @@ public class OrdinalConverter {
 	 */
 	private static String getOrdinalNumberForCatalan(int number) {
 		switch (number) {
-		case 0:
-			return number + "";
-		case 1:
-			return number + "r";
-		case 2:
-			return number + "n";
-		case 3:
-			return number + "r";
-		case 4:
-			return number + "t";
-		default:
-			return number + "e";
+			case 0:
+				return number + "";
+			case 1:
+				return number + "r";
+			case 2:
+				return number + "n";
+			case 3:
+				return number + "r";
+			case 4:
+				return number + "t";
+			default:
+				return number + "e";
 		}
 	}
 
@@ -94,14 +110,14 @@ public class OrdinalConverter {
 		int unitsDigit = number % 10;
 
 		switch (unitsDigit) {
-		case 1:
-			return number + "st";
-		case 2:
-			return number + "nd";
-		case 3:
-			return number + "rd";
-		default:
-			return number + "th";
+			case 1:
+				return number + "st";
+			case 2:
+				return number + "nd";
+			case 3:
+				return number + "rd";
+			default:
+				return number + "th";
 		}
 	}
 
@@ -145,5 +161,4 @@ public class OrdinalConverter {
 		}
 		return number + ":a";
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.geos;
 
 import java.util.ArrayList;
@@ -14,7 +30,7 @@ import org.geogebra.common.plugin.EuclidianStyleConstants;
 
 /**
  * Parent (number+direction) for changing prism, cylinder, etc.
- * 
+ *
  * @author Mathieu
  *
  */
@@ -31,13 +47,13 @@ public class ChangeableParent {
 	private final CoordConverter converter;
 
 	/**
-	 * 
+	 *
 	 * @param v
 	 *            value
 	 * @return v as GeoNumeric if instance of and independent (return null
 	 *         otherwise)
 	 */
-	static public GeoNumeric getGeoNumeric(NumberValue v) {
+	public static GeoNumeric getGeoNumeric(NumberValue v) {
 
 		if (v instanceof GeoNumeric) {
 			GeoNumeric geo = (GeoNumeric) v;
@@ -51,7 +67,7 @@ public class ChangeableParent {
 	/**
 	 * set changeable parent to the polygon as part of polyhedron net (check
 	 * first if num is not null)
-	 * 
+	 *
 	 * @param polygon
 	 *            polyhedron net face
 	 * @param num
@@ -59,11 +75,13 @@ public class ChangeableParent {
 	 * @param polyhedron
 	 *            polyhedron parent
 	 */
-	static public void setPolyhedronNet(GeoPolygon polygon, GeoNumeric num,
-			GeoPolyhedronInterface polyhedron, GeoPolyhedronInterface net) {
+	public static void setPolyhedronNet(
+			GeoPolygon polygon,
+			GeoNumeric num,
+			GeoPolyhedronInterface polyhedron,
+			GeoPolyhedronInterface net) {
 		if (num != null) {
-			ChangeableParent cp = new ChangeableParent(polygon, num,
-					polyhedron, net);
+			ChangeableParent cp = new ChangeableParent(polygon, num, polyhedron, net);
 			polygon.setChangeableParent(cp);
 
 			// set segments (if not already done)
@@ -80,7 +98,7 @@ public class ChangeableParent {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param number
 	 *            number
 	 * @param director
@@ -89,8 +107,8 @@ public class ChangeableParent {
 	 *            converts mouse movement to parameter value
 	 * @param surface object changing as a result of moving the parent
 	 */
-	public ChangeableParent(GeoNumeric number, GeoElementND director, CoordConverter converter,
-			GeoElementND surface) {
+	public ChangeableParent(
+			GeoNumeric number, GeoElementND director, CoordConverter converter, GeoElementND surface) {
 		changeableNumber = number;
 		directorGeo = director;
 		forPolyhedronNet = false;
@@ -100,7 +118,7 @@ public class ChangeableParent {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param child
 	 *            child
 	 * @param number
@@ -108,8 +126,8 @@ public class ChangeableParent {
 	 * @param parent
 	 *            parent polyhedron
 	 */
-	public ChangeableParent(GeoElement child, GeoNumeric number,
-			GeoPolyhedronInterface parent, GeoElementND surface) {
+	public ChangeableParent(
+			GeoElement child, GeoNumeric number, GeoPolyhedronInterface parent, GeoElementND surface) {
 		changeableNumber = number;
 		directorGeo = child;
 		forPolyhedronNet = true;
@@ -119,38 +137,38 @@ public class ChangeableParent {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return number
 	 */
-	final public GeoNumeric getNumber() {
+	public final GeoNumeric getNumber() {
 		return changeableNumber;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return value of the number
 	 */
-	final public double getValue() {
+	public final double getValue() {
 		return changeableNumber.getValue();
 	}
 
 	/**
-	 * 
+	 *
 	 * @return director
 	 */
-	final public GeoElementND getDirector() {
+	public final GeoElementND getDirector() {
 		return directorGeo;
 	}
 
 	/**
 	 * record number value and direction
-	 * 
+	 *
 	 * @param view
 	 *            view calling
 	 * @param startPoint
 	 *            start point
 	 */
-	final public void record(EuclidianView view, Coords startPoint) {
+	public final void record(EuclidianView view, Coords startPoint) {
 		startValue = getValue();
 		if (direction == null) {
 			direction = new Coords(3);
@@ -159,27 +177,26 @@ public class ChangeableParent {
 			if (view instanceof EuclidianView3D) {
 				if (centroid == null) {
 					centroid = new Coords(3);
-                }
-                parent.pseudoCentroid(centroid);
-                direction.setSub3(startPoint, centroid);
-                converter.record(this, startPoint);
-                direction.normalize();
-            } else {
+				}
+				parent.pseudoCentroid(centroid);
+				direction.setSub3(startPoint, centroid);
+				converter.record(this, startPoint);
+				direction.normalize();
+			} else {
 				direction.set(0, 0, 0);
 			}
 		} else {
-			direction.set3(
+			direction.set3(directorGeo.getMainDirection());
 
-					directorGeo.getMainDirection());
 			converter.record(this, startPoint);
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @return start value
 	 */
-	final public double getStartValue() {
+	public final double getStartValue() {
 		return startValue;
 	}
 
@@ -198,9 +215,13 @@ public class ChangeableParent {
 	 *            view where the move occurs (if not keyboard)
 	 * @return true on success
 	 */
-	final public boolean move(Coords rwTransVec, Coords endPosition,
-			Coords viewDirection, ArrayList<GeoElement> updateGeos,
-			ArrayList<GeoElement> tempMoveObjectList, EuclidianView view) {
+	public final boolean move(
+			Coords rwTransVec,
+			Coords endPosition,
+			Coords viewDirection,
+			ArrayList<GeoElement> updateGeos,
+			ArrayList<GeoElement> tempMoveObjectList,
+			EuclidianView view) {
 
 		GeoNumeric var = getNumber();
 
@@ -209,15 +230,13 @@ public class ChangeableParent {
 		}
 
 		if (endPosition == null) { // comes from arrows keys -- all is added
-			var.setValue(var.getValue() + rwTransVec.getX() + rwTransVec.getY()
-					+ rwTransVec.getZ());
-			GeoElement.addParentToUpdateList(var,
-					updateGeos, tempMoveObjectList);
+			var.setValue(var.getValue() + rwTransVec.getX() + rwTransVec.getY() + rwTransVec.getZ());
+			GeoElement.addParentToUpdateList(var, updateGeos, tempMoveObjectList);
 			return true;
 		}
 
 		if (viewDirection == null) { // may come from 2D view, e.g.
-										// EuclidianController.moveDependent()
+			// EuclidianController.moveDependent()
 			// see
 			// https://play.google.com/apps/publish/?dev_acc=05873811091523087820#ErrorClusterDetailsPlace:p=org.geogebra.android&et=CRASH&sh=false&lr=LAST_7_DAYS&ecn=java.lang.NullPointerException:+Attempt+to+invoke+virtual+method+'double+org.geogebra.a.m.a.j.e(org.geogebra.a.m.a.j)'+on+a+null+object+reference&tf=SourceFile&tc=%2509at+org.geogebra.common.kernel.geos.ChangeableCoordParent.move(ChangeableCoordParent.java:202)&tm=a&nid&an&c&s=new_status_desc&ed=1480452507515
 			return false;
@@ -225,14 +244,13 @@ public class ChangeableParent {
 
 		// else: comes from mouse
 
-        double val = converter.translationToValue(direction, rwTransVec,
-                getStartValue(), view);
-        if (needsSnap(view)) {
-            val = converter.snap(val, view);
-        }
-        if (!Double.isFinite(val)) {
-            return false;
-        }
+		double val = converter.translationToValue(direction, rwTransVec, getStartValue(), view);
+		if (needsSnap(view)) {
+			val = converter.snap(val, view);
+		}
+		if (!Double.isFinite(val)) {
+			return false;
+		}
 
 		var.setValue(val);
 		GeoElement.addParentToUpdateList(var, updateGeos, tempMoveObjectList);
@@ -242,15 +260,15 @@ public class ChangeableParent {
 
 	private static boolean needsSnap(EuclidianView view) {
 		switch (view.getPointCapturingMode()) {
-		case EuclidianStyleConstants.POINT_CAPTURING_STICKY_POINTS:
-			// TODO
-			return false;
-		default:
-		case EuclidianStyleConstants.POINT_CAPTURING_AUTOMATIC:
-			return view.isGridOrAxesShown();
-		case EuclidianStyleConstants.POINT_CAPTURING_ON:
-		case EuclidianStyleConstants.POINT_CAPTURING_ON_GRID:
-			return true;
+			case EuclidianStyleConstants.POINT_CAPTURING_STICKY_POINTS:
+				// TODO
+				return false;
+			default:
+			case EuclidianStyleConstants.POINT_CAPTURING_AUTOMATIC:
+				return view.isGridOrAxesShown();
+			case EuclidianStyleConstants.POINT_CAPTURING_ON:
+			case EuclidianStyleConstants.POINT_CAPTURING_ON_GRID:
+				return true;
 		}
 	}
 
@@ -271,5 +289,4 @@ public class ChangeableParent {
 	public GeoElement getSurface() {
 		return surface == null ? null : surface.toGeoElement();
 	}
-
 }

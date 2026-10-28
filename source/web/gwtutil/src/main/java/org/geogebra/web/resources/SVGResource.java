@@ -1,20 +1,18 @@
-/**********************************************
- * Copyright (C) 2010 Lukas Laag
- * This file is part of lib-gwt-svg.
- * 
- * libgwtsvg is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * libgwtsvg is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with libgwtsvg.  If not, see http://www.gnu.org/licenses/
- **********************************************/
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
 package org.geogebra.web.resources;
 
@@ -24,7 +22,7 @@ import org.gwtproject.resources.ext.ResourceGeneratorType;
 import org.gwtproject.safehtml.shared.SafeUri;
 
 /**
- * A resource that contains SVG that should be incorporated into the compiled output. 
+ * A resource that contains SVG that should be incorporated into the compiled output.
  * Based on https://github.com/laaglu/lib-gwt-svg but provides a small subset of functionality.
  */
 @DefaultExtensions({".svg"})
@@ -47,7 +45,6 @@ public interface SVGResource extends ResourcePrototype {
 
 	/**
 	 * @return raw SVG content
-	*/
+	 */
 	String getSVG();
 }
-

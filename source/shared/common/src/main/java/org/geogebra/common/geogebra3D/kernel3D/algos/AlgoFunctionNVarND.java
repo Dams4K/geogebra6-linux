@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.kernel.Construction;
@@ -33,8 +49,7 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 
 	// private GeoNumeric[] localVar; // input : variables u, v, ...
 
-	private AlgoFunctionNVarND(Construction cons, NumberValue[] from,
-			NumberValue[] to) {
+	private AlgoFunctionNVarND(Construction cons, NumberValue[] from, NumberValue[] to) {
 		super(cons);
 
 		// this.coords = coords;
@@ -45,7 +60,7 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 
 	/**
 	 * Construct a function
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -58,11 +73,15 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 	 *            "from" values for each var
 	 * @param to
 	 *            "to" values for each var
-	 * 
+	 *
 	 */
-	public AlgoFunctionNVarND(Construction cons, String label,
-			GeoNumberValue[] coords, GeoNumeric[] localVar,
-			GeoNumberValue[] from, GeoNumberValue[] to) {
+	public AlgoFunctionNVarND(
+			Construction cons,
+			String label,
+			GeoNumberValue[] coords,
+			GeoNumeric[] localVar,
+			GeoNumberValue[] from,
+			GeoNumberValue[] to) {
 
 		this(cons, from, to);
 
@@ -79,8 +98,7 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 		FunctionNVar[] fun = new FunctionNVar[coords.length];
 
 		for (int i = 0; i < coords.length; i++) {
-			exp[i] = kernel.convertNumberValueToExpressionNode(
-					coords[i].toGeoElement());
+			exp[i] = kernel.convertNumberValueToExpressionNode(coords[i].toGeoElement());
 			for (int j = 0; j < localVar.length; j++) {
 				exp[i] = exp[i].replace(localVar[j], funVar[j]).wrap();
 			}
@@ -99,7 +117,7 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 
 	/**
 	 * Construct a function
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -110,10 +128,14 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 	 *            "from" values for each var
 	 * @param to
 	 *            "to" values for each var
-	 * 
+	 *
 	 */
-	public AlgoFunctionNVarND(Construction cons, String label,
-			GeoFunctionNVar f, GeoNumberValue[] from, GeoNumberValue[] to) {
+	public AlgoFunctionNVarND(
+			Construction cons,
+			String label,
+			GeoFunctionNVar f,
+			GeoNumberValue[] from,
+			GeoNumberValue[] to) {
 
 		this(cons, from, to);
 
@@ -128,17 +150,14 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 
 		compute();
 		function.setLabel(label);
-
 	}
 
-	private void setInputOutput(GeoNumberValue[] coords,
-			GeoNumeric[] localVar) {
+	private void setInputOutput(GeoNumberValue[] coords, GeoNumeric[] localVar) {
 
 		int inputLength = from.length + to.length;
 		if (coords != null) {
 			inputLength += coords.length;
-		}
-		else {
+		} else {
 			inputLength += 1; // for the function
 		}
 		if (localVar != null) {
@@ -169,8 +188,7 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 			index++;
 		}
 
-		super.setInputOutput(inputElements, new GeoElement[] { function });
-
+		super.setInputOutput(inputElements, new GeoElement[] {function});
 	}
 
 	/**
@@ -202,5 +220,4 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 	public Commands getClassName() {
 		return Commands.Function;
 	}
-
 }

@@ -1,6 +1,20 @@
-package org.geogebra.common.kernel.arithmetic;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import java.util.Objects;
+package org.geogebra.common.kernel.arithmetic;
 
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.StringTemplate;
@@ -48,8 +62,8 @@ public class RecurringDecimal extends MyDouble {
 	 */
 	public String toFraction(StringTemplate tpl) {
 		ExpressionNode expression = wrap();
-		return Fractions.getResolution(expression, expression.getKernel(),
-				false, true).toValueString(tpl);
+		return Fractions.getResolution(expression, expression.getKernel(), false, true)
+				.toValueString(tpl);
 	}
 
 	/**
@@ -76,20 +90,6 @@ public class RecurringDecimal extends MyDouble {
 		return ret;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof RecurringDecimal) {
-			return super.equals(o)
-					&& ((RecurringDecimal) o).model.equals(this.model);
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), model);
-	}
-
 	/**
 	 * Parses RecurringDecimal from string.
 	 *
@@ -98,14 +98,13 @@ public class RecurringDecimal extends MyDouble {
 	 * @param recurring the recurring digits
 	 * @return the new, RecurringDecimal instance.
 	 */
-	public static RecurringDecimal parse(Kernel kernel, String preperiod,
-			String recurring) {
-		return new RecurringDecimal(kernel, parseProperties(kernel.getLocalization(),
-				preperiod, recurring));
+	public static RecurringDecimal parse(Kernel kernel, String preperiod, String recurring) {
+		return new RecurringDecimal(
+				kernel, parseProperties(kernel.getLocalization(), preperiod, recurring));
 	}
 
-	private static RecurringDecimalModel parseProperties(Localization loc, String preperiodUtf,
-			String recurringUtf) {
+	private static RecurringDecimalModel parseProperties(
+			Localization loc, String preperiodUtf, String recurringUtf) {
 		String preperiod = convertToLatinCharacters(preperiodUtf);
 		String recurring = convertToLatinCharacters(recurringUtf);
 		try {
@@ -128,4 +127,7 @@ public class RecurringDecimal extends MyDouble {
 		return true;
 	}
 
+	Object getModel() {
+		return model;
+	}
 }

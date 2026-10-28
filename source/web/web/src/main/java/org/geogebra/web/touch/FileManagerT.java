@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.touch;
 
 import org.geogebra.common.main.App;
@@ -52,18 +68,16 @@ public abstract class FileManagerT extends FileManager {
 
 	@Override
 	public void export(final App app1) {
-		((AppW) app1).getGgbApi().getBase64(true,
-				s -> nativeShare(s, app1.getExportTitle()));
+		((AppW) app1).getGgbApi().getBase64(true, s -> nativeShare(s, app1.getExportTitle()));
 	}
 
 	@Override
-	public void showExportAsPictureDialog(String url, String filename,
-			String extension, String titleKey, App appW) {
+	public void showExportAsPictureDialog(
+			String url, String filename, String extension, String titleKey, App appW) {
 
 		exportImage(url, filename, extension);
 		// TODO check if it really happened
-		appW.dispatchEvent(
-				new Event(EventType.EXPORT, null, "[\"" + extension + "\"]"));
+		appW.dispatchEvent(new Event(EventType.EXPORT, null, "[\"" + extension + "\"]"));
 	}
 
 	@Override

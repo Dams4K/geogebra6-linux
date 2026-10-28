@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.geogebra3D.web.main;
 
 import java.util.ArrayList;
@@ -16,19 +32,19 @@ import org.geogebra.web.geogebra3D.web.euclidianForPlane.EuclidianViewForPlaneW;
 import org.geogebra.web.geogebra3D.web.gui.layout.panels.EuclidianDockPanelForPlaneW;
 
 /**
- * 
+ *
  * @author mathieu
  *
  *         Companion for 3D application in desktop
  */
-public class App3DCompanionW extends App3DCompanion {
+public final class App3DCompanionW extends App3DCompanion {
 
 	private EuclidianDockPanelForPlaneW panel;
 	private ArrayList<EuclidianDockPanelForPlaneW> panelForPlaneList;
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 */
@@ -38,16 +54,18 @@ public class App3DCompanionW extends App3DCompanion {
 
 	@Override
 	protected EuclidianViewForPlaneCompanion createEuclidianViewForPlane(
-			ViewCreator plane, EuclidianSettings evSettings,
-			boolean panelSettings) {
+			ViewCreator plane, EuclidianSettings evSettings, boolean panelSettings) {
 
 		// create dock panel
 		panel = new EuclidianDockPanelForPlaneW(app, incViewID());
 
 		panel.loadComponent();
-		EuclidianViewForPlaneW view = new EuclidianViewForPlaneW(panel,
-				new EuclidianControllerForPlaneW(app.getKernel()), plane,
-				evSettings, panel.getViewId());
+		EuclidianViewForPlaneW view = new EuclidianViewForPlaneW(
+				panel,
+				new EuclidianControllerForPlaneW(app.getKernel()),
+				plane,
+				evSettings,
+				panel.getViewId());
 		panel.setView(view);
 
 		((LayoutW) app.getGuiManager().getLayout()).registerPanel(panel);
@@ -64,7 +82,7 @@ public class App3DCompanionW extends App3DCompanion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return current dockpanel for plane
 	 */
 	@Override
@@ -81,14 +99,13 @@ public class App3DCompanionW extends App3DCompanion {
 			panelForPlaneList.clear();
 		}
 
-		DockPanel[] panels = ((DockManagerW) app.getGuiManager().getLayout()
-				.getDockManager()).getPanels();
+		DockPanel[] panels =
+				((DockManagerW) app.getGuiManager().getLayout().getDockManager()).getPanels();
 		for (int i = 0; i < panels.length; i++) {
 			if (panels[i] instanceof EuclidianDockPanelForPlaneW) {
 				panelForPlaneList.add((EuclidianDockPanelForPlaneW) panels[i]);
 			}
 		}
-
 	}
 
 	@Override
@@ -96,9 +113,9 @@ public class App3DCompanionW extends App3DCompanion {
 
 		for (EuclidianDockPanelForPlaneW p : panelForPlaneList) {
 			EuclidianViewForPlaneW view = p.getView();
-			GeoElement geo = app.getKernel().lookupLabel(
-					view.getCompanion().getPlane().getLabelSimple());
-			if (geo != null && (geo instanceof ViewCreator)) {
+			GeoElement geo =
+					app.getKernel().lookupLabel(view.getCompanion().getPlane().getLabelSimple());
+			if (geo instanceof ViewCreator) {
 				ViewCreator plane = (ViewCreator) geo;
 				view.getCompanion().setPlane(plane);
 				plane.setEuclidianViewForPlane(view.getCompanion());
@@ -133,5 +150,4 @@ public class App3DCompanionW extends App3DCompanion {
 			((EuclidianViewForPlaneW) vfpc.getView()).getDockPanel().deferredOnResize();
 		}
 	}
-
 }

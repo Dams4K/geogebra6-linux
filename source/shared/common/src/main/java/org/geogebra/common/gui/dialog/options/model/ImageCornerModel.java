@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import org.geogebra.common.kernel.Kernel;
@@ -28,18 +44,16 @@ public class ImageCornerModel extends MultipleGeosModel {
 				isEqual = false;
 				break;
 			}
-
 		}
 
 		if (isEqual && p0 != null) {
 			if (getListener() instanceof GeoComboListener) {
-				((GeoComboListener) getListener()).setSelectedItem(
-					p0.getLabel(StringTemplate.defaultTemplate));
+				((GeoComboListener) getListener())
+						.setSelectedItem(p0.getLabel(StringTemplate.defaultTemplate));
 			}
 		} else {
 			getListener().setSelectedIndex(-1);
 		}
-
 	}
 
 	@Override
@@ -56,12 +70,13 @@ public class ImageCornerModel extends MultipleGeosModel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return if this point is the center point.
 	 */
 	public boolean isCenter() {
 		return cornerIdx == GeoImage.CENTER_INDEX;
 	}
+
 	@Override
 	protected void apply(int index, int value) {
 		// Not used
@@ -72,11 +87,9 @@ public class ImageCornerModel extends MultipleGeosModel {
 		GeoPointND newLoc = null;
 		handler.resetError();
 		if (!StringUtil.emptyTrim(strLoc)) {
-			newLoc = kernel.getAlgebraProcessor().evaluateToPoint(strLoc,
-					handler, true);
+			newLoc = kernel.getAlgebraProcessor().evaluateToPoint(strLoc, handler, true);
 		}
-		if (newLoc == null
-				&& (cornerIdx == 0 || !StringUtil.emptyTrim(strLoc))) {
+		if (newLoc == null && (cornerIdx == 0 || !StringUtil.emptyTrim(strLoc))) {
 			return;
 		}
 		for (int i = 0; i < getGeosLength(); i++) {
@@ -117,5 +130,4 @@ public class ImageCornerModel extends MultipleGeosModel {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
 }

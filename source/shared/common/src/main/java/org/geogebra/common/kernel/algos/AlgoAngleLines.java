@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoAngleLines.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -32,7 +30,7 @@ public class AlgoAngleLines extends AlgoAngleLinesND {
 
 	/**
 	 * Creates new unlabeled angle between lines algo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param g
@@ -42,8 +40,7 @@ public class AlgoAngleLines extends AlgoAngleLinesND {
 	 * @param orientation
 	 *            orientation (for 3D)
 	 */
-	AlgoAngleLines(Construction cons, GeoLineND g, GeoLineND h,
-			GeoDirectionND orientation) {
+	AlgoAngleLines(Construction cons, GeoLineND g, GeoLineND h, GeoDirectionND orientation) {
 		super(cons);
 		setInput(g, h, orientation);
 		angle = newGeoAngle(cons);
@@ -51,7 +48,6 @@ public class AlgoAngleLines extends AlgoAngleLinesND {
 
 		// compute angle
 		compute();
-
 	}
 
 	private AlgoAngleLines(GeoLineND g, GeoLineND h) {
@@ -60,7 +56,7 @@ public class AlgoAngleLines extends AlgoAngleLinesND {
 
 	/**
 	 * Creates new labeled angle between lines algo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -70,15 +66,13 @@ public class AlgoAngleLines extends AlgoAngleLinesND {
 	 * @param h
 	 *            second line
 	 */
-
-	public AlgoAngleLines(Construction cons, String label, GeoLineND g,
-			GeoLineND h) {
+	public AlgoAngleLines(Construction cons, String label, GeoLineND g, GeoLineND h) {
 		this(cons, label, g, h, null);
 	}
 
 	/**
 	 * Creates new labeled angle between lines algo
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -90,9 +84,8 @@ public class AlgoAngleLines extends AlgoAngleLinesND {
 	 * @param orientation
 	 *            orientation (for 3D)
 	 */
-
-	public AlgoAngleLines(Construction cons, String label, GeoLineND g,
-			GeoLineND h, GeoDirectionND orientation) {
+	public AlgoAngleLines(
+			Construction cons, String label, GeoLineND g, GeoLineND h, GeoDirectionND orientation) {
 		this(cons, g, h, orientation);
 		angle.setLabel(label);
 	}
@@ -103,17 +96,15 @@ public class AlgoAngleLines extends AlgoAngleLinesND {
 	}
 
 	// calc angle between lines g and h
-	// use normalvectors (gx, gy), (hx, hy)
+	// use normal vectors (gx, gy), (hx, hy)
 	@Override
 	public void compute() {
 		// |v| * |w| * sin(alpha) = det(v, w)
 		// cos(alpha) = v . w / (|v| * |w|)
 		// tan(alpha) = sin(alpha) / cos(alpha)
 		// => tan(alpha) = det(v, w) / v . w
-		double det = ((GeoLine) g).x * ((GeoLine) h).y
-				- ((GeoLine) g).y * ((GeoLine) h).x;
-		double prod = ((GeoLine) g).x * ((GeoLine) h).x
-				+ ((GeoLine) g).y * ((GeoLine) h).y;
+		double det = ((GeoLine) g).x * ((GeoLine) h).y - ((GeoLine) g).y * ((GeoLine) h).x;
+		double prod = ((GeoLine) g).x * ((GeoLine) h).x + ((GeoLine) g).y * ((GeoLine) h).y;
 		double value = Math.atan2(det, prod);
 
 		angle.setValue(value);
@@ -137,5 +128,4 @@ public class AlgoAngleLines extends AlgoAngleLinesND {
 	public GeoElementND getInput(int i) {
 		return getInputMaybeXOYPlane(i);
 	}
-
 }

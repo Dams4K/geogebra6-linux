@@ -1,8 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.inputfield;
 
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GFont;
 import org.geogebra.common.kernel.geos.properties.HorizontalAlignment;
+import org.geogebra.editor.share.util.GWTKeycodes;
 import org.geogebra.gwtutil.NavigatorUtil;
 import org.geogebra.web.html5.Browser;
 import org.geogebra.web.html5.gui.util.CancelEventTimer;
@@ -17,7 +34,6 @@ import org.gwtproject.event.dom.client.KeyPressEvent;
 import org.gwtproject.user.client.ui.FlowPanel;
 
 import com.google.gwt.core.client.Scheduler;
-import com.himamis.retex.editor.share.util.GWTKeycodes;
 
 import elemental2.dom.DomGlobal;
 import elemental2.dom.Event;
@@ -25,8 +41,8 @@ import elemental2.dom.Touch;
 import elemental2.dom.TouchEvent;
 import jsinterop.base.Js;
 
-public class CursorOverlayController implements TextFieldController,
-		LongTouchTimer.LongTouchHandler {
+public class CursorOverlayController
+		implements TextFieldController, LongTouchTimer.LongTouchHandler {
 
 	private final AppW app;
 	private final AutoCompleteTextFieldW textField;
@@ -41,8 +57,8 @@ public class CursorOverlayController implements TextFieldController,
 	 * @param textField to have the overlay.
 	 * @param main widget of the textfield.
 	 */
-	public CursorOverlayController(AutoCompleteTextFieldW textField, FlowPanel main,
-			TextFieldController defaultController) {
+	public CursorOverlayController(
+			AutoCompleteTextFieldW textField, FlowPanel main, TextFieldController defaultController) {
 		this.app = textField.getApplication();
 		this.textField = textField;
 		this.main = main;
@@ -72,33 +88,28 @@ public class CursorOverlayController implements TextFieldController,
 		textField.addBlurHandler(evt -> removeCursor());
 		textField.updateInputBoxAlign();
 		final Element element = textField.getInputElement();
-		app.getGlobalHandlers().addEventListener(element, "touchstart",
-				this::preventNativeSelection);
+		app.getGlobalHandlers().addEventListener(element, "touchstart", this::preventNativeSelection);
 
-		app.getGlobalHandlers().addEventListener(main.getElement(), "touchstart",
-				this::unselectOverlay);
+		app.getGlobalHandlers()
+				.addEventListener(main.getElement(), "touchstart", this::unselectOverlay);
 
-		app.getGlobalHandlers().addEventListener(main.getElement(), "touchstart",
-				e -> {
-					if (cursorOverlay.hasFakeSelection()) {
-						return;
-					}
-					TouchEvent touchEvent = Js.uncheckedCast(e);
-					if (touchEvent.touches.length > 0) {
-						Touch touch = touchEvent.touches.item(0);
-						double x = touch.clientX;
-						double y = touch.clientY;
-						LongTouchManager.getInstance().scheduleTimer(this, (int) x, (int) y, 200);
-					}
-				});
+		app.getGlobalHandlers().addEventListener(main.getElement(), "touchstart", e -> {
+			if (cursorOverlay.hasFakeSelection()) {
+				return;
+			}
+			TouchEvent touchEvent = Js.uncheckedCast(e);
+			if (touchEvent.touches.length > 0) {
+				Touch touch = touchEvent.touches.item(0);
+				double x = touch.clientX;
+				double y = touch.clientY;
+				LongTouchManager.getInstance().scheduleTimer(this, (int) x, (int) y, 200);
+			}
+		});
 
-		app.getGlobalHandlers().addEventListener(main.getElement(), "touchend",
-				e -> {
-						CancelEventTimer.cancelMouseEvent();
-						LongTouchManager.getInstance().cancelTimer();
-
-				});
-
+		app.getGlobalHandlers().addEventListener(main.getElement(), "touchend", e -> {
+			CancelEventTimer.cancelMouseEvent();
+			LongTouchManager.getInstance().cancelTimer();
+		});
 	}
 
 	private void preventNativeSelection(Event event) {
@@ -152,8 +163,7 @@ public class CursorOverlayController implements TextFieldController,
 	@Override
 	public void setFont(GFont font) {
 		defaultController.setFont(font);
-		Dom.setImportant(cursorOverlay.getElement().getStyle(), "font-size",
-				font.getSize() + "px");
+		Dom.setImportant(cursorOverlay.getElement().getStyle(), "font-size", font.getSize() + "px");
 	}
 
 	@Override
@@ -182,23 +192,23 @@ public class CursorOverlayController implements TextFieldController,
 			}
 		}
 		switch (keyCode) {
-		case GWTKeycodes.KEY_BACKSPACE:
-			textField.onBackSpace();
-			break;
-		case GWTKeycodes.KEY_LEFT:
-			textField.onArrowLeft();
-			break;
-		case GWTKeycodes.KEY_RIGHT:
-			textField.onArrowRight();
-			break;
-		case GWTKeycodes.KEY_UP:
-			textField.handleUpArrow();
-			break;
-		case GWTKeycodes.KEY_DOWN:
-			textField.handleDownArrow();
-			break;
-		default:
-			break;
+			case GWTKeycodes.KEY_BACKSPACE:
+				textField.onBackSpace();
+				break;
+			case GWTKeycodes.KEY_LEFT:
+				textField.onArrowLeft();
+				break;
+			case GWTKeycodes.KEY_RIGHT:
+				textField.onArrowRight();
+				break;
+			case GWTKeycodes.KEY_UP:
+				textField.handleUpArrow();
+				break;
+			case GWTKeycodes.KEY_DOWN:
+				textField.handleDownArrow();
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -227,12 +237,15 @@ public class CursorOverlayController implements TextFieldController,
 		}
 	}
 
+	/**
+	 * @return whether the selection widget is present
+	 */
 	public boolean isSelected() {
 		return cursorOverlay.hasFakeSelection();
 	}
 
 	@Override
-	public void handleLongTouch(int x, int y) {
+	public void handleLongTouch(double x, double y) {
 		CancelEventTimer.touchEventOccurred();
 		selectAll();
 	}

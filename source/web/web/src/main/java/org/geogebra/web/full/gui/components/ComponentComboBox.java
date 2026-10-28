@@ -1,15 +1,35 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.components;
 
-import java.util.List;
+import static org.geogebra.common.properties.PropertyView.ComboBox;
+import static org.geogebra.common.properties.PropertyView.ConfigurationUpdateDelegate;
+import static org.geogebra.common.properties.PropertyView.VisibilityUpdateDelegate;
 
-import org.geogebra.common.euclidian.event.PointerEventType;
+import java.util.List;
+import java.util.function.Supplier;
+
 import org.geogebra.common.gui.SetLabels;
 import org.geogebra.common.properties.util.StringPropertyWithSuggestions;
 import org.geogebra.common.util.StringUtil;
+import org.geogebra.editor.share.util.GWTKeycodes;
 import org.geogebra.web.html5.gui.BaseWidgetFactory;
 import org.geogebra.web.html5.gui.inputfield.AutoCompleteTextFieldW;
 import org.geogebra.web.html5.gui.util.AriaHelper;
-import org.geogebra.web.html5.gui.util.ClickStartHandler;
 import org.geogebra.web.html5.gui.util.Dom;
 import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.core.client.Scheduler;
@@ -17,15 +37,20 @@ import org.gwtproject.user.client.DOM;
 import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Label;
 
-import com.himamis.retex.editor.share.util.GWTKeycodes;
-
-public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabledState {
+public final class ComponentComboBox extends FlowPanel
+		implements SetLabels, ConfigurationUpdateDelegate, VisibilityUpdateDelegate {
 	private final AppW appW;
-	private AutoCompleteTextFieldW inputTextField;
+	private final AutoCompleteTextFieldW inputTextField;
 	private Label label;
 	private final String labelTextKey;
 	private DropDownComboBoxController controller;
 	private final String controlsID;
+	private ComboBox comboBoxProperty;
+	private String previousValue = "";
+
+	public ComponentComboBox(AppW app, String label, List<String> items) {
+		this(app, label, () -> items);
+	}
 
 	/**
 	 * Creates a combo box using a list of String.
@@ -33,12 +58,16 @@ public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabl
 	 * @param label label of combo box
 	 * @param items popup items
 	 */
-	public ComponentComboBox(AppW app, String label, List<String> items) {
+	public ComponentComboBox(AppW app, String label, Supplier<List<String>> items) {
 		appW = app;
 		labelTextKey = label;
 		controlsID = DOM.createUniqueId();
 		addStyleName("comboBox");
 		addStyleName("validation");
+		inputTextField = new AutoCompleteTextFieldW(-1, appW, false, null);
+		inputTextField.addInputListener(evt -> {
+			controller.setSelectedOption(items.get().indexOf(inputTextField.getText()));
+		});
 		buildGUI();
 		addHandlers();
 
@@ -48,30 +77,37 @@ public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabl
 	/**
 	 * Creates a combo box using a {@link StringPropertyWithSuggestions}.
 	 * @param app see {@link AppW}
-	 * @param property popup items
+	 * @param property see {@link org.geogebra.common.properties.PropertyView.ComboBox}
 	 */
-	public ComponentComboBox(AppW app, StringPropertyWithSuggestions property) {
-		this(app, property.getName(), property.getSuggestions());
+	public ComponentComboBox(AppW app, ComboBox property) {
+		this(app, property.getLabel(), property::getItems);
+		this.comboBoxProperty = property;
 		setValue(property.getValue());
 		addChangeHandler(() -> {
+			String previousValue = property.getValue();
 			String text = getSelectedText().trim();
-			String message = property.validateValue(text);
-			AriaHelper.setErrorMessage(inputTextField.getTextBox(), message);
-			if (message == null) {
-				property.setValue(text);
+			property.setValue(text);
+			String message = property.getErrorMessage();
+			if (message != null && property.restoresPreviousValueOnInvalidInput()) {
+				property.setValue(previousValue);
+				setValue(previousValue);
+				message = null;
 			}
+			AriaHelper.setErrorMessage(inputTextField.getTextBox(), message);
 			setStyleName("error", message != null);
 		});
+		comboBoxProperty.setConfigurationUpdateDelegate(this);
+		comboBoxProperty.setVisibilityUpdateDelegate(this);
 	}
 
-	private void initController(List<String> items) {
-		controller = new DropDownComboBoxController(appW, this, items, labelTextKey,
-				this::onClose);
+	private void initController(Supplier<List<String>> items) {
+		controller = new DropDownComboBoxController(
+				appW, () -> null, this, items, labelTextKey, this::onClose, null);
 		controller.addChangeHandler(() -> updateSelectionText(getSelectedText()));
 		controller.setPopupID(controlsID);
 		controller.setFocusAnchor(inputTextField.getInputElement());
-		controller.addHighlightingListener(id ->
-				AriaHelper.setActiveDescendant(inputTextField.getTextBox(), id));
+		controller.addHighlightingListener(
+				id -> AriaHelper.setActiveDescendant(inputTextField.getTextBox(), id));
 		inputTextField.setUpDownArrowHandler(controller);
 		updateSelectionText(getSelectedText());
 	}
@@ -85,7 +121,6 @@ public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabl
 			optionHolder.add(label);
 		}
 
-		inputTextField = new AutoCompleteTextFieldW(-1, appW, false, null);
 		inputTextField.setAutoComplete(false);
 		inputTextField.prepareShowSymbolButton(false);
 		inputTextField.enableGGBKeyboard();
@@ -95,6 +130,7 @@ public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabl
 		AriaHelper.setAriaExpanded(inputTextField.getTextBox(), false);
 		AriaHelper.setAutocomplete(inputTextField.getTextBox(), "none");
 		AriaHelper.setControls(inputTextField.getTextBox(), controlsID);
+		AriaHelper.setTabIndex(this, 0);
 		inputTextField.addBlurHandler(event -> controller.onInputChange(inputTextField.getText()));
 
 		optionHolder.add(inputTextField);
@@ -112,7 +148,10 @@ public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabl
 
 	// Status helpers
 
-	@Override
+	/**
+	 * Enable/disable combo-box
+	 * @param disabled whether it should be disabled or not
+	 */
 	public void setDisabled(boolean disabled) {
 		inputTextField.setEnabled(!disabled);
 		Dom.toggleClass(this, "disabled", disabled);
@@ -129,14 +168,10 @@ public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabl
 	// Combo box and input field related handlers
 
 	private void addClickHandler() {
-		ClickStartHandler.init(this, new ClickStartHandler(false, true) {
-
-			@Override
-			public void onClickStart(int x, int y, PointerEventType type) {
-				controller.getPopup().forceKeyboardFocus(false);
-				if (!isDisabled() && !isInputFocused()) {
-					toggleExpanded();
-				}
+		Dom.addEventListener(this.getElement(), "click", event -> {
+			controller.getPopup().forceKeyboardFocus(false);
+			if (!isDisabled() && (!isInputFocused() || !controller.isOpened())) {
+				toggleExpanded();
 			}
 		});
 	}
@@ -148,6 +183,7 @@ public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabl
 		inputTextField.getTextBox().addFocusHandler(event -> {
 			addStyleName("focusState");
 			addStyleName("active");
+			previousValue = getSelectedText();
 		});
 		inputTextField.getTextBox().addBlurHandler(event -> {
 			removeStyleName("focusState");
@@ -159,10 +195,8 @@ public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabl
 	 * Add mouse over/ out handlers.
 	 */
 	private void addHoverHandlers() {
-		inputTextField.getTextBox()
-				.addMouseOverHandler(event -> addStyleName("hoverState"));
-		inputTextField.getTextBox()
-				.addMouseOutHandler(event -> removeStyleName("hoverState"));
+		inputTextField.getTextBox().addMouseOverHandler(event -> addStyleName("hoverState"));
+		inputTextField.getTextBox().addMouseOutHandler(event -> removeStyleName("hoverState"));
 	}
 
 	private void addFieldKeyAndPointerHandler() {
@@ -173,8 +207,9 @@ public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabl
 					setExpanded(false);
 				}
 				controller.onInputChange(inputTextField.getText());
-				inputTextField.setFocus(true);
+				Scheduler.get().scheduleDeferred(() -> inputTextField.setFocus(true));
 			} else if (event.getNativeKeyCode() == GWTKeycodes.KEY_ESCAPE) {
+				inputTextField.setText(previousValue);
 				setExpanded(false);
 				inputTextField.setFocus(true);
 			}
@@ -203,8 +238,7 @@ public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabl
 
 	private void setExpanded(boolean expanded) {
 		if (expanded) {
-			controller.setSelectedOption(controller.possibleSelectedIndex(
-					inputTextField.getText()));
+			controller.setSelectedOption(controller.possibleSelectedIndex(inputTextField.getText()));
 			controller.showAsComboBox();
 			AriaHelper.setAriaExpanded(inputTextField.getTextBox(), true);
 			Scheduler.get().scheduleDeferred(() -> inputTextField.setFocus(true));
@@ -231,6 +265,9 @@ public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabl
 		}
 	}
 
+	/**
+	 * @return index of the selected option, or -1 if nothing is selected.
+	 */
 	public int getSelectedIndex() {
 		return controller.getSelectedIndex();
 	}
@@ -270,5 +307,20 @@ public class ComponentComboBox extends FlowPanel implements SetLabels, HasDisabl
 			label.setText(menu);
 			AriaHelper.setLabel(inputTextField.getTextBox(), menu);
 		}
+	}
+
+	@Override
+	public void configurationUpdated() {
+		setValue(comboBoxProperty.getValue());
+		setDisabled(!comboBoxProperty.isEnabled());
+		setVisible(comboBoxProperty.isVisible());
+		String message = comboBoxProperty.getErrorMessage();
+		AriaHelper.setErrorMessage(inputTextField.getTextBox(), message);
+		setStyleName("error", message != null);
+	}
+
+	@Override
+	public void visibilityUpdated() {
+		setVisible(comboBoxProperty.isVisible());
 	}
 }

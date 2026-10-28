@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.pagecontrolpanel;
 
 import org.geogebra.web.full.css.MaterialDesignResources;
@@ -12,10 +28,11 @@ import org.gwtproject.core.client.Scheduler;
 import org.gwtproject.event.logical.shared.CloseEvent;
 import org.gwtproject.event.logical.shared.CloseHandler;
 
-public class PageControlPanelContextMenu extends GPopupMenuW implements CloseHandler<GPopupPanel> {
-	protected AppWFull appW;
+public final class PageControlPanelContextMenu extends GPopupMenuW
+		implements CloseHandler<GPopupPanel> {
+	private final AppWFull appW;
 	private final PageListController pageController;
-	protected GeoGebraFrameFull frame;
+	private final GeoGebraFrameFull frame;
 	private AriaMenuItem paste;
 	private final MenuItemController menuItemController;
 
@@ -40,13 +57,15 @@ public class PageControlPanelContextMenu extends GPopupMenuW implements CloseHan
 	}
 
 	private void addPasteItem() {
-		paste = addItem(MaterialDesignResources.INSTANCE.paste_black(),
+		paste = addItem(
+				MaterialDesignResources.INSTANCE.paste_black(),
 				appW.getLocalization().getMenu("Paste"),
 				menuItemController.onPaste(pageController.getLastCard(), paste));
 	}
 
 	private void addNewPage() {
-		addItem(MaterialDesignResources.INSTANCE.add_black(),
+		addItem(
+				MaterialDesignResources.INSTANCE.add_black(),
 				appW.getLocalization().getMenu("ContextMenu.NewPage"),
 				menuItemController.addNewPage(pageController.getSlideCount()));
 	}
@@ -57,8 +76,7 @@ public class PageControlPanelContextMenu extends GPopupMenuW implements CloseHan
 	 * @param text menu item text
 	 * @param cmd command to execute
 	 */
-	protected AriaMenuItem addItem(SVGResource img, String text,
-			Scheduler.ScheduledCommand cmd) {
+	private AriaMenuItem addItem(SVGResource img, String text, Scheduler.ScheduledCommand cmd) {
 		AriaMenuItem mi = MainMenu.getMenuBarItem(img, text, cmd);
 		addItem(mi);
 		return mi;

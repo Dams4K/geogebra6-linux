@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -21,7 +25,7 @@ import org.geogebra.common.kernel.geos.GeoFunctionable;
 /**
  * Finds all local extrema of a polynomial wrapped in If[] eg If[0 &lt; x &lt;
  * 10,3x^3 - 48x^2 + 162x + 300]
- * 
+ *
  * @author Michael
  */
 public class AlgoExtremumPolynomialInterval extends AlgoExtremumPolynomial {
@@ -36,8 +40,7 @@ public class AlgoExtremumPolynomialInterval extends AlgoExtremumPolynomial {
 	 * @param f
 	 *            function
 	 */
-	public AlgoExtremumPolynomialInterval(Construction cons, String[] labels,
-			GeoFunctionable f) {
+	public AlgoExtremumPolynomialInterval(Construction cons, String[] labels, GeoFunctionable f) {
 		super(cons, labels, f, true);
 	}
 
@@ -45,12 +48,8 @@ public class AlgoExtremumPolynomialInterval extends AlgoExtremumPolynomial {
 	public final void compute() {
 		Function fun = f.getFunction();
 		if (f.isDefined()) {
-			ExpressionNode polyExpression = fun.getFunctionExpression()
-					.getRight()
-					.wrap();
-			ExpressionNode condExpression = fun
-					.getFunctionExpression().getLeft()
-					.wrap();
+			ExpressionNode polyExpression = fun.getFunctionExpression().getRight().wrap();
+			ExpressionNode condExpression = fun.getFunctionExpression().getLeft().wrap();
 			if (yValFunction == null
 					|| yValFunction.getExpression() != polyExpression
 					|| interval.getFunctionExpression() != condExpression) {
@@ -61,7 +60,6 @@ public class AlgoExtremumPolynomialInterval extends AlgoExtremumPolynomial {
 
 				// extract interval
 				interval = new Function(condExpression, fVar);
-
 			}
 
 			// roots of first derivative
@@ -80,7 +78,5 @@ public class AlgoExtremumPolynomialInterval extends AlgoExtremumPolynomial {
 				rootPoints[i].setUndefined();
 			}
 		}
-
 	}
-
 }

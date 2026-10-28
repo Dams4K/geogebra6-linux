@@ -1,9 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.properties.impl.objects;
 
-import org.geogebra.common.gui.dialog.options.model.LineStyleModel;
 import org.geogebra.common.kernel.geos.GProperty;
 import org.geogebra.common.kernel.geos.GeoElement;
-import org.geogebra.common.kernel.geos.GeoList;
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.properties.impl.AbstractRangeProperty;
 import org.geogebra.common.properties.impl.objects.delegate.AbstractGeoElementDelegate;
@@ -15,28 +29,35 @@ import org.geogebra.common.properties.impl.objects.delegate.ThicknessPropertyDel
  */
 public class ThicknessProperty extends AbstractRangeProperty<Integer> {
 
+	/** Minimal thickness for most elements */
+	public static final int DEFAULT_MIN_THICKNESS = 1;
+	/** Max thickness for math apps elements, in half-pixels */
+	public static final int DEFAULT_MAX_THICKNESS = 13;
+	/** Max line thickness of highlighter, in half-pixels */
+	public static final int MAX_PEN_HIGHLIGHTER_SIZE = 60;
+
 	private final AbstractGeoElementDelegate delegate;
 
 	/**
-	 * Constructor
-	 * @param localization - localization
-	 * @param element - geo
-	 * @throws NotApplicablePropertyException - exception
+	 * Default thickness property with max value 13, used for all apps other than notes.
+	 * @param localization localization
+	 * @param element geo
+	 * @throws NotApplicablePropertyException exception
 	 */
 	public ThicknessProperty(Localization localization, GeoElement element)
 			throws NotApplicablePropertyException {
-		super(localization, "Thickness", null, 9, 1);
+		super(localization, "Thickness", null, DEFAULT_MAX_THICKNESS, 1);
 		delegate = new ThicknessPropertyDelegate(element);
 	}
 
 	/**
-	 * Constructor
-	 * @param localization - localization
-	 * @param max - maximum of range
-	 * @param delegate - delegate
+	 * Parametrized thickness property.
+	 * @param localization localization
+	 * @param max maximum of range
+	 * @param delegate delegate
 	 */
-	public ThicknessProperty(Localization localization, int max,
-			AbstractGeoElementDelegate delegate) {
+	public ThicknessProperty(
+			Localization localization, int max, AbstractGeoElementDelegate delegate) {
 		super(localization, "Thickness", null, max, 1);
 		this.delegate = delegate;
 	}
@@ -59,14 +80,7 @@ public class ThicknessProperty extends AbstractRangeProperty<Integer> {
 	}
 
 	private void setThickness(GeoElement element, int size) {
-		if (element instanceof GeoList) {
-			GeoList list = (GeoList) element;
-			for (int i = 0; i < list.size(); i++) {
-				setThickness(list.get(i), size);
-			}
-		} else if (LineStyleModel.match(element)) {
-			element.setLineThickness(size);
-		}
+		element.setLineThickness(size);
 		element.updateVisualStyleRepaint(GProperty.LINE_STYLE);
 	}
 

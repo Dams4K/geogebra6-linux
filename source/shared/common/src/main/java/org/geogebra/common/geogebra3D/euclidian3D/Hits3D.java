@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D;
 
 import java.util.ArrayList;
@@ -16,7 +32,7 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * 3D hits (for picking, selection, ...)
- * 
+ *
  * @author Mathieu
  *
  */
@@ -26,14 +42,13 @@ public class Hits3D extends Hits {
 	/** set of hits by picking order */
 	private TreeSetOfDrawable3D[] hitSet = new TreeSetOfDrawable3D[Drawable3D.DRAW_PICK_ORDER_MAX];
 	/** other hits */
-	private TreeSetOfDrawable3D hitsOthers = new TreeSetOfDrawable3D(
-			new Drawable3D.DrawableComparator());
+	private TreeSetOfDrawable3D hitsOthers =
+			new TreeSetOfDrawable3D(new Drawable3D.DrawableComparator());
 	/** label hits */
-	private TreeSetOfDrawable3D hitsLabels = new TreeSetOfDrawable3D(
-			new Drawable3D.DrawableComparator());
+	private TreeSetOfDrawable3D hitsLabels =
+			new TreeSetOfDrawable3D(new Drawable3D.DrawableComparator());
 	/** set of all the sets */
-	private TreeSet<TreeSetOfDrawable3D> hitSetSet = new TreeSet<>(
-			new Drawable3D.SetComparator());
+	private TreeSet<TreeSetOfDrawable3D> hitSetSet = new TreeSet<>(new Drawable3D.SetComparator());
 
 	private Hits topHits = new Hits();
 
@@ -43,18 +58,17 @@ public class Hits3D extends Hits {
 	private int quadCount;
 
 	/**
-	 * class for tree set of drawable 3D
-	 * 
+	 * Tree set of 3D drawables.
 	 */
-	private static class TreeSetOfDrawable3D extends TreeSet<Drawable3D> {
+	private static final class TreeSetOfDrawable3D extends TreeSet<Drawable3D> {
 
 		private static final long serialVersionUID = 1L;
 
-		public TreeSetOfDrawable3D(DrawableComparator drawableComparator) {
+		private TreeSetOfDrawable3D(DrawableComparator drawableComparator) {
 			super(drawableComparator);
 		}
 
-		public void add(Drawable3D d, double zNear, double zFar) {
+		private void add(Drawable3D d, double zNear, double zFar) {
 
 			// if already contained and not nearer, do nothing
 			if (contains(d)) {
@@ -69,19 +83,17 @@ public class Hits3D extends Hits {
 			d.setZPick(zNear, zFar, false, d.getPositionOnHitting());
 
 			super.add(d);
-
 		}
 	}
 
 	/**
-	 * common constructor
+	 * Common constructor.
 	 */
 	public Hits3D() {
 		super();
 
 		for (int i = 0; i < Drawable3D.DRAW_PICK_ORDER_MAX; i++) {
-			hitSet[i] = new TreeSetOfDrawable3D(
-					new Drawable3D.DrawableComparator());
+			hitSet[i] = new TreeSetOfDrawable3D(new Drawable3D.DrawableComparator());
 		}
 
 		// init counters
@@ -126,12 +138,11 @@ public class Hits3D extends Hits {
 		hitsLabels.clear();
 
 		topHits.init();
-
 	}
 
 	/**
 	 * init and set geo as only element
-	 * 
+	 *
 	 * @param geo
 	 *            geo
 	 */
@@ -145,7 +156,7 @@ public class Hits3D extends Hits {
 
 	/**
 	 * insert a drawable in the hitSet, called by EuclidianRenderer3D
-	 * 
+	 *
 	 * @param d
 	 *            the drawable
 	 * @param type
@@ -155,8 +166,7 @@ public class Hits3D extends Hits {
 	 * @param zFar
 	 *            most far z for picking
 	 */
-	public void addDrawable3D(Drawable3D d, PickingType type, double zNear,
-			double zFar) {
+	public void addDrawable3D(Drawable3D d, PickingType type, double zNear, double zFar) {
 
 		if (type == PickingType.LABEL) {
 			if (!d.getGeoElement().isGeoText()) {
@@ -173,12 +183,11 @@ public class Hits3D extends Hits {
 		} else {
 			hitsOthers.add(d, zNear, zFar);
 		}
-
 	}
 
 	/**
 	 * insert a drawable in the hitSet
-	 * 
+	 *
 	 * @param d
 	 *            the drawable
 	 * @param type
@@ -204,7 +213,7 @@ public class Hits3D extends Hits {
 
 	/**
 	 * sort all hits in different sets
-	 * 
+	 *
 	 * @return nearest zNear
 	 */
 	public double sort() {
@@ -257,7 +266,7 @@ public class Hits3D extends Hits {
 
 	/**
 	 * WARNING : sort() should be called before
-	 * 
+	 *
 	 * @return all drawables, in pick order
 	 */
 	public ArrayList<Drawable3D> getDrawables() {
@@ -272,7 +281,6 @@ public class Hits3D extends Hits {
 			return cloneHits();
 		}
 		return topHits;
-
 	}
 
 	@Override
@@ -280,15 +288,14 @@ public class Hits3D extends Hits {
 		Hits3D ret = new Hits3D();
 		int depthCount = 0;
 		int geoNCount = 0;
-		for (Iterator<TreeSetOfDrawable3D> iterSet = hitSetSet
-				.iterator(); iterSet.hasNext() && depthCount < depth;) {
+		for (Iterator<TreeSetOfDrawable3D> iterSet = hitSetSet.iterator();
+				iterSet.hasNext() && depthCount < depth; ) {
 			TreeSetOfDrawable3D set = iterSet.next();
 			if (set.size() > 0) {
 				depthCount++;
 			}
 
-			for (Iterator<Drawable3D> iter = set.iterator(); iter.hasNext()
-					&& geoNCount < geoN;) {
+			for (Iterator<Drawable3D> iter = set.iterator(); iter.hasNext() && geoNCount < geoN; ) {
 				Drawable3D d = iter.next();
 				GeoElement geo = d.getGeoElement();
 				ret.add(geo);
@@ -300,7 +307,7 @@ public class Hits3D extends Hits {
 
 	/**
 	 * return the first label hit, if one
-	 * 
+	 *
 	 * @return the first label hit
 	 */
 	public GeoElement getLabelHit() {
@@ -332,8 +339,7 @@ public class Hits3D extends Hits {
 		boolean foundTarget = false;
 		for (int i = 0; i < size() - 1; ++i) {
 			GeoElement geo = get(i);
-			if (geo.isGeoPolygon() || geo instanceof GeoQuadric3D
-					|| geo.isGeoConic()) {
+			if (geo.isGeoPolygon() || geo instanceof GeoQuadric3D || geo.isGeoConic()) {
 				if (foundTarget) {
 					// not removing when found first time
 					remove(i);
@@ -357,5 +363,4 @@ public class Hits3D extends Hits {
 	public int hashCode() {
 		return super.hashCode();
 	}
-
 }

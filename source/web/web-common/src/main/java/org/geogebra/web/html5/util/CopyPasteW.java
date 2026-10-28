@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.util;
 
 import static elemental2.dom.DomGlobal.navigator;
@@ -6,12 +22,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.geogebra.common.awt.GPoint2D;
 import org.geogebra.common.euclidian.DrawableND;
 import org.geogebra.common.euclidian.EmbedManager;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.draw.DrawInline;
+import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoFormula;
 import org.geogebra.common.kernel.geos.GeoInline;
@@ -26,12 +44,14 @@ import org.geogebra.common.util.InternalClipboard;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.SyntaxAdapterImpl;
 import org.geogebra.common.util.debug.Log;
+import org.geogebra.gwtutil.JsObject;
 import org.geogebra.gwtutil.NavigatorUtil;
 import org.geogebra.web.html5.gui.util.BrowserStorage;
 import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.core.client.Scheduler;
 import org.gwtproject.dom.client.Element;
 
+import elemental2.core.Function;
 import elemental2.core.Global;
 import elemental2.core.JsArray;
 import elemental2.dom.Blob;
@@ -40,6 +60,7 @@ import elemental2.dom.ClipboardEvent;
 import elemental2.dom.ClipboardItem;
 import elemental2.dom.DataTransfer;
 import elemental2.dom.DomGlobal;
+import elemental2.dom.Event;
 import elemental2.dom.EventListener;
 import elemental2.dom.EventTarget;
 import elemental2.dom.FileReader;
@@ -55,16 +76,18 @@ public class CopyPasteW extends CopyPaste {
 	private static final String pastePrefix = "ggbpastedata";
 
 	private static final int defaultTextWidth = 300;
+	private static final String CUSTOM_MIME = "web text/ggb";
+	private static final String PLAIN_TEXT_MIME = "text/plain";
 	private static boolean collectCopyCalls = false;
-	private static final List<String> copyQueue = new ArrayList<>();
+	private static final List<String[]> copyQueue = new ArrayList<>();
 
 	/**
 	 * @param data copied data
 	 * @return blob URL to the data (as plain text)
 	 */
 	public static String asBlobURL(String data) {
-		return URL.createObjectURL(new Blob(
-				new JsArray<>(Blob.ConstructorBlobPartsArrayUnionType.of(data))));
+		return URL.createObjectURL(
+				new Blob(new JsArray<>(Blob.ConstructorBlobPartsArrayUnionType.of(data))));
 	}
 
 	/**
@@ -75,7 +98,8 @@ public class CopyPasteW extends CopyPaste {
 		if (app.isWhiteboardActive()) {
 			final EuclidianView ev = app.getActiveEuclidianView();
 
-			final GeoFormula txt = new GeoFormula(app.getKernel().getConstruction(),
+			final GeoFormula txt = new GeoFormula(
+					app.getKernel().getConstruction(),
 					new GPoint2D(ev.toRealWorldCoordX(-defaultTextWidth), 0));
 			txt.setLabel(null);
 			app.getDrawEquation().checkFirstCall();
@@ -86,17 +110,14 @@ public class CopyPasteW extends CopyPaste {
 	}
 
 	private static void center(GeoInline txt, EuclidianView ev, App app) {
-		final DrawableND drawText =  app.getActiveEuclidianView()
-				.getDrawableFor(txt);
+		final DrawableND drawText = app.getActiveEuclidianView().getDrawableFor(txt);
 		if (drawText != null) {
 			drawText.update();
 			((DrawInline) drawText).updateContent();
 			Scheduler.get().scheduleDeferred(() -> {
 				int x = (int) ((ev.getWidth() - txt.getWidth()) / 2);
 				int y = (int) ((ev.getHeight() - txt.getHeight()) / 2);
-				txt.setLocation(new GPoint2D(
-						ev.toRealWorldCoordX(x), ev.toRealWorldCoordY(y)
-				));
+				txt.setLocation(new GPoint2D(ev.toRealWorldCoordX(x), ev.toRealWorldCoordY(y)));
 				drawText.update();
 
 				ev.getEuclidianController().selectAndShowSelectionUI(txt);
@@ -118,7 +139,7 @@ public class CopyPasteW extends CopyPaste {
 	public static void stopCollectingCopyCalls() {
 		if (collectCopyCalls) {
 			collectCopyCalls = false;
-			copyQueue.forEach(CopyPasteW::writeToExternalClipboard);
+			copyQueue.forEach(item -> writeToExternalClipboard(item[0], item[1]));
 			copyQueue.clear();
 		}
 	}
@@ -126,7 +147,10 @@ public class CopyPasteW extends CopyPaste {
 	@Override
 	public void copyToXML(App app, List<GeoElement> geos) {
 		String textToSave = InternalClipboard.getTextToSave(app, geos, Global::escape);
-		saveToClipboard(textToSave);
+		String formulas = geos.stream()
+				.map(geo -> geo.toString(StringTemplate.editTemplate))
+				.collect(Collectors.joining("\n"));
+		saveToClipboard(textToSave, formulas);
 	}
 
 	/**
@@ -137,7 +161,7 @@ public class CopyPasteW extends CopyPaste {
 		if (StringUtil.empty(toWrite)) {
 			return false;
 		}
-		writeToExternalClipboard(toWrite);
+		writeToExternalClipboard(toWrite, null);
 		BrowserStorage.LOCAL.setItem(pastePrefix, toWrite);
 		return true;
 	}
@@ -145,56 +169,86 @@ public class CopyPasteW extends CopyPaste {
 	/**
 	 * @param toWrite string to be copied
 	 */
-	public static void writeToExternalClipboard(String toWrite) {
+	public static void writeToExternalClipboard(String toWrite, String external) {
 		if (collectCopyCalls) {
-			copyQueue.add(toWrite);
+			copyQueue.add(new String[] {toWrite, external});
 			return;
 		}
 		if (copyToExternalSupported()) {
 			// Supported in Chrome, Safari
-			BlobPropertyBag bag =
-					BlobPropertyBag.create();
-			bag.setType("text/plain");
-			Blob blob = new Blob(new JsArray<>(
-					Blob.ConstructorBlobPartsArrayUnionType.of(toWrite)), bag);
-			ClipboardItem.ConstructorItemsJsPropertyMapTypeParameterUnionType wrapBlob =
-					ClipboardItem.ConstructorItemsJsPropertyMapTypeParameterUnionType.of(blob);
-			ClipboardItem data = new ClipboardItem(JsPropertyMap.of("text/plain", wrapBlob));
 
-			navigator.clipboard.write(JsArray.of(data)).then(ignore -> {
-				Log.debug("successfully wrote gegeobra data to clipboard");
-				return null;
-			}, (ignore) -> {
-				Log.debug("writing geogebra data to clipboard failed");
-				return null;
-			});
+			Function supportCheck =
+					(Function) JsObject.of(DomGlobal.window).nestedGet("ClipboardItem.supports");
+			JsPropertyMap<ClipboardItem.ConstructorItemsJsPropertyMapTypeParameterUnionType> mimeMap =
+					JsPropertyMap.of();
+			if (external == null
+					|| supportCheck == null
+					|| Js.isFalsy(supportCheck.call(null, CUSTOM_MIME))) {
+				addMime(mimeMap, toWrite, PLAIN_TEXT_MIME);
+			} else {
+				addMime(mimeMap, toWrite, CUSTOM_MIME);
+				addMime(mimeMap, external, PLAIN_TEXT_MIME);
+			}
+			navigator
+					.clipboard
+					.write(JsArray.of(new ClipboardItem(mimeMap)))
+					.then(
+							ignore -> {
+								Log.debug("successfully wrote data to clipboard: "
+										+ elemental2.core.JsObject.keys(mimeMap));
+								return null;
+							},
+							(error) -> {
+								Log.warn(error);
+								Log.debug("writing data to clipboard failed");
+								return null;
+							});
 		} else if (clipboardSupports("writeText")) {
 			// Supported in Firefox
 
-			navigator.clipboard.writeText(toWrite).then((ignore) -> {
-				Log.debug("successfully wrote text to clipboard");
-				return null;
-			}, (ignore) -> {
-				Log.debug("writing text to clipboard failed");
-				return null;
-			});
+			navigator
+					.clipboard
+					.writeText(toWrite)
+					.then(
+							(ignore) -> {
+								Log.debug("successfully wrote text to clipboard");
+								return null;
+							},
+							(ignore) -> {
+								Log.debug("writing text to clipboard failed");
+								return null;
+							});
 		} else {
 			Log.debug("Copy not supported");
 		}
 	}
 
-	private static void saveToClipboard(String toSave) {
+	private static void addMime(
+			JsPropertyMap<ClipboardItem.ConstructorItemsJsPropertyMapTypeParameterUnionType> map,
+			String toWrite,
+			String contentType) {
+		BlobPropertyBag bag = BlobPropertyBag.create();
+		bag.setType(contentType);
+		Blob blob = new Blob(new JsArray<>(Blob.ConstructorBlobPartsArrayUnionType.of(toWrite)), bag);
+		map.set(
+				contentType, ClipboardItem.ConstructorItemsJsPropertyMapTypeParameterUnionType.of(blob));
+	}
+
+	private static void saveToClipboard(String toSave, String externalFallback) {
 		String escapedContent = Global.escape(toSave);
-		writeToExternalClipboardWithFallback(pastePrefix + DomGlobal.btoa(escapedContent));
+		writeToExternalClipboardWithFallback(
+				pastePrefix + DomGlobal.btoa(escapedContent), externalFallback);
 	}
 
 	/**
 	 * Copies to external clipboard, adding a fallback based on local storage
-	 * @param content clipboard content
+	 * @param content clipboard content, preferably in a format understood by GGB
+	 * @param external alternative representation of content, suitable for external apps
+	 *
 	 */
-	public static void writeToExternalClipboardWithFallback(String content) {
+	public static void writeToExternalClipboardWithFallback(String content, String external) {
 		if (!NavigatorUtil.isiOS() || copyToExternalSupported()) {
-			writeToExternalClipboard(content);
+			writeToExternalClipboard(content, external);
 		}
 		BrowserStorage.LOCAL.setItem(pastePrefix, asBlobURL(content));
 	}
@@ -209,7 +263,8 @@ public class CopyPasteW extends CopyPaste {
 	}
 
 	private static void handleStorageFallback(Consumer<String> callback) {
-		DomGlobal.fetch(BrowserStorage.LOCAL.getItem(pastePrefix)).then(Response::text)
+		DomGlobal.fetch(BrowserStorage.LOCAL.getItem(pastePrefix))
+				.then(Response::text)
 				.then(text -> {
 					callback.accept(text);
 					return null;
@@ -242,51 +297,60 @@ public class CopyPasteW extends CopyPaste {
 	public static void pasteNative(Consumer<String> callback, Consumer<String> imageCallback) {
 		if (clipboardSupports("read")) {
 			// supported in Chrome
-			navigator.clipboard
-				.read()
-				.then((data) -> {
-						for (int i = 0; i < data.length; i++) {
-							for (int j = 0; j < data.getAt(i).types.length; j++) {
-								String type = data.getAt(i).types.getAt(j);
-								if (type.equals("image/png")) {
-									FileReader reader = new FileReader();
+			navigator
+					.clipboard
+					.read()
+					.then(
+							(data) -> {
+								for (int i = 0; i < data.length; i++) {
+									ClipboardItem clipboardItem = data.getAt(i);
+									for (int j = 0; j < clipboardItem.types.length; j++) {
+										String type = clipboardItem.types.getAt(j);
+										if (type.equals("image/png")) {
+											FileReader reader = new FileReader();
 
-									reader.addEventListener("load", (ignore) ->
-											imageCallback.accept(reader.result.asString()), false);
+											reader.addEventListener(
+													"load",
+													(ignore) -> imageCallback.accept(reader.result.asString()),
+													false);
 
-									data.getAt(i).getType("image/png").then((item) -> {
-										reader.readAsDataURL(item);
-										return null;
-									});
-								} else if (type.equals("text/plain")
-										|| type.equals("text/uri-list")) {
-									data.getAt(i).getType(type).then((item) -> {
-										readBlob(item, callback);
-										return null;
-									});
-									return null;
+											clipboardItem.getType("image/png").then((item) -> {
+												reader.readAsDataURL(item);
+												return null;
+											});
+										} else if (type.equals(CUSTOM_MIME)
+												|| type.equals(PLAIN_TEXT_MIME)
+												|| type.equals("text/uri-list")) {
+											clipboardItem.getType(type).then((item) -> {
+												readBlob(item, callback);
+												return null;
+											});
+											return null;
+										}
+									}
 								}
-							}
-						}
-						return null;
-					},
-					(reason) -> {
-						Log.debug("reading data from clipboard failed " + reason);
-						handleStorageFallback(callback);
-						return null;
-					});
+								return null;
+							},
+							(reason) -> {
+								Log.debug("reading data from clipboard failed " + reason);
+								handleStorageFallback(callback);
+								return null;
+							});
 		} else if (clipboardSupports("readText")) {
 			// not sure if any browser enters this at the time of writing
-			navigator.clipboard.readText().then(
-				(text) -> {
-					callback.accept(text);
-					return null;
-				},
-				(reason) -> {
-					Log.debug("reading text from clipboard failed: " + reason);
-					handleStorageFallback(callback);
-					return null;
-				});
+			navigator
+					.clipboard
+					.readText()
+					.then(
+							(text) -> {
+								callback.accept(text);
+								return null;
+							},
+							(reason) -> {
+								Log.debug("reading text from clipboard failed: " + reason);
+								handleStorageFallback(callback);
+								return null;
+							});
 		} else {
 			handleStorageFallback(callback);
 		}
@@ -333,7 +397,8 @@ public class CopyPasteW extends CopyPaste {
 		if (app.isWhiteboardActive()) {
 			final EuclidianView ev = app.getActiveEuclidianView();
 
-			final GeoInlineText txt = new GeoInlineText(app.getKernel().getConstruction(),
+			final GeoInlineText txt = new GeoInlineText(
+					app.getKernel().getConstruction(),
 					new GPoint2D(ev.toRealWorldCoordX(-defaultTextWidth), 0));
 			txt.setSize(defaultTextWidth, GeoInlineText.DEFAULT_HEIGHT);
 			txt.setLabel(null);
@@ -359,14 +424,13 @@ public class CopyPasteW extends CopyPaste {
 	private static void pasteGeoGebraXML(App app, String clipboardContent) {
 		int endline = clipboardContent.indexOf('\n');
 
-		ArrayList<String> copiedXMLlabels = separateXMLLabels(clipboardContent, endline);
+		ArrayList<String> copiedXMLLabels = separateXMLLabels(clipboardContent, endline);
 
 		endline++;
 		while (clipboardContent.startsWith(InternalClipboard.imagePrefix, endline)
 				|| clipboardContent.startsWith(InternalClipboard.embedPrefix, endline)) {
 			int nextEndline = clipboardContent.indexOf('\n', endline);
-			String line = clipboardContent
-					.substring(endline, nextEndline);
+			String line = clipboardContent.substring(endline, nextEndline);
 
 			String[] tokens = line.split(" ", 3);
 			if (tokens.length == 3) {
@@ -377,8 +441,9 @@ public class CopyPasteW extends CopyPaste {
 
 		String copiedXML = clipboardContent.substring(endline);
 
-		Scheduler.get().scheduleDeferred(
-				() -> InternalClipboard.pasteGeoGebraXMLInternal(app, copiedXMLlabels, copiedXML));
+		Scheduler.get()
+				.scheduleDeferred(
+						() -> InternalClipboard.pasteGeoGebraXMLInternal(app, copiedXMLLabels, copiedXML));
 	}
 
 	private static void handleSpecialLine(String[] tokens, App app) {
@@ -414,7 +479,7 @@ public class CopyPasteW extends CopyPaste {
 	@Override
 	public void copyTextToSystemClipboard(String text) {
 		Log.debug("copying to clipboard " + text);
-		writeToExternalClipboard(text);
+		writeToExternalClipboard(text, null);
 	}
 
 	/**
@@ -430,21 +495,43 @@ public class CopyPasteW extends CopyPaste {
 			DataTransfer clipboardData = Js.<ClipboardEvent>uncheckedCast(event).clipboardData;
 			if (clipboardData.files.length > 0) {
 				FileReader reader = new FileReader();
-				reader.addEventListener("load",
-						(ignore) -> pasteImage(app, reader.result.asString()));
+				reader.addEventListener("load", (ignore) -> pasteImage(app, reader.result.asString()));
 
 				reader.readAsDataURL(clipboardData.files.getAt(0));
 				return;
 			}
-
-			String text = clipboardData.getData("text/plain");
-			if (Js.isTruthy(text)) {
-				pasteText(app, text);
-				event.preventDefault(); // avoid conflict with Murok
-				return;
+			// try to paste the custom mime type first
+			if (clipboardSupports("read")) {
+				// supported in Chrome
+				navigator
+						.clipboard
+						.read()
+						.then(
+								(data) -> {
+									for (int i = 0; i < data.length; i++) {
+										ClipboardItem clipboardItem = data.getAt(i);
+										for (int j = 0; j < clipboardItem.types.length; j++) {
+											String type = clipboardItem.types.getAt(j);
+											if (type.equals(CUSTOM_MIME)) {
+												clipboardItem.getType(type).then((item) -> {
+													readBlob(item, text -> pasteText(app, text));
+													return null;
+												});
+												return null;
+											}
+										}
+									}
+									checkPlainTextPaste(app, clipboardData, event);
+									return null;
+								},
+								(reason) -> {
+									Log.debug("reading data from clipboard failed " + reason);
+									checkPlainTextPaste(app, clipboardData, event);
+									return null;
+								});
+			} else {
+				checkPlainTextPaste(app, clipboardData, event);
 			}
-
-			pasteInternal(app);
 		});
 
 		EventListener cutCopy = (event) -> {
@@ -457,6 +544,17 @@ public class CopyPasteW extends CopyPaste {
 
 		app.getGlobalHandlers().addEventListener(target, "copy", cutCopy);
 		app.getGlobalHandlers().addEventListener(target, "cut", cutCopy);
+	}
+
+	private static void checkPlainTextPaste(AppW app, DataTransfer clipboardData, Event event) {
+		String text = clipboardData.getData("text/plain");
+		if (Js.isTruthy(text)) {
+			pasteText(app, text);
+			event.preventDefault(); // avoid conflict with Murok
+			return;
+		}
+
+		pasteInternal(app);
 	}
 
 	/**
@@ -497,25 +595,31 @@ public class CopyPasteW extends CopyPaste {
 	}
 
 	private static void onPermission(AsyncOperation<Boolean> callback) {
-		navigator.clipboard.read().then((data) -> {
-			if (data.length == 0 || data.getAt(0).types.length == 0) {
-				callback.callback(false);
-				return null;
-			}
+		navigator
+				.clipboard
+				.read()
+				.then(
+						(data) -> {
+							if (data.length == 0 || data.getAt(0).types.length == 0) {
+								callback.callback(false);
+								return null;
+							}
 
-			if ("image/png".equals(data.getAt(0).types.getAt(0))) {
-				callback.callback(true);
-			} else if ("text/plain".equals(data.getAt(0).types.getAt(0))) {
-				data.getAt(0).getType("text/plain").then((item) -> {
-					callback.callback(item.size > 0);
-					return null;
-				});
-			}
-			return null;
-		}, (ignore) -> {
-			callback.callback(true);
-			return null;
-		});
+							String type = data.getAt(0).types.getAt(0);
+							if ("image/png".equals(type)) {
+								callback.callback(true);
+							} else if (PLAIN_TEXT_MIME.equals(type) || CUSTOM_MIME.equals(type)) {
+								data.getAt(0).getType(type).then((item) -> {
+									callback.callback(item.size > 0);
+									return null;
+								});
+							}
+							return null;
+						},
+						(ignore) -> {
+							callback.callback(true);
+							return null;
+						});
 	}
 
 	/**
@@ -527,18 +631,22 @@ public class CopyPasteW extends CopyPaste {
 			if (Js.isTruthy(navigator.permissions)) {
 				PermissionDescriptor descriptor = PermissionDescriptor.create();
 				descriptor.setName("clipboard-read");
-				navigator.permissions.query(descriptor).then((result) -> {
-					if (result != null && "granted".equals(result.state)) {
-						onPermission(callback);
-					} else {
-						callback.callback(true);
-					}
-					return null;
-				}).catch_(err -> {
-					Log.debug("No read permission");
-					callback.callback(true);
-					return null;
-				});
+				navigator
+						.permissions
+						.query(descriptor)
+						.then((result) -> {
+							if (result != null && "granted".equals(result.state)) {
+								onPermission(callback);
+							} else {
+								callback.callback(true);
+							}
+							return null;
+						})
+						.catch_(err -> {
+							Log.debug("No read permission");
+							callback.callback(true);
+							return null;
+						});
 			} else {
 				// Safari doesn't have navigator.permissions, checking content
 				// directly triggers an extra popup on Mac -> just assume we can paste
@@ -555,6 +663,6 @@ public class CopyPasteW extends CopyPaste {
 
 	static boolean clipboardSupports(String s) {
 		return Js.isTruthy(navigator.clipboard)
-				&& Js.isTruthy(Js.asPropertyMap(navigator.clipboard).get(s));
+				&& Js.isTruthy(JsObject.of(navigator.clipboard).get(s));
 	}
 }

@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * XMLFileReader.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 09. Mai 2003, 16:05
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.jre.io;
@@ -38,13 +36,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.geogebra.common.awt.MyImage;
+import org.geogebra.common.awt.annotations.HasNativeSubclass;
 import org.geogebra.common.io.MyXMLHandler;
 import org.geogebra.common.io.MyXMLio;
 import org.geogebra.common.io.QDParser;
 import org.geogebra.common.io.XMLParseException;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.io.file.ByteArrayZipFile;
 import org.geogebra.common.io.file.ZipFile;
-import org.geogebra.common.jre.gui.MyImageJre;
 import org.geogebra.common.jre.io.file.InputStreamZipFile;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.Kernel;
@@ -56,9 +56,10 @@ import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.debug.Log;
 
 /**
- * 
+ *
  * @author Markus Hohenwarter
  */
+@HasNativeSubclass
 public abstract class MyXMLioJre extends MyXMLio {
 
 	// Use the default (non-validating) parser
@@ -77,36 +78,35 @@ public abstract class MyXMLioJre extends MyXMLio {
 	}
 
 	@Override
-	final protected void createXMLParser() {
+	protected final void createXMLParser() {
 		xmlParser = new QDParser();
 	}
 
 	/**
 	 * Reads zipped file from input stream that includes the construction saved
 	 * in xml format and maybe image files.
-	 * 
+	 *
 	 * @param is
 	 *            input stream
-	 * @param isGGTfile
+	 * @param isGGTFile
 	 *            true for ggt files
 	 * @throws XMLParseException if XML is not valid
 	 * @throws IOException if stream cannot be read
 	 */
-	public final void readZipFromInputStream(InputStream is, boolean isGGTfile)
+	public final void readZipFromInputStream(InputStream is, boolean isGGTFile)
 			throws IOException, XMLParseException {
 
 		ZipInputStream zip = new ZipInputStream(is);
 
-		readZip(zip, isGGTfile);
-
+		readZip(zip, isGGTFile);
 	}
 
 	@Override
 	public void readZipFromString(ZipFile zipFile) throws IOException, XMLParseException {
 		if (zipFile instanceof ByteArrayZipFile) {
 			ByteArrayZipFile byteArrayZipFile = (ByteArrayZipFile) zipFile;
-			ZipInputStream zip = new ZipInputStream(
-					new ByteArrayInputStream(byteArrayZipFile.getByteArray()));
+			ZipInputStream zip =
+					new ZipInputStream(new ByteArrayInputStream(byteArrayZipFile.getByteArray()));
 
 			readZip(zip, false);
 		} else if (zipFile instanceof InputStreamZipFile) {
@@ -118,15 +118,15 @@ public abstract class MyXMLioJre extends MyXMLio {
 	/**
 	 * Reads zipped file from zip input stream that includes the construction
 	 * saved in xml format and maybe image files.
-	 * 
+	 *
 	 * @param zip
 	 *            zip input stream
-	 * @param isGGTfile
+	 * @param isGGTFile
 	 *            true for ggt files
 	 * @throws XMLParseException if XML is not valid
 	 * @throws IOException if stream cannot be read
 	 */
-	protected void readZip(ZipInputStream zip, boolean isGGTfile)
+	protected void readZip(ZipInputStream zip, boolean isGGTFile)
 			throws IOException, XMLParseException {
 		// we have to read everything (i.e. all images)
 		// before we process the XML file, that's why we
@@ -135,8 +135,6 @@ public abstract class MyXMLioJre extends MyXMLio {
 		byte[] macroXmlFileBuffer = null;
 		byte[] defaults2dXmlFileBuffer = null;
 		byte[] defaults3dXmlFileBuffer = null;
-		boolean xmlFound = false;
-		boolean macroXMLfound = false;
 		boolean javaScriptFound = false;
 		boolean structureFound = false;
 
@@ -158,7 +156,6 @@ public abstract class MyXMLioJre extends MyXMLio {
 			} else if (name.equals(XML_FILE)) {
 				// load xml file into memory first
 				xmlFileBuffer = StreamUtil.loadIntoMemory(zip);
-				xmlFound = true;
 				handler = getGGBHandler();
 			} else if (name.equals(XML_FILE_DEFAULTS_2D)) {
 				// load defaults xml file into memory first
@@ -171,7 +168,6 @@ public abstract class MyXMLioJre extends MyXMLio {
 			} else if (name.equals(XML_FILE_MACRO)) {
 				// load macro xml file into memory first
 				macroXmlFileBuffer = StreamUtil.loadIntoMemory(zip);
-				macroXMLfound = true;
 				handler = getGGBHandler();
 			} else if (name.equals(JAVASCRIPT_FILE)) {
 				// load JavaScript
@@ -193,7 +189,7 @@ public abstract class MyXMLioJre extends MyXMLio {
 		}
 		zip.close();
 
-		if (!isGGTfile) {
+		if (!isGGTFile) {
 			// ggb file: remove all macros from kernel before processing
 			kernel.removeAllMacros();
 		}
@@ -202,15 +198,15 @@ public abstract class MyXMLioJre extends MyXMLio {
 		if (macroXmlFileBuffer != null) {
 			// don't clear kernel for macro files
 			kernel.getConstruction().setFileLoading(true);
-			processXMLBuffer(macroXmlFileBuffer, !isGGTfile, isGGTfile);
+			processXMLBuffer(macroXmlFileBuffer, !isGGTFile, isGGTFile);
 			kernel.getConstruction().setFileLoading(false);
 		}
 
 		// process construction
-		if (!isGGTfile && xmlFileBuffer != null) {
+		if (!isGGTFile && xmlFileBuffer != null) {
 			kernel.getConstruction().setFileLoading(true);
 			app.getCompanion().resetEuclidianViewForPlaneIds();
-			processXMLBuffer(xmlFileBuffer, !macroXMLfound, isGGTfile);
+			processXMLBuffer(xmlFileBuffer, macroXmlFileBuffer == null, isGGTFile);
 			kernel.getConstruction().setFileLoading(false);
 		}
 
@@ -226,10 +222,10 @@ public abstract class MyXMLioJre extends MyXMLio {
 			kernel.getConstruction().setFileLoading(false);
 		}
 
-		if (!javaScriptFound && !isGGTfile) {
+		if (!javaScriptFound && !isGGTFile) {
 			kernel.resetLibraryJavaScript();
 		}
-		if (!(macroXMLfound || xmlFound || structureFound)) {
+		if (macroXmlFileBuffer == null && xmlFileBuffer == null && !structureFound) {
 			throw new IOException("No XML data found in file.");
 		}
 	}
@@ -240,7 +236,7 @@ public abstract class MyXMLioJre extends MyXMLio {
 
 	/**
 	 * Handles the XML file stored in buffer.
-	 * 
+	 *
 	 * @param buffer
 	 *            input buffer
 	 * @param clearConstruction
@@ -250,8 +246,8 @@ public abstract class MyXMLioJre extends MyXMLio {
 	 * @throws XMLParseException if XML is not valid
 	 * @throws IOException if stream cannot be read
 	 */
-	protected void processXMLBuffer(byte[] buffer, boolean clearConstruction,
-			boolean isGGTOrDefaults) throws XMLParseException, IOException {
+	protected void processXMLBuffer(byte[] buffer, boolean clearConstruction, boolean isGGTOrDefaults)
+			throws XMLParseException, IOException {
 		// handle the data in the memory buffer
 		try (ByteArrayInputStream bs = new ByteArrayInputStream(buffer)) {
 			XMLStreamInputStream ir = new XMLStreamInputStream(bs);
@@ -263,7 +259,7 @@ public abstract class MyXMLioJre extends MyXMLio {
 	/**
 	 * Reads from a zipped input stream that includes only the construction
 	 * saved in xml format.
-	 * 
+	 *
 	 * @param is
 	 *            input stream
 	 * @throws XMLParseException if XML is not valid
@@ -277,27 +273,25 @@ public abstract class MyXMLioJre extends MyXMLio {
 		if (entry != null && entry.getName().equals(XML_FILE)) {
 			// process xml file
 			kernel.getConstruction().setFileLoading(true);
-			doParseXML(new XMLStreamInputStream(zip), true, false, true, true,
-					false);
+			doParseXML(new XMLStreamInputStream(zip), true, false, true, true, false);
 			kernel.getConstruction().setFileLoading(false);
 			zip.close();
 		} else {
 			zip.close();
 			throw new IOException(XML_FILE + " not found");
 		}
-
 	}
 
 	/**
 	 * Creates a zipped file containing the construction and all settings saved
 	 * in xml format plus all external images.
-	 * 
+	 *
 	 * @param file
 	 *            output file
 	 * @throws IOException
 	 *             on write error
 	 */
-	final public void writeGeoGebraFile(File file) throws IOException {
+	public final void writeGeoGebraFile(File file) throws IOException {
 		// create file
 		FileOutputStream f = new FileOutputStream(file);
 		BufferedOutputStream b = new BufferedOutputStream(f);
@@ -312,7 +306,7 @@ public abstract class MyXMLioJre extends MyXMLio {
 	/**
 	 * Creates a zipped file containing the construction and all settings saved
 	 * in xml format plus all external images. GeoGebra File Format.
-	 * 
+	 *
 	 * @param os
 	 *            output stream
 	 * @param includeThumbnail
@@ -320,16 +314,15 @@ public abstract class MyXMLioJre extends MyXMLio {
 	 * @throws IOException
 	 *             on write error
 	 */
-	final public void writeGeoGebraFile(OutputStream os,
-			boolean includeThumbnail) throws IOException {
+	public final void writeGeoGebraFile(OutputStream os, boolean includeThumbnail)
+			throws IOException {
 		boolean isSaving = kernel.isSaving();
 		kernel.setSaving(true);
 
 		try {
 			// zip stream
 			ZipOutputStream zip = new ZipOutputStream(os);
-			OutputStreamWriter osw = new OutputStreamWriter(zip,
-					StandardCharsets.UTF_8);
+			OutputStreamWriter osw = new OutputStreamWriter(zip, StandardCharsets.UTF_8);
 
 			// write construction images
 			writeConstructionImages(kernel.getConstruction(), zip);
@@ -361,10 +354,10 @@ public abstract class MyXMLioJre extends MyXMLio {
 			zip.closeEntry();
 
 			// write XML file for defaults
-			StringBuilder sb2d = new StringBuilder();
-			StringBuilder sb3d = null;
+			XMLStringBuilder sb2d = new XMLStringBuilder();
+			XMLStringBuilder sb3d = null;
 			if (app.is3D()) {
-				sb3d = new StringBuilder();
+				sb3d = new XMLStringBuilder();
 			}
 			cons.getConstructionDefaults().getDefaultsXML(sb2d, sb3d);
 
@@ -395,7 +388,7 @@ public abstract class MyXMLioJre extends MyXMLio {
 	/**
 	 * Creates a zipped file containing the given macros in xml format plus all
 	 * their external images (e.g. icons).
-	 * 
+	 *
 	 * @param file
 	 *            output file
 	 * @param macros
@@ -403,8 +396,7 @@ public abstract class MyXMLioJre extends MyXMLio {
 	 * @throws IOException
 	 *             write error
 	 */
-	final public void writeMacroFile(File file, ArrayList<Macro> macros)
-			throws IOException {
+	public final void writeMacroFile(File file, ArrayList<Macro> macros) throws IOException {
 		if (macros == null) {
 			return;
 		}
@@ -420,7 +412,7 @@ public abstract class MyXMLioJre extends MyXMLio {
 	/**
 	 * Writes a zipped file containing the given macros in xml format plus all
 	 * their external images (e.g. icons) to the specified output stream.
-	 * 
+	 *
 	 * @param os
 	 *            output stream
 	 * @param macros
@@ -428,8 +420,7 @@ public abstract class MyXMLioJre extends MyXMLio {
 	 * @throws IOException
 	 *             write error
 	 */
-	final public void writeMacroStream(OutputStream os, ArrayList<Macro> macros)
-			throws IOException {
+	public final void writeMacroStream(OutputStream os, ArrayList<Macro> macros) throws IOException {
 		writeMacroStream(os, macros, macros);
 	}
 
@@ -445,13 +436,12 @@ public abstract class MyXMLioJre extends MyXMLio {
 	 * @throws IOException
 	 *             write error
 	 */
-	final public void writeMacroStream(OutputStream os, ArrayList<Macro> macros,
-				ArrayList<Macro> macrosWithImages)
+	public final void writeMacroStream(
+			OutputStream os, ArrayList<Macro> macros, ArrayList<Macro> macrosWithImages)
 			throws IOException {
 		// zip stream
 		ZipOutputStream zip = new ZipOutputStream(os);
-		OutputStreamWriter osw = new OutputStreamWriter(zip,
-				StandardCharsets.UTF_8);
+		OutputStreamWriter osw = new OutputStreamWriter(zip, StandardCharsets.UTF_8);
 
 		// write images
 		writeMacroImages(macrosWithImages, zip);
@@ -469,14 +459,11 @@ public abstract class MyXMLioJre extends MyXMLio {
 	/**
 	 * Writes all images used in construction to zip.
 	 */
-	private void writeConstructionImages(Construction cons1,
-			ZipOutputStream zip) {
+	private void writeConstructionImages(Construction cons1, ZipOutputStream zip) {
 		writeConstructionImages(cons1, zip, "");
 	}
 
-	private void writeConstructionImages(Construction cons1,
-			ZipOutputStream zip,
-			String filePath) {
+	private void writeConstructionImages(Construction cons1, ZipOutputStream zip, String filePath) {
 		// save all GeoImage images
 		// TreeSet images =
 		// cons.getGeoSetLabelOrder(GeoElement.GEO_CLASS_IMAGE);
@@ -489,15 +476,15 @@ public abstract class MyXMLioJre extends MyXMLio {
 		while (it.hasNext()) {
 			GeoElement geo = it.next();
 			String fileName = geo.getImageFileName();
-			MyImageJre image = (MyImageJre) geo.getFillImage();
+			MyImage image = geo.getFillImage();
 			if (fileName != null && image != null) {
 
+				String fullPath = (filePath + fileName).replaceFirst("^/", "");
 				if (image.isSVG()) {
 					// SVG
 					try {
-						zip.putNextEntry(new ZipEntry(filePath + fileName));
-						OutputStreamWriter osw = new OutputStreamWriter(zip,
-								StandardCharsets.UTF_8);
+						zip.putNextEntry(new ZipEntry(fullPath));
+						OutputStreamWriter osw = new OutputStreamWriter(zip, StandardCharsets.UTF_8);
 						osw.write(image.getSVG());
 						osw.flush();
 						zip.closeEntry();
@@ -508,11 +495,9 @@ public abstract class MyXMLioJre extends MyXMLio {
 				} else {
 					// BITMAP
 					if (image.hasNonNullImplementation()) {
-						writeImageToZip(zip, filePath + fileName, image);
+						writeImageToZip(zip, fullPath, image);
 					}
-
 				}
-
 			}
 			// Save images used in single bars
 			if (geo instanceof ChartStyleGeo) {
@@ -522,11 +507,8 @@ public abstract class MyXMLioJre extends MyXMLio {
 					k = i + 1;
 					ChartStyle algo1 = ((ChartStyleGeo) geo).getStyle();
 					if (algo1.getBarImage(k) != null) {
-						geo.setImageFileName(
-								algo1.getBarImage(k));
-						writeImageToZip(zip,
-								algo1.getBarImage(k),
-								(MyImageJre) geo.getFillImage());
+						geo.setImageFileName(algo1.getBarImage(k));
+						writeImageToZip(zip, algo1.getBarImage(k), geo.getFillImage());
 					}
 				}
 			}
@@ -546,15 +528,13 @@ public abstract class MyXMLioJre extends MyXMLio {
 
 		try {
 			// BufferedImage img = app.getExportImage(exportScale);
-			MyImageJre img = getExportImage(THUMBNAIL_PIXELS_X,
-					THUMBNAIL_PIXELS_Y);
+			MyImage img = getExportImage(THUMBNAIL_PIXELS_X, THUMBNAIL_PIXELS_Y);
 			if (img != null) {
 				writeImageToZip(zip, fileName, img);
 			}
-		} catch (Exception e) {
+		} catch (Exception expected) {
 			// catch error if size is zero
 		}
-
 	}
 
 	/**
@@ -564,18 +544,16 @@ public abstract class MyXMLioJre extends MyXMLio {
 	 *            height
 	 * @return image
 	 */
-	abstract protected MyImageJre getExportImage(double width, double height);
+	protected abstract MyImage getExportImage(double width, double height);
 
 	/**
 	 * Writes all images used in the given macros to zip.
 	 */
-	private void writeMacroImages(ArrayList<Macro> macros,
-			ZipOutputStream zip) {
+	private void writeMacroImages(ArrayList<Macro> macros, ZipOutputStream zip) {
 		writeMacroImages(macros, zip, "");
 	}
 
-	private void writeMacroImages(ArrayList<Macro> macros, ZipOutputStream zip,
-			String filePath) {
+	private void writeMacroImages(ArrayList<Macro> macros, ZipOutputStream zip, String filePath) {
 		if (macros == null) {
 			return;
 		}
@@ -583,12 +561,11 @@ public abstract class MyXMLioJre extends MyXMLio {
 		for (int i = 0; i < macros.size(); i++) {
 			// save all images in macro construction
 			Macro macro = macros.get(i);
-			writeConstructionImages(macro.getMacroConstruction(), zip,
-					filePath);
+			writeConstructionImages(macro.getMacroConstruction(), zip, filePath);
 
 			// save macro icon
 			String fileName = macro.getIconFileName();
-			MyImageJre img = getExternalImage(fileName);
+			MyImage img = getExternalImage(fileName);
 			if (img != null && img.hasNonNullImplementation()) {
 				writeImageToZip(zip, filePath + fileName, img);
 			}
@@ -600,10 +577,9 @@ public abstract class MyXMLioJre extends MyXMLio {
 	 *            file name
 	 * @return image
 	 */
-	abstract protected MyImageJre getExternalImage(String fileName);
+	protected abstract MyImage getExternalImage(String fileName);
 
-	private void writeImageToZip(ZipOutputStream zip, String fileName,
-			MyImageJre img) {
+	private void writeImageToZip(ZipOutputStream zip, String fileName, MyImage img) {
 		// create new entry in zip archive
 		try {
 			ZipEntry zipEntry = new ZipEntry(fileName);
@@ -619,7 +595,7 @@ public abstract class MyXMLioJre extends MyXMLio {
 
 	/**
 	 * Writes an image to stream
-	 * 
+	 *
 	 * @param os
 	 *            output stream
 	 * @param fileName
@@ -627,8 +603,7 @@ public abstract class MyXMLioJre extends MyXMLio {
 	 * @param img
 	 *            image
 	 */
-	final public void writeImageToStream(OutputStream os, String fileName,
-			MyImageJre img) {
+	public final void writeImageToStream(OutputStream os, String fileName, MyImage img) {
 		// if we get here we need to save the image from the memory
 		try {
 			// try to write image using the format of the filename extension
@@ -648,7 +623,6 @@ public abstract class MyXMLioJre extends MyXMLio {
 				writeImage(img, "png", os);
 			} catch (Exception ex) {
 				Log.debug(ex.getMessage());
-				return;
 			}
 		}
 	}
@@ -663,12 +637,11 @@ public abstract class MyXMLioJre extends MyXMLio {
 	 * @throws IOException
 	 *             write error
 	 */
-	abstract protected void writeImage(MyImageJre img, String ext,
-			OutputStream os) throws IOException;
+	protected abstract void writeImage(MyImage img, String ext, OutputStream os) throws IOException;
 
 	/**
 	 * Compresses xml String and writes result to os.
-	 * 
+	 *
 	 * @param os
 	 *            output stream
 	 * @param xmlString
@@ -676,12 +649,10 @@ public abstract class MyXMLioJre extends MyXMLio {
 	 * @throws IOException
 	 *             write error
 	 */
-	public static void writeZipped(OutputStream os, StringBuilder xmlString)
-			throws IOException {
+	public static void writeZipped(OutputStream os, StringBuilder xmlString) throws IOException {
 		ZipOutputStream z = new ZipOutputStream(os);
 		z.putNextEntry(new ZipEntry(XML_FILE));
-		BufferedWriter w = new BufferedWriter(
-				new OutputStreamWriter(z, StandardCharsets.UTF_8));
+		BufferedWriter w = new BufferedWriter(new OutputStreamWriter(z, StandardCharsets.UTF_8));
 		for (int i = 0; i < xmlString.length(); i++) {
 			w.write(xmlString.charAt(i));
 		}
@@ -690,12 +661,12 @@ public abstract class MyXMLioJre extends MyXMLio {
 	}
 
 	@Override
-	final protected void resetXMLParser() {
+	protected final void resetXMLParser() {
 		xmlParser.reset();
 	}
 
 	@Override
-	final protected void parseXML(MyXMLHandler xmlHandler, XMLStream stream)
+	protected final void parseXML(MyXMLHandler xmlHandler, XMLStream stream)
 			throws XMLParseException, IOException {
 		XMLStreamJre streamJre = (XMLStreamJre) stream;
 		xmlParser.parse(xmlHandler, streamJre.getReader());
@@ -710,13 +681,13 @@ public abstract class MyXMLioJre extends MyXMLio {
 		 * @return reader
 		 * @throws IOException when reader creation fails
 		 */
-		public Reader getReader() throws IOException;
+		Reader getReader() throws IOException;
 
 		/**
 		 * @throws IOException
 		 *             when closing goes wrong
 		 */
-		public void closeReader() throws IOException;
+		void closeReader() throws IOException;
 	}
 
 	/**
@@ -748,7 +719,7 @@ public abstract class MyXMLioJre extends MyXMLio {
 	}
 
 	@Override
-	final protected XMLStream createXMLStreamString(String str) {
+	protected final XMLStream createXMLStreamString(String str) {
 		return new XMLStreamStringJre(str);
 	}
 

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -51,16 +55,17 @@ public class AlgoLineBisectorTwoPointsDirection3D extends AlgoElement3D {
 	 * @param direction
 	 *            direction
 	 */
-	public AlgoLineBisectorTwoPointsDirection3D(Construction cons, String label,
-			GeoPointND a, GeoPointND b, GeoDirectionND direction) {
+	public AlgoLineBisectorTwoPointsDirection3D(
+			Construction cons, String label, GeoPointND a, GeoPointND b, GeoDirectionND direction) {
 		super(cons);
 		this.a = a;
 		this.b = b;
 		this.direction = direction;
 		line = new GeoLine3D(cons);
 
-		setInputOutput(new GeoElement[] { (GeoElement) a, (GeoElement) b,
-				(GeoElement) direction }, new GeoElement[] { line });
+		setInputOutput(
+				new GeoElement[] {(GeoElement) a, (GeoElement) b, (GeoElement) direction},
+				new GeoElement[] {line});
 
 		// compute line
 		compute();
@@ -101,12 +106,17 @@ public class AlgoLineBisectorTwoPointsDirection3D extends AlgoElement3D {
 	public String toString(StringTemplate tpl) {
 		// direction is plane
 		if (direction instanceof GeoCoordSys2D) {
-			return getLoc().getPlain("PerpendicularBisectorOfAParallelToB",
-					a.getLabel(tpl) + b.getLabel(tpl), direction.getLabel(tpl));
+			return getLoc()
+					.getPlain(
+							"PerpendicularBisectorOfAParallelToB",
+							a.getLabel(tpl) + b.getLabel(tpl),
+							direction.getLabel(tpl));
 		}
 		// direction is line
-		return getLoc().getPlain("PerpendicularBisectorOfAPerpendicularToB",
-				a.getLabel(tpl) + b.getLabel(tpl), direction.getLabel(tpl));
+		return getLoc()
+				.getPlain(
+						"PerpendicularBisectorOfAPerpendicularToB",
+						a.getLabel(tpl) + b.getLabel(tpl),
+						direction.getLabel(tpl));
 	}
-
 }

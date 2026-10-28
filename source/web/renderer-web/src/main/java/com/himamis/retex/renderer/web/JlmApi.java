@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package com.himamis.retex.renderer.web;
 
 import com.himamis.retex.renderer.share.TeXFont;
@@ -33,19 +49,19 @@ public class JlmApi {
 	public final int TYPEWRITER = TeXFont.TYPEWRITER;
 
 	public FormulaRenderingResult drawLatex(JsPropertyMap<?> opts) {
-		//ctx, latex, size, style, x, y, fgColor, bgColor, cb
+		// ctx, latex, size, style, x, y, fgColor, bgColor, cb
 		if (Js.isFalsy(opts.get("context")) && Js.isFalsy(opts.get("element"))) {
 			throw new IllegalArgumentException("drawLatex(opts): opts.context must not be null");
 		}
 		Object latex = opts.get("latex");
 		Object ascii = opts.get("ascii");
 		if (!"string".equals(Js.typeof(latex)) && !"string".equals(Js.typeof(ascii))) {
-			throw new IllegalArgumentException("drawLatex(opts): "
-					+ "opts.latex or opts.ascii must be of type string.");
+			throw new IllegalArgumentException(
+					"drawLatex(opts): " + "opts.latex or opts.ascii must be of type string.");
 		}
 		CanvasRenderingContext2D ctx = Js.uncheckedCast(getContext(opts));
-		TeXFormula formula = ascii == null ? new TeXFormula((String) latex)
-				: library.fromAsciiMath((String) ascii);
+		TeXFormula formula =
+				ascii == null ? new TeXFormula((String) latex) : library.fromAsciiMath((String) ascii);
 		int size = getInt(opts, "size", 12);
 		int type = getInt(opts, "type", 0);
 		int x = getInt(opts, "x", 0);
@@ -54,14 +70,15 @@ public class JlmApi {
 		int bottomInset = getInt(opts, "insets.bottom", 0);
 		int leftInset = getInt(opts, "insets.left", 0);
 		int rightInset = getInt(opts, "insets.right", 0);
-		String fgColor = opts.get("foregroundColor") == null ? "#000000" : (String) opts.get("foregroundColor");
+		String fgColor =
+				opts.get("foregroundColor") == null ? "#000000" : (String) opts.get("foregroundColor");
 		String bgColor = (String) opts.get("backgroundColor"); // undefined === invisible
 		DrawingFinishedCallback cb = Js.uncheckedCast(opts.get("callback"));
 		FactoryProviderGWT.ensureLoaded();
 		Insets insets = new Insets(topInset, leftInset, bottomInset, rightInset);
 		HTMLCanvasElement canvas = (HTMLCanvasElement) opts.get("element");
-		FormulaRenderingResult result = library.drawLatex(ctx, formula, size, type, x, y,
-				insets, fgColor, bgColor, cb, canvas);
+		FormulaRenderingResult result =
+				library.drawLatex(ctx, formula, size, type, x, y, insets, fgColor, bgColor, cb, canvas);
 		if (canvas != null) {
 			canvas.setAttribute("aria-label", latex == null ? (String) ascii : (String) latex);
 		}
@@ -69,7 +86,8 @@ public class JlmApi {
 	}
 
 	private Object getContext(JsPropertyMap<?> opts) {
-		return Js.isTruthy(opts.get("context"))	? opts.get("context")
+		return Js.isTruthy(opts.get("context"))
+				? opts.get("context")
 				: ((HTMLCanvasElement) opts.get("element")).getContext("2d");
 	}
 

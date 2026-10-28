@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -35,8 +39,7 @@ public class AlgoTangentPoint3D extends AlgoTangentPointND {
 	private Coords polarDirection;
 	private Coords coords2D;
 
-	public AlgoTangentPoint3D(Construction cons, String[] labels, GeoPointND P,
-			GeoConicND c) {
+	public AlgoTangentPoint3D(Construction cons, String[] labels, GeoPointND P, GeoConicND c) {
 		super(cons, labels, P, c);
 	}
 
@@ -61,19 +64,15 @@ public class AlgoTangentPoint3D extends AlgoTangentPointND {
 
 		if (i == 0) { // for second tangent, calculations are already done
 			polar.getCoords(polarCoords);
-			polarDirection = c.getCoordSys().getVector(-polarCoords[1],
-					polarCoords[0]);
+			polarDirection = c.getCoordSys().getVector(-polarCoords[1], polarCoords[0]);
 			if (DoubleUtil.isZero(polarCoords[0])) {
-				polarOrigin = c.getCoordSys().getPoint(0,
-						-polarCoords[2] / polarCoords[1]);
+				polarOrigin = c.getCoordSys().getPoint(0, -polarCoords[2] / polarCoords[1]);
 			} else {
-				polarOrigin = c.getCoordSys()
-						.getPoint(-polarCoords[2] / polarCoords[0], 0);
+				polarOrigin = c.getCoordSys().getPoint(-polarCoords[2] / polarCoords[0], 0);
 			}
 		}
 
 		((GeoLine3D) tangents[i]).setCoord(polarOrigin, polarDirection);
-
 	}
 
 	@Override
@@ -92,8 +91,7 @@ public class AlgoTangentPoint3D extends AlgoTangentPointND {
 			return true;
 		}
 
-		coords2D = c.getCoordSys()
-				.getNormalProjection(P.getInhomCoordsInD3())[1];
+		coords2D = c.getCoordSys().getNormalProjection(P.getInhomCoordsInD3())[1];
 		if (!DoubleUtil.isZero(coords2D.getZ())) {
 			return true;
 		}
@@ -112,9 +110,8 @@ public class AlgoTangentPoint3D extends AlgoTangentPointND {
 	@Override
 	protected boolean isIntersectionPointIncident() {
 		// Too low precision causes tangent not touching the conic GGB-1018
-		return c.isIntersectionPointIncident(coords2D,
-				Kernel.STANDARD_PRECISION); // ||
-											// P.getIncidenceList().contains(c);
+		return c.isIntersectionPointIncident(coords2D, Kernel.STANDARD_PRECISION); // ||
+		// P.getIncidenceList().contains(c);
 	}
 
 	@Override
@@ -157,13 +154,11 @@ public class AlgoTangentPoint3D extends AlgoTangentPointND {
 	 * @param algoIntersect
 	 *            algo used
 	 */
-	public static final void initForNearToRelationship(
-			GeoPointND[] tangentPoints, GeoLineND tangent,
-			AlgoIntersectND algoIntersect) {
+	public static void initForNearToRelationship(
+			GeoPointND[] tangentPoints, GeoLineND tangent, AlgoIntersectND algoIntersect) {
 		Coords firstTangentPoint = tangentPoints[0].getInhomCoordsInD3();
 
-		if (!tangent.isOnFullLine(firstTangentPoint,
-				Kernel.MIN_PRECISION)) {
+		if (!tangent.isOnFullLine(firstTangentPoint, Kernel.MIN_PRECISION)) {
 			algoIntersect.initForNearToRelationship();
 
 			// first = second
@@ -174,5 +169,4 @@ public class AlgoTangentPoint3D extends AlgoTangentPointND {
 			algoIntersect.setIntersectionPoint(1, tangentPoints[1]);
 		}
 	}
-
 }

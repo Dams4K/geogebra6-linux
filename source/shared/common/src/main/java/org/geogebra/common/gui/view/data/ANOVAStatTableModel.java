@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.data;
 
 import java.util.ArrayList;
@@ -49,7 +65,7 @@ public class ANOVAStatTableModel extends StatTableModel {
 	/**
 	 * Calculates ANOVA stats. (Modified form of method found in Apache Commons
 	 * OneWayAnovaImpl)
-	 * 
+	 *
 	 * @param categoryData
 	 *            <code>Collection</code> of <code>double[]</code> arrays each
 	 *            containing data for one category
@@ -67,8 +83,7 @@ public class ANOVAStatTableModel extends StatTableModel {
 		if (categoryData.size() < 2) {
 			throw MathRuntimeException.createIllegalArgumentException(
 					// LocalizedFormats.TWO_OR_MORE_CATEGORIES_REQUIRED,
-					"two or more categories required, got {0}",
-					categoryData.size());
+					"two or more categories required, got {0}", categoryData.size());
 		}
 
 		// check if each category has enough data and all is double[]
@@ -76,8 +91,7 @@ public class ANOVAStatTableModel extends StatTableModel {
 			if (array.length <= 1) {
 				throw MathRuntimeException.createIllegalArgumentException(
 						// LocalizedFormats.TWO_OR_MORE_VALUES_IN_CATEGORY_REQUIRED,
-						"two or more values required in each category, one has {0}",
-						array.length);
+						"two or more values required in each category, one has {0}", array.length);
 			}
 		}
 
@@ -107,12 +121,10 @@ public class ANOVAStatTableModel extends StatTableModel {
 				totsumsq.increment(val);
 			}
 			dfwg += num - 1;
-			double ss = sumsq.getResult()
-					- sum.getResult() * sum.getResult() / num;
+			double ss = sumsq.getResult() - sum.getResult() * sum.getResult() / num;
 			sswg += ss;
 		}
-		double sst = totsumsq.getResult()
-				- totsum.getResult() * totsum.getResult() / totnum;
+		double sst = totsumsq.getResult() - totsum.getResult() * totsum.getResult() / totnum;
 		double ssbg = sst - sswg;
 		int dfbg = categoryData.size() - 1;
 		double msbg = ssbg / dfbg;
@@ -128,14 +140,13 @@ public class ANOVAStatTableModel extends StatTableModel {
 	/**
 	 * Calculates ANOVA stats. (Modified form of method found in Apache Commons
 	 * OneWayAnovaImpl)
-	 * 
+	 *
 	 * @param categoryData
 	 *            <code>Collection</code> of <code>double[]</code> arrays each
 	 *            containing data for one category
 	 * @return computed AnovaStats
 	 */
-	public static AnovaStats anovaStatsSilent(
-			Collection<double[]> categoryData) {
+	public static AnovaStats anovaStatsSilent(Collection<double[]> categoryData) {
 		try {
 			return anovaStats(categoryData);
 		} catch (RuntimeException e) {
@@ -163,11 +174,13 @@ public class ANOVAStatTableModel extends StatTableModel {
 
 		/** sum of squares */
 		private double ssbg;
+
 		private double sswg;
 		private double sst;
 
 		/** mean squares */
 		private double msbg;
+
 		private double mswg;
 
 		/** P value */
@@ -175,7 +188,7 @@ public class ANOVAStatTableModel extends StatTableModel {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param dfbg
 		 *            degrees of freedom in numerator (between groups)
 		 * @param dfwg
@@ -183,8 +196,16 @@ public class ANOVAStatTableModel extends StatTableModel {
 		 * @param F
 		 *            statistic
 		 */
-		public AnovaStats(int dfbg, int dfwg, double F, double P, double ssbg,
-				double sswg, double sst, double msbg, double mswg) {
+		public AnovaStats(
+				int dfbg,
+				int dfwg,
+				double F,
+				double P,
+				double ssbg,
+				double sswg,
+				double sst,
+				double msbg,
+				double mswg) {
 			this.setDfbg(dfbg);
 			this.setDfwg(dfwg);
 			this.setF(F);
@@ -194,7 +215,6 @@ public class ANOVAStatTableModel extends StatTableModel {
 			this.setSst(sst);
 			this.setMsbg(msbg);
 			this.setMswg(mswg);
-
 		}
 
 		public int getDfbg() {
@@ -272,7 +292,7 @@ public class ANOVAStatTableModel extends StatTableModel {
 
 	/**
 	 * Get anovastats ignoring errors
-	 * 
+	 *
 	 * @param dataList
 	 *            tabular data
 	 * @return ANOVA stats
@@ -294,18 +314,22 @@ public class ANOVAStatTableModel extends StatTableModel {
 	@Override
 	public String[] getRowNames() {
 		Localization loc = getApp().getLocalization();
-		String[] names = { loc.getMenu("BetweenGroups"),
-				loc.getMenu("WithinGroups"), loc.getMenu("Total"), };
+		String[] names = {
+			loc.getMenu("BetweenGroups"), loc.getMenu("WithinGroups"), loc.getMenu("Total"),
+		};
 		return names;
 	}
 
 	@Override
 	public String[] getColumnNames() {
 		Localization loc = getApp().getLocalization();
-		String[] names = { loc.getMenu("DegreesOfFreedom.short"),
-				loc.getMenu("SumSquares.short"),
-				loc.getMenu("MeanSquare.short"), loc.getMenu("FStatistic"),
-				loc.getMenu("PValue"), };
+		String[] names = {
+			loc.getMenu("DegreesOfFreedom.short"),
+			loc.getMenu("SumSquares.short"),
+			loc.getMenu("MeanSquare.short"),
+			loc.getMenu("FStatistic"),
+			loc.getMenu("PValue"),
+		};
 
 		return names;
 	}

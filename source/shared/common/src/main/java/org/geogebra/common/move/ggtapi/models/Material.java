@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.move.ggtapi.models;
 
 import java.io.Serializable;
@@ -9,9 +25,9 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * Material POJO
- * 
+ *
  * @author Matthias Meisinger
- * 
+ *
  */
 @SuppressWarnings("serial")
 public class Material implements Serializable {
@@ -19,7 +35,7 @@ public class Material implements Serializable {
 	/**
 	 * Storage provider.
 	 */
-    public enum Provider {
+	public enum Provider {
 		TUBE("GeoGebra"),
 		GOOGLE("Google Drive"),
 		LOCAL("Local");
@@ -56,7 +72,15 @@ public class Material implements Serializable {
 	 * Resource type (values names must match API-supported values).
 	 */
 	public enum MaterialType {
-		ggb, ggt, ggs, link, book, ws, csv, flexiblews, ggsTemplate;
+		ggb,
+		ggt,
+		ggs,
+		link,
+		book,
+		ws,
+		csv,
+		flexiblews,
+		ggsTemplate;
 
 		@Override
 		public String toString() {
@@ -100,6 +124,7 @@ public class Material implements Serializable {
 	 * thumbnail available for the material.
 	 */
 	private String thumbnail;
+
 	private boolean thumbnailIsBase64 = false;
 	private String previewUrl;
 	private int width;
@@ -270,6 +295,9 @@ public class Material implements Serializable {
 		return this.description;
 	}
 
+	/**
+	 * @return the display name of the creator, or an empty string if the creator is unknown
+	 */
 	public String getAuthor() {
 		return creator == null ? "" : this.creator.getDisplayName();
 	}
@@ -281,6 +309,9 @@ public class Material implements Serializable {
 		return this.url;
 	}
 
+	/**
+	 * @return the URL to edit this material
+	 */
 	public String getEditUrl() {
 		return GeoGebraConstants.EDIT_URL_BASE + getSharingKeySafe();
 	}
@@ -327,7 +358,7 @@ public class Material implements Serializable {
 	 */
 	public void setTimestampFromJava(long timestamp) {
 		setTimestamp(timestamp / 1000); // JAVA USES MILLISECONDS, UNIX USES
-										// SECONDS
+		// SECONDS
 	}
 
 	/**
@@ -489,7 +520,6 @@ public class Material implements Serializable {
 		putString(ret, "appnname", appName);
 		if (storeLocalValues) {
 			putString(ret, "localID", localID + "");
-
 		}
 		return ret;
 	}
@@ -497,12 +527,11 @@ public class Material implements Serializable {
 	private static void putBoolean(JSONObject ret, String key, boolean val) {
 		if (val) {
 			try {
-				ret.put(key, Boolean.valueOf(val));
+				ret.put(key, val);
 			} catch (JSONException e) {
 				Log.debug(e);
 			}
 		}
-
 	}
 
 	private static void putString(JSONObject ret, String key, String value) {
@@ -822,6 +851,9 @@ public class Material implements Serializable {
 		this.showZoomButtons = showZoomButtons;
 	}
 
+	/**
+	 * @param fileContent file content (e.g. JS object in Web)
+	 */
 	public void setContent(Object fileContent) {
 		this.fileContent = fileContent;
 	}

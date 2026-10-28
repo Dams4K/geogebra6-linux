@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.scripting;
 
 import org.geogebra.common.kernel.CommandLookupStrategy;
@@ -28,19 +44,17 @@ public class CmdExecute extends CmdScripting {
 	}
 
 	@Override
-	final public GeoElement[] perform(Command c) throws MyError {
+	public final GeoElement[] perform(Command c) throws MyError {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
 		arg = resArgs(c);
 		if (n > 10 || n == 0) {
 			throw argNumErr(c);
 		}
-		if (arg[0].isGeoList() && ((GeoList) arg[0]).size() == 0
-				|| !arg[0].isDefined()) {
-			return new GeoElement[] {};
+		if (arg[0].isGeoList() && ((GeoList) arg[0]).size() == 0 || !arg[0].isDefined()) {
+			return new GeoElement[0];
 		}
-		if (!arg[0].isGeoList() || !arg[0]
-				.getGeoElementForPropertiesDialog().isGeoText()) {
+		if (!arg[0].isGeoList() || !arg[0].getGeoElementForPropertiesDialog().isGeoText()) {
 			throw argErr(c, arg[0]);
 		}
 		GeoList list = (GeoList) arg[0];
@@ -55,12 +69,12 @@ public class CmdExecute extends CmdScripting {
 			try {
 				String cmdText = ((GeoText) list.get(i)).getTextStringSafe();
 				for (int k = 1; k < n; k++) {
-					cmdText = cmdText.replace("%" + k,
-							arg[k].getLabel(StringTemplate.maxDecimals));
+					cmdText = cmdText.replace("%" + k, arg[k].getLabel(StringTemplate.maxDecimals));
 				}
-				kernel.getAlgebraProcessor()
-						.processAlgebraCommandNoExceptionHandling(cmdText,
-								false, app.getErrorHandler(), false, null);
+				kernel
+						.getAlgebraProcessor()
+						.processAlgebraCommandNoExceptionHandling(
+								cmdText, false, app.getErrorHandler(), false, null);
 			} catch (MyError e) {
 				app.showError(e);
 				break;

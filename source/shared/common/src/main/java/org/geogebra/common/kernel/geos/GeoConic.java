@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * GeoConic.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 10. September 2001, 08:52
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.geos;
@@ -51,9 +49,14 @@ import org.geogebra.common.util.MyMath;
 /**
  * Conics in 2D
  */
-public class GeoConic extends GeoConicND implements ConicMirrorable,
-		SymbolicParametersBotanaAlgo, EquationValue, GeoEvaluatable,
-		GeoFunctionable, Functional {
+public class GeoConic extends GeoConicND
+		implements ConicMirrorable,
+				SymbolicParametersBotanaAlgo,
+				EquationValue,
+				GeoEvaluatable,
+				GeoFunctionable,
+				Functional {
+
 	private CoordSys coordSys;
 	private int tableColumn = -1;
 	private boolean pointsVisible = true;
@@ -65,7 +68,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 
 	/**
 	 * Creates a conic
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 */
@@ -75,7 +78,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 
 	/**
 	 * Creates new GeoConic with Coordinate System for 3D
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param coeffs
@@ -88,7 +91,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 
 	/**
 	 * Creates copy of conic in construction of conic
-	 * 
+	 *
 	 * @param conic
 	 *            conic to be copied
 	 */
@@ -109,7 +112,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 
 	/**
 	 * Return angle of rotation from x-axis to the major axis of ellipse
-	 * 
+	 *
 	 * @return angle between x-axis and major axis of ellipse
 	 */
 	double getPhi() {
@@ -120,22 +123,19 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 			return 0.5 * Math.PI;
 		}
 		if (matrix[0] <= matrix[1]) {
-			return 0.25 * Math.PI - 0.5
-					* Math.atan((matrix[0] - matrix[1]) / (2 * matrix[3]));
+			return 0.25 * Math.PI - 0.5 * Math.atan((matrix[0] - matrix[1]) / (2 * matrix[3]));
 		}
-		return 0.75 * Math.PI
-				- 0.5 * Math.atan((matrix[0] - matrix[1]) / (2 * matrix[3]));
+		return 0.75 * Math.PI - 0.5 * Math.atan((matrix[0] - matrix[1]) / (2 * matrix[3]));
 	}
 
 	/**
 	 * Invert circle or line in circle
-	 * 
-	 * @version 2010-01-21
+	 *
 	 * @author Michael Borcherds
 	 * @param conic Circle used as mirror
 	 */
 	@Override
-	final public void mirror(GeoConicND conic) {
+	public final void mirror(GeoConicND conic) {
 
 		if (conic.getType() == CONIC_SINGLE_POINT) {
 			setUndefined();
@@ -144,7 +144,6 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 
 		// Mirror point in circle
 		if (conic.isCircle() && (type == CONIC_SINGLE_POINT || type == CONIC_CIRCLE)) {
-			double r1 = conic.getHalfAxes()[0];
 			Coords midpoint1 = conic.getMidpointND();
 			double x1 = midpoint1.getX();
 			double y1 = midpoint1.getY();
@@ -155,8 +154,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 			double y2 = midpoint2.getY();
 
 			// distance between centers
-			double dist = Math
-					.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+			double dist = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 
 			// Log.debug("dist ="+dist);
 			// Log.debug("r1="+r1+" x1="+x1+"y1 ="+y1);
@@ -170,7 +168,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 				update();
 				return;
 			}
-
+			double r1 = conic.getHalfAxes()[0];
 			// does circle being inverted pass through center of the other?
 			if (DoubleUtil.isEqual(dist, r2)) {
 				double dx = x2 - x1;
@@ -221,13 +219,13 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 			GeoPoint tmp = new GeoPoint(cons, null, centerX, centerY, 1.0);
 			setCircleMatrix(tmp, r3);
 			tmp.removeOrSetUndefinedIfHasFixedDescendent();
-		} else if (conic.isCircle() && (this.getType() == GeoConicNDConstants.CONIC_LINE
-				|| this.getType() == GeoConicNDConstants.CONIC_PARALLEL_LINES)) {
-				// Mirror point in circle
+		} else if (conic.isCircle()
+				&& (this.getType() == GeoConicNDConstants.CONIC_LINE
+						|| this.getType() == GeoConicNDConstants.CONIC_PARALLEL_LINES)) {
+			// Mirror point in circle
 			if (conic.getType() == GeoConicNDConstants.CONIC_CIRCLE) { // Mirror
 				// point in
 				// circle
-				double r = conic.getHalfAxes()[0];
 				GeoVec2D midPoint = conic.getTranslationVector();
 				double mx = midPoint.getX();
 				double my = midPoint.getY();
@@ -240,24 +238,21 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 					perpX = mx;
 					perpY = -lz / ly;
 				} else {
-					perpY = -(lx * ly * mx - lx * lx * my + ly * lz)
-							/ (lx * lx + ly * ly);
+					perpY = -(lx * ly * mx - lx * lx * my + ly * lz) / (lx * lx + ly * ly);
 					perpX = (-lz - ly * perpY) / lx;
 				}
 
-				double dist2 = (perpX - mx) * (perpX - mx)
-						+ (perpY - my) * (perpY - my);
+				double dist2 = (perpX - mx) * (perpX - mx) + (perpY - my) * (perpY - my);
 				// if line goes through center, we keep it
 				if (!DoubleUtil.isZero(dist2)) {
+					double r = conic.getHalfAxes()[0];
 					double sf = r * r / dist2;
 					// GeoPoint p =new GeoPoint(cons,null,a+sf*(perpX-a),
 					// b+sf*(perpY-b) ,1.0);
 					GeoPoint m = new GeoPoint(cons);
-					m.setCoords(mx + sf * (perpX - mx) / 2,
-							my + sf * (perpY - my) / 2, 1.0);
-					setSphereND(m,
-							sf / 2 * Math.sqrt((perpX - mx) * (perpX - mx)
-									+ (perpY - my) * (perpY - my)));
+					m.setCoords(mx + sf * (perpX - mx) / 2, my + sf * (perpY - my) / 2, 1.0);
+					setSphereND(
+							m, sf / 2 * Math.sqrt((perpX - mx) * (perpX - mx) + (perpY - my) * (perpY - my)));
 				} else {
 					type = GeoConicNDConstants.CONIC_LINE;
 				}
@@ -281,13 +276,15 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 	 * mirror this conic at point Q
 	 */
 	@Override
-	final public void mirror(Coords Q) {
+	public final void mirror(Coords Q) {
 		double qx = Q.getX();
 		double qy = Q.getY();
 
-		matrix[2] = 4.0 * (qy * qy * matrix[1]
-				+ qx * (qx * matrix[0] + 2.0 * qy * matrix[3] + matrix[4])
-				+ qy * matrix[5]) + matrix[2];
+		matrix[2] = 4.0
+						* (qy * qy * matrix[1]
+								+ qx * (qx * matrix[0] + 2.0 * qy * matrix[3] + matrix[4])
+								+ qy * matrix[5])
+				+ matrix[2];
 		matrix[4] = -2.0 * (qx * matrix[0] + qy * matrix[3]) - matrix[4];
 		matrix[5] = -2.0 * (qx * matrix[3] + qy * matrix[1]) - matrix[5];
 
@@ -297,7 +294,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 
 		// mirror translation vector b
 		getB().mirror(Q);
-		setMidpoint(new double[] { getB().getX(), getB().getY() });
+		setMidpoint(new double[] {getB().getX(), getB().getY()});
 
 		setAffineTransform();
 		updateDegenerates(p -> p.mirror(Q)); // for degenerate conics
@@ -307,7 +304,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 	 * mirror this point at line g
 	 */
 	@Override
-	final public void mirror(GeoLineND g1) {
+	public final void mirror(GeoLineND g1) {
 
 		GeoLine g = (GeoLine) g1;
 
@@ -339,7 +336,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 	/**
 	 * mirror transform with angle phi [ cos sin 0 ] [ sin -cos 0 ] [ 0 0 1 ]
 	 */
-	final private void mirror(double phi) {
+	private void mirror(double phi) {
 		// set rotated matrix
 		double sum = matrix[0] + matrix[1];
 		double diff = matrix[0] - matrix[1];
@@ -367,7 +364,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 		eigenvec[1].mirror(phi);
 
 		getB().mirror(phi);
-		setMidpoint(new double[] { getB().getX(), getB().getY() });
+		setMidpoint(new double[] {getB().getX(), getB().getY()});
 	}
 
 	// //////////////////////////////////////
@@ -397,7 +394,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 	}
 
 	@Override
-	final public boolean isCasEvaluableObject() {
+	public final boolean isCasEvaluableObject() {
 		return true;
 	}
 
@@ -410,34 +407,32 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 	}
 
 	@Override
-	public void matrixTransform(double a00, double a01, double a02, double a10,
-			double a11, double a12, double a20, double a21, double a22) {
+	public void matrixTransform(
+			double a00,
+			double a01,
+			double a02,
+			double a10,
+			double a11,
+			double a12,
+			double a20,
+			double a21,
+			double a22) {
 		// TODO Auto-generated method stub
 
-		double[][] adj = MyMath.adjoint(a00, a01, a02, a10, a11, a12, a20, a21,
-				a22);
+		double[][] adj = MyMath.adjoint(a00, a01, a02, a10, a11, a12, a20, a21, a22);
 		/*
 		 * ( A[0] A[3] A[4] ) matrix = ( A[3] A[1] A[5] ) ( A[4] A[5] A[2] )
 		 * P=matrix*B
 		 */
-		double p00 = matrix[0] * adj[0][0] + matrix[3] * adj[0][1]
-				+ matrix[4] * adj[0][2];
-		double p01 = matrix[0] * adj[1][0] + matrix[3] * adj[1][1]
-				+ matrix[4] * adj[1][2];
-		double p02 = matrix[0] * adj[2][0] + matrix[3] * adj[2][1]
-				+ matrix[4] * adj[2][2];
-		double p10 = matrix[3] * adj[0][0] + matrix[1] * adj[0][1]
-				+ matrix[5] * adj[0][2];
-		double p11 = matrix[3] * adj[1][0] + matrix[1] * adj[1][1]
-				+ matrix[5] * adj[1][2];
-		double p12 = matrix[3] * adj[2][0] + matrix[1] * adj[2][1]
-				+ matrix[5] * adj[2][2];
-		double p20 = matrix[4] * adj[0][0] + matrix[5] * adj[0][1]
-				+ matrix[2] * adj[0][2];
-		double p21 = matrix[4] * adj[1][0] + matrix[5] * adj[1][1]
-				+ matrix[2] * adj[1][2];
-		double p22 = matrix[4] * adj[2][0] + matrix[5] * adj[2][1]
-				+ matrix[2] * adj[2][2];
+		final double p00 = matrix[0] * adj[0][0] + matrix[3] * adj[0][1] + matrix[4] * adj[0][2];
+		final double p01 = matrix[0] * adj[1][0] + matrix[3] * adj[1][1] + matrix[4] * adj[1][2];
+		final double p02 = matrix[0] * adj[2][0] + matrix[3] * adj[2][1] + matrix[4] * adj[2][2];
+		final double p10 = matrix[3] * adj[0][0] + matrix[1] * adj[0][1] + matrix[5] * adj[0][2];
+		final double p11 = matrix[3] * adj[1][0] + matrix[1] * adj[1][1] + matrix[5] * adj[1][2];
+		final double p12 = matrix[3] * adj[2][0] + matrix[1] * adj[2][1] + matrix[5] * adj[2][2];
+		final double p20 = matrix[4] * adj[0][0] + matrix[5] * adj[0][1] + matrix[2] * adj[0][2];
+		final double p21 = matrix[4] * adj[1][0] + matrix[5] * adj[1][1] + matrix[2] * adj[1][2];
+		final double p22 = matrix[4] * adj[2][0] + matrix[5] * adj[2][1] + matrix[2] * adj[2][2];
 
 		matrix[0] = adj[0][0] * p00 + adj[0][1] * p10 + adj[0][2] * p20;
 		matrix[3] = adj[0][0] * p01 + adj[0][1] * p11 + adj[0][2] * p21;
@@ -477,8 +472,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 		matrix[5] = evalCoeff(coeff, 0, 1) / 2;
 
 		classifyConic(false);
-		if (coeff.length <= 2 && coeff[0].length <= 2
-				&& DoubleUtil.isZero(evalCoeff(coeff, 1, 1))) {
+		if (coeff.length <= 2 && coeff[0].length <= 2 && DoubleUtil.isZero(evalCoeff(coeff, 1, 1))) {
 			type = CONIC_LINE;
 		}
 	}
@@ -508,7 +502,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 
 	/**
 	 * Set this conic from line (type will be CONIC_LINE)
-	 * 
+	 *
 	 * @param line
 	 *            line
 	 */
@@ -531,21 +525,17 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 	}
 
 	@Override
-	public PVariable[] getBotanaVars(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PVariable[] getBotanaVars(GeoElementND geo) throws NoSymbolicParametersException {
 		if (algoParent instanceof SymbolicParametersBotanaAlgo) {
-			return ((SymbolicParametersBotanaAlgo) algoParent)
-					.getBotanaVars(this);
+			return ((SymbolicParametersBotanaAlgo) algoParent).getBotanaVars(this);
 		}
 		return null;
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 		if (algoParent instanceof SymbolicParametersBotanaAlgo) {
-			return ((SymbolicParametersBotanaAlgo) algoParent)
-					.getBotanaPolynomials(this);
+			return ((SymbolicParametersBotanaAlgo) algoParent).getBotanaPolynomials(this);
 		}
 		throw new NoSymbolicParametersException();
 	}
@@ -557,7 +547,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 
 	/**
 	 * dilate this conic from point S by factor r
-	 * 
+	 *
 	 * @param rval
 	 *            ratio
 	 * @param S
@@ -602,7 +592,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 
 	/**
 	 * set this to single point at m location
-	 * 
+	 *
 	 * @param conic
 	 *            conic which will be single point
 	 * @param x
@@ -610,8 +600,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 	 * @param y
 	 *            single point y coord
 	 */
-	static final public void setSinglePoint(GeoConic conic, double x,
-			double y) {
+	public static void setSinglePoint(GeoConic conic, double x, double y) {
 		conic.setMidpoint(x, y);
 		conic.singlePoint();
 	}
@@ -654,7 +643,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 
 	@Override
 	public Function getFunction() {
-		Function definitionFn = GeoLine.definitionAsFunction(getDefinition());
+		Function definitionFn = GeoLine.definitionAsFunction(definition);
 		if (definitionFn != null) {
 			return definitionFn;
 		}
@@ -662,13 +651,10 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 		ExpressionNode expr;
 		if (isRealValuedFunction()) {
 			double coeffY = -2 * matrix[ConicMatrix.Y];
-			ExpressionNode quadratic = x.wrap().power(2)
-					.multiply(matrix[ConicMatrix.XX] / coeffY);
-			ExpressionNode linear = x.wrap()
-					.multiply(2 * matrix[ConicMatrix.X] / coeffY);
+			ExpressionNode quadratic = x.wrap().power(2).multiply(matrix[ConicMatrix.XX] / coeffY);
+			ExpressionNode linear = x.wrap().multiply(2 * matrix[ConicMatrix.X] / coeffY);
 
-			expr = quadratic.plus(linear)
-					.plus(matrix[ConicMatrix.CONST] / coeffY);
+			expr = quadratic.plus(linear).plus(matrix[ConicMatrix.CONST] / coeffY);
 		} else {
 			expr = new ExpressionNode(kernel, Double.NaN);
 		}
@@ -730,8 +716,7 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 
 	@Override
 	public boolean hasTableOfValues() {
-		return !this.isLimitedPath()
-				&& isRealValuedFunction();
+		return !this.isLimitedPath() && isRealValuedFunction();
 	}
 
 	@Override
@@ -743,6 +728,11 @@ public class GeoConic extends GeoConicND implements ConicMirrorable,
 
 	@Override
 	public boolean isPolynomialFunction(boolean forRoot) {
+		return true;
+	}
+
+	@Override
+	public boolean hasPolynomialNumerator(boolean forRoot) {
 		return true;
 	}
 }

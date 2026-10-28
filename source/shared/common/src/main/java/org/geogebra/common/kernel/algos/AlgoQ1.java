@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -23,11 +27,10 @@ import org.geogebra.common.kernel.geos.GeoNumeric;
 
 /**
  * Sort a list. Adapted from AlgoSort
- * 
+ *
  * @author Michael Borcherds
  * @version 2008-02-16
  */
-
 public class AlgoQ1 extends AlgoElement {
 
 	private GeoList inputList;
@@ -123,20 +126,18 @@ public class AlgoQ1 extends AlgoElement {
 			Arrays.sort(sortList);
 
 			switch (size % 4) {
-			case 0:
-				Q1.setValue((sortList[size / 4 - 1]
-						+ sortList[(size + 4) / 4 - 1]) / 2);
-				break;
-			case 1:
-				Q1.setValue((sortList[(size - 1) / 4 - 1]
-						+ sortList[(size + 3) / 4 - 1]) / 2);
-				break;
-			case 2:
-				Q1.setValue(sortList[(size + 2) / 4 - 1]);
-				break;
-			default:
-				Q1.setValue(sortList[(size + 1) / 4 - 1]);
-				break;
+				case 0:
+					Q1.setValue((sortList[size / 4 - 1] + sortList[(size + 4) / 4 - 1]) / 2);
+					break;
+				case 1:
+					Q1.setValue((sortList[(size - 1) / 4 - 1] + sortList[(size + 3) / 4 - 1]) / 2);
+					break;
+				case 2:
+					Q1.setValue(sortList[(size + 2) / 4 - 1]);
+					break;
+				default:
+					Q1.setValue(sortList[(size + 1) / 4 - 1]);
+					break;
 			}
 
 		}
@@ -146,16 +147,14 @@ public class AlgoQ1 extends AlgoElement {
 		// ================================================
 		else if (inputList.size() == freqList.size()) {
 
-			if (!freqList.isDefined()
-					|| (inputList.size() != freqList.size())) {
+			if (!freqList.isDefined() || (inputList.size() != freqList.size())) {
 				Q1.setUndefined();
 				return;
 			}
 
 			// handle bad frequency
 			for (int i = 0; i < freqList.size(); i++) {
-				if (!(freqList.get(i) instanceof NumberValue)
-						|| freqList.get(i).evaluateDouble() < 0) {
+				if (!(freqList.get(i) instanceof NumberValue) || freqList.get(i).evaluateDouble() < 0) {
 					Q1.setUndefined();
 					return;
 				}
@@ -169,8 +168,7 @@ public class AlgoQ1 extends AlgoElement {
 			}
 
 			// extract value and frequency arrays
-			Object[] obj = AlgoMedian.convertValueFreqListToArrays(inputList,
-					freqList);
+			Object[] obj = AlgoMedian.convertValueFreqListToArrays(inputList, freqList);
 			Double[] v = (Double[]) obj[0];
 			Integer[] f = (Integer[]) obj[1];
 			int n = (Integer) obj[2];
@@ -183,24 +181,23 @@ public class AlgoQ1 extends AlgoElement {
 
 			// find Q1
 			switch (n % 4) {
-			case 0:
-				Q1.setValue((AlgoMedian.getValueAt(n / 4 - 1, v, f)
-						+ AlgoMedian.getValueAt((n + 4) / 4 - 1, v, f)) / 2);
-				break;
-			case 1:
-				Q1.setValue((AlgoMedian.getValueAt((n - 1) / 4 - 1, v, f)
-						+ AlgoMedian.getValueAt((n + 3) / 4 - 1, v, f)) / 2);
-				break;
-			case 2:
-				Q1.setValue(AlgoMedian.getValueAt((n + 2) / 4 - 1, v, f));
-				break;
-			default:
-				Q1.setValue(AlgoMedian.getValueAt((n + 1) / 4 - 1, v, f));
-				break;
+				case 0:
+					Q1.setValue((AlgoMedian.getValueAt(n / 4 - 1, v, f)
+									+ AlgoMedian.getValueAt((n + 4) / 4 - 1, v, f))
+							/ 2);
+					break;
+				case 1:
+					Q1.setValue((AlgoMedian.getValueAt((n - 1) / 4 - 1, v, f)
+									+ AlgoMedian.getValueAt((n + 3) / 4 - 1, v, f))
+							/ 2);
+					break;
+				case 2:
+					Q1.setValue(AlgoMedian.getValueAt((n + 2) / 4 - 1, v, f));
+					break;
+				default:
+					Q1.setValue(AlgoMedian.getValueAt((n + 1) / 4 - 1, v, f));
+					break;
 			}
-
 		}
-
 	}
-
 }

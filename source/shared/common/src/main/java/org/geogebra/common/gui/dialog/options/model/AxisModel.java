@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import java.util.ArrayList;
@@ -9,16 +25,16 @@ import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoNumberValue;
+import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.error.ErrorHelper;
 import org.geogebra.common.main.settings.EuclidianSettings;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 public class AxisModel {
-	final static public int AXIS_X = 0;
-	final static public int AXIS_Y = 1;
-	final static public int AXIS_Z = 2;
+	public static final int AXIS_X = 0;
+	public static final int AXIS_Y = 1;
+	public static final int AXIS_Z = 2;
 	protected int axis;
 	protected EuclidianView view;
 	private IAxisModelListener listener;
@@ -29,8 +45,7 @@ public class AxisModel {
 	 * @param view graphics view
 	 * @param axis axis index
 	 */
-	public AxisModel(App app, EuclidianView view, int axis,
-			IAxisModelListener listener) {
+	public AxisModel(App app, EuclidianView view, int axis, IAxisModelListener listener) {
 		this.listener = listener;
 		this.app = app;
 		this.axis = axis;
@@ -39,20 +54,21 @@ public class AxisModel {
 
 	public List<String> getTickOptions() {
 		// ticks
-		return Arrays.asList(" |  '  |  '  |",
+		return Arrays.asList(
+				" |  '  |  '  |",
 				" |  \u00a0 | \u00a0  |", // only major
 				" "); // no ticks
 	}
 
 	public String getAxisName() {
 		switch (axis) {
-		case AXIS_X:
-		default:
-			return "xAxis";
-		case AXIS_Y:
-			return "yAxis";
-		case AXIS_Z:
-			return "zAxis";
+			case AXIS_X:
+			default:
+				return "xAxis";
+			case AXIS_Y:
+				return "yAxis";
+			case AXIS_Z:
+				return "zAxis";
 		}
 	}
 
@@ -67,11 +83,11 @@ public class AxisModel {
 	}
 
 	public GeoNumberValue applyTickDistance(String str, boolean fireChange) {
-		GeoNumberValue value = null;
+		GeoNumeric value = null;
 		final String text = str.trim();
-		if (!"".equals(text)) {
-			value = app.getKernel().getAlgebraProcessor()
-					.evaluateToNumeric(text, ErrorHelper.silent());
+		if (!text.isEmpty()) {
+			value =
+					app.getKernel().getAlgebraProcessor().evaluateToGeoNumeric(text, ErrorHelper.silent());
 		}
 		if (value != null) {
 			EuclidianSettings settings = getSettings();
@@ -96,14 +112,15 @@ public class AxisModel {
 	}
 
 	public List<String> getUnitLabelOptions() {
-		return Arrays.asList("",
-			Unicode.DEGREE_STRING, // degrees
-			Unicode.PI_STRING, // pi
-			"mm",
-			"cm",
-			"m",
-			"km",
-			Unicode.CURRENCY_DOLLAR + "");
+		return Arrays.asList(
+				"",
+				Unicode.DEGREE_STRING, // degrees
+				Unicode.PI_STRING, // pi
+				"mm",
+				"cm",
+				"m",
+				"km",
+				Unicode.CURRENCY_DOLLAR + "");
 	}
 
 	public void showAxis(boolean value) {
@@ -128,8 +145,7 @@ public class AxisModel {
 	public void applyTickDistance(boolean value, boolean fireChange) {
 		EuclidianSettings settings = getSettings();
 		if (settings != null) {
-			settings.setAutomaticAxesNumberingDistance(!value, axis,
-					fireChange);
+			settings.setAutomaticAxesNumberingDistance(!value, axis, fireChange);
 		} else {
 			view.setAutomaticAxesNumberingDistance(!value, axis);
 		}
@@ -142,8 +158,7 @@ public class AxisModel {
 	private EuclidianSettings getSettings() {
 		if (app.getEuclidianView1() == view) {
 			return app.getSettings().getEuclidian(1);
-		} else if (app.hasEuclidianView2EitherShowingOrNot(1)
-				&& app.getEuclidianView2(1) == view) {
+		} else if (app.hasEuclidianView2EitherShowingOrNot(1) && app.getEuclidianView2(1) == view) {
 			return app.getSettings().getEuclidian(2);
 		} else if (app.isEuclidianView3D(view)) {
 			return app.getSettings().getEuclidian(3);
@@ -171,7 +186,7 @@ public class AxisModel {
 
 	public boolean applyAxisLabel(String text, boolean fireChange) {
 
-		boolean changed = false;
+		boolean changed;
 
 		EuclidianSettings settings = getSettings();
 		if (settings != null) {
@@ -257,16 +272,16 @@ public class AxisModel {
 		labels.add("");
 		String defaultLabel;
 		switch (axis) {
-		case AXIS_X:
-			defaultLabel = "x";
-			break;
-		case AXIS_Y:
-		default:
-			defaultLabel = "y";
-			break;
-		case AXIS_Z:
-			defaultLabel = "z";
-			break;
+			case AXIS_X:
+				defaultLabel = "x";
+				break;
+			case AXIS_Y:
+			default:
+				defaultLabel = "y";
+				break;
+			case AXIS_Z:
+				defaultLabel = "z";
+				break;
 		}
 		labels.add(defaultLabel);
 		GeoElement.addAddAllGreekLowerCaseNoPi(labels);
@@ -306,7 +321,6 @@ public class AxisModel {
 
 	public String getAxisDistance() {
 		GeoNumberValue dist = view.getAxesDistanceObjects()[axis];
-		return dist == null ? ""
-				: dist.getLabel(StringTemplate.editTemplate);
+		return dist == null ? "" : dist.getLabel(StringTemplate.editTemplate);
 	}
 }

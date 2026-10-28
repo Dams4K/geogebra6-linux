@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.euclidian;
 
 import org.geogebra.common.euclidian.ScreenReaderAdapter;
@@ -17,7 +33,7 @@ import jsinterop.base.Js;
 /**
  * Widget to allow screen readers to read text from
  * non-accessible areas like EV1, EV3D
- * 
+ *
  * @author laszlo
  *
  */
@@ -28,15 +44,15 @@ public class ReaderWidget extends SimplePanel implements ScreenReaderAdapter {
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param evNo
-	 *            view number
+	 *
+	 * @param idSuffix
+	 *            ID suffix identifying the view
 	 * @param anchor
 	 *            object to focus afterwards
 	 */
-	public ReaderWidget(int evNo, Element anchor) {
+	public ReaderWidget(String idSuffix, Element anchor) {
 		this.anchor = anchor;
-		getElement().setId("screenReader" + evNo);
+		getElement().setId("screenReader" + idSuffix);
 		getElement().addClassName("screenReaderStyle");
 		// can't be tabbed, but can get the focus programmatically
 		getElement().setTabIndex(-1);
@@ -48,7 +64,7 @@ public class ReaderWidget extends SimplePanel implements ScreenReaderAdapter {
 
 	/**
 	 * Set text to read.
-	 * 
+	 *
 	 * @param text
 	 *            to set.
 	 */
@@ -64,7 +80,7 @@ public class ReaderWidget extends SimplePanel implements ScreenReaderAdapter {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param text
 	 *            to read.
 	 */
@@ -72,7 +88,6 @@ public class ReaderWidget extends SimplePanel implements ScreenReaderAdapter {
 		String normalized = new JsString(text).normalize();
 		ScreenReader.debug(normalized);
 		// make sure text isn't truncated by <return>
-		// https://help.geogebra.org/topic/alttext-reading-stops-at-hard-return
 		setText(normalized.replace('\n', ' '));
 		focus();
 		resetWithDelay();
@@ -126,13 +141,14 @@ public class ReaderWidget extends SimplePanel implements ScreenReaderAdapter {
 
 	private boolean isDomSliderActive() {
 		Element activeElement = Dom.getActiveElement();
-		return activeElement != null && activeElement.hasTagName("INPUT")
+		return activeElement != null
+				&& activeElement.hasTagName("INPUT")
 				&& "range".equals(activeElement.getAttribute("type"));
 	}
 
 	private void updateScrollElement() {
 		if (Js.isTruthy(DomGlobal.document.documentElement.scrollTop)
-			&& Js.isFalsy(DomGlobal.document.body.scrollTop)) {
+				&& Js.isFalsy(DomGlobal.document.body.scrollTop)) {
 			scrollElement = DomGlobal.document.documentElement;
 		} else {
 			scrollElement = DomGlobal.document.body;

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.geogebra3D.web.euclidian3D.openGL;
 
 import org.geogebra.common.geogebra3D.euclidian3D.openGL.GLBufferIndices;
@@ -6,11 +22,11 @@ import elemental2.core.Int16Array;
 
 /**
  * buffers for openGL
- * 
+ *
  * @author mathieu
  *
  */
-public class GLBufferIndicesW implements GLBufferIndices {
+public final class GLBufferIndicesW implements GLBufferIndices {
 
 	private Int16Array impl;
 	private boolean isEmpty;
@@ -43,7 +59,6 @@ public class GLBufferIndicesW implements GLBufferIndices {
 		}
 
 		mIndex = 0;
-
 	}
 
 	@Override
@@ -71,7 +86,7 @@ public class GLBufferIndicesW implements GLBufferIndices {
 
 	@Override
 	public short get() {
-		short ret = impl.getAt(mIndex).shortValue();
+		short ret = (short) impl.at(mIndex);
 		mIndex++;
 		return ret;
 	}
@@ -92,12 +107,13 @@ public class GLBufferIndicesW implements GLBufferIndices {
 			return;
 		}
 		for (int i = 0; i < ret.length; i++) {
-			ret[i] = impl.getAt(i).shortValue();
+			double value = impl.at(i);
+			ret[i] = (short) value;
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @return buffer
 	 */
 	public Int16Array getBuffer() {
@@ -115,5 +131,4 @@ public class GLBufferIndicesW implements GLBufferIndices {
 	public void position(int newPosition) {
 		mIndex = newPosition;
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.algebra;
 
 import org.geogebra.common.kernel.algos.GetCommand;
@@ -8,8 +24,8 @@ import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.util.StringUtil;
 
-public class SuggestionSolve extends Suggestion {
-	
+public sealed class SuggestionSolve extends Suggestion permits SuggestionSolveForSymbolic {
+
 	static final Suggestion SINGLE_SOLVE = new SuggestionSolve();
 	private String[] labels;
 
@@ -26,19 +42,19 @@ public class SuggestionSolve extends Suggestion {
 		if (labels == null || labels.length < 1) {
 			return geo.getLabelSimple();
 		}
-		return "{" + StringUtil.join(", ", labels) + "," + geo.getLabelSimple()
-				+ "}";
+		return "{" + StringUtil.join(", ", labels) + "," + geo.getLabelSimple() + "}";
 	}
 
 	@Override
 	protected void runCommands(GeoElementND geo) {
-		geo.getKernel().getAlgebraProcessor().processAlgebraCommand(
-				"Solve[" + getLabels(geo) + "]", false);
+		geo.getKernel()
+				.getAlgebraProcessor()
+				.processAlgebraCommand("Solve[" + getLabels(geo) + "]", false);
 	}
 
 	/**
 	 * Check if Solve is available for the geo and return suitable suggestion
-	 * 
+	 *
 	 * @param geo
 	 *            construction element
 	 * @return suggestion if applicable
@@ -64,12 +80,12 @@ public class SuggestionSolve extends Suggestion {
 
 	private static Suggestion getMulti(GeoElement geo, final String[] vars) {
 
-		GeoElementND prev = geo.getConstruction().getPrevious(geo,
-				var -> Equation.isAlgebraEquation(var)
-						&& subset(((EquationValue) var)
-						.getEquationVariables(), vars)
-						&& !checkDependentAlgo(var,
-						SINGLE_SOLVE, null));
+		GeoElementND prev = geo.getConstruction()
+				.getPrevious(
+						geo,
+						var -> Equation.isAlgebraEquation(var)
+								&& subset(((EquationValue) var).getEquationVariables(), vars)
+								&& !checkDependentAlgo(var, SINGLE_SOLVE, null));
 
 		if (prev != null) {
 			return new SuggestionSolve(prev.getLabelSimple());
@@ -101,8 +117,8 @@ public class SuggestionSolve extends Suggestion {
 	}
 
 	@Override
-	protected boolean allAlgosExist(GetCommand className, GeoElement[] input,
-			boolean[] algosMissing) {
+	protected boolean allAlgosExist(
+			GetCommand className, GeoElement[] input, boolean[] algosMissing) {
 		return className == Commands.Solve || className == Commands.NSolve;
 	}
 }

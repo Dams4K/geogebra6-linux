@@ -1,14 +1,29 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian;
 
-import javax.annotation.Nonnull;
-
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GEllipse2DDouble;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.GLine2D;
 import org.geogebra.common.awt.GShape;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.main.GeoGebraColorConstants;
+import org.jspecify.annotations.NonNull;
 
 public class CurveBoundingBox extends BoundingBox<GEllipse2DDouble> {
 
@@ -38,6 +53,10 @@ public class CurveBoundingBox extends BoundingBox<GEllipse2DDouble> {
 
 	@Override
 	protected void drawHandlers(GGraphics2D g2) {
+		if (isFixed()) {
+			return;
+		}
+
 		int index = 0;
 		g2.setStroke(AwtFactory.getPrototype().newBasicStroke(2));
 		g2.setColor(GeoGebraColorConstants.NEUTRAL_400);
@@ -59,8 +78,8 @@ public class CurveBoundingBox extends BoundingBox<GEllipse2DDouble> {
 	}
 
 	private void connectHandlers(int from, int to, GGraphics2D g2) {
-		line.setLine(handlerCenterX[from], handlerCenterY[from],
-				handlerCenterX[to], handlerCenterY[to]);
+		line.setLine(
+				handlerCenterX[from], handlerCenterY[from], handlerCenterX[to], handlerCenterY[to]);
 		g2.draw(line);
 	}
 
@@ -85,8 +104,7 @@ public class CurveBoundingBox extends BoundingBox<GEllipse2DDouble> {
 	}
 
 	@Override
-	public @Nonnull ShapeManipulationHandler getHitHandler(int x, int y,
-			int hitThreshold) {
+	public @NonNull ShapeManipulationHandler getHitHandler(int x, int y, int hitThreshold) {
 		int hit = hitHandlers(x, y, hitThreshold);
 		if (hit >= 0) {
 			return new ControlPointHandler(hit);

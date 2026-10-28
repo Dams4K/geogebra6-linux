@@ -1,9 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.geogebra.common.BaseUnitTest;
 import org.geogebra.common.kernel.geos.GeoConic;
@@ -14,12 +30,12 @@ import org.geogebra.common.main.settings.config.AppConfigGeometry;
 import org.geogebra.common.main.settings.config.AppConfigGraphing;
 import org.geogebra.common.properties.impl.objects.IsFixedObjectProperty;
 import org.geogebra.common.properties.impl.objects.delegate.NotApplicablePropertyException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class FixUnfixTest extends BaseUnitTest {
+class FixUnfixTest extends BaseUnitTest {
 
 	@Test
-	public void testDefaultFixForFunctionGraphing() {
+	void testDefaultFixForFunctionGraphing() {
 		getApp().setConfig(new AppConfigGraphing());
 		assertTrue(getApp().getConfig().isObjectDraggingRestricted());
 
@@ -33,7 +49,7 @@ public class FixUnfixTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testDefaultFixForFunctionGeometry() {
+	void testDefaultFixForFunctionGeometry() {
 		getApp().setConfig(new AppConfigGeometry());
 		assertFalse(getApp().getSettings().getAlgebra().isEquationChangeByDragRestricted());
 
@@ -47,7 +63,7 @@ public class FixUnfixTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testUnfixForFunctionGraphing() {
+	void testUnfixForFunctionGraphing() {
 		getApp().setConfig(new AppConfigGraphing());
 
 		GeoFunction function = add("f(x) = x+1");
@@ -64,7 +80,7 @@ public class FixUnfixTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testUnfixForFunctionGeometry() {
+	void testUnfixForFunctionGeometry() {
 		getApp().setConfig(new AppConfigGeometry());
 
 		GeoFunction function = add("f(x) = x+1");
@@ -81,23 +97,24 @@ public class FixUnfixTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testFixHiddenGraphing() {
+	void testFixHiddenGraphing() {
 		getApp().setConfig(new AppConfigGraphing());
 
 		GeoFunction function = add("f(x) = x+1");
 		GeoConic conic = add("x*x+y*y=5");
 		GeoLine line = add("y=5");
 
-		GeoElement[] geos = new GeoElement[]{function, conic, line};
+		GeoElement[] geos = new GeoElement[] {function, conic, line};
 
 		for (GeoElement geo : geos) {
-			assertThrows(NotApplicablePropertyException.class,
+			assertThrows(
+					NotApplicablePropertyException.class,
 					() -> new IsFixedObjectProperty(getLocalization(), geo));
 		}
 	}
 
 	@Test
-	public void testFixHiddenGeometry() {
+	void testFixHiddenGeometry() {
 		getApp().setConfig(new AppConfigGeometry());
 
 		GeoFunction function = add("f(x) = x+1");
@@ -114,7 +131,7 @@ public class FixUnfixTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testFixedPropertyFunctionInGraphing() {
+	void testFixedPropertyFunctionInGraphing() {
 		getApp().setConfig(new AppConfigGraphing());
 		assertTrue(getApp().getSettings().getAlgebra().isEquationChangeByDragRestricted());
 
@@ -122,7 +139,7 @@ public class FixUnfixTest extends BaseUnitTest {
 		GeoConic conic = add("x*x+y*y=5");
 		GeoLine line = add("y=5");
 		FixObjectModel fixObjectModel = getModel();
-		Object[] geos = new Object[]{function, conic, line};
+		Object[] geos = new Object[] {function, conic, line};
 
 		fixObjectModel.setGeos(geos);
 		fixObjectModel.updateProperties();
@@ -134,7 +151,7 @@ public class FixUnfixTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testFixedPropertyFunctionInGeometry() {
+	void testFixedPropertyFunctionInGeometry() {
 		getApp().setConfig(new AppConfigGeometry());
 		assertFalse(getApp().getSettings().getAlgebra().isEquationChangeByDragRestricted());
 
@@ -142,7 +159,7 @@ public class FixUnfixTest extends BaseUnitTest {
 		GeoConic conic = add("x*x+y*y=5");
 		GeoLine line = add("y=5");
 		FixObjectModel fixObjectModel = getModel();
-		Object[] geos = new Object[]{function, conic, line};
+		Object[] geos = new Object[] {function, conic, line};
 
 		fixObjectModel.setGeos(geos);
 		fixObjectModel.updateProperties();
@@ -154,17 +171,18 @@ public class FixUnfixTest extends BaseUnitTest {
 	}
 
 	private FixObjectModel getModel() {
-		return new FixObjectModel(new BooleanOptionModel.IBooleanOptionListener() {
-			@Override
-			public void updateCheckbox(boolean isEqual) {
-				// stub
-			}
+		return new FixObjectModel(
+				new BooleanOptionModel.IBooleanOptionListener() {
+					@Override
+					public void updateCheckbox(boolean isEqual) {
+						// stub
+					}
 
-			@Override
-			public Object updatePanel(Object[] geos2) {
-				return null;
-			}
-		}, getApp());
+					@Override
+					public Object updatePanel(Object[] geos2) {
+						return null;
+					}
+				},
+				getApp());
 	}
-
 }

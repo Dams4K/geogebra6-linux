@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoMidpointConic.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 11. November 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -32,7 +30,7 @@ public class AlgoCenterConic extends AlgoCenterQuadricND {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -59,24 +57,24 @@ public class AlgoCenterConic extends AlgoCenterQuadricND {
 	public void setCoords() {
 
 		switch (c.type) {
-		case GeoConicNDConstants.CONIC_CIRCLE:
-		case GeoConicNDConstants.CONIC_ELLIPSE:
-		case GeoConicNDConstants.CONIC_HYPERBOLA:
-		case GeoConicNDConstants.CONIC_SINGLE_POINT:
-		case GeoConicNDConstants.CONIC_INTERSECTING_LINES:
-			GeoVec2D b = ((GeoConicND) c).getB();
-			setCoords(b.getX(), b.getY());
-			break;
+			case GeoConicNDConstants.CONIC_CIRCLE:
+			case GeoConicNDConstants.CONIC_ELLIPSE:
+			case GeoConicNDConstants.CONIC_HYPERBOLA:
+			case GeoConicNDConstants.CONIC_SINGLE_POINT:
+			case GeoConicNDConstants.CONIC_INTERSECTING_LINES:
+				GeoVec2D b = ((GeoConicND) c).getB();
+				setCoords(b.getX(), b.getY());
+				break;
 
-		default:
-			// midpoint undefined
-			midpoint.setUndefined();
+			default:
+				// midpoint undefined
+				midpoint.setUndefined();
 		}
 	}
 
 	/**
 	 * set the coords of the midpoint
-	 * 
+	 *
 	 * @param x
 	 *            x-coord
 	 * @param y
@@ -85,5 +83,4 @@ public class AlgoCenterConic extends AlgoCenterQuadricND {
 	protected void setCoords(double x, double y) {
 		midpoint.setCoords(x, y, 1.0d);
 	}
-
 }

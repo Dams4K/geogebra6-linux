@@ -1,6 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.arithmetic.simplifiers;
 
-import static org.geogebra.common.kernel.arithmetic.simplifiers.ExpressionValueUtils.*;
+import static org.geogebra.common.kernel.arithmetic.simplifiers.ExpressionValueUtils.getLeftMultiplier;
+import static org.geogebra.common.kernel.arithmetic.simplifiers.ExpressionValueUtils.isDivNode;
+import static org.geogebra.common.kernel.arithmetic.simplifiers.ExpressionValueUtils.isIntegerValue;
+import static org.geogebra.common.kernel.arithmetic.simplifiers.ExpressionValueUtils.isMultiplyNode;
 import static org.geogebra.common.util.DoubleUtil.isInteger;
 
 import org.geogebra.common.kernel.Kernel;
@@ -58,18 +77,13 @@ public class CancelGCDInFraction implements SimplifyNode {
 				multiplier *= getLeftMultiplier(leftTree.getRightTree());
 				nodeType = NodeType.NEGATIVE_MULTIPLIED_NUMERATOR;
 			} else {
-				nodeType = isTrivialMultiplier()
-						? NodeType.SIMPLE_FRACTION
-						: NodeType.MULTIPLIED_NUMERATOR;
+				nodeType = isTrivialMultiplier() ? NodeType.SIMPLE_FRACTION : NodeType.MULTIPLIED_NUMERATOR;
 			}
 		}
 
-		if (isMultiplyNode(node)
-				&& isDivNode(node.getRightTree())) {
+		if (isMultiplyNode(node) && isDivNode(node.getRightTree())) {
 			multiplier = getLeftMultiplier(node);
-			nodeType = isTrivialMultiplier()
-					? NodeType.SIMPLE_FRACTION
-					: NodeType.MULTIPLIED_FRACTION;
+			nodeType = isTrivialMultiplier() ? NodeType.SIMPLE_FRACTION : NodeType.MULTIPLIED_FRACTION;
 		}
 		return nodeType != NodeType.INVALID;
 	}
@@ -81,17 +95,17 @@ public class CancelGCDInFraction implements SimplifyNode {
 	@Override
 	public ExpressionNode apply(ExpressionNode node) {
 		switch (nodeType) {
-		case MULTIPLIED_FRACTION:
-			return applyForMultipliedFraction(node);
-		case MULTIPLIED_NUMERATOR:
-			return applyForMultipliedNumerator(node);
-		case NEGATIVE_MULTIPLIED_NUMERATOR:
-			return applyForNegativeMultipliedNumerator(node);
-		case SIMPLE_FRACTION:
-			return applyForSimpleFraction(node);
-		case INVALID:
-		default:
-			return node;
+			case MULTIPLIED_FRACTION:
+				return applyForMultipliedFraction(node);
+			case MULTIPLIED_NUMERATOR:
+				return applyForMultipliedNumerator(node);
+			case NEGATIVE_MULTIPLIED_NUMERATOR:
+				return applyForNegativeMultipliedNumerator(node);
+			case SIMPLE_FRACTION:
+				return applyForSimpleFraction(node);
+			case INVALID:
+			default:
+				return node;
 		}
 	}
 
@@ -100,8 +114,7 @@ public class CancelGCDInFraction implements SimplifyNode {
 		ExpressionNode canceledNumerator = utils.newNode(
 				utils.newDouble(multiplier),
 				Operation.MULTIPLY,
-				numerator.getRightTree().getRightTree()
-		);
+				numerator.getRightTree().getRightTree());
 		ExpressionNode node1 = utils.newDiv(canceledNumerator, node.getRightTree());
 
 		return applyForMultipliedNumerator(node1);
@@ -124,10 +137,11 @@ public class CancelGCDInFraction implements SimplifyNode {
 	}
 
 	private ExpressionNode applyForMultipliedFraction(ExpressionNode node) {
-		GCDInFraction gcd = new GCDInFraction(utils, getLeftMultiplier(node),
-				(long) node.getRightTree().getRightTree().evaluateDouble());
+		GCDInFraction gcd = new GCDInFraction(utils, getLeftMultiplier(node), (long)
+				node.getRightTree().getRightTree().evaluateDouble());
 
-		return utils.div(utils.multiplyR(node.getRightTree().getLeftTree(), gcd.reducedNumerator()),
+		return utils.div(
+				utils.multiplyR(node.getRightTree().getLeftTree(), gcd.reducedNumerator()),
 				gcd.reducedDenominatorValue());
 	}
 
@@ -138,8 +152,8 @@ public class CancelGCDInFraction implements SimplifyNode {
 		return getCanceledFraction(node, numerator, denominator);
 	}
 
-	private ExpressionNode getCanceledFraction(ExpressionNode node, ExpressionNode node1,
-			ExpressionNode node2) {
+	private ExpressionNode getCanceledFraction(
+			ExpressionNode node, ExpressionNode node1, ExpressionNode node2) {
 		ExpressionNode canceledFraction = null;
 		if (isIntegerValue(node1) && isIntegerValue(node2)) {
 			return simplifyConstantFraction(node, node1, node2);
@@ -152,8 +166,8 @@ public class CancelGCDInFraction implements SimplifyNode {
 		return canceledFraction != null ? canceledFraction : node;
 	}
 
-	private ExpressionNode simplifyConstantFraction(ExpressionNode node, ExpressionNode node1,
-			ExpressionNode node2) {
+	private ExpressionNode simplifyConstantFraction(
+			ExpressionNode node, ExpressionNode node1, ExpressionNode node2) {
 		int n = (int) node1.evaluateDouble();
 		int m = (int) node2.evaluateDouble();
 		GCDInFraction gcd = new GCDInFraction(utils, n, m);
@@ -194,8 +208,8 @@ public class CancelGCDInFraction implements SimplifyNode {
 		return node1.divide(canceled);
 	}
 
-	private ExpressionNode cancel(ExpressionNode node1, ExpressionNode node2,
-			double evalCanceled, double eval) {
+	private ExpressionNode cancel(
+			ExpressionNode node1, ExpressionNode node2, double evalCanceled, double eval) {
 		GCDInFraction gcd = new GCDInFraction(utils, (long) evalCanceled, (long) eval);
 		if (gcd.isEqual(-1)) {
 			return null;
@@ -215,17 +229,15 @@ public class CancelGCDInFraction implements SimplifyNode {
 							: utils.newMultiply(utils.newDouble(div), node1.getLeftTree());
 				}
 			} else {
-				return new ExpressionNode(kernel,
-						new MyDouble(kernel, 1), Operation.DIVIDE, node1.getRight());
+				return new ExpressionNode(
+						kernel, new MyDouble(kernel, 1), Operation.DIVIDE, node1.getRight());
 			}
 		} else if (!gcd.isEqual(1)) {
 			double v = eval / gcd.gcd();
 			double canceledDominator = node2.divide(gcd.gcd()).evaluateDouble();
-			ExpressionValue multRArg = node1.getLeft().isLeaf() ? node1.getRight()
-					: node1.getLeft();
-			return utils.newDiv(utils.newDouble(v).wrap().multiplyR(multRArg),
-					utils.newDouble(canceledDominator)
-			);
+			ExpressionValue multRArg = node1.getLeft().isLeaf() ? node1.getRight() : node1.getLeft();
+			return utils.newDiv(
+					utils.newDouble(v).wrap().multiplyR(multRArg), utils.newDouble(canceledDominator));
 		}
 		return null;
 	}

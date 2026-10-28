@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoJoinPointsSegment
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 21. August 2003
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -30,7 +28,7 @@ import org.geogebra.common.kernel.matrix.CoordMatrix;
 /**
  *
  * @author ggb3D
- * 
+ *
  */
 public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
 
@@ -50,7 +48,7 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
 
 	/**
 	 * Creates new AlgoIntersectLinePlane
-	 * 
+	 *
 	 * @param cons
 	 *            the construction
 	 * @param plane
@@ -60,8 +58,8 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
 	 * @param addToCons
 	 *            whether to add to cons
 	 */
-	AlgoIntersectPlaneQuadric(Construction cons, GeoCoordSys2D plane,
-			GeoQuadricND quadric, boolean addToCons) {
+	AlgoIntersectPlaneQuadric(
+			Construction cons, GeoCoordSys2D plane, GeoQuadricND quadric, boolean addToCons) {
 
 		super(cons, addToCons);
 
@@ -78,7 +76,7 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
 
 	/**
 	 * Creates new AlgoIntersectLinePlane
-	 * 
+	 *
 	 * @param cons
 	 *            the construction
 	 * @param plane
@@ -86,23 +84,20 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
 	 * @param quadric
 	 *            quadric
 	 */
-	AlgoIntersectPlaneQuadric(Construction cons, GeoCoordSys2D plane,
-			GeoQuadricND quadric) {
+	AlgoIntersectPlaneQuadric(Construction cons, GeoCoordSys2D plane, GeoQuadricND quadric) {
 
 		this(cons, plane, quadric, true);
-
 	}
 
 	/**
 	 * end of constructor for this algo
 	 */
 	protected void end() {
-		setInputOutput(new GeoElement[] { plane.toGeoElement(), quadric },
-				new GeoElement[] { conic });
+		setInputOutput(new GeoElement[] {plane.toGeoElement(), quadric}, new GeoElement[] {conic});
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cons1
 	 *            construction
 	 * @return new conic for intersection
@@ -113,7 +108,7 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
 
 	/**
 	 * return the intersection
-	 * 
+	 *
 	 * @return the intersection
 	 */
 	public GeoConic3D getConic() {
@@ -133,21 +128,19 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
 		intersectPlaneQuadric(plane, quadric, conic);
 	}
 
-	private void intersectPlaneQuadric(GeoCoordSys2D inputPlane,
-			GeoQuadricND inputQuad, GeoConic3D outputConic) {
+	private void intersectPlaneQuadric(
+			GeoCoordSys2D inputPlane, GeoQuadricND inputQuad, GeoConic3D outputConic) {
 		if (parametricMatrix == null) {
 			parametricMatrix = new CoordMatrix(4, 3);
 		}
 		CoordMatrix qm = inputQuad.getSymmetricMatrix();
-		CoordMatrix pm = inputPlane.getCoordSys()
-				.getParametricMatrix(parametricMatrix);
+		CoordMatrix pm = inputPlane.getCoordSys().getParametricMatrix(parametricMatrix);
 
 		// sets the conic matrix from plane and quadric matrix
 		cm.setMul(tmpMatrix.setMulT1(pm, qm), pm);
 
 		outputConic.setCoordSys(inputPlane.getCoordSys());
 		outputConic.setMatrix(cm);
-
 	}
 
 	@Override
@@ -156,13 +149,12 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(getLoc().getPlain("IntersectionCurveOfAB",
-				plane.getLabel(tpl), quadric.getLabel(tpl)));
+		sb.append(
+				getLoc().getPlain("IntersectionCurveOfAB", plane.getLabel(tpl), quadric.getLabel(tpl)));
 
 		return sb.toString();
 	}
-
 }

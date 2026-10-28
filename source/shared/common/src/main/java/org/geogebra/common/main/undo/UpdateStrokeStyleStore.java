@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main.undo;
 
 import static org.geogebra.common.main.undo.ConstructionActionExecutor.DEL;
@@ -48,7 +64,6 @@ public class UpdateStrokeStyleStore extends StrokeHelper {
 	 * adds the updated strokes (coloring/thickness etc) to the StrokeSplitHelper object
 	 * @param updatedStrokes newly created stroke with the modifications
 	 */
-
 	public void addUpdatedStrokes(List<GeoElement> updatedStrokes) {
 		this.updatedStrokes = updatedStrokes;
 		modifiedStateXML = getStrokesXML(updatedStrokes);
@@ -58,16 +73,14 @@ public class UpdateStrokeStyleStore extends StrokeHelper {
 	 * stores an undo for the stroke style update
 	 */
 	public void storeStrokeStyleUpdateUndo() {
-		undoManager.buildAction(ActionType.UPDATE, toStyledStrokeArray())
+		undoManager
+				.buildAction(ActionType.UPDATE, toStyledStrokeArray())
 				.withUndo(ActionType.UPDATE, toUnStyledStrokeArray())
 				.withLabels(getLabelsThatNeedRemoval())
 				.storeAndNotifyUnsaved();
 	}
 
 	private String[] getLabelsThatNeedRemoval() {
-		return updatedStrokes
-				.stream()
-				.map(s -> DEL + s.getLabelSimple())
-				.toArray(String[]::new);
+		return updatedStrokes.stream().map(s -> DEL + s.getLabelSimple()).toArray(String[]::new);
 	}
 }

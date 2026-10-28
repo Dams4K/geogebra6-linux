@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.sound;
 
 import java.util.HashMap;
@@ -39,7 +55,7 @@ public class SoundManagerW implements SoundManager {
 	public void pauseResumeSound(boolean resume) {
 		FunctionSoundW.getInstance().pause(resume);
 		mp3active = resume;
-		for (HTMLAudioElement element: geoAudioElements.values()) {
+		for (HTMLAudioElement element : geoAudioElements.values()) {
 			if (resume) {
 				element.play();
 			} else {
@@ -49,8 +65,7 @@ public class SoundManagerW implements SoundManager {
 	}
 
 	@Override
-	public void playSequenceNote(int note, double duration, int instrument,
-			int velocity) {
+	public void playSequenceNote(int note, double duration, int instrument, int velocity) {
 		midiNotSupported();
 	}
 
@@ -117,7 +132,7 @@ public class SoundManagerW implements SoundManager {
 
 	/**
 	 * 'canplay', 'timeupdate' and 'ended' handler for audio element from GeoAudio.
-	 * 
+	 *
 	 * @param audio
 	 *            Element that is ready to play.
 	 * @param geoAudio
@@ -184,10 +199,9 @@ public class SoundManagerW implements SoundManager {
 	}
 
 	@Override
-	public void playFunction(GeoFunction geoFunction, double min, double max,
-			int sampleRate, int bitDepth) {
-		FunctionSoundW.getInstance().playFunction(geoFunction, min, max, sampleRate,
-				bitDepth);
+	public void playFunction(
+			GeoFunction geoFunction, double min, double max, int sampleRate, int bitDepth) {
+		FunctionSoundW.getInstance().playFunction(geoFunction, min, max, sampleRate, bitDepth);
 	}
 
 	private void onUrlError() {

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.advanced;
@@ -39,8 +43,12 @@ public class AlgoDynamicCoordinates3D extends AlgoDynamicCoordinates {
 	 * @param z
 	 *            z-coord
 	 */
-	public AlgoDynamicCoordinates3D(Construction cons, String label,
-			GeoPointND arg, GeoNumberValue x, GeoNumberValue y,
+	public AlgoDynamicCoordinates3D(
+			Construction cons,
+			String label,
+			GeoPointND arg,
+			GeoNumberValue x,
+			GeoNumberValue y,
 			GeoNumberValue z) {
 		super(cons);
 		this.P = arg;
@@ -79,14 +87,16 @@ public class AlgoDynamicCoordinates3D extends AlgoDynamicCoordinates {
 		double yCoord = y.getDouble();
 		double zCoord = z.getDouble();
 
-		if (Double.isNaN(xCoord) || Double.isInfinite(xCoord)
-				|| Double.isNaN(yCoord) || Double.isInfinite(yCoord)
-				|| Double.isNaN(zCoord) || Double.isInfinite(zCoord)) {
+		if (Double.isNaN(xCoord)
+				|| Double.isInfinite(xCoord)
+				|| Double.isNaN(yCoord)
+				|| Double.isInfinite(yCoord)
+				|| Double.isNaN(zCoord)
+				|| Double.isInfinite(zCoord)) {
 			M.setUndefined();
 			return;
 		}
 
 		M.setCoords(xCoord, yCoord, zCoord, 1.0);
 	}
-
 }

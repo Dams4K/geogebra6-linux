@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.main;
 
 import java.util.List;
@@ -27,7 +43,7 @@ import org.gwtproject.user.client.DOM;
 
 import elemental2.dom.DomGlobal;
 
-public class EmbedFactory implements AsyncOperation<URLStatus>, MaterialCallbackI {
+public final class EmbedFactory implements AsyncOperation<URLStatus>, MaterialCallbackI {
 	private URLChecker urlChecker;
 	final AppW app;
 	private Runnable hideDialogCallback;
@@ -52,8 +68,7 @@ public class EmbedFactory implements AsyncOperation<URLStatus>, MaterialCallback
 	}
 
 	private void initURLChecker() {
-		if (DomGlobal.location.host != null
-				&& DomGlobal.location.host.contains("geogebra")) {
+		if (DomGlobal.location.host != null && DomGlobal.location.host.contains("geogebra")) {
 			urlChecker = new EmbedURLChecker(app.getAppletParameters().getParamBackendURL());
 		} else {
 			urlChecker = new MarvlURLChecker();
@@ -135,8 +150,7 @@ public class EmbedFactory implements AsyncOperation<URLStatus>, MaterialCallback
 		if (obj.getErrorKey() == null) {
 			GeoElement geo = createAndShowEmbeddedElement(obj.getUrl());
 			runHideCallback();
-			app.getActiveEuclidianView()
-					.getEuclidianController().selectAndShowSelectionUI(geo);
+			app.getActiveEuclidianView().getEuclidianController().selectAndShowSelectionUI(geo);
 		} else {
 			mediaInputPanel.showError(obj.getErrorKey());
 		}

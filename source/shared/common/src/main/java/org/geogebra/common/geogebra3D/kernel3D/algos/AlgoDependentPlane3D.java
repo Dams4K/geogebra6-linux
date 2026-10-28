@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoDependentLine.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 29. October 2001
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -45,7 +43,7 @@ public class AlgoDependentPlane3D extends AlgoElement3D {
 
 	/**
 	 * Creates new AlgoDependentPlane
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param equ
@@ -68,8 +66,7 @@ public class AlgoDependentPlane3D extends AlgoElement3D {
 			}
 
 			// check that coefficient is a number: this may throw an exception
-			ExpressionValue eval = ev[i]
-					.evaluate(StringTemplate.defaultTemplate);
+			ExpressionValue eval = ev[i].evaluate(StringTemplate.defaultTemplate);
 			((NumberValue) eval).getDouble();
 		}
 
@@ -92,8 +89,7 @@ public class AlgoDependentPlane3D extends AlgoElement3D {
 	// for AlgoElement
 	@Override
 	protected void setInputOutput() {
-		input = equation.getGeoElementVariables(
-				SymbolicMode.NONE);
+		input = equation.getGeoElementVariables(SymbolicMode.NONE);
 
 		setOnlyOutput(p);
 		setDependencies(); // done by AlgoElement
@@ -112,8 +108,11 @@ public class AlgoDependentPlane3D extends AlgoElement3D {
 
 		try {
 			ExpressionNode exp = p.getDefinition();
-			p.setEquation(ev[0].evaluateDouble(), ev[1].evaluateDouble(),
-					ev[2].evaluateDouble(), ev[3].evaluateDouble());
+			p.setEquation(
+					ev[0].evaluateDouble(),
+					ev[1].evaluateDouble(),
+					ev[2].evaluateDouble(),
+					ev[3].evaluateDouble());
 			p.setDefinition(exp);
 		} catch (Throwable e) {
 			p.setUndefined();
@@ -121,7 +120,7 @@ public class AlgoDependentPlane3D extends AlgoElement3D {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		if (p.getDefinition() != null) {
 			return p.getDefinition().toString(tpl);
 		}
@@ -133,11 +132,12 @@ public class AlgoDependentPlane3D extends AlgoElement3D {
 		if (lhs0z == null) {
 			ExpressionNode lhs = equation.getLHS();
 			FunctionVariable z = new FunctionVariable(kernel, "z");
-			lhs0z = new ExpressionNode(kernel, lhs, Operation.PLUS,
-					new ExpressionNode(kernel, new ExpressionNode(kernel, 0),
-							Operation.MULTIPLY, z));
+			lhs0z = new ExpressionNode(
+					kernel,
+					lhs,
+					Operation.PLUS,
+					new ExpressionNode(kernel, new ExpressionNode(kernel, 0), Operation.MULTIPLY, z));
 		}
 		return equation.toString(tpl, lhs0z);
-
 	}
 }

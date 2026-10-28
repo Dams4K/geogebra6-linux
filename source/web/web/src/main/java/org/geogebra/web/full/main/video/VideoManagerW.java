@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.main.video;
 
 import java.util.ArrayList;
@@ -12,12 +28,12 @@ import org.geogebra.common.main.App;
 import org.geogebra.common.media.MediaURLParser;
 import org.geogebra.common.media.VideoManager;
 import org.geogebra.common.media.VideoURL;
+import org.geogebra.web.awt.MyImageW;
 import org.geogebra.web.full.gui.layout.DockPanelW;
 import org.geogebra.web.full.gui.layout.panels.EuclidianDockPanelW;
 import org.geogebra.web.full.main.AppWFull;
 import org.geogebra.web.html5.css.GuiResourcesSimple;
 import org.geogebra.web.html5.gui.util.Dom;
-import org.geogebra.web.html5.main.MyImageW;
 import org.gwtproject.dom.client.Element;
 
 import elemental2.dom.HTMLImageElement;
@@ -28,10 +44,10 @@ import elemental2.dom.HTMLImageElement;
  * @author laszlo
  *
  */
-public class VideoManagerW implements VideoManager {
+public final class VideoManagerW implements VideoManager {
 
-	private final static int DEFAULT_WIDTH = 420;
-	private final static int DEFAULT_HEIGHT = 365;
+	private static final int DEFAULT_WIDTH = 420;
+	private static final int DEFAULT_HEIGHT = 365;
 
 	private AppWFull app;
 
@@ -64,15 +80,14 @@ public class VideoManagerW implements VideoManager {
 		img.setAttribute("crossorigin", "anonymous");
 		img.src = app.getHost() + geo.getPreviewUrl();
 		img.addEventListener("load", (event) -> {
-				final MyImage prev = new MyImageW(img, false);
-				geo.setPreview(prev);
-				app.getActiveEuclidianView().updateAllDrawablesForView(true);
+			final MyImage prev = new MyImageW(img, false);
+			geo.setPreview(prev);
+			app.getActiveEuclidianView().updateAllDrawablesForView(true);
 		});
 
 		img.addEventListener("error", (event) -> {
-				img.src = GuiResourcesSimple.INSTANCE.mow_video_player()
-						.getSafeUri().asString();
-				app.getActiveEuclidianView().updateAllDrawablesForView(true);
+			img.src = GuiResourcesSimple.INSTANCE.mow_video_player().getSafeUri().asString();
+			app.getActiveEuclidianView().updateAllDrawablesForView(true);
 		});
 	}
 
@@ -92,7 +107,7 @@ public class VideoManagerW implements VideoManager {
 
 		final AbstractVideoPlayer player = !isOnline()
 				? createPlayerOffline(video, players.size())
-				: createPlayer(video, players.size()) ;
+				: createPlayer(video, players.size());
 
 		addPlayerToFrame(video, player);
 	}
@@ -104,8 +119,8 @@ public class VideoManagerW implements VideoManager {
 
 		players.put(video, player);
 
-		DockPanelW panel = app.getGuiManager().getLayout().getDockManager()
-				.getPanel(App.VIEW_EUCLIDIAN);
+		DockPanelW panel =
+				app.getGuiManager().getLayout().getDockManager().getPanel(App.VIEW_EUCLIDIAN);
 		((EuclidianDockPanelW) panel).getEuclidianPanel().add(player);
 	}
 
@@ -115,16 +130,16 @@ public class VideoManagerW implements VideoManager {
 
 	private AbstractVideoPlayer createPlayer(DrawVideo video, int id) {
 		switch (video.getVideo().getFormat()) {
-		case VIDEO_YOUTUBE:
-			return new YouTubePlayer(video, id);
-		case VIDEO_HTML5:
-			return new HTML5Player(video, id);
-		case VIDEO_MEBIS:
-			return new MebisPlayer(video, id);
-		case AUDIO_HTML5:
-		case NONE:
-		default:
-			return null;
+			case VIDEO_YOUTUBE:
+				return new YouTubePlayer(video, id);
+			case VIDEO_HTML5:
+				return new HTML5Player(video, id);
+			case VIDEO_MEBIS:
+				return new MebisPlayer(video, id);
+			case AUDIO_HTML5:
+			case NONE:
+			default:
+				return null;
 		}
 	}
 
@@ -178,6 +193,9 @@ public class VideoManagerW implements VideoManager {
 		players.clear();
 	}
 
+	/**
+	 * @return whether the network is currently online
+	 */
 	public boolean isOnline() {
 		return app.getNetworkOperation().isOnline();
 	}

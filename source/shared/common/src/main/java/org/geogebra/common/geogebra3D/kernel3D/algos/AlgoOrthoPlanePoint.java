@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -30,7 +34,7 @@ public abstract class AlgoOrthoPlanePoint extends AlgoOrthoPlane {
 	private GeoElement secondInput; // input
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -40,14 +44,14 @@ public abstract class AlgoOrthoPlanePoint extends AlgoOrthoPlane {
 	 * @param secondInput
 	 *            orthogonal element
 	 */
-	public AlgoOrthoPlanePoint(Construction cons, String label,
-			GeoPointND point, GeoElement secondInput) {
+	public AlgoOrthoPlanePoint(
+			Construction cons, String label, GeoPointND point, GeoElement secondInput) {
 		super(cons);
 		this.point = point;
 		this.secondInput = secondInput;
 
-		setInputOutput(new GeoElement[] { (GeoElement) point, secondInput },
-				new GeoElement[] { getPlane() });
+		setInputOutput(
+				new GeoElement[] {(GeoElement) point, secondInput}, new GeoElement[] {getPlane()});
 
 		// compute plane
 		compute();
@@ -65,7 +69,7 @@ public abstract class AlgoOrthoPlanePoint extends AlgoOrthoPlane {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return second input
 	 */
 	protected GeoElement getSecondInput() {
@@ -73,9 +77,8 @@ public abstract class AlgoOrthoPlanePoint extends AlgoOrthoPlane {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
-		return getLoc().getPlain("PlaneThroughAPerpendicularToB",
-				point.getLabel(tpl), secondInput.getLabel(tpl));
-
+	public final String toString(StringTemplate tpl) {
+		return getLoc()
+				.getPlain("PlaneThroughAPerpendicularToB", point.getLabel(tpl), secondInput.getLabel(tpl));
 	}
 }

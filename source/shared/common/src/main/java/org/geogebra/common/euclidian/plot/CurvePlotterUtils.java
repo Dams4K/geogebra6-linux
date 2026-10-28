@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.plot;
 
 import java.util.List;
@@ -19,8 +35,8 @@ public class CurvePlotterUtils {
 	 *            coordinate system to be applied on 2D points
 	 * @return last point drawn
 	 */
-	static public double[] draw(PathPlotter gp,
-			List<? extends MyPoint> pointList, CoordSys transformSys) {
+	public static double[] draw(
+			PathPlotter gp, List<? extends MyPoint> pointList, CoordSys transformSys) {
 		double[] coords = gp.newDoubleArray();
 		int size = pointList.size();
 		boolean supports = gp.supports(transformSys);
@@ -59,8 +75,7 @@ public class CurvePlotterUtils {
 		return coords;
 	}
 
-	private static double[] moveTo(PathPlotter gp, double[] coords,
-			double[] previousLastMove) {
+	private static double[] moveTo(PathPlotter gp, double[] coords, double[] previousLastMove) {
 		double[] lastMove;
 		if (previousLastMove != null) {
 			gp.lineTo(previousLastMove);

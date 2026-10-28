@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D;
 
 import org.geogebra.common.awt.GPoint;
@@ -8,7 +24,7 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * class for rays, spheres, etc. that can hit 3D objects in 3D view
- * 
+ *
  * @author Proprietaire
  *
  */
@@ -37,6 +53,7 @@ public class Hitting {
 	 * current threshold
 	 */
 	protected int threshold;
+
 	private boolean clippedValuesUpdated;
 
 	/** start point x */
@@ -51,6 +68,7 @@ public class Hitting {
 	public double y1;
 	/** end point z */
 	public double z1;
+
 	private double vx;
 	private double vy;
 	private double vz;
@@ -60,7 +78,7 @@ public class Hitting {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param view
 	 *            3D view
 	 */
@@ -76,12 +94,11 @@ public class Hitting {
 		originScreen.setW(1);
 
 		directionScreen = new Coords(4);
-
 	}
 
 	/**
 	 * set the hits
-	 * 
+	 *
 	 * @param mouseLoc
 	 *            mouse location
 	 * @param threshold
@@ -95,7 +112,7 @@ public class Hitting {
 
 	/**
 	 * calculate clipped x, y, z values if not already updated
-	 * 
+	 *
 	 */
 	public void calculateClippedValues() {
 
@@ -119,8 +136,7 @@ public class Hitting {
 		vx = x1 - x0;
 		vy = y1 - y0;
 		vz = z1 - z0;
-		if (vx * direction.getX() < 0 || vy * direction.getY() < 0
-				|| vz * direction.getZ() < 0) {
+		if (vx * direction.getX() < 0 || vy * direction.getY() < 0 || vz * direction.getZ() < 0) {
 			x0 = Double.NaN;
 		} else {
 			squareNorm = vx * vx + vy * vy + vz * vz;
@@ -131,7 +147,7 @@ public class Hitting {
 
 	/**
 	 * set origin, direction, threshold
-	 * 
+	 *
 	 * @param mouseLoc
 	 *            mouse location
 	 * @param threshold
@@ -148,7 +164,7 @@ public class Hitting {
 
 	/**
 	 * set origin, direction, threshold
-	 * 
+	 *
 	 * @param origin
 	 *            origin
 	 * @param direction
@@ -156,8 +172,7 @@ public class Hitting {
 	 * @param threshold
 	 *            threshold
 	 */
-	public void setOriginDirectionThreshold(Coords origin, Coords direction,
-			int threshold) {
+	public void setOriginDirectionThreshold(Coords origin, Coords direction, int threshold) {
 
 		this.origin.set3(origin);
 		this.direction.set3(direction);
@@ -197,22 +212,21 @@ public class Hitting {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param mouseLoc
 	 *            mouse location
 	 * @return first hit label geo
 	 */
 	public GeoElement getLabelHit(GPoint mouseLoc) {
 		if (view.getProjection() == EuclidianView3DInterface.PROJECTION_ORTHOGRAPHIC) {
-			return view.getDrawList3D().getLabelHit(originScreen.getX(),
-					originScreen.getY());
+			return view.getDrawList3D().getLabelHit(originScreen.getX(), originScreen.getY());
 		}
 
 		return view.getDrawList3D().getLabelHit(originScreen, directionScreen);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param label
 	 *            label
 	 * @return true if this hits the label
@@ -226,22 +240,21 @@ public class Hitting {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param p
 	 *            point coords
 	 * @return true if the point is inside the clipping box (if used)
 	 */
-	final public boolean isInsideClipping(Coords p) {
+	public final boolean isInsideClipping(Coords p) {
 		if (view.useClippingCube()) {
 			return view.isInside(p);
 		}
 
 		return true;
-
 	}
 
 	/**
-	 * 
+	 *
 	 * @return current threshold
 	 */
 	public int getThreshold() {

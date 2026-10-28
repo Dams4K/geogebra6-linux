@@ -1,14 +1,18 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
-*/
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
 package org.geogebra.common.kernel.implicit;
 
@@ -35,8 +39,7 @@ import org.geogebra.common.util.debug.Log;
 /**
  * Algorithm to intersect Implicit polynomials with either lines or polynomials
  */
-public class AlgoIntersectImplicitpolyParametric
-		extends AlgoSimpleRootsPolynomial {
+public class AlgoIntersectImplicitpolyParametric extends AlgoSimpleRootsPolynomial {
 
 	private PolynomialFunction tx;
 	private PolynomialFunction ty;
@@ -47,7 +50,7 @@ public class AlgoIntersectImplicitpolyParametric
 
 	/**
 	 * To compute intersection of polynomial and line
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param p
@@ -55,8 +58,7 @@ public class AlgoIntersectImplicitpolyParametric
 	 * @param l
 	 *            line
 	 */
-	public AlgoIntersectImplicitpolyParametric(Construction c, GeoImplicit p,
-			GeoLine l) {
+	public AlgoIntersectImplicitpolyParametric(Construction c, GeoImplicit p, GeoLine l) {
 		super(c, p.toGeoElement(), l);
 		this.p = p;
 		this.l = l;
@@ -65,7 +67,7 @@ public class AlgoIntersectImplicitpolyParametric
 
 	/**
 	 * To compute intersection of polynomial and function
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param p
@@ -73,8 +75,7 @@ public class AlgoIntersectImplicitpolyParametric
 	 * @param f
 	 *            function
 	 */
-	public AlgoIntersectImplicitpolyParametric(Construction c, GeoImplicit p,
-			GeoFunctionable f) {
+	public AlgoIntersectImplicitpolyParametric(Construction c, GeoImplicit p, GeoFunctionable f) {
 		super(c, p.toGeoElement(), f.toGeoElement());
 		this.p = p;
 		this.f = f;
@@ -109,10 +110,9 @@ public class AlgoIntersectImplicitpolyParametric
 				computeNonPoly(fFun, false);
 				return;
 			}
-			tx = new PolynomialFunction(new double[] { 0, 1 }); // x=t
+			tx = new PolynomialFunction(new double[] {0, 1}); // x=t
 
-			PolyFunction derivY = f.getFunction()
-					.getNumericPolynomialDerivative(0, false, false, false);
+			PolyFunction derivY = f.getFunction().getNumericPolynomialDerivative(0, false, false, false);
 			if (derivY == null) {
 				points.adjustOutputSize(0);
 				return;
@@ -139,29 +139,27 @@ public class AlgoIntersectImplicitpolyParametric
 			// get parametrisation of line
 			double[] startP = new double[2];
 			l.getInhomPointOnLine(startP);
-			tx = new PolynomialFunction(new double[] { startP[0], l.getY() }); // x=p1+t*r1
-			ty = new PolynomialFunction(new double[] { startP[1], -l.getX() }); // y=p2+t*r2
+			tx = new PolynomialFunction(new double[] {startP[0], l.getY()}); // x=p1+t*r1
+			ty = new PolynomialFunction(new double[] {startP[1], -l.getX()}); // y=p2+t*r2
 			maxT = l.getMaxParameter();
 			minT = l.getMinParameter();
 
 			if (l.getParentAlgorithm() instanceof AlgoTangentImplicitpoly) {
-				tangentPoints = ((AlgoTangentImplicitpoly) l
-						.getParentAlgorithm()).getTangentPoints();
+				tangentPoints = ((AlgoTangentImplicitpoly) l.getParentAlgorithm()).getTangentPoints();
 			}
 		} else {
 			return;
 		}
 		PolynomialFunction sum = null;
-		PolynomialFunction zs = null;
+		PolynomialFunction zs;
 		// Insert x and y (univariat)polynomials via the Horner-scheme
 		double[][] coeff = p.getCoeff();
 		if (coeff != null) {
 			for (int i = coeff.length - 1; i >= 0; i--) {
-				zs = new PolynomialFunction(
-						new double[] { coeff[i][coeff[i].length - 1] });
+				zs = new PolynomialFunction(new double[] {coeff[i][coeff[i].length - 1]});
 				for (int j = coeff[i].length - 2; j >= 0; j--) {
-					zs = zs.multiply(ty).add(new PolynomialFunction(
-							new double[] { coeff[i][j] })); // y*zs+coeff[i][j];
+					zs = zs.multiply(ty)
+							.add(new PolynomialFunction(new double[] {coeff[i][j]})); // y*zs+coeff[i][j];
 				}
 				if (sum == null) {
 					sum = zs;
@@ -182,10 +180,12 @@ public class AlgoIntersectImplicitpolyParametric
 
 	private void computeNonPoly(GeoFunction fun, boolean transpose) {
 
-		GeoFunction paramEquation = new GeoFunction(cons, p,
-				transpose ? fun : null, transpose ? null : fun);
+		GeoFunction paramEquation =
+				new GeoFunction(cons, p, transpose ? fun : null, transpose ? null : fun);
 
-		AlgoRoots algo = new AlgoRoots(cons, paramEquation,
+		AlgoRoots algo = new AlgoRoots(
+				cons,
+				paramEquation,
 				new GeoNumeric(cons, fun.getMinParameter()),
 				new GeoNumeric(cons, fun.getMaxParameter()));
 		cons.removeFromConstructionList(algo);
@@ -194,12 +194,10 @@ public class AlgoIntersectImplicitpolyParametric
 		List<double[]> valPairs = new ArrayList<>();
 		for (int i = 0; i < rootPoints.length; i++) {
 			double t = rootPoints[i].getX();
-			valPairs.add(transpose ? new double[] { fun.value(t), t }
-					: new double[] { t, fun.value(t) });
+			valPairs.add(transpose ? new double[] {fun.value(t), t} : new double[] {t, fun.value(t)});
 		}
 
 		setPoints(valPairs);
-
 	}
 
 	private void mergeWithTangentPoints() {
@@ -217,15 +215,14 @@ public class AlgoIntersectImplicitpolyParametric
 
 		int newSize = orgSize;
 		double EPS2 = Kernel.STANDARD_PRECISION; // TODO: have a better guess of
-													// the error
+		// the error
 
 		for (int i = 0; i < tangentPoints.length; ++i) {
 			if (tangentPoints[i].getIncidenceList() != null
 					&& tangentPoints[i].getIncidenceList().contains(l)) {
 				addTangent[i] = true;
 				for (int j = 0; j < orgSize; ++j) {
-					if (points.getElement(j)
-							.distanceSqr(tangentPoints[i]) < EPS2) {
+					if (points.getElement(j).distanceSqr(tangentPoints[i]) < EPS2) {
 						if (addTangent[i]) {
 							points.getElement(j).setUndefined();
 							--newSize;
@@ -233,7 +230,6 @@ public class AlgoIntersectImplicitpolyParametric
 							addTangent[i] = false;
 							points.getElement(i).setCoords(tangentPoints[j]);
 						}
-
 					}
 				}
 				if (addTangent[i]) {
@@ -249,8 +245,7 @@ public class AlgoIntersectImplicitpolyParametric
 		for (int i = 0; i < orgSize; ++i) {
 			if (points.getElement(i).isDefined()) {
 				if (definedCount != i) {
-					points.getElement(definedCount)
-							.setCoords(points.getElement(i));
+					points.getElement(definedCount).setCoords(points.getElement(i));
 				}
 				++definedCount;
 			}
@@ -267,7 +262,6 @@ public class AlgoIntersectImplicitpolyParametric
 		if (setLabels) {
 			points.updateLabels();
 		}
-
 	}
 
 	@Override
@@ -279,5 +273,4 @@ public class AlgoIntersectImplicitpolyParametric
 	public int getRelatedModeID() {
 		return EuclidianConstants.MODE_INTERSECT;
 	}
-
 }

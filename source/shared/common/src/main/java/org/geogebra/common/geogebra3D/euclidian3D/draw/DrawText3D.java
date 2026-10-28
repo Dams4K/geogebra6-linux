@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.draw;
 
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
@@ -55,8 +71,7 @@ public final class DrawText3D extends Drawable3DCurves {
 
 	@Override
 	public CaptionText createStaticCaption3D(GeoElement geo) {
-		return new StaticText3D(geo);
-
+		return new StaticText3D(geo, getView3D());
 	}
 
 	@Override
@@ -80,8 +95,7 @@ public final class DrawText3D extends Drawable3DCurves {
 
 		// compute location of text
 		if (text.isAbsoluteScreenLocActive()) {
-			return new Coords(text.getAbsoluteScreenLocX(),
-					text.getAbsoluteScreenLocY(), 0, 1);
+			return new Coords(text.getAbsoluteScreenLocX(), text.getAbsoluteScreenLocY(), 0, 1);
 		}
 
 		GeoPointND loc = text.getStartPoint();
@@ -110,8 +124,8 @@ public final class DrawText3D extends Drawable3DCurves {
 	public boolean hit(Hitting hitting) {
 
 		if (hitting.hitLabel(label)) {
-			setZPick(label.getDrawZ(), label.getDrawZ(),
-					hitting.discardPositiveHits(), -label.getDrawZ());
+			setZPick(
+					label.getDrawZ(), label.getDrawZ(), hitting.discardPositiveHits(), -label.getDrawZ());
 			return true;
 		}
 
@@ -135,7 +149,7 @@ public final class DrawText3D extends Drawable3DCurves {
 
 	/**
 	 * Draw this or not, depending on abs flag.
-	 * 
+	 *
 	 * @param renderer
 	 *            renderer
 	 * @param absolute
@@ -150,7 +164,7 @@ public final class DrawText3D extends Drawable3DCurves {
 
 	@Override
 	public boolean isVisible() {
-		if  (getGeoElement().isLabelSet() && createdByDrawList()) {
+		if (getGeoElement().isLabelSet() && createdByDrawList()) {
 			return false;
 		}
 		return super.isVisible();

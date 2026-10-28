@@ -1,18 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoCommonTangents.java, dsun48 [6/26/2011]
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -50,8 +49,7 @@ public class AlgoCommonTangents extends AlgoCommonTangentsND {
 	 * @param d
 	 *            second conic
 	 */
-	public AlgoCommonTangents(Construction cons, String[] labels, GeoConicND c,
-			GeoConicND d) {
+	public AlgoCommonTangents(Construction cons, String[] labels, GeoConicND c, GeoConicND d) {
 		super(cons);
 		this.c = c;
 		this.d = d;
@@ -66,7 +64,6 @@ public class AlgoCommonTangents extends AlgoCommonTangentsND {
 		setInputOutput();
 		compute();
 		LabelManager.setLabels(labels, getOutput());
-
 	}
 
 	/**
@@ -80,25 +77,22 @@ public class AlgoCommonTangents extends AlgoCommonTangentsND {
 			c.polarPoint(tangents[i], (GeoPoint) algoIntersect.getOutput(i));
 		}
 		algoIntersect.initForNearToRelationship();
-
 	}
 
 	@Override
 	protected void setInputOutput() {
-		input = new GeoElement[] { c.toGeoElement(), d.toGeoElement() };
+		input = new GeoElement[] {c.toGeoElement(), d.toGeoElement()};
 		setOutputLength(4);
 		for (int i = 0; i < 4; i++) {
 			setOutput(i, tangents[i]);
 		}
 		setDependencies();
-
 	}
 
 	@Override
 	public void compute() {
-		CoordMatrix nm = c.getSymmetricMatrix()
-				.mul(d.getSymmetricMatrix().inverse())
-				.mul(c.getSymmetricMatrix());
+		CoordMatrix nm =
+				c.getSymmetricMatrix().mul(d.getSymmetricMatrix().inverse()).mul(c.getSymmetricMatrix());
 		tg.setMatrix(nm);
 		tg.update();
 		if (algoIntersect == null) {
@@ -114,13 +108,11 @@ public class AlgoCommonTangents extends AlgoCommonTangentsND {
 			c.polarLine((GeoPoint) algoIntersect.getOutput(i), currentTangent);
 			if (isInner(currentTangent) && inner < 2) {
 				tangents[2 + inner].set(currentTangent);
-				tangents[2 + inner].getStartPoint()
-						.set(algoIntersect.getOutput(i));
+				tangents[2 + inner].getStartPoint().set(algoIntersect.getOutput(i));
 				inner++;
 			} else if (outer < 2) {
 				tangents[outer].set(currentTangent);
-				tangents[outer].getStartPoint()
-						.set(algoIntersect.getOutput(i));
+				tangents[outer].getStartPoint().set(algoIntersect.getOutput(i));
 				outer++;
 			}
 		}
@@ -141,5 +133,4 @@ public class AlgoCommonTangents extends AlgoCommonTangentsND {
 		}
 		return null;
 	}
-
 }

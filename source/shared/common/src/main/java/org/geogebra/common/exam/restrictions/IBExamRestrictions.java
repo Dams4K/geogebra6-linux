@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.exam.restrictions;
 
 import static org.geogebra.common.SuiteSubApp.CAS;
@@ -163,7 +179,6 @@ import static org.geogebra.common.kernel.commands.Commands.Insert;
 import static org.geogebra.common.kernel.commands.Commands.IntegralBetween;
 import static org.geogebra.common.kernel.commands.Commands.IntegralSymbolic;
 import static org.geogebra.common.kernel.commands.Commands.InteriorAngles;
-import static org.geogebra.common.kernel.commands.Commands.Intersect;
 import static org.geogebra.common.kernel.commands.Commands.IntersectConic;
 import static org.geogebra.common.kernel.commands.Commands.IntersectPath;
 import static org.geogebra.common.kernel.commands.Commands.Intersection;
@@ -354,7 +369,6 @@ import static org.geogebra.common.plugin.Operation.RANDOM;
 import java.util.Map;
 import java.util.Set;
 
-import org.geogebra.common.exam.ExamType;
 import org.geogebra.common.exam.restrictions.ib.IBCommandArgumentFilter;
 import org.geogebra.common.exam.restrictions.ib.IBSyntaxFilter;
 import org.geogebra.common.exam.restrictions.ib.PointDerivativeFilter;
@@ -364,16 +378,22 @@ import org.geogebra.common.kernel.algos.DisabledAlgorithms;
 import org.geogebra.common.kernel.arithmetic.filter.ExpressionFilter;
 import org.geogebra.common.kernel.arithmetic.filter.OperationFilter;
 import org.geogebra.common.kernel.commands.filter.CommandArgumentFilter;
+import org.geogebra.common.kernel.commands.filter.ExamCommandArgumentFilter;
 import org.geogebra.common.kernel.commands.selector.CommandFilter;
 import org.geogebra.common.kernel.commands.selector.CommandNameFilter;
 import org.geogebra.common.main.settings.ProbabilityCalculatorSettings;
 import org.geogebra.common.main.syntax.suggestionfilter.SyntaxFilter;
 import org.geogebra.common.plugin.Operation;
+import org.geogebra.common.properties.PropertyKey;
+import org.geogebra.common.properties.impl.distribution.DistributionTypeProperty;
+import org.geogebra.common.restrictions.PropertyRestriction;
+import org.geogebra.common.restrictions.Restrictions;
 
-public final class IBExamRestrictions extends ExamRestrictions {
+public final class IBExamRestrictions extends Restrictions {
 
-	IBExamRestrictions() {
-		super(ExamType.IB,
+	/** Constructs the restrictions for IB exam. */
+	public IBExamRestrictions() {
+		super(
 				Set.of(CAS, G3D, GEOMETRY, SCIENTIFIC),
 				GRAPHING,
 				null,
@@ -390,6 +410,7 @@ public final class IBExamRestrictions extends ExamRestrictions {
 				null,
 				createDisabledAlgorithms(),
 				null,
+				null,
 				null);
 	}
 
@@ -398,58 +419,302 @@ public final class IBExamRestrictions extends ExamRestrictions {
 	}
 
 	private static Set<CommandFilter> createCommandFilters() {
-		CommandNameFilter nameFilter = new CommandNameFilter(true,
-				Bottom, Cone, Cube, Cylinder, Dodecahedron, Ends, Height, Icosahedron, InfiniteCone,
-				InfiniteCylinder, IntersectConic, Net, Octahedron, PerpendicularPlane, Plane,
-				PlaneBisector, Prism, Pyramid, Side, Sphere, Surface, Tetrahedron, Top, Volume,
-				CompleteSquare, Cross, Division, Divisors, DivisorsList, DivisorsSum, Dot, Expand,
-				Factor, IFactor, IsFactored, IsPrime, LeftSide, Mod, NextPrime, PreviousPrime,
-				RightSide, Simplify, BarChart, BoxPlot, ContingencyTable, DotPlot,
-				FrequencyPolygon, FrequencyTable, Histogram, HistogramRight, NormalQuantilePlot,
-				PieChart, ResidualPlot, StickGraph, Axes, Center, Circle, Conic, ConjugateDiameter,
-				Directrix, Eccentricity, Ellipse, Focus, Hyperbola, Incircle, LinearEccentricity,
-				MajorAxis, MinorAxis, Parabola, Parameter, Polar, SemiMajorAxisLength,
-				SemiMinorAxisLength, Semicircle, ConvexHull, DelaunayTriangulation,
-				MinimumSpanningTree, ShortestDistance, TravelingSalesman, Voronoi, Asymptote,
-				Coefficients, Curvature, CurvatureVector, DataFunction, Derivative, Factors,
-				Function, ImplicitCurve, ImplicitDerivative, IntegralBetween, IntegralSymbolic,
-				Iteration, IterationList, IsVertexForm, LeftSum, Limit, LimitAbove, LimitBelow,
-				LowerSum, NSolveODE, Normalize, Numerator, OsculatingCircle, ParametricDerivative,
-				PartialFractions, PathParameter, Polynomial, RectangleSum, RemovableDiscontinuity,
-				RootList, SlopeField, SolveODE, BezierCurve, Spline,
-				TaylorPolynomial, TrapezoidalSum,
-				TrigCombine, TrigExpand, TrigSimplify, UpperSum, AffineRatio, Angle, AngleBisector,
-				Arc, AreCollinear, AreConcurrent, AreConcyclic, AreCongruent, AreEqual, AreParallel,
-				ArePerpendicular, Area, Barycenter, Centroid, CircularArc, CircularSector,
-				CircumcircularArc, CircumcircularSector, Circumference, ClosestPoint,
-				ClosestPointRegion, CrossRatio, Cubic, Direction, Distance, Envelope, IntersectPath,
-				Intersection, Length, Line, Locus, LocusEquation, Midpoint, Perimeter,
-				PerpendicularBisector, PerpendicularLine, Point, PointIn, Polygon, Polyline, Prove,
-				ProveDetails, Radius, Ray, RigidPolygon, Sector, Segment, TriangleCenter,
-				TriangleCurve, Trilinear, Vertex, Corner, DynamicCoordinates, ToComplex, ToPoint,
-				Append, Classes, Element, First, Flatten, Frequency, IndexOf, Insert,
-				Join, Last, OrdinalRank, PointList, Product, RandomElement, Remove,
-				Reverse, SelectedIndex, Shuffle, Sort, Take, TiedRank, Union, Unique, Zip, CountIf,
-				Bernoulli, Cauchy, Erlang, Exponential, Gamma, InverseCauchy, InverseExponential,
-				InverseGamma, InverseLogNormal, InverseLogistic, InversePascal, InverseWeibull,
-				InverseZipf, LogNormal, Logistic, Pascal, RandomBetween, RandomBinomial,
-				RandomDiscrete, RandomNormal, RandomPointIn, RandomPoisson, RandomPolynomial,
-				RandomUniform, Triangular, Uniform, Weibull, Zipf, Covariance, FitImplicit,
-				FitLineX, GeometricMean, HarmonicMean, Percentile,
-				RootMeanSquare, Sample, SampleVariance, SigmaXX, SigmaXY, SigmaYY,
-				Spearman, SumSquaredErrors, Sxx, Sxy, Syy, TTestPaired, ContinuedFraction,
-				FormulaText, FractionText, LetterToUnicode, Ordinal, ReplaceAll, Split,
-				ScientificText, SurdText, Text, TextToUnicode, UnicodeToLetter, UnicodeToText,
-				Dilate, Reflect, Rotate, Shear, Stretch, Translate, MatrixRank,
-				PerpendicularVector, UnitPerpendicularVector, UnitVector, Vector, CFactor,
-				GroebnerDegRevLex, GroebnerLexDeg, GroebnerLex, Substitute, BetaDist,
-				InverseBeta, InteriorAngles, Random, Execute, ExportImage, Intersect, Turtle,
-				TurtleBack, TurtleForward, TurtleLeft, TurtleRight, TurtleUp, TurtleDown);
+		CommandNameFilter nameFilter = new CommandNameFilter(
+				true,
+				Bottom,
+				Cone,
+				Cube,
+				Cylinder,
+				Dodecahedron,
+				Ends,
+				Height,
+				Icosahedron,
+				InfiniteCone,
+				InfiniteCylinder,
+				IntersectConic,
+				Net,
+				Octahedron,
+				PerpendicularPlane,
+				Plane,
+				PlaneBisector,
+				Prism,
+				Pyramid,
+				Side,
+				Sphere,
+				Surface,
+				Tetrahedron,
+				Top,
+				Volume,
+				CompleteSquare,
+				Cross,
+				Division,
+				Divisors,
+				DivisorsList,
+				DivisorsSum,
+				Dot,
+				Expand,
+				Factor,
+				IFactor,
+				IsFactored,
+				IsPrime,
+				LeftSide,
+				Mod,
+				NextPrime,
+				PreviousPrime,
+				RightSide,
+				Simplify,
+				BarChart,
+				BoxPlot,
+				ContingencyTable,
+				DotPlot,
+				FrequencyPolygon,
+				FrequencyTable,
+				Histogram,
+				HistogramRight,
+				NormalQuantilePlot,
+				PieChart,
+				ResidualPlot,
+				StickGraph,
+				Axes,
+				Center,
+				Circle,
+				Conic,
+				ConjugateDiameter,
+				Directrix,
+				Eccentricity,
+				Ellipse,
+				Focus,
+				Hyperbola,
+				Incircle,
+				LinearEccentricity,
+				MajorAxis,
+				MinorAxis,
+				Parabola,
+				Parameter,
+				Polar,
+				SemiMajorAxisLength,
+				SemiMinorAxisLength,
+				Semicircle,
+				ConvexHull,
+				DelaunayTriangulation,
+				MinimumSpanningTree,
+				ShortestDistance,
+				TravelingSalesman,
+				Voronoi,
+				Asymptote,
+				Coefficients,
+				Curvature,
+				CurvatureVector,
+				DataFunction,
+				Derivative,
+				Factors,
+				Function,
+				ImplicitCurve,
+				ImplicitDerivative,
+				IntegralBetween,
+				IntegralSymbolic,
+				Iteration,
+				IterationList,
+				IsVertexForm,
+				LeftSum,
+				Limit,
+				LimitAbove,
+				LimitBelow,
+				LowerSum,
+				NSolveODE,
+				Normalize,
+				Numerator,
+				OsculatingCircle,
+				ParametricDerivative,
+				PartialFractions,
+				PathParameter,
+				Polynomial,
+				RectangleSum,
+				RemovableDiscontinuity,
+				RootList,
+				SlopeField,
+				SolveODE,
+				BezierCurve,
+				Spline,
+				TaylorPolynomial,
+				TrapezoidalSum,
+				TrigCombine,
+				TrigExpand,
+				TrigSimplify,
+				UpperSum,
+				AffineRatio,
+				Angle,
+				AngleBisector,
+				Arc,
+				AreCollinear,
+				AreConcurrent,
+				AreConcyclic,
+				AreCongruent,
+				AreEqual,
+				AreParallel,
+				ArePerpendicular,
+				Area,
+				Barycenter,
+				Centroid,
+				CircularArc,
+				CircularSector,
+				CircumcircularArc,
+				CircumcircularSector,
+				Circumference,
+				ClosestPoint,
+				ClosestPointRegion,
+				CrossRatio,
+				Cubic,
+				Direction,
+				Distance,
+				Envelope,
+				IntersectPath,
+				Intersection,
+				Length,
+				Line,
+				Locus,
+				LocusEquation,
+				Midpoint,
+				Perimeter,
+				PerpendicularBisector,
+				PerpendicularLine,
+				Point,
+				PointIn,
+				Polygon,
+				Polyline,
+				Prove,
+				ProveDetails,
+				Radius,
+				Ray,
+				RigidPolygon,
+				Sector,
+				Segment,
+				TriangleCenter,
+				TriangleCurve,
+				Trilinear,
+				Vertex,
+				Corner,
+				DynamicCoordinates,
+				ToComplex,
+				ToPoint,
+				Append,
+				Classes,
+				Element,
+				First,
+				Flatten,
+				Frequency,
+				IndexOf,
+				Insert,
+				Join,
+				Last,
+				OrdinalRank,
+				PointList,
+				Product,
+				RandomElement,
+				Remove,
+				Reverse,
+				SelectedIndex,
+				Shuffle,
+				Sort,
+				Take,
+				TiedRank,
+				Union,
+				Unique,
+				Zip,
+				CountIf,
+				Bernoulli,
+				Cauchy,
+				Erlang,
+				Exponential,
+				Gamma,
+				InverseCauchy,
+				InverseExponential,
+				InverseGamma,
+				InverseLogNormal,
+				InverseLogistic,
+				InversePascal,
+				InverseWeibull,
+				InverseZipf,
+				LogNormal,
+				Logistic,
+				Pascal,
+				RandomBetween,
+				RandomBinomial,
+				RandomDiscrete,
+				RandomNormal,
+				RandomPointIn,
+				RandomPoisson,
+				RandomPolynomial,
+				RandomUniform,
+				Triangular,
+				Uniform,
+				Weibull,
+				Zipf,
+				Covariance,
+				FitImplicit,
+				FitLineX,
+				GeometricMean,
+				HarmonicMean,
+				Percentile,
+				RootMeanSquare,
+				Sample,
+				SampleVariance,
+				SigmaXX,
+				SigmaXY,
+				SigmaYY,
+				Spearman,
+				SumSquaredErrors,
+				Sxx,
+				Sxy,
+				Syy,
+				TTestPaired,
+				ContinuedFraction,
+				FormulaText,
+				FractionText,
+				LetterToUnicode,
+				Ordinal,
+				ReplaceAll,
+				Split,
+				ScientificText,
+				SurdText,
+				Text,
+				TextToUnicode,
+				UnicodeToLetter,
+				UnicodeToText,
+				Dilate,
+				Reflect,
+				Rotate,
+				Shear,
+				Stretch,
+				Translate,
+				MatrixRank,
+				PerpendicularVector,
+				UnitPerpendicularVector,
+				UnitVector,
+				Vector,
+				CFactor,
+				GroebnerDegRevLex,
+				GroebnerLexDeg,
+				GroebnerLex,
+				Substitute,
+				BetaDist,
+				InverseBeta,
+				InteriorAngles,
+				Random,
+				Execute,
+				ExportImage,
+				Turtle,
+				TurtleBack,
+				TurtleForward,
+				TurtleLeft,
+				TurtleRight,
+				TurtleUp,
+				TurtleDown);
 		return Set.of(nameFilter);
 	}
 
 	private static Set<CommandArgumentFilter> createCommandArgumentFilters() {
-		return Set.of(new IBCommandArgumentFilter());
+		return Set.of(new ExamCommandArgumentFilter(), new IBCommandArgumentFilter());
 	}
 
 	private static OperationFilter createOperationFilter() {
@@ -462,31 +727,65 @@ public final class IBExamRestrictions extends ExamRestrictions {
 	}
 
 	private static ToolCollectionFilter createToolCollectionFilter() {
-		return new ToolCollectionSetFilter(MODE_IMAGE, MODE_TEXT, MODE_ANGLE, MODE_DISTANCE,
-				MODE_AREA, MODE_ANGLE_FIXED, MODE_MIDPOINT, MODE_ORTHOGONAL, MODE_LINE_BISECTOR,
-				MODE_PARALLEL, MODE_ANGULAR_BISECTOR, MODE_LOCUS, MODE_SEGMENT, MODE_JOIN,
-				MODE_RAY, MODE_VECTOR, MODE_SEGMENT_FIXED, MODE_VECTOR_FROM_POINT,
-				MODE_POLAR_DIAMETER, MODE_POLYLINE, MODE_POLYGON, MODE_REGULAR_POLYGON,
-				MODE_VECTOR_POLYGON, MODE_RIGID_POLYGON, MODE_CIRCLE_TWO_POINTS, MODE_COMPASSES,
-				MODE_SEMICIRCLE, MODE_CIRCLE_POINT_RADIUS, MODE_CIRCLE_THREE_POINTS,
-				MODE_CIRCLE_ARC_THREE_POINTS, MODE_CIRCUMCIRCLE_ARC_THREE_POINTS,
-				MODE_CIRCLE_SECTOR_THREE_POINTS, MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS,
-				MODE_ELLIPSE_THREE_POINTS, MODE_CONIC_FIVE_POINTS, MODE_PARABOLA,
-				MODE_HYPERBOLA_THREE_POINTS, MODE_MIRROR_AT_LINE, MODE_MIRROR_AT_POINT,
-				MODE_TRANSLATE_BY_VECTOR, MODE_ROTATE_BY_ANGLE, MODE_DILATE_FROM_POINT,
-				MODE_MIRROR_AT_CIRCLE, MODE_FREEHAND_SHAPE, MODE_RELATION);
+		return new ToolCollectionSetFilter(
+				MODE_IMAGE,
+				MODE_TEXT,
+				MODE_ANGLE,
+				MODE_DISTANCE,
+				MODE_AREA,
+				MODE_ANGLE_FIXED,
+				MODE_MIDPOINT,
+				MODE_ORTHOGONAL,
+				MODE_LINE_BISECTOR,
+				MODE_PARALLEL,
+				MODE_ANGULAR_BISECTOR,
+				MODE_LOCUS,
+				MODE_SEGMENT,
+				MODE_JOIN,
+				MODE_RAY,
+				MODE_VECTOR,
+				MODE_SEGMENT_FIXED,
+				MODE_VECTOR_FROM_POINT,
+				MODE_POLAR_DIAMETER,
+				MODE_POLYLINE,
+				MODE_POLYGON,
+				MODE_REGULAR_POLYGON,
+				MODE_VECTOR_POLYGON,
+				MODE_RIGID_POLYGON,
+				MODE_CIRCLE_TWO_POINTS,
+				MODE_COMPASSES,
+				MODE_SEMICIRCLE,
+				MODE_CIRCLE_POINT_RADIUS,
+				MODE_CIRCLE_THREE_POINTS,
+				MODE_CIRCLE_ARC_THREE_POINTS,
+				MODE_CIRCUMCIRCLE_ARC_THREE_POINTS,
+				MODE_CIRCLE_SECTOR_THREE_POINTS,
+				MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS,
+				MODE_ELLIPSE_THREE_POINTS,
+				MODE_CONIC_FIVE_POINTS,
+				MODE_PARABOLA,
+				MODE_HYPERBOLA_THREE_POINTS,
+				MODE_MIRROR_AT_LINE,
+				MODE_MIRROR_AT_POINT,
+				MODE_TRANSLATE_BY_VECTOR,
+				MODE_ROTATE_BY_ANGLE,
+				MODE_DILATE_FROM_POINT,
+				MODE_MIRROR_AT_CIRCLE,
+				MODE_FREEHAND_SHAPE,
+				MODE_RELATION);
 	}
 
-	private static Map<String, PropertyRestriction> createDistributionPropertyRestriction() {
-		Set<ProbabilityCalculatorSettings.Dist> restrictedDistributions = Set.of(
-				EXPONENTIAL, CAUCHY, WEIBULL, GAMMA, BETA, LOGNORMAL, LOGISTIC, PASCAL
-		);
-		return Map.of("Distribution", new PropertyRestriction(false, value ->
-				!restrictedDistributions.contains(value)));
+	private static Map<PropertyKey, PropertyRestriction> createDistributionPropertyRestriction() {
+		Set<ProbabilityCalculatorSettings.Dist> restrictedDistributions =
+				Set.of(EXPONENTIAL, CAUCHY, WEIBULL, GAMMA, BETA, LOGNORMAL, LOGISTIC, PASCAL);
+		return Map.of(
+				PropertyKey.of(DistributionTypeProperty.class),
+				new PropertyRestriction(false, value -> !restrictedDistributions.contains(value)));
 	}
 
 	private static Set<DisabledAlgorithms> createDisabledAlgorithms() {
-		return Set.of(DisabledAlgorithms.TangentPointImplicitCurve,
+		return Set.of(
+				DisabledAlgorithms.TangentPointImplicitCurve,
 				DisabledAlgorithms.TangentPointConic,
 				DisabledAlgorithms.TangentConicConic,
 				DisabledAlgorithms.TangentLineConic);

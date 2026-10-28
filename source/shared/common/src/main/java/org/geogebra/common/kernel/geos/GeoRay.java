@@ -1,17 +1,22 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
-*/
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
 package org.geogebra.common.kernel.geos;
 
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.PathMover;
 import org.geogebra.common.kernel.PathMoverGeneric;
@@ -36,7 +41,7 @@ import org.geogebra.common.util.ExtendedBoolean;
 /**
  * @author Markus Hohenwarter
  */
-final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
+public final class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 
 	private boolean allowOutlyingIntersections = false;
 	private boolean keepTypeOnGeometricTransform = true;
@@ -44,7 +49,7 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 
 	/**
 	 * Creates ray with start point A.
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param A
@@ -57,7 +62,7 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 
 	/**
 	 * Creates new ray
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 */
@@ -67,7 +72,7 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 
 	/**
 	 * Copy constructor
-	 * 
+	 *
 	 * @param ray
 	 *            template ray
 	 */
@@ -88,8 +93,7 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 
 	@Override
 	public GeoElement copyInternal(Construction cons1) {
-		GeoRay ray = new GeoRay(cons1,
-				(GeoPoint) startPoint.copyInternal(cons1));
+		GeoRay ray = new GeoRay(cons1, (GeoPoint) startPoint.copyInternal(cons1));
 		ray.set(this);
 		return ray;
 	}
@@ -104,24 +108,25 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 		GeoRay ray = (GeoRay) geo;
 		keepTypeOnGeometricTransform = ray.keepTypeOnGeometricTransform;
 
-		startPoint = (GeoPoint) GeoLine.updatePoint(cons, startPoint,
-				ray.startPoint);
+		startPoint = (GeoPoint) GeoLine.updatePoint(cons, startPoint, ray.startPoint);
 
 		// Need to adjust the second defining object too, see #3770
 		if (getParentAlgorithm() instanceof AlgoJoinPointsRay
 				&& geo.getParentAlgorithm() instanceof AlgoJoinPointsRay) {
-			((AlgoJoinPointsRay) getParentAlgorithm()).getQ()
+			((AlgoJoinPointsRay) getParentAlgorithm())
+					.getQ()
 					.set(((AlgoJoinPointsRay) geo.getParentAlgorithm()).getQ());
 		} else if (getParentAlgorithm() instanceof AlgoRayPointVector
 				&& geo.getParentAlgorithm() instanceof AlgoRayPointVector) {
-			((AlgoRayPointVector) getParentAlgorithm()).getv().set(
-					((AlgoRayPointVector) geo.getParentAlgorithm()).getv());
+			((AlgoRayPointVector) getParentAlgorithm())
+					.getv()
+					.set(((AlgoRayPointVector) geo.getParentAlgorithm()).getv());
 		}
 	}
 
 	/**
 	 * Sets this ray using direction line and start point
-	 * 
+	 *
 	 * @param s
 	 *            start point
 	 * @param direction
@@ -218,7 +223,7 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 	/**
 	 * Returns the smallest possible parameter value for this path (may be
 	 * Double.NEGATIVE_INFINITY)
-	 * 
+	 *
 	 * @return smallest possible parameter
 	 */
 	@Override
@@ -229,7 +234,7 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 	/**
 	 * Returns the largest possible parameter value for this path (may be
 	 * Double.POSITIVE_INFINITY)
-	 * 
+	 *
 	 * @return largest possible parameter
 	 */
 	@Override
@@ -246,65 +251,53 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 	 * returns all class-specific xml tags for saveXML
 	 */
 	@Override
-	protected void getStyleXML(StringBuilder sb) {
+	protected void getStyleXML(XMLStringBuilder sb) {
 		super.getStyleXML(sb);
 
-		// allowOutlyingIntersections
-		sb.append("\t<outlyingIntersections val=\"");
-		sb.append(allowOutlyingIntersections);
-		sb.append("\"/>\n");
-
-		// keepTypeOnGeometricTransform
-		sb.append("\t<keepTypeOnTransform val=\"");
-		sb.append(keepTypeOnGeometricTransform);
-		sb.append("\"/>\n");
-
+		sb.startTag("outlyingIntersections").attr("val", allowOutlyingIntersections).endTag();
+		sb.startTag("keepTypeOnTransform").attr("val", keepTypeOnGeometricTransform).endTag();
 	}
 
 	/**
 	 * Creates a new ray using a geometric transform.
-	 * 
+	 *
 	 * @param t
 	 *            transform
 	 */
-
 	@Override
-	public GeoElement[] createTransformedObject(Transform t,
-			String transformedLabel) {
-		AlgoElement parent = keepTypeOnGeometricTransform ? getParentAlgorithm()
-				: null;
+	public GeoElement[] createTransformedObject(Transform t, String transformedLabel) {
+		AlgoElement parent = keepTypeOnGeometricTransform ? getParentAlgorithm() : null;
 
 		// CREATE RAY
 		if (parent instanceof AlgoJoinPointsRay) {
 			// transform points
 			AlgoJoinPointsRay algo = (AlgoJoinPointsRay) parent;
-			GeoPointND[] points = { algo.getP(), algo.getQ() };
+			GeoPointND[] points = {algo.getP(), algo.getQ()};
 			points = t.transformPoints(points);
 			if (t.isAffine()) {
-				GeoElement ray = (GeoElement) kernel.rayND(transformedLabel,
-						points[0], points[1]);
+				GeoElement ray = (GeoElement) kernel.rayND(transformedLabel, points[0], points[1]);
 				ray.setVisualStyleForTransformations(this);
-				GeoElement[] geos = { ray, (GeoElement) points[0],
-						(GeoElement) points[1] };
+				GeoElement[] geos = {ray, (GeoElement) points[0], (GeoElement) points[1]};
 				return geos;
 			}
 			GeoPoint inf = new GeoPoint(cons);
-			inf.setCoords(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
-					1);
+			inf.setCoords(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 1);
 			inf = (GeoPoint) t.doTransform(inf);
-			AlgoConicPartCircumcircle ae = new AlgoConicPartCircumcircle(cons,
-					Transform.transformedGeoLabel(this), (GeoPoint) points[0],
-					(GeoPoint) points[1], inf,
+			AlgoConicPartCircumcircle ae = new AlgoConicPartCircumcircle(
+					cons,
+					Transform.transformedGeoLabel(this),
+					(GeoPoint) points[0],
+					(GeoPoint) points[1],
+					inf,
 					GeoConicNDConstants.CONIC_PART_ARC);
 			cons.removeFromAlgorithmList(ae);
 			GeoElement arc = ae.getConicPart(); // GeoConicPart
 			arc.setVisualStyleForTransformations(this);
-			GeoElement[] geos = { arc, (GeoElement) points[0],
-					(GeoElement) points[1] };
+			GeoElement[] geos = {arc, (GeoElement) points[0], (GeoElement) points[1]};
 			return geos;
 		} else if (parent instanceof AlgoRayPointVector) {
 			// transform startpoint
-			GeoPointND[] points = { getStartPoint() };
+			GeoPointND[] points = {getStartPoint()};
 			points = t.transformPoints(points);
 
 			boolean oldSuppressLabelCreation = cons.isSuppressLabelsActive();
@@ -319,39 +312,39 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 
 				// ray through transformed point with direction of transformed
 				// line
-				GeoElement ray = kernel.getAlgoDispatcher().ray(
-						transformedLabel, (GeoPoint) points[0],
-						(GeoVector) direction);
+				GeoElement ray = kernel
+						.getAlgoDispatcher()
+						.ray(transformedLabel, (GeoPoint) points[0], (GeoVector) direction);
 				ray.setVisualStyleForTransformations(this);
-				GeoElement[] geos = new GeoElement[] { ray,
-						(GeoElement) points[0] };
+				GeoElement[] geos = new GeoElement[] {ray, (GeoElement) points[0]};
 				return geos;
 			}
-			AlgoTranslate at = new AlgoTranslate(cons, getStartPoint(),
-					(GeoVector) direction);
+			AlgoTranslate at = new AlgoTranslate(cons, getStartPoint(), (GeoVector) direction);
 			cons.removeFromAlgorithmList(at);
 			GeoPoint thirdPoint = (GeoPoint) at.getResult();
 			GeoPoint inf = new GeoPoint(cons);
-			inf.setCoords(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
-					1);
+			inf.setCoords(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 1);
 
-			GeoPointND[] points2 = new GeoPointND[] { thirdPoint, inf };
+			GeoPointND[] points2 = new GeoPointND[] {thirdPoint, inf};
 			points2 = t.transformPoints(points2);
 			cons.setSuppressLabelCreation(oldSuppressLabelCreation);
-			AlgoConicPartCircumcircle ae = new AlgoConicPartCircumcircle(cons,
-					Transform.transformedGeoLabel(this), (GeoPoint) points[0],
-					(GeoPoint) points2[0], (GeoPoint) points2[1],
+			AlgoConicPartCircumcircle ae = new AlgoConicPartCircumcircle(
+					cons,
+					Transform.transformedGeoLabel(this),
+					(GeoPoint) points[0],
+					(GeoPoint) points2[0],
+					(GeoPoint) points2[1],
 					GeoConicNDConstants.CONIC_PART_ARC);
 			GeoElement arc = ae.getConicPart(); // GeoConicPart
 			arc.setVisualStyleForTransformations(this);
-			GeoElement[] geos = { arc, (GeoElement) points[0] };
+			GeoElement[] geos = {arc, (GeoElement) points[0]};
 			return geos;
 
 		} else {
 			// create LINE
 			GeoElement transformedLine = t.getTransformedLine(this);
 			transformedLine.setLabel(transformedLabel);
-			GeoElement[] ret = { transformedLine };
+			GeoElement[] ret = {transformedLine};
 			return ret;
 		}
 	}
@@ -373,8 +366,8 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 			return geo.isEqualExtended(this);
 		}
 
-		return ExtendedBoolean.newExtendedBoolean(isSameDirection((GeoLine) geo)
-				&& ((GeoRay) geo).getStartPoint().isEqual(getStartPoint()));
+		return ExtendedBoolean.newExtendedBoolean(
+				isSameDirection((GeoLine) geo) && ((GeoRay) geo).getStartPoint().isEqual(getStartPoint()));
 	}
 
 	@Override
@@ -388,7 +381,6 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 		}
 
 		return respectLimitedPath(pnt2D, eps);
-
 	}
 
 	@Override
@@ -422,8 +414,7 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 		GeoVector directionVec = new GeoVector(cons);
 		directionVec.setCoords(direction);
 
-		AlgoRayPointVector algo = new AlgoRayPointVector(cons,
-				startPoint1, directionVec);
+		AlgoRayPointVector algo = new AlgoRayPointVector(cons, startPoint1, directionVec);
 
 		return algo.getRay();
 	}
@@ -437,11 +428,18 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 	}
 
 	@Override
-	public void matrixTransform(double a00, double a01, double a02, double a10, double a11,
-			double a12, double a20, double a21, double a22) {
+	public void matrixTransform(
+			double a00,
+			double a01,
+			double a02,
+			double a10,
+			double a11,
+			double a12,
+			double a20,
+			double a21,
+			double a22) {
 		super.matrixTransform(a00, a01, a02, a10, a11, a12, a20, a21, a22);
 
 		startPoint.matrixTransform(a00, a01, a02, a10, a11, a12, a20, a21, a22);
 	}
-
 }

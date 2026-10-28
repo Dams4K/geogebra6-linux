@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.util.keyboard;
 
 import org.geogebra.keyboard.web.KeyboardListener;
@@ -9,13 +25,13 @@ import org.gwtproject.user.client.Event;
 /**
  * Connector for keyboard and input boxes
  */
-public class AutocompleteProcessing implements KeyboardListener {
+public final class AutocompleteProcessing implements KeyboardListener {
 
 	private AutoCompleteTextFieldW field;
 
 	/**
 	 * Connector for keyboartd and input boxes
-	 * 
+	 *
 	 * @param field
 	 *            input box
 	 */
@@ -34,16 +50,13 @@ public class AutocompleteProcessing implements KeyboardListener {
 
 	@Override
 	public void onEnter() {
-		NativeEvent event = Document.get().createKeyDownEvent(false, false,
-				false, false, ENTER);
+		NativeEvent event = Document.get().createKeyDownEvent(false, false, false, false, ENTER);
 		field.getTextField().onBrowserEvent(Event.as(event));
 
-		event = Document.get().createKeyPressEvent(false, false, false, false,
-				ENTER);
+		event = Document.get().createKeyPressEvent(false, false, false, false, ENTER);
 		field.getTextField().onBrowserEvent(Event.as(event));
 
-		event = Document.get().createKeyUpEvent(false, false, false, false,
-				ENTER);
+		event = Document.get().createKeyUpEvent(false, false, false, false, ENTER);
 		field.getTextField().onBrowserEvent(Event.as(event));
 	}
 
@@ -88,18 +101,12 @@ public class AutocompleteProcessing implements KeyboardListener {
 
 	@Override
 	public void onKeyboardClosed() {
-		if (isSVCell()) {
-			if (field.getApplication().getGuiManager() != null) {
-				field.getApplication().getGuiManager().getSpreadsheetView()
-						.setKeyboardEnabled(false);
-			}
-		}
-
+		// not needed
 	}
 
 	@Override
 	public void ansPressed() {
-		/// not needed
+		// not needed
 	}
 
 	@Override

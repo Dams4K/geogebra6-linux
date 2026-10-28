@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.geogebra3D.web.euclidian3D.openGL;
 
 import java.util.ArrayList;
@@ -9,11 +25,11 @@ import jsinterop.base.Js;
 
 /**
  * buffers for openGL
- * 
+ *
  * @author mathieu
  *
  */
-public class GLBufferW implements GLBuffer {
+public final class GLBufferW implements GLBuffer {
 
 	private Float32Array impl;
 	private boolean isEmpty;
@@ -66,7 +82,7 @@ public class GLBufferW implements GLBuffer {
 
 	@Override
 	public double get() {
-		double ret = impl.getAt(index);
+		double ret = impl.at(index);
 		index++;
 		return ret;
 	}
@@ -98,19 +114,16 @@ public class GLBufferW implements GLBuffer {
 	}
 
 	@Override
-	public void set(ArrayList<Double> array, int arrayOffset, int offset,
-			int length) {
+	public void set(ArrayList<Double> array, int arrayOffset, int offset, int length) {
 		for (int i = 0; i < length; i++) {
 			impl.setAt(i + offset, array.get(arrayOffset + i));
 		}
 	}
 
 	@Override
-	public void set(ArrayList<Double> array, float[] translate, float scale,
-			int offset, int length) {
+	public void set(ArrayList<Double> array, float[] translate, float scale, int offset, int length) {
 		for (int i = 0; i < length; i++) {
-			impl.setAt(i + offset,
-					(double) (array.get(i).floatValue() * scale + translate[i % 3]));
+			impl.setAt(i + offset, (double) (array.get(i).floatValue() * scale + translate[i % 3]));
 		}
 	}
 
@@ -132,12 +145,12 @@ public class GLBufferW implements GLBuffer {
 			return;
 		}
 		for (int i = 0; i < ret.length; i++) {
-			ret[i] = impl.getAt(i).floatValue();
+			ret[i] = (float) impl.at(i);
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @return buffer
 	 */
 	public Float32Array getBuffer() {
@@ -155,5 +168,4 @@ public class GLBufferW implements GLBuffer {
 	public void position(int newPosition) {
 		index = newPosition;
 	}
-
 }

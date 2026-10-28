@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -88,7 +92,7 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 	// private Line2D.Double tempLine = new Line2D.Double();
 
 	private boolean continuous;
-	protected boolean[] lastFarAway = { false, false, false };
+	protected boolean[] lastFarAway = {false, false, false};
 	private boolean foundDefined;
 	private boolean maxTimeExceeded;
 	private Construction macroCons;
@@ -99,7 +103,7 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 	private TreeSet<GeoElement> Qin;
 
 	private int views = 1;
-	protected boolean[] visibleEV = { false, false, false };
+	protected boolean[] visibleEV = {false, false, false};
 
 	// small cache of 3 last parameters and Qcopy positions
 	private double[] paramCache = new double[3];
@@ -121,8 +125,8 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 	 * @param registerCE
 	 *            whether to listen to zooming
 	 */
-	public AlgoLocusND(Construction cons, GeoPointND Q, GeoPointND P,
-			int min_steps, boolean registerCE) {
+	public AlgoLocusND(
+			Construction cons, GeoPointND Q, GeoPointND P, int min_steps, boolean registerCE) {
 		super(cons, registerCE);
 
 		createMaxDistances();
@@ -165,19 +169,19 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 
 	/**
 	 * create start pos points
-	 * 
+	 *
 	 * @param cons1
 	 *            construction
 	 */
-	abstract protected void createStartPos(Construction cons1);
+	protected abstract void createStartPos(Construction cons1);
 
 	/**
-	 * 
+	 *
 	 * @param cons1
 	 *            construction
 	 * @return new GeoLocus
 	 */
-	abstract protected GeoLocusND<T> newGeoLocus(Construction cons1);
+	protected abstract GeoLocusND<T> newGeoLocus(Construction cons1);
 
 	/**
 	 * @param cons
@@ -189,8 +193,7 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 	 * @param P
 	 *            moving point
 	 */
-	public AlgoLocusND(Construction cons, String label, GeoPointND Q,
-			GeoPointND P) {
+	public AlgoLocusND(Construction cons, String label, GeoPointND Q, GeoPointND P) {
 		this(cons, Q, P, PathMover.MIN_STEPS, true);
 		locus.setLabel(label);
 	}
@@ -207,7 +210,7 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 
 	/**
 	 * Returns the dependent point
-	 * 
+	 *
 	 * @return dependent point Q
 	 */
 	public GeoPointND getQ() {
@@ -216,7 +219,7 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 
 	/**
 	 * A way more descriptive name for the getter.
-	 * 
+	 *
 	 * @return dependent point Q
 	 */
 	public GeoPointND getLocusPoint() {
@@ -233,7 +236,7 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 	private void init() {
 		// copy the construction
 		Qin = ((GeoElement) locusPoint).getAllPredecessors(); // all parents of
-																// Q
+		// Q
 
 		// get intersection of all children of P and all parents of Q
 		locusConsOrigElements = new TreeSet<>();
@@ -241,12 +244,10 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 		Iterator<GeoElement> it = Qin.iterator();
 		while (it.hasNext()) {
 			GeoElement parent = it.next();
-			if (parent.isLabelSet()
-					&& parent.isChildOf(movingPoint)) {
+			if (parent.isLabelSet() && parent.isChildOf(movingPoint)) {
 				// note: locusConsOrigElements will contain AlgoElement and
 				// GeoElement objects
-				Macro.addDependentElement(parent, locusConsOrigElements,
-						usedAlgoIds);
+				Macro.addDependentElement(parent, locusConsOrigElements, usedAlgoIds);
 			}
 		}
 
@@ -254,14 +255,12 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 		// Note: we have to undo this at the end of this method !!!
 		boolean isLabeledP = movingPoint.isLabelSet();
 		if (!isLabeledP) {
-			movingPoint.setLabelSimple(
-					movingPoint.getDefaultLabel());
+			movingPoint.setLabelSimple(movingPoint.getDefaultLabel());
 			((GeoElement) movingPoint).setLabelSet(true);
 		}
 		boolean isLabeledQ = locusPoint.isLabelSet();
 		if (!isLabeledQ) {
-			locusPoint.setLabelSimple(
-					locusPoint.getDefaultLabel());
+			locusPoint.setLabelSimple(locusPoint.getDefaultLabel());
 			((GeoElement) locusPoint).setLabelSet(true);
 		}
 
@@ -277,12 +276,10 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 		// in AlgoLocus,
 		// and macroCons.updateConstruction is only called one time, after
 		// resetMacroConstruction
-		Macro.addDependentElement((GeoElement) movingPoint,
-				locusConsOrigElements, usedAlgoIds);
+		Macro.addDependentElement((GeoElement) movingPoint, locusConsOrigElements, usedAlgoIds);
 
 		// add locus creating point and its algorithm to locusConsOrigElements
-		Macro.addDependentAlgo(locusPoint.getParentAlgorithm(),
-				locusConsOrigElements, usedAlgoIds);
+		Macro.addDependentAlgo(locusPoint.getParentAlgorithm(), locusConsOrigElements, usedAlgoIds);
 
 		// create macro construction
 		buildLocusMacroConstruction(locusConsOrigElements);
@@ -339,15 +336,14 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 
 	/**
 	 * Returns locus
-	 * 
+	 *
 	 * @return locus
 	 */
 	public GeoLocusND<T> getLocus() {
 		return locus;
 	}
 
-	private void buildLocusMacroConstruction(
-			TreeSet<ConstructionElement> locusConsElements) {
+	private void buildLocusMacroConstruction(TreeSet<ConstructionElement> locusConsElements) {
 		// build macro construction
 		macroKernel = kernel.newMacroKernel();
 		macroKernel.setGlobalVariableLookup(true);
@@ -360,20 +356,17 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 			ConstructionElement ce = it.next();
 			if (ce.isGeoElement()) {
 				GeoElement geo = (GeoElement) ce;
-				macroKernel.addReservedLabel(
-						geo.getLabel(StringTemplate.defaultTemplate));
+				macroKernel.addReservedLabel(geo.getLabel(StringTemplate.defaultTemplate));
 			}
 		}
 
 		try {
 			// get XML for macro construction of P -> Q
-			String locusConsXML = Macro.buildMacroXML(kernel, locusConsElements)
-					.toString();
+			String locusConsXML = Macro.buildMacroXML(kernel, locusConsElements).toString();
 			macroKernel.loadXML(locusConsXML);
 
 			// get the copies of P and Q from the macro kernel
-			copyP = (GeoPointND) macroKernel
-					.lookupLabel(movingPoint.getLabelSimple());
+			copyP = (GeoPointND) macroKernel.lookupLabel(movingPoint.getLabelSimple());
 			copyP.setFixed(false);
 			copyP.setPath(movingPoint.getPath());
 
@@ -383,8 +376,7 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 			// AlgoIntersectLineConic.resetPossibleSpecialCase();//not
 			// implemented
 
-			copyQ = (GeoPointND) macroKernel
-					.lookupLabel(locusPoint.getLabelSimple());
+			copyQ = (GeoPointND) macroKernel.lookupLabel(locusPoint.getLabelSimple());
 			macroCons = macroKernel.getConstruction();
 
 			/*
@@ -414,8 +406,7 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 				// do not copy functions, their expressions already
 				// include references to the correct other geos
 				if (!geoOrig.isGeoFunction()) {
-					GeoElement geoCopy = macroCons
-							.lookupLabel(geoOrig.getLabelSimple());
+					GeoElement geoCopy = macroCons.lookupLabel(geoOrig.getLabelSimple());
 					if (geoCopy != null) {
 						try {
 							ExpressionNode en = geoCopy.getDefinition();
@@ -423,9 +414,7 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 							geoCopy.setDefinition(en);
 							geoCopy.update();
 						} catch (Exception e) {
-							Log.debug(
-									"AlgoLocus: error in resetMacroConstruction(): "
-											+ e.getMessage());
+							Log.debug("AlgoLocus: error in resetMacroConstruction(): " + e.getMessage());
 						}
 					}
 				}
@@ -436,7 +425,8 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 	// compute locus line
 	@Override
 	public final void compute() {
-		if (!movingPoint.isDefined() || macroCons == null
+		if (!movingPoint.isDefined()
+				|| macroCons == null
 				|| !isPathIterable(path.toGeoElement())
 				|| !validLocus(locusPoint, movingPoint)) {
 			locus.setUndefined();
@@ -463,8 +453,7 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 
 		// lines: start from startpoint to avoid inf. problems.
 		// Otherwise go from endpoint to endpoint
-		if (!Double.isFinite(path.getMinParameter())
-				&& 0 < path.getMaxParameter()) {
+		if (!Double.isFinite(path.getMinParameter()) && 0 < path.getMaxParameter()) {
 			copyP.getPathParameter().setT(0);
 		} else {
 			copyP.getPathParameter().setT(path.getMinParameter());
@@ -494,7 +483,8 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 
 		do {
 			boolean finishedRun = false;
-			while (!finishedRun && !maxTimeExceeded
+			while (!finishedRun
+					&& !maxTimeExceeded
 					&& pointCount <= PathMover.MAX_POINTS * views
 					&& whileLoops <= MAX_LOOPS) {
 				whileLoops++;
@@ -513,8 +503,10 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 					if (!parameterJump) {
 						// make steps smaller until distance ok to connect with
 						// last point
-						while (copyQ.isDefined() && !copyQ.isInfinite()
-								&& !distanceOK(copyQ) && !maxTimeExceeded) {
+						while (copyQ.isDefined()
+								&& !copyQ.isInfinite()
+								&& !distanceOK(copyQ)
+								&& !maxTimeExceeded) {
 							// go back and try smaller step
 							boolean smallerStep = pathMover.smallerStep();
 							if (!smallerStep) {
@@ -577,8 +569,7 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 						// decrease step until another step is possible
 						boolean check = true;
 						while (check) {
-							check = !pathMover.hasNext()
-									&& pathMover.smallerStep();
+							check = !pathMover.hasNext() && pathMover.smallerStep();
 						}
 						// no smaller step possible: run finished
 						if (!pathMover.hasNext()) {
@@ -621,22 +612,22 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param point
 	 *            point
 	 * @return true if point is not equal to last coords
 	 */
-	abstract protected boolean differentFromLast(GeoPointND point);
+	protected abstract boolean differentFromLast(GeoPointND point);
 
 	/**
-	 * 
+	 *
 	 * @param p1
 	 *            first point
 	 * @param p2
 	 *            second point
 	 * @return true if p1 and p2 has same coords for min precision
 	 */
-	abstract protected boolean areEqual(GeoPointND p1, GeoPointND p2);
+	protected abstract boolean areEqual(GeoPointND p1, GeoPointND p2);
 
 	private static boolean isPathIterable(GeoElement geoElement) {
 		if (geoElement.isGeoImplicitCurve()) {
@@ -729,59 +720,59 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param length
 	 *            number of elements
 	 * @return new q copy cache
 	 */
-	abstract protected T[] createQCopyCache(int length);
+	protected abstract T[] createQCopyCache(int length);
 
 	/**
 	 * set point's coords to copy
-	 * 
+	 *
 	 * @param copy
 	 *            copy
 	 * @param point
 	 *            point
 	 */
-	abstract protected void setQCopyCache(T copy, GeoPointND point);
+	protected abstract void setQCopyCache(T copy, GeoPointND point);
 
 	/**
-	 * 
+	 *
 	 * @return new instance for cache
 	 */
-	abstract protected T newCache();
+	protected abstract T newCache();
 
 	/**
 	 * insert point
-	 * 
+	 *
 	 * @param point
 	 *            point
 	 * @param lineTo
 	 *            if line to
 	 */
-	abstract protected void insertPoint(GeoPointND point, boolean lineTo);
+	protected abstract void insertPoint(GeoPointND point, boolean lineTo);
 
 	/**
-	 * 
+	 *
 	 * @param point
 	 *            point
 	 * @return if the point is far away
 	 */
-	abstract protected boolean isFarAway(GeoPointND point, int i);
+	protected abstract boolean isFarAway(GeoPointND point, int i);
 
 	/**
-	 * 
+	 *
 	 * @param Q
 	 *            point
 	 * @param i
 	 *            view index
 	 * @return if distance ok for the point in this rectangle
 	 */
-	abstract protected boolean distanceOK(GeoPointND Q, int i);
+	protected abstract boolean distanceOK(GeoPointND Q, int i);
 
 	private boolean distanceOK(GeoPointND Q) {
-		boolean[] distanceOK = { false, false, false };
+		boolean[] distanceOK = {false, false, false};
 
 		for (int i = 0; i < distanceOK.length; i++) {
 			if (lastFarAway[i] && isFarAway(Q, i)) {
@@ -801,15 +792,14 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param Q
 	 *            point
 	 * @param orInsteadOfAnd
 	 *            check that at least one coord is close?
 	 * @return true if distance is small to last point
 	 */
-	abstract protected boolean distanceSmall(GeoPointND Q,
-			boolean orInsteadOfAnd);
+	protected abstract boolean distanceSmall(GeoPointND Q, boolean orInsteadOfAnd);
 
 	void updateScreenBordersIfNecessary() {
 		for (int i = 0; i < visibleEV.length; i++) {
@@ -871,8 +861,7 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 			views++;
 		}
 		boolean changed = false;
-		for (int i = 0; i < visibleEV.length
-				&& i < kernel.getXmaxLength(); i++) {
+		for (int i = 0; i < visibleEV.length && i < kernel.getXmaxLength(); i++) {
 			if (visibleEV[i]) {
 				changed = changed || updateScreenBorders(i);
 			}
@@ -895,15 +884,14 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 	 * Decide if the locus definition is valid in the sense that there is no
 	 * ad-hoc definition of a point on a path/region between the locus point and
 	 * the moving point on the dependency graph of the construction.
-	 * 
+	 *
 	 * @param locusPoint
 	 *            locus point
 	 * @param movingPoint
 	 *            moving point
 	 * @return whether the points can be used for locus
 	 */
-	public static boolean validLocus(GeoPointND locusPoint,
-			GeoPointND movingPoint) {
+	public static boolean validLocus(GeoPointND locusPoint, GeoPointND movingPoint) {
 		HashSet<GeoElement> mPChildren = new HashSet<>();
 		mPChildren.addAll(movingPoint.getAllChildren());
 		HashSet<GeoElement> lPParents = new HashSet<>();
@@ -912,16 +900,16 @@ public abstract class AlgoLocusND<T extends MyPoint> extends AlgoElement {
 
 		for (GeoElement ge : mPChildren) {
 			AlgoElement ae = ge.getParentAlgorithm();
-			if (ae != null && (ae instanceof AlgoPointOnPath
-					|| ae instanceof AlgoPoint3DOnPath
-					|| ae instanceof AlgoPointInRegion
-					|| ae instanceof AlgoPoint3DInRegion)) {
-				Log.debug("Element " + ge
-						+ " is defined ad-hoc by GeoGebra, no valid locus can be generated");
+			if (ae != null
+					&& (ae instanceof AlgoPointOnPath
+							|| ae instanceof AlgoPoint3DOnPath
+							|| ae instanceof AlgoPointInRegion
+							|| ae instanceof AlgoPoint3DInRegion)) {
+				Log.debug(
+						"Element " + ge + " is defined ad-hoc by GeoGebra, no valid locus can be generated");
 				return false;
 			}
 		}
 		return true;
 	}
-
 }

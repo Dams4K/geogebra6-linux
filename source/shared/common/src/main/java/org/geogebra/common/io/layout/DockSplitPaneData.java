@@ -1,9 +1,27 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.io.layout;
+
+import org.geogebra.common.io.XMLStringBuilder;
 
 /**
  * A storage container for a split pane. Just used for saving &amp; loading a
  * perspective as not all information can be stored in the DockPanelInfo.
- * 
+ *
  * @author Florian Sonner
  */
 public class DockSplitPaneData {
@@ -20,8 +38,7 @@ public class DockSplitPaneData {
 	 *            vertical or horizontal (JSplitPane.HORIZONTAL_SPLIT or
 	 *            JSplitPane.VERTICAL_SPLIT)
 	 */
-	public DockSplitPaneData(String location, double dividerLocation,
-			int orientation) {
+	public DockSplitPaneData(String location, double dividerLocation, int orientation) {
 		this.location = location;
 		this.dividerLocation = dividerLocation;
 		this.orientation = orientation;
@@ -49,18 +66,14 @@ public class DockSplitPaneData {
 	}
 
 	/**
-	 * @return XML representation
+	 * @param sb builder XML representation
 	 */
-	public String getXml() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("<pane location=\"");
-		sb.append(location);
-		sb.append("\" divider=\"");
-		sb.append(dividerLocation);
-		sb.append("\" orientation=\"");
-		sb.append(orientation);
-		sb.append("\" />");
-		return sb.toString();
+	public void getXml(XMLStringBuilder sb) {
+		sb.startTag("pane");
+		sb.attrRaw("location", location);
+		sb.attr("divider", dividerLocation);
+		sb.attr("orientation", orientation);
+		sb.endTag();
 	}
 
 	/**

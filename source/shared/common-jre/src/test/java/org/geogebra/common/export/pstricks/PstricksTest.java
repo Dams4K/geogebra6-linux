@@ -1,7 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.export.pstricks;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.ArrayList;
 
@@ -14,26 +30,25 @@ import org.geogebra.common.kernel.arithmetic.Inequality;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.main.AppCommon3D;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class PstricksTest {
+class PstricksTest {
 	private static AppCommon3D app;
 	private static ArrayList<String> inputs;
-	private final ExportGraphicsFactory exportGraphicsFactory
-			= ExportGraphicsCommon::new;
+	private final ExportGraphicsFactory exportGraphicsFactory = ExportGraphicsCommon::new;
 
-	@Before
-	public void clear() {
+	@BeforeEach
+	void clear() {
 		app.getKernel().clearConstruction(true);
 		t("ShowAxes(false)");
 		t("ShowGrid(false)");
 	}
 
 	/** Set up the app */
-	@BeforeClass
-	public static void setUp() {
+	@BeforeAll
+	static void setUp() {
 		app = AppCommonFactory.create3D();
 		inputs = new ArrayList<>();
 		createObjects();
@@ -48,20 +63,19 @@ public class PstricksTest {
 	}
 
 	@Test
-	public void exportPstricks() {
+	void exportPstricks() {
 		GeoGebraExport ps = new GeoGebraToPstricks(app, exportGraphicsFactory);
 		testInputs(ps, "\\end{document}");
 	}
 
 	@Test
-	public void exportPgf() {
+	void exportPgf() {
 		GeoGebraExport ps = new GeoGebraToPgf(app, exportGraphicsFactory);
 		testInputs(ps, "\\end{document}");
-
 	}
 
 	@Test
-	public void exportAsymptote() {
+	void exportAsymptote() {
 		GeoGebraExport ps = new GeoGebraToAsymptote(app, exportGraphicsFactory);
 		testInputs(ps, "/* end of picture */");
 	}
@@ -70,8 +84,7 @@ public class PstricksTest {
 		String last = "";
 		EuclidianView ev = app.getActiveEuclidianView();
 
-		ExportFrameMinimal frame = new ExportFrameMinimal(ev.getYmin(),
-				ev.getYmax());
+		ExportFrameMinimal frame = new ExportFrameMinimal(ev.getYmin(), ev.getYmax());
 		frame.setKeepColor();
 		GeoElement slider = app.getKernel().lookupLabel("anim");
 		if (slider instanceof GeoNumeric) {
@@ -83,8 +96,7 @@ public class PstricksTest {
 			String out = generate(ps, frame);
 			assertNotEquals(cmd, out, last);
 			last = out;
-			assertEquals(string,
-					out.substring(out.length() - string.length()));
+			assertEquals(string, out.substring(out.length() - string.length()));
 		}
 	}
 
@@ -142,11 +154,9 @@ public class PstricksTest {
 		}
 	}
 
-	private static String generate(GeoGebraExport ps,
-			ExportFrameMinimal frame) {
+	private static String generate(GeoGebraExport ps, ExportFrameMinimal frame) {
 		ps.generateAllCode();
 		return frame.getCode();
-
 	}
 
 	private static class ExportGraphicsCommon extends GGraphicsCommon {
@@ -154,8 +164,7 @@ public class PstricksTest {
 		private final Inequality inequality;
 		private final FunctionalNVar geo;
 
-		public ExportGraphicsCommon(FunctionalNVar geo, Inequality inequality,
-				GeoGebraExport export) {
+		ExportGraphicsCommon(FunctionalNVar geo, Inequality inequality, GeoGebraExport export) {
 			this.export = export;
 			this.inequality = inequality;
 			this.geo = geo;

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.main;
 
 import java.awt.Component;
@@ -26,22 +42,21 @@ import org.geogebra.desktop.euclidian.EuclidianViewD;
 import org.geogebra.desktop.gui.GuiManagerD;
 import org.geogebra.desktop.gui.app.FileExtensionFilter;
 import org.geogebra.desktop.gui.app.GeoGebraFrame;
+import org.geogebra.desktop.gui.dialog.HelpDialog;
 import org.geogebra.desktop.gui.inputbar.AlgebraInputD;
 import org.geogebra.desktop.gui.layout.LayoutD;
 import org.geogebra.desktop.gui.menubar.GeoGebraMenuBar;
 import org.geogebra.desktop.gui.util.OOMLConverter;
 import org.geogebra.desktop.util.UtilD;
-
-import com.himamis.retex.editor.desktop.MathFieldD;
-import com.himamis.retex.editor.share.util.KeyCodes;
+import org.geogebra.editor.desktop.MathFieldD;
+import org.geogebra.editor.share.util.KeyCodes;
 
 /**
  * Handles global keys like ESC, DELETE, and function keys.
- * 
+ *
  * @author Markus Hohenwarter
  */
-public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
-		implements KeyEventDispatcher {
+public class GlobalKeyDispatcherD extends GlobalKeyDispatcher implements KeyEventDispatcher {
 
 	private boolean newWindowAllowed = true;
 
@@ -64,7 +79,8 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 		// ignore key events coming from text components (i.e. text fields and
 		// text areas)
 		// or key events coming from popups (source class = JRootPane)
-		if (event.isConsumed() || event.getSource() instanceof JTextComponent
+		if (event.isConsumed()
+				|| event.getSource() instanceof JTextComponent
 				|| event.getSource() instanceof JRootPane
 				|| event.getSource() instanceof MathFieldD) {
 			return false;
@@ -72,20 +88,20 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 
 		boolean consumed = false;
 		switch (event.getID()) {
-		default:
-			// do nothing
-			break;
-		case KeyEvent.KEY_PRESSED:
-			consumed = handleKeyPressed(event);
-			break;
+			default:
+				// do nothing
+				break;
+			case KeyEvent.KEY_PRESSED:
+				consumed = handleKeyPressed(event);
+				break;
 
-		case KeyEvent.KEY_TYPED:
-			consumed = handleKeyTyped(event);
-			break;
+			case KeyEvent.KEY_TYPED:
+				consumed = handleKeyTyped(event);
+				break;
 
-		case KeyEvent.KEY_RELEASED:
-			newWindowAllowed = true;
-			break;
+			case KeyEvent.KEY_RELEASED:
+				newWindowAllowed = true;
+				break;
 		}
 
 		if (consumed) {
@@ -96,7 +112,7 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 
 	/**
 	 * The "key pressed" event is generated when a key is pushed down.
-	 * 
+	 *
 	 * @param event
 	 *            event
 	 * @return if key was consumed
@@ -125,10 +141,8 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 		if (event.getSource() instanceof JTable) {
 			return false;
 		}
-		char ch = event.getKeyChar();
-		if (!event.isMetaDown() && !event.isAltDown()
-				&& !event.isControlDown()) {
-			return renameStarted(ch);
+		if (!event.isMetaDown() && !event.isAltDown() && !event.isControlDown()) {
+			keyPressedOnGeo(event.getKeyChar());
 		}
 		return false;
 	}
@@ -136,7 +150,7 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 	/**
 	 * Handles key event by disassembling it into primitive types and handling
 	 * it using the method from common
-	 * 
+	 *
 	 * @param event
 	 *            event
 	 * @return whether key was consumed
@@ -146,27 +160,32 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 		// use event.isAltDown rather than AppD.isControlDown(event)
 		// as we need to distinguish <AltGr>2 and <Ctrl>2
 		// #2390 #908
-		return handleGeneralKeys(KeyCodes.translateJavacode(event.getKeyCode()),
-				event.isShiftDown(), AppD.isControlDown(event),
-				event.isAltDown(), event.getSource() instanceof JTable,
+		return handleGeneralKeys(
+				KeyCodes.translateJavacode(event.getKeyCode()),
+				event.isShiftDown(),
+				AppD.isControlDown(event),
+				event.isAltDown(),
+				event.getSource() instanceof JTable,
 				event.getSource() instanceof EuclidianViewD);
 	}
 
-	private boolean handleSelectedGeosKeys(KeyEvent event,
-			ArrayList<GeoElement> geos) {
+	private boolean handleSelectedGeosKeys(KeyEvent event, ArrayList<GeoElement> geos) {
 
 		// use event.isAltDown rather than AppD.isAltDown(event)
 		// as Ctrl-Arrow on OSX does something special
 		// so we actually want to use Alt
 		return handleSelectedGeosKeys(
-				KeyCodes.translateJavacode(event.getKeyCode()), geos,
-				event.isShiftDown(), AppD.isControlDown(event),
-				event.isAltDown(), event.getSource() instanceof JTable);
+				KeyCodes.translateJavacode(event.getKeyCode()),
+				geos,
+				event.isShiftDown(),
+				AppD.isControlDown(event),
+				event.isAltDown(),
+				event.getSource() instanceof JTable);
 	}
 
 	@Override
-	protected boolean handleCtrlKey(KeyCodes key, boolean isShiftDown, boolean fromSpreadsheet,
-			boolean fromEuclidianView) {
+	protected boolean handleCtrlKey(
+			KeyCodes key, boolean isShiftDown, boolean fromSpreadsheet, boolean fromEuclidianView) {
 		return handleCtrlKeys(key, isShiftDown, fromSpreadsheet, fromEuclidianView);
 	}
 
@@ -176,17 +195,15 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 			return true;
 		}
 
-		if (app.isUsingFullGui()
-				&& app.getGuiManager().noMenusOpen()) {
-			if (app.showAlgebraInput() && !((GuiManagerD) app.getGuiManager())
-					.getAlgebraInput().hasFocus()) {
+		if (app.isUsingFullGui() && app.getGuiManager().noMenusOpen()) {
+			if (app.showAlgebraInput()
+					&& !((GuiManagerD) app.getGuiManager()).getAlgebraInput().hasFocus()) {
 				// focus this frame (needed for external view windows)
 				if (((AppD) app).getFrame() != null) {
 					((AppD) app).getFrame().toFront();
 				}
 
-				((GuiManagerD) app.getGuiManager()).getAlgebraInput()
-						.requestFocus();
+				((GuiManagerD) app.getGuiManager()).getAlgebraInput().requestFocus();
 
 				return true;
 			}
@@ -203,14 +220,12 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 		if (isControlDown && app.isUsingFullGui()) {
 
 			GuiManagerInterface gui = app.getGuiManager();
-			((LayoutD) gui.getLayout()).getDockManager()
-					.moveFocus(!isShiftDown);
+			((LayoutD) gui.getLayout()).getDockManager().moveFocus(!isShiftDown);
 
 			return true;
-
 		}
-		boolean useTab = app.getActiveEuclidianView().hasFocus()
-				|| app.getAlgebraView().hasFocus();
+		boolean useTab =
+				app.getActiveEuclidianView().hasFocus() || app.getAlgebraView().hasFocus();
 
 		// make sure TAB works in Input Boxes but also in Spreadsheet, Input Bar
 		Component owner = ((AppD) app).getFrame().getFocusOwner();
@@ -237,20 +252,20 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 
 	@Override
 	protected void handleCopyCut(boolean cut) {
-		if (!(((GuiManagerD) app.getGuiManager()).getSpreadsheetView()
-				.hasFocus())
-				&& !(((AlgebraInputD) ((GuiManagerD) app.getGuiManager())
-						.getAlgebraInput()).getTextField().hasFocus())) {
+		if (!((GuiManagerD) app.getGuiManager()).getSpreadsheetView().hasFocus()
+				&& !((AlgebraInputD) ((GuiManagerD) app.getGuiManager()).getAlgebraInput())
+						.getTextField()
+						.hasFocus()) {
 			CopyPaste.handleCutCopy(app, cut);
 		}
 	}
 
 	@Override
 	protected void handleCtrlV() {
-		if (!(((GuiManagerD) app.getGuiManager()).getSpreadsheetView()
-				.hasFocus())
-				&& !(((AlgebraInputD) ((GuiManagerD) app.getGuiManager())
-						.getAlgebraInput()).getTextField().hasFocus())) {
+		if (!((GuiManagerD) app.getGuiManager()).getSpreadsheetView().hasFocus()
+				&& !((AlgebraInputD) ((GuiManagerD) app.getGuiManager()).getAlgebraInput())
+						.getTextField()
+						.hasFocus()) {
 
 			app.setWaitCursor();
 			app.getCopyPaste().pasteFromXML(app);
@@ -263,8 +278,7 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 	 * Handle pasted OOML (MS Office equation)
 	 */
 	protected void tryPasteEquation() {
-		String html = ((GuiManagerD) app.getGuiManager())
-				.getStringFromClipboard();
+		String html = ((GuiManagerD) app.getGuiManager()).getStringFromClipboard();
 		if (html != null && html.indexOf("<m:oMath") > 0) {
 			int blockBegin = html.indexOf("<m:oMathPara>");
 			int blockEnd;
@@ -274,9 +288,8 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 			} else {
 				blockEnd = html.indexOf("</m:oMathPara>") + 14;
 			}
-			String mathml = OOMLConverter
-					.oomlToMathml(html.substring(blockBegin, blockEnd)
-							.replace('\n', ' ').replace('\r', ' '));
+			String mathml = OOMLConverter.oomlToMathml(
+					html.substring(blockBegin, blockEnd).replace('\n', ' ').replace('\r', ' '));
 			app.getGgbApi().evalCommand(mathml);
 		}
 	}
@@ -292,8 +305,7 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 			if (app.isSaved() || ((AppD) app).saveCurrentFile()) {
 				FileExtensionFilter fileFilter = new FileExtensionFilter();
 				fileFilter.addExtension(FileExtensions.GEOGEBRA);
-				File[] options = ((AppD) app).getCurrentPath()
-						.listFiles(fileFilter);
+				File[] options = ((AppD) app).getCurrentPath().listFiles(fileFilter);
 				if (options == null) {
 					return false;
 				}
@@ -301,14 +313,12 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 				// folder
 				if (((AppD) app).getCurrentFile() == null) {
 					if (options.length > 0) {
-						((GuiManagerD) app.getGuiManager()).loadFile(options[0],
-								false);
+						((GuiManagerD) app.getGuiManager()).loadFile(options[0], false);
 						return true;
 					}
 					return false;
 				}
-				TreeSet<File> sortedSet = new TreeSet<>(
-						UtilD.getFileComparator());
+				TreeSet<File> sortedSet = new TreeSet<>(UtilD.getFileComparator());
 				for (File option : options) {
 					if (option.isFile()) {
 						sortedSet.add(option);
@@ -337,8 +347,7 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 				AppD application = ggb.getApplication();
 
 				if (app == application) {
-					int n = isAltDown ? ((i - 1 + size) % size)
-							: ((i + 1) % size);
+					int n = isAltDown ? ((i - 1 + size) % size) : ((i + 1) % size);
 					ggb = ggbInstances.get(n); // next/last
 					// instance
 					ggb.toFront();
@@ -353,16 +362,15 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 
 	@Override
 	protected void copyDefinitionsToInputBarAsList(List<GeoElement> geos) {
-		JTextComponent textComponent = ((AlgebraInputD) ((GuiManagerD) app
-				.getGuiManager()).getAlgebraInput()).getTextField();
+		JTextComponent textComponent =
+				((AlgebraInputD) ((GuiManagerD) app.getGuiManager()).getAlgebraInput()).getTextField();
 
 		StringBuilder sb = new StringBuilder();
 		sb.append('{');
 
 		Iterator<GeoElement> it = geos.iterator();
 		while (it.hasNext()) {
-			sb.append(it.next().getFormulaString(StringTemplate.defaultTemplate,
-					false));
+			sb.append(it.next().getFormulaString(StringTemplate.defaultTemplate, false));
 			if (it.hasNext()) {
 				sb.append(',');
 			}
@@ -386,5 +394,11 @@ public class GlobalKeyDispatcherD extends GlobalKeyDispatcher
 			app.setDefaultCursor();
 			newWindowAllowed = false;
 		}
+	}
+
+	@Override
+	protected boolean openToolHelp() {
+		new HelpDialog((AppD) app).openToolHelp();
+		return true;
 	}
 }

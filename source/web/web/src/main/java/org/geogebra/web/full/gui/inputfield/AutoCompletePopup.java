@@ -1,6 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.inputfield;
 
-import org.geogebra.common.gui.MayHaveFocus;
+import org.geogebra.common.gui.FocusableComponent;
 import org.geogebra.common.gui.inputfield.InputHelper;
 import org.geogebra.common.main.localization.AutocompleteProvider;
 import org.geogebra.common.ownership.GlobalScope;
@@ -18,7 +34,7 @@ import org.gwtproject.user.client.ui.InlineHTML;
 import org.gwtproject.user.client.ui.Label;
 import org.gwtproject.user.client.ui.Widget;
 
-public class AutoCompletePopup extends GPopupMenuW {
+public final class AutoCompletePopup extends GPopupMenuW {
 
 	private final AutocompleteProvider suggestions;
 	private final AutoCompleteW component;
@@ -29,8 +45,7 @@ public class AutoCompletePopup extends GPopupMenuW {
 	 * @param provider completions provider
 	 * @param component text input field
 	 */
-	public AutoCompletePopup(AppW app, AutocompleteProvider provider,
-			AutoCompleteW component) {
+	public AutoCompletePopup(AppW app, AutocompleteProvider provider, AutoCompleteW component) {
 		super(app);
 		this.suggestions = provider;
 		this.component = component;
@@ -39,7 +54,7 @@ public class AutoCompletePopup extends GPopupMenuW {
 	}
 
 	@Override
-	protected void returnFocus(MayHaveFocus anchor) {
+	protected void returnFocus(FocusableComponent anchor) {
 		// keep focus in input
 	}
 
@@ -51,9 +66,8 @@ public class AutoCompletePopup extends GPopupMenuW {
 		AriaMenuBar submenu = new AriaMenuBar();
 		submenu.addStyleName("autocompleteSyntaxContent");
 		submenu.addStyleName("customScrollbar");
-		for (String line: cpl.syntaxes) {
-			AriaMenuItem item = new AriaMenuItem(line.replaceAll("[<>]", ""),
-					null, () -> {
+		for (String line : cpl.syntaxes) {
+			AriaMenuItem item = new AriaMenuItem(line.replaceAll("[<>]", ""), null, () -> {
 				component.insertString(line);
 				hide();
 			});
@@ -61,8 +75,7 @@ public class AutoCompletePopup extends GPopupMenuW {
 			item.setFocusable(false);
 			submenu.addItem(item);
 		}
-		AriaMenuItem menuItem = new AriaMenuItem(highlightSuffix(cpl.match),
-				submenu);
+		AriaMenuItem menuItem = new AriaMenuItem(highlightSuffix(cpl.match), submenu);
 		menuItem.setSubmenuHeading(buildSubmenuHeading(cpl));
 		menuItem.addStyleName("no-image");
 		menuItem.setFocusable(false);
@@ -73,17 +86,17 @@ public class AutoCompletePopup extends GPopupMenuW {
 		FlowPanel heading = new FlowPanel();
 		heading.addStyleName("autocompleteSyntaxHeading");
 		heading.add(new Label(command.getCommand()));
-		if (!GlobalScope.examController.isExamActive()) {
+		if (!GlobalScope.isExamActive(getApp())) {
 			heading.add(createHelpButton(command));
 		}
 		return heading;
 	}
 
 	private Widget createHelpButton(AutocompleteProvider.Completion command) {
-		StandardButton button = new StandardButton(SharedResources.INSTANCE.icon_help_black(),
-				null, 24);
-		button.addFastClickHandler(ignore ->
-				getApp().getGuiManager().openHelp(command.helpType, command.helpPage));
+		StandardButton button =
+				new StandardButton(SharedResources.INSTANCE.icon_help_black(), null, 24);
+		button.addFastClickHandler(
+				ignore -> getApp().getGuiManager().openHelp(command.helpType, command.helpPage));
 		return button;
 	}
 
@@ -126,8 +139,8 @@ public class AutoCompletePopup extends GPopupMenuW {
 		int scaledBottom = scaledTop + inputHeight;
 		int popupTop = getPopupTop(scaledTop, scaledBottom);
 
-		popupPanel.setPopupPositionAndShow((offsetWidth, offsetHeight) ->
-				popupPanel.setPopupPosition(left, popupTop));
+		popupPanel.setPopupPositionAndShow(
+				(offsetWidth, offsetHeight) -> popupPanel.setPopupPosition(left, popupTop));
 	}
 
 	private int scaledY(double y) {
@@ -136,8 +149,8 @@ public class AutoCompletePopup extends GPopupMenuW {
 
 	private int getPopupTop(int inputTop, int inputBottom) {
 		int popupTop = inputBottom;
-		int distBottomKeyboardTop = (int) (getApp().getHeight() - inputBottom
-				- getApp().getAppletFrame().getKeyboardHeight());
+		int distBottomKeyboardTop =
+				(int) (getApp().getHeight() - inputBottom - getApp().getAppletFrame().getKeyboardHeight());
 		// not enough place to show below input
 		if (distBottomKeyboardTop < popupPanel.getOffsetHeight()) {
 			popupTop = inputTop - popupPanel.getOffsetHeight();
@@ -157,6 +170,9 @@ public class AutoCompletePopup extends GPopupMenuW {
 		return popupTop;
 	}
 
+	/**
+	 * @return whether the autocomplete suggestion menu is currently shown.
+	 */
 	public boolean isSuggesting() {
 		return isMenuShown();
 	}
@@ -213,7 +229,8 @@ public class AutoCompletePopup extends GPopupMenuW {
 	 * @param height - height of input
 	 */
 	public void popupSuggestions(String input, int left, int top, int height) {
-		if (input != null && !input.isBlank()
+		if (input != null
+				&& !input.isBlank()
 				&& InputHelper.needsAutocomplete(input, getApp().getKernel())) {
 			fillAndShow(input, left, top, height);
 		} else {

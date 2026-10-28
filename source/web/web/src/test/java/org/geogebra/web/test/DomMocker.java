@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.test;
 
 import static org.mockito.Mockito.doAnswer;
@@ -38,22 +54,24 @@ public class DomMocker {
 		Element element = mock(Element.class);
 		final Map<String, String> attributes = new HashMap<>();
 		Mockito.doAnswer((Answer<Void>) invocation -> {
-			attributes.put(invocation.getArgumentAt(0, String.class),
-					invocation.getArgumentAt(1, String.class));
-			return null;
-		}).when(element).setAttribute(Matchers.anyString(), Matchers.anyString());
+					attributes.put(
+							invocation.getArgumentAt(0, String.class), invocation.getArgumentAt(1, String.class));
+					return null;
+				})
+				.when(element)
+				.setAttribute(Matchers.anyString(), Matchers.anyString());
 
 		Mockito.doAnswer((Answer<Void>) invocation -> {
-			attributes.put("innerText", invocation.getArgumentAt(0, String.class));
-			return null;
-		}).when(element).setInnerText(Matchers.anyString());
+					attributes.put("innerText", invocation.getArgumentAt(0, String.class));
+					return null;
+				})
+				.when(element)
+				.setInnerText(Matchers.anyString());
 
-		when(element.getAttribute(Matchers.anyString()))
-				.thenAnswer((Answer<String>) invocation ->
-								attributes.get(invocation.getArgumentAt(0, String.class)));
+		when(element.getAttribute(Matchers.anyString())).thenAnswer((Answer<String>)
+				invocation -> attributes.get(invocation.getArgumentAt(0, String.class)));
 		when(element.getInnerText())
-				.thenAnswer((Answer<String>) invocation ->
-						String.valueOf(attributes.get("innerText")));
+				.thenAnswer((Answer<String>) invocation -> String.valueOf(attributes.get("innerText")));
 		Style mockStyle = mock(Style.class);
 		when(element.getStyle()).thenReturn(mockStyle);
 		return element;
@@ -82,8 +100,10 @@ public class DomMocker {
 
 	private static void bypassSetTextMethod(final Label lbl) {
 		doAnswer((Answer<Void>) invocation -> {
-			lbl.getElement().setInnerText(invocation.getArgumentAt(0, String.class));
-			return null;
-		}).when(lbl).setText(Matchers.anyString());
+					lbl.getElement().setInnerText(invocation.getArgumentAt(0, String.class));
+					return null;
+				})
+				.when(lbl)
+				.setText(Matchers.anyString());
 	}
 }

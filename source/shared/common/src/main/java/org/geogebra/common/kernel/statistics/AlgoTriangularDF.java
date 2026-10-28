@@ -1,18 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * Area of polygon P[0], ..., P[n]
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -30,7 +29,7 @@ import org.geogebra.common.kernel.geos.GeoNumberValue;
 
 /**
  * algorithm for Triangular[a, b, mode,x, boolean]
- * 
+ *
  * @author Michael
  */
 public class AlgoTriangularDF extends AlgoElement {
@@ -53,8 +52,12 @@ public class AlgoTriangularDF extends AlgoElement {
 	 * @param cumulative
 	 *            cumulative?
 	 */
-	public AlgoTriangularDF(Construction cons, GeoNumberValue a,
-			GeoNumberValue b, GeoNumberValue mode, BooleanValue cumulative) {
+	public AlgoTriangularDF(
+			Construction cons,
+			GeoNumberValue a,
+			GeoNumberValue b,
+			GeoNumberValue mode,
+			BooleanValue cumulative) {
 		super(cons);
 		this.a = a;
 		this.b = b;
@@ -111,7 +114,8 @@ public class AlgoTriangularDF extends AlgoElement {
 			return;
 		}
 
-		if (a.getDouble() >= b.getDouble() || mode.getDouble() > b.getDouble()
+		if (a.getDouble() >= b.getDouble()
+				|| mode.getDouble() > b.getDouble()
 				|| mode.getDouble() < a.getDouble()) {
 			ret.setUndefined();
 			return;
@@ -134,18 +138,20 @@ public class AlgoTriangularDF extends AlgoElement {
 
 		if (cumulative != null && cumulative.getBoolean()) {
 
-			branchAtoMode = fv.wrap().subtract(a).square()
-					.divide(bEn.subtract(a).multiply(modeEn.subtract(a)));
-			branchModeToB = fv.wrap().subtract(b).square()
+			branchAtoMode =
+					fv.wrap().subtract(a).square().divide(bEn.subtract(a).multiply(modeEn.subtract(a)));
+			branchModeToB = fv.wrap()
+					.subtract(b)
+					.square()
 					.divide(bEn.subtract(a).multiply(modeEn.subtract(b)))
 					.plus(1);
 			rightBranch = new MyDouble(kernel, 1);
 		} else {
 
-			branchAtoMode = fv.wrap().subtract(a).multiplyR(2)
-					.divide(bEn.subtract(a).multiply(modeEn.subtract(a)));
-			branchModeToB = fv.wrap().subtract(b).multiplyR(2)
-					.divide(bEn.subtract(a).multiply(modeEn.subtract(b)));
+			branchAtoMode =
+					fv.wrap().subtract(a).multiplyR(2).divide(bEn.subtract(a).multiply(modeEn.subtract(a)));
+			branchModeToB =
+					fv.wrap().subtract(b).multiplyR(2).divide(bEn.subtract(a).multiply(modeEn.subtract(b)));
 			rightBranch = new MyDouble(kernel, 0);
 
 			// old hack:
@@ -155,12 +161,10 @@ public class AlgoTriangularDF extends AlgoElement {
 			// ("+b+" - ("+a+")) / ("+c+" - ("+b+")), 0]]]",
 			// true );
 		}
-		ExpressionNode middleRight = lessThanMode.ifElse(branchAtoMode,
-				lessThanB.ifElse(branchModeToB, rightBranch));
+		ExpressionNode middleRight =
+				lessThanMode.ifElse(branchAtoMode, lessThanB.ifElse(branchModeToB, rightBranch));
 
 		ret.setDefined(true);
 		ret.getFunctionExpression().setRight(middleRight);
-
 	}
-
 }

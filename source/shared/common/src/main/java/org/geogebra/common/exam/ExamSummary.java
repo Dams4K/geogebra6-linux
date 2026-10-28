@@ -1,9 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.exam;
 
 import java.util.Date;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 
 import org.geogebra.common.kernel.commands.CmdGetTime;
 import org.geogebra.common.main.AppConfig;
@@ -11,6 +24,8 @@ import org.geogebra.common.main.Localization;
 import org.geogebra.common.main.exam.event.CheatingEvent;
 import org.geogebra.common.main.exam.event.CheatingEvents;
 import org.geogebra.common.util.TimeFormatAdapter;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides information for the exam details UI (during exams) or exam summary UI (after finishing).
@@ -69,23 +84,24 @@ public final class ExamSummary {
 	 * @param timeFormatter A {@link TimeFormatAdapter} for formatting durations.
 	 * @param localization A localization.
 	 */
-	public ExamSummary(@Nonnull ExamType examType,
-			@Nonnull Date startDate,
-			@CheckForNull Date finishDate,
-			@Nonnull CheatingEvents cheatingEvents,
-			@Nonnull AppConfig appConfig,
-			@Nonnull  TimeFormatAdapter timeFormatter,
-			@Nonnull  Localization localization) {
+	public ExamSummary(
+			@NonNull ExamType examType,
+			@NonNull Date startDate,
+			@Nullable Date finishDate,
+			@NonNull CheatingEvents cheatingEvents,
+			@NonNull AppConfig appConfig,
+			@NonNull TimeFormatAdapter timeFormatter,
+			@NonNull Localization localization) {
 		isExamFinished = finishDate != null;
 		cheated = !cheatingEvents.isEmpty();
 		examName = examType.getDisplayName(localization, appConfig);
-		title = localization.getMenu("exam_menu_entry") + ": " + (cheated
-				? localization.getMenu("exam_alert") : localization.getMenu("OK"));
+		title = localization.getMenu("exam_menu_entry") + ": "
+				+ (cheated ? localization.getMenu("exam_alert") : localization.getMenu("OK"));
 		finishedInfoText = localization.getMenu("exam_log_show_screen_to_teacher");
 		durationHintText = localization.getMenu("Duration");
 		if (finishDate != null) {
-			durationLabelText = timeFormatter.format(localization.getLanguageTag(),
-					finishDate.getTime() - startDate.getTime());
+			durationLabelText = timeFormatter.format(
+					localization.getLanguageTag(), finishDate.getTime() - startDate.getTime());
 			endTimeLabelText = formatTime(finishDate, localization);
 		}
 		startDateHintText = localization.getMenu("exam_start_date");
@@ -97,11 +113,10 @@ public final class ExamSummary {
 		activityLabelText = getActivityLog(startDate, finishDate, cheatingEvents, localization);
 	}
 
-	private String getActivityLog(Date startDate, Date finishDate,
-			CheatingEvents cheatingEvents, Localization localization) {
+	private String getActivityLog(
+			Date startDate, Date finishDate, CheatingEvents cheatingEvents, Localization localization) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("0:00").append(' ')
-				.append(localization.getMenu("exam_started")).append("\n");
+		sb.append("0:00").append(' ').append(localization.getMenu("exam_started")).append("\n");
 		for (CheatingEvent cheatingEvent : cheatingEvents.getEvents()) {
 			sb.append(formatElapsedTime(startDate, cheatingEvent.getDate()));
 			sb.append(' ');
@@ -109,8 +124,10 @@ public final class ExamSummary {
 			sb.append("\n");
 		}
 		if (finishDate != null) {
-			sb.append(formatElapsedTime(startDate, finishDate)).append(' ')
-					.append(localization.getMenu("exam_ended")).append("\n");
+			sb.append(formatElapsedTime(startDate, finishDate))
+					.append(' ')
+					.append(localization.getMenu("exam_ended"))
+					.append("\n");
 		}
 		return sb.toString();
 	}

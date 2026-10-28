@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util.debug;
 
 /**
@@ -29,9 +45,9 @@ public class GeoGebraProfiler {
 		if (drags > 0) {
 			Log.debug("Profile Dragging: \nNumber of handled drag events: " + drags + "\n"
 					+ "Average duration of one drag event: "
-					+ ((float) dragTime / (float) drags) + " ms \n" + "Number of repaints: "
+					+ (dragTime / (float) drags) + " ms \n" + "Number of repaints: "
 					+ repaints + "\n" + "Average duration of one repaint: "
-					+ ((float) repaintTime / repaints) + " ms");
+					+ (repaintTime / (float) repaints) + " ms");
 		}
 	}
 
@@ -40,8 +56,8 @@ public class GeoGebraProfiler {
 	 */
 	public static void printAlgebraMeasurementData() {
 		if (algebra > 0) {
-			Log.debug("Profile Algebra: " + algebra + " x "
-					+ (algebraTime / algebra) + " = " + algebraTime);
+			Log.debug(
+					"Profile Algebra: " + algebra + " x " + (algebraTime / algebra) + " = " + algebraTime);
 		}
 	}
 
@@ -50,8 +66,8 @@ public class GeoGebraProfiler {
 	 */
 	public static void printEventMeasurementData() {
 		if (event > 0) {
-			Log.debug("Profile EventDispatcher: " + event + " x "
-					+ (eventTime / event) + " = " + eventTime);
+			Log.debug(
+					"Profile EventDispatcher: " + event + " x " + (eventTime / event) + " = " + eventTime);
 		}
 	}
 
@@ -60,14 +76,14 @@ public class GeoGebraProfiler {
 	 */
 	public static void printCascadeMeasurementData() {
 		if (cascades > 0) {
-			Log.debug("Profile Cascades: " + cascades + " x "
-					+ (cascadeTime / cascades) + " = " + cascadeTime);
+			Log.debug(
+					"Profile Cascades: " + cascades + " x " + (cascadeTime / cascades) + " = " + cascadeTime);
 		}
 	}
 
 	/**
 	 * Log a repaint
-	 * 
+	 *
 	 * @param time
 	 *            repaint duration
 	 */

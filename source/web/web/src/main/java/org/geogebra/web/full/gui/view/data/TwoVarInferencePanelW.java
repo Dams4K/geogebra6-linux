@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.data;
 
 import org.geogebra.common.gui.view.data.TwoVarInferenceModel;
@@ -12,8 +28,8 @@ import org.gwtproject.user.client.ui.FlowPanel;
 import org.gwtproject.user.client.ui.Label;
 import org.gwtproject.user.client.ui.ListBox;
 
-public class TwoVarInferencePanelW extends FlowPanel implements StatPanelInterfaceW,
-		TwoVarInferenceListener {
+public final class TwoVarInferencePanelW extends FlowPanel
+		implements StatPanelInterfaceW, TwoVarInferenceListener {
 
 	private AppW app;
 	private DataAnalysisViewW daView;
@@ -39,14 +55,14 @@ public class TwoVarInferencePanelW extends FlowPanel implements StatPanelInterfa
 	private FlowPanel mainPanel;
 	private FlowPanel samplePanel;
 	private TwoVarStatPanelW twoStatPanel;
-	private TwoVarInferenceModel model;
+	private final TwoVarInferenceModel model;
 	private boolean enablePooled;
 	private ComponentCheckbox ckPooled;
 	private Localization loc;
 
 	/**
 	 * Construct a TwoVarInference panel
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param view
@@ -82,8 +98,7 @@ public class TwoVarInferencePanelW extends FlowPanel implements StatPanelInterfa
 		lblTitle1 = new Label();
 		lblTitle2 = new Label();
 
-		ckPooled = new ComponentCheckbox(loc, false, "Pooled",
-				(selected) -> model.setPooled(selected));
+		ckPooled = new ComponentCheckbox(loc, false, "Pooled", model::setPooled);
 		ckPooled.addStyleName("ckPooled");
 
 		lbAltHyp = new ListBox();
@@ -210,7 +225,7 @@ public class TwoVarInferencePanelW extends FlowPanel implements StatPanelInterfa
 
 	/**
 	 * Handle input event.
-	 * 
+	 *
 	 * @param source
 	 *            input field
 	 */
@@ -247,8 +262,7 @@ public class TwoVarInferencePanelW extends FlowPanel implements StatPanelInterfa
 	}
 
 	@Override
-	public void setStatTable(int row, String[] rowNames, int length,
-			String[] columnNames) {
+	public void setStatTable(int row, String[] rowNames, int length, String[] columnNames) {
 		resultTable.setStatTable(1, null, columnNames.length, columnNames);
 	}
 
@@ -292,5 +306,4 @@ public class TwoVarInferencePanelW extends FlowPanel implements StatPanelInterfa
 		this.enablePooled = enablePooled;
 		ckPooled.setVisible(enablePooled);
 	}
-
 }

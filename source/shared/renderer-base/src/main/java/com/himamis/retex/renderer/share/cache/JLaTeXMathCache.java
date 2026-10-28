@@ -24,23 +24,23 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  *
- * Linking this library statically or dynamically with other modules 
- * is making a combined work based on this library. Thus, the terms 
- * and conditions of the GNU General Public License cover the whole 
+ * Linking this library statically or dynamically with other modules
+ * is making a combined work based on this library. Thus, the terms
+ * and conditions of the GNU General Public License cover the whole
  * combination.
- * 
- * As a special exception, the copyright holders of this library give you 
- * permission to link this library with independent modules to produce 
- * an executable, regardless of the license terms of these independent 
- * modules, and to copy and distribute the resulting executable under terms 
- * of your choice, provided that you also meet, for each linked independent 
- * module, the terms and conditions of the license of that module. 
- * An independent module is a module which is not derived from or based 
- * on this library. If you modify this library, you may extend this exception 
- * to your version of the library, but you are not obliged to do so. 
- * If you do not wish to do so, delete this exception statement from your 
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce
+ * an executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under terms
+ * of your choice, provided that you also meet, for each linked independent
+ * module, the terms and conditions of the license of that module.
+ * An independent module is a module which is not derived from or based
+ * on this library. If you modify this library, you may extend this exception
+ * to your version of the library, but you are not obliged to do so.
+ * If you do not wish to do so, delete this exception statement from your
  * version.
- * 
+ *
  */
 
 package com.himamis.retex.renderer.share.cache;
@@ -52,36 +52,34 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.geogebra.common.awt.GColor;
+
 import com.himamis.retex.renderer.share.TeXFormula;
 import com.himamis.retex.renderer.share.TeXIcon;
 import com.himamis.retex.renderer.share.exception.ParseException;
 import com.himamis.retex.renderer.share.platform.Graphics;
-import com.himamis.retex.renderer.share.platform.graphics.Color;
 import com.himamis.retex.renderer.share.platform.graphics.Graphics2DInterface;
 import com.himamis.retex.renderer.share.platform.graphics.Image;
 import com.himamis.retex.renderer.share.platform.graphics.Insets;
-import com.himamis.retex.renderer.share.platform.graphics.Transform;
 
 /**
  * Class to cache generated image from formulas
- * 
+ *
  * @author Calixte DENIZET
  */
 public final class JLaTeXMathCache {
 
-	private static final Transform identity = new Graphics().createTransform();
-	private static ConcurrentMap<CachedTeXFormula, SoftReference<CachedImage>> cache = new ConcurrentHashMap<CachedTeXFormula, SoftReference<CachedImage>>(
-			128);
+	private static ConcurrentMap<CachedTeXFormula, SoftReference<CachedImage>> cache =
+			new ConcurrentHashMap<>(128);
 	private static int max = Integer.MAX_VALUE;
 	private static final ReferenceQueue<CachedImage> queue = new ReferenceQueue<>();
 	private static double pixelRatio = 1;
 
-	private JLaTeXMathCache() {
-	}
+	private JLaTeXMathCache() {}
 
 	/**
 	 * Set max size. Take care the cache will be reinitialized
-	 * 
+	 *
 	 * @param max
 	 *            the max size
 	 */
@@ -102,15 +100,14 @@ public final class JLaTeXMathCache {
 	 *            the inset to add on the top, bottom, left and right
 	 * @return an array of length 3 containing width, height and depth
 	 */
-	public static int[] getCachedTeXFormulaDimensions(String f, int style,
-			int type, int size, int inset, Color fgcolor)
-			throws ParseException {
+	public static int[] getCachedTeXFormulaDimensions(
+			String f, int style, int type, double size, int inset, GColor fgcolor) throws ParseException {
 		return getCachedTeXFormulaDimensions(
 				new CachedTeXFormula(f, style, type, size, inset, fgcolor));
 	}
 
-	public static int[] getCachedTeXFormulaDimensions(String f, int style,
-			int size, int inset) throws ParseException {
+	public static int[] getCachedTeXFormulaDimensions(String f, int style, double size, int inset)
+			throws ParseException {
 		return getCachedTeXFormulaDimensions(f, style, 0, size, inset, null);
 	}
 
@@ -119,10 +116,9 @@ public final class JLaTeXMathCache {
 	 *            an Object to identify the image in the cache
 	 * @return an array of length 3 containing width, height and depth
 	 */
-	public static int[] getCachedTeXFormulaDimensions(Object o)
-			throws ParseException {
+	public static int[] getCachedTeXFormulaDimensions(Object o) throws ParseException {
 		if (o == null || !(o instanceof CachedTeXFormula)) {
-			return new int[] { 0, 0, 0 };
+			return new int[] {0, 0, 0};
 		}
 		CachedTeXFormula cached = (CachedTeXFormula) o;
 		SoftReference<CachedImage> img = cache.get(cached);
@@ -130,12 +126,12 @@ public final class JLaTeXMathCache {
 			img = makeImage(cached);
 		}
 
-		return new int[] { cached.width, cached.height, cached.depth };
+		return new int[] {cached.width, cached.height, cached.depth};
 	}
 
 	/**
 	 * Get a cached formula
-	 * 
+	 *
 	 * @param f
 	 *            a formula
 	 * @param style
@@ -146,10 +142,9 @@ public final class JLaTeXMathCache {
 	 *            the inset to add on the top, bottom, left and right
 	 * @return the key in the map
 	 */
-	public static Object getCachedTeXFormula(String f, int style, int type,
-			int size, int inset, Color fgcolor) throws ParseException {
-		CachedTeXFormula cached = new CachedTeXFormula(f, style, type, size,
-				inset, fgcolor);
+	public static Object getCachedTeXFormula(
+			String f, int style, int type, double size, int inset, GColor fgcolor) throws ParseException {
+		CachedTeXFormula cached = new CachedTeXFormula(f, style, type, size, inset, fgcolor);
 		SoftReference<CachedImage> img = cache.get(cached);
 		if (img == null || img.get() == null) {
 			img = makeImage(cached);
@@ -158,8 +153,8 @@ public final class JLaTeXMathCache {
 		return cached;
 	}
 
-	public static Object getCachedTeXFormula(String f, int style, int size,
-			int inset) throws ParseException {
+	public static Object getCachedTeXFormula(String f, int style, double size, int inset)
+			throws ParseException {
 		return getCachedTeXFormula(f, style, 0, size, inset, null);
 	}
 
@@ -172,7 +167,7 @@ public final class JLaTeXMathCache {
 
 	/**
 	 * Remove a formula from the cache
-	 * 
+	 *
 	 * @param f
 	 *            a formula
 	 * @param style
@@ -182,21 +177,20 @@ public final class JLaTeXMathCache {
 	 * @param inset
 	 *            the inset to add on the top, bottom, left and right
 	 */
-	public static void removeCachedTeXFormula(String f, int style, int type,
-			int size, int inset, Color fgcolor) throws ParseException {
-		cache.remove(
-				new CachedTeXFormula(f, style, type, size, inset, fgcolor));
+	public static void removeCachedTeXFormula(
+			String f, int style, int type, double size, int inset, GColor fgcolor) throws ParseException {
+		cache.remove(new CachedTeXFormula(f, style, type, size, inset, fgcolor));
 	}
 
-	public static void removeCachedTeXFormula(String f, int style, int size,
-			int inset) throws ParseException {
+	public static void removeCachedTeXFormula(String f, int style, double size, int inset)
+			throws ParseException {
 		removeCachedTeXFormula(f, style, 0, size, inset, null);
 	}
 
 	/**
 	 * Remove a formula from the cache. Take care, remove the Object o,
 	 * invalidate it !
-	 * 
+	 *
 	 * @param o
 	 *            an Object to identify the image in the cache
 	 */
@@ -207,58 +201,8 @@ public final class JLaTeXMathCache {
 	}
 
 	/**
-	 * Paint a cached formula
-	 * 
-	 * @param f
-	 *            a formula
-	 * @param style
-	 *            a style like TeXConstants.STYLE_DISPLAY
-	 * @param size
-	 *            the size of font
-	 * @param inset
-	 *            the inset to add on the top, bottom, left and right
-	 * @return the key in the map
-	 */
-	// public static Object paintCachedTeXFormula(String f, int style, int type,
-	// int size, int inset,
-	// Color fgcolor, Graphics2DInterface g) throws ParseException {
-	// return paintCachedTeXFormula(new CachedTeXFormula(f, style, type, size,
-	// inset, fgcolor), g);
-	// }
-
-	// public static Object paintCachedTeXFormula(String f, int style, int size,
-	// int inset, Graphics2DInterface g)
-	// throws ParseException {
-	// return paintCachedTeXFormula(f, style, 0, size, inset, null, g);
-	// }
-
-	/**
-	 * Paint a cached formula
-	 * 
-	 * @param o
-	 *            an Object to identify the image in the cache
-	 * @param g
-	 *            the graphics where to paint the image
-	 * @return the key in the map
-	 */
-	// public static Object paintCachedTeXFormula(Object o, Graphics2DInterface
-	// g) throws ParseException {
-	// if (o == null || !(o instanceof CachedTeXFormula)) {
-	// return null;
-	// }
-	// CachedTeXFormula cached = (CachedTeXFormula) o;
-	// SoftReference<CachedImage> img = cache.get(cached);
-	// if (img == null || img.get() == null) {
-	// img = makeImage(cached);
-	// }
-	// g.drawImage(img.get().image, identity);
-	//
-	// return cached;
-	// }
-
-	/**
 	 * Get a cached formula
-	 * 
+	 *
 	 * @param f
 	 *            a formula
 	 * @param style
@@ -269,26 +213,24 @@ public final class JLaTeXMathCache {
 	 *            the inset to add on the top, bottom, left and right
 	 * @return the cached image
 	 */
-	public static Image getCachedTeXFormulaImage(String f, int style, int type,
-			int size, int inset, Color fgcolor) throws ParseException {
-		return getCachedTeXFormulaImage(
-				new CachedTeXFormula(f, style, type, size, inset, fgcolor));
+	public static Image getCachedTeXFormulaImage(
+			String f, int style, int type, double size, int inset, GColor fgcolor) throws ParseException {
+		return getCachedTeXFormulaImage(new CachedTeXFormula(f, style, type, size, inset, fgcolor));
 	}
 
-	public static Image getCachedTeXFormulaImage(String f, int style, int size,
-			int inset) throws ParseException {
+	public static Image getCachedTeXFormulaImage(String f, int style, double size, int inset)
+			throws ParseException {
 		return getCachedTeXFormulaImage(f, style, 0, size, inset, null);
 	}
 
 	/**
 	 * Get a cached formula
-	 * 
+	 *
 	 * @param o
 	 *            an Object to identify the image in the cache
 	 * @return the cached image
 	 */
-	public static Image getCachedTeXFormulaImage(Object o)
-			throws ParseException {
+	public static Image getCachedTeXFormulaImage(Object o) throws ParseException {
 		if (o == null || !(o instanceof CachedTeXFormula)) {
 			return null;
 		}
@@ -304,20 +246,19 @@ public final class JLaTeXMathCache {
 	private static SoftReference<CachedImage> makeImage(CachedTeXFormula cached)
 			throws ParseException {
 		TeXFormula formula = new TeXFormula(cached.f);
-		TeXIcon icon = formula.createTeXIcon(cached.style, cached.size,
-				cached.type, cached.fgcolor);
-		icon.setInsets(new Insets(cached.inset, cached.inset, cached.inset,
-				cached.inset));
-		Image image = new Graphics().createImage((int) Math.round(icon.getIconWidth() * pixelRatio),
-				(int) Math.round(icon.getIconHeight() * pixelRatio), Image.TYPE_INT_ARGB);
+		TeXIcon icon = formula.createTeXIcon(cached.style, cached.size, cached.type, cached.fgcolor);
+		icon.setInsets(new Insets(cached.inset, cached.inset, cached.inset, cached.inset));
+		Image image = new Graphics()
+				.createImage(
+						(int) Math.round(icon.getIconWidth() * pixelRatio),
+						(int) Math.round(icon.getIconHeight() * pixelRatio),
+						Image.TYPE_INT_ARGB);
 		Graphics2DInterface g2 = image.createGraphics2D();
 		g2.scale(pixelRatio, pixelRatio);
 		icon.paintIcon(null, g2, 0, 0);
 		g2.dispose();
-		cached.setDimensions(icon.getIconWidth(), icon.getIconHeight(),
-				icon.getIconDepth());
-		SoftReference<CachedImage> img = new SoftReference<>(
-				new CachedImage(image, cached), queue);
+		cached.setDimensions(icon.getIconWidth(), icon.getIconHeight(), icon.getIconDepth());
+		SoftReference<CachedImage> img = new SoftReference<>(new CachedImage(image, cached), queue);
 
 		if (cache.size() >= max) {
 			Reference<? extends CachedImage> soft;
@@ -365,15 +306,14 @@ public final class JLaTeXMathCache {
 		String f;
 		int style;
 		int type;
-		int size;
+		double size;
 		int inset;
 		int width = -1;
 		int height;
 		int depth;
-		Color fgcolor;
+		GColor fgcolor;
 
-		CachedTeXFormula(String f, int style, int type, int size, int inset,
-				Color fgcolor) {
+		CachedTeXFormula(String f, int style, int type, double size, int inset, GColor fgcolor) {
 			this.f = f;
 			this.style = style;
 			this.type = type;
@@ -393,11 +333,13 @@ public final class JLaTeXMathCache {
 		 */
 		@Override
 		public boolean equals(Object o) {
-			if (o != null && o instanceof CachedTeXFormula) {
-				CachedTeXFormula c = (CachedTeXFormula) o;
-				boolean b = (c.f.equals(f) && c.style == style && c.type == type
-						&& c.size == size && c.inset == inset
-						&& c.fgcolor.equals(fgcolor));
+			if (o instanceof CachedTeXFormula c) {
+				boolean b = c.f.equals(f)
+						&& c.style == style
+						&& c.type == type
+						&& c.size == size
+						&& c.inset == inset
+						&& c.fgcolor.equals(fgcolor);
 				if (b) {
 					if (c.width == -1) {
 						c.width = width;

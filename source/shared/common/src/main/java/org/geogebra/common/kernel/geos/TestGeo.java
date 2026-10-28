@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.geos;
@@ -38,7 +42,7 @@ import org.geogebra.common.kernel.kernelND.Region3D;
 
 /***
  * Replacement for isInstance checks
- * 
+ *
  * For Macro inputs, objects are tested in order so we must have eg GEOVECTOR
  * then GEOVECTORND then MOVEABLE otherwise the test will not work see #2398
  */
@@ -543,15 +547,14 @@ public enum TestGeo implements Predicate<Object> {
 		@Override
 		public boolean test(Object ob) {
 			if (ob instanceof GeoConicND) {
-				return ((GeoConicND) ob)
-						.getLastHitType() == HitType.ON_BOUNDARY;
+				return ((GeoConicND) ob).getLastHitType() == HitType.ON_BOUNDARY;
 			}
 			return ob instanceof Path;
 		}
 	};
 
 	/**
-	 * 
+	 *
 	 * @param ob
 	 *            geo
 	 * @param vertexCount
@@ -599,25 +602,24 @@ public enum TestGeo implements Predicate<Object> {
 			return true;
 		}
 		switch (other) {
-		case GEONUMERIC:
-			return isSubtypeOrEqual(GEOANGLE) || isSubtypeOrEqual(GEOBOOLEAN);
-		case GEOFUNCTION:
-			return isSubtypeOrEqual(GEONUMERIC) || isSubtypeOrEqual(GEOLINE);
-		case GEOFUNCTIONNVAR:
-			return isSubtypeOrEqual(GEOFUNCTION);
-		case GEOCONIC:
-		case GEOPLANEND:
-			return isSubtypeOrEqual(GEOLINE);
-		case GEOIMPLICIT:
-			return isSubtypeOrEqual(GEOCONIC);
-		case GEOPOINT:
-			return isSubtypeOrEqual(GEONUMERIC);
-		case GEOPOINTND:
-			return isSubtypeOrEqual(GEOPOINT);
-		default:
-			break;
+			case GEONUMERIC:
+				return isSubtypeOrEqual(GEOANGLE) || isSubtypeOrEqual(GEOBOOLEAN);
+			case GEOFUNCTION:
+				return isSubtypeOrEqual(GEONUMERIC) || isSubtypeOrEqual(GEOLINE);
+			case GEOFUNCTIONNVAR:
+				return isSubtypeOrEqual(GEOFUNCTION);
+			case GEOCONIC:
+			case GEOPLANEND:
+				return isSubtypeOrEqual(GEOLINE);
+			case GEOIMPLICIT:
+				return isSubtypeOrEqual(GEOCONIC);
+			case GEOPOINT:
+				return isSubtypeOrEqual(GEONUMERIC);
+			case GEOPOINTND:
+				return isSubtypeOrEqual(GEOPOINT);
+			default:
+				break;
 		}
 		return false;
 	}
-
 }

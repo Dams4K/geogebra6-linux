@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
 import org.geogebra.common.awt.GGraphics2D;
@@ -13,7 +29,7 @@ import org.geogebra.common.kernel.kernelND.GeoSurfaceCartesian2D;
 
 /**
  * Draws 2D parametric surface
- * 
+ *
  * @author Zbynek
  */
 public class DrawSurface extends Drawable {
@@ -36,15 +52,15 @@ public class DrawSurface extends Drawable {
 
 	private static class SurfaceCurve implements CurveEvaluable {
 
-		private GeoSurfaceCartesian2D surface;
+		private final GeoSurfaceCartesian2D surface;
 		private double val;
 		private boolean fixed;
 
-		public SurfaceCurve(GeoSurfaceCartesian2D surface) {
+		SurfaceCurve(GeoSurfaceCartesian2D surface) {
 			this.surface = surface;
 		}
 
-		public void set(double i, boolean fixed) {
+		private void set(double i, boolean fixed) {
 			this.val = i;
 			this.fixed = fixed;
 		}
@@ -63,7 +79,6 @@ public class DrawSurface extends Drawable {
 
 		@Override
 		public double[] newDoubleArray() {
-			// TODO Auto-generated method stub
 			return new double[2];
 		}
 
@@ -81,13 +96,12 @@ public class DrawSurface extends Drawable {
 			}
 			out[0] = surface.getFunctions()[0].evaluate(u, v);
 			out[1] = surface.getFunctions()[1].evaluate(u, v);
-
 		}
 
 		@Override
 		public double[] getDefinedInterval(double a, double b) {
 			// TODO Auto-generated method stub
-			return new double[] { a, b };
+			return new double[] {a, b};
 		}
 
 		@Override
@@ -128,21 +142,28 @@ public class DrawSurface extends Drawable {
 			return;
 		}
 		SurfaceCurve curve = new SurfaceCurve(surface);
-		for (double i = surface.getMinParameter(0); i <= surface
-				.getMaxParameter(0); i += 1) {
+		for (double i = surface.getMinParameter(0); i <= surface.getMaxParameter(0); i += 1) {
 			curve.set(i, false);
-			CurvePlotter.plotCurve(curve, surface.getMinParameter(1),
-					surface.getMaxParameter(1), view, gp, labelVisible,
+			CurvePlotter.plotCurve(
+					curve,
+					surface.getMinParameter(1),
+					surface.getMaxParameter(1),
+					view,
+					gp,
+					labelVisible,
 					Gap.MOVE_TO);
 		}
-		for (double i = surface.getMinParameter(1); i <= surface
-				.getMaxParameter(1); i++) {
+		for (double i = surface.getMinParameter(1); i <= surface.getMaxParameter(1); i++) {
 			curve.set(i, true);
-			CurvePlotter.plotCurve(curve, surface.getMinParameter(0),
-					surface.getMaxParameter(0), view, gp, labelVisible,
-				Gap.MOVE_TO);
+			CurvePlotter.plotCurve(
+					curve,
+					surface.getMinParameter(0),
+					surface.getMaxParameter(0),
+					view,
+					gp,
+					labelVisible,
+					Gap.MOVE_TO);
 		}
-
 	}
 
 	@Override
@@ -150,7 +171,7 @@ public class DrawSurface extends Drawable {
 		g2.setPaint(getObjectColor());
 		g2.setStroke(objStroke);
 		if (gp != null) {
-			g2.draw(gp);
+			gp.draw(g2);
 		}
 	}
 
@@ -165,5 +186,4 @@ public class DrawSurface extends Drawable {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 }

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.main;
 
 import org.geogebra.common.GeoGebraConstants;
@@ -25,6 +41,7 @@ import elemental2.dom.DomGlobal;
 public abstract class FileManager extends MaterialsManager {
 	/** application */
 	protected AppW app;
+
 	private Material.Provider provider = Material.Provider.TUBE;
 	private FileSystemFileHandle fileHandle;
 
@@ -40,7 +57,7 @@ public abstract class FileManager extends MaterialsManager {
 	public abstract void delete(Material mat, boolean permanent, Runnable onSuccess);
 
 	/**
-	 * 
+	 *
 	 * @param base64
 	 *            only a hint, we can send null and it will be resolved
 	 * @param modified
@@ -52,7 +69,7 @@ public abstract class FileManager extends MaterialsManager {
 
 	/**
 	 * Overwritten for phone
-	 * 
+	 *
 	 * @param material
 	 *            {@link Material}
 	 */
@@ -62,7 +79,7 @@ public abstract class FileManager extends MaterialsManager {
 
 	/**
 	 * Overwritten for phone
-	 * 
+	 *
 	 * @param material
 	 *            {@link Material}
 	 */
@@ -90,13 +107,12 @@ public abstract class FileManager extends MaterialsManager {
 		}
 		mat.setBase64(base64);
 		mat.setTitle(app.getKernel().getConstruction().getTitle());
-		mat.setDescription(app.getKernel().getConstruction()
-				.getWorksheetText(0));
-		mat.setThumbnailBase64(((EuclidianViewWInterface) app
-				.getActiveEuclidianView())
-				.getCanvasBase64WithTypeString());
+		mat.setDescription(app.getKernel().getConstruction().getWorksheetText(0));
+		mat.setThumbnailBase64(
+				((EuclidianViewWInterface) app.getActiveEuclidianView()).getCanvasBase64WithTypeString());
 		if (app.getLoginOperation() != null) {
-			UserPublic user = new UserPublic(app.getLoginOperation().getModel().getUserId(),
+			UserPublic user = new UserPublic(
+					app.getLoginOperation().getModel().getUserId(),
 					app.getLoginOperation().getUserName());
 			mat.setCreator(user);
 		}
@@ -111,21 +127,20 @@ public abstract class FileManager extends MaterialsManager {
 
 	@Override
 	protected final void showTooltip(Material mat) {
-		app.getToolTipManager().showBottomMessage(app.getLocalization()
-				.getPlain("SeveralVersionsOfA", mat.getTitle()), app);
-
+		app.getToolTipManager()
+				.showBottomMessage(
+						app.getLocalization().getPlain("SeveralVersionsOfA", mat.getTitle()), app);
 	}
 
 	/**
 	 * Refresh material in browse view
-	 * 
+	 *
 	 * @param newMat
 	 *            uploaded material
 	 */
 	@Override
 	protected void refreshMaterial(Material newMat) {
 		app.getGuiManager().getBrowseView().refreshMaterial(newMat, false);
-
 	}
 
 	@Override
@@ -159,7 +174,7 @@ public abstract class FileManager extends MaterialsManager {
 
 	/**
 	 * only for FileManagerT and FileManagerW
-	 * 
+	 *
 	 * @return {@link AppW}
 	 */
 	@Override
@@ -211,8 +226,7 @@ public abstract class FileManager extends MaterialsManager {
 	 * intent iOS Safari: open in new tab (no download possible)
 	 */
 	@Override
-	final public void exportImage(String url, String filename,
-			String extension) {
+	public final void exportImage(String url, String filename, String extension) {
 		Browser.exportImage(url, filename);
 	}
 
@@ -222,13 +236,12 @@ public abstract class FileManager extends MaterialsManager {
 	 */
 	public void showOfflineErrorTooltip(AppW appw) {
 		if (!appw.getNetworkOperation().isOnline()) {
-			app.getToolTipManager().showBottomMessage(appw
-					.getLocalization()
-					.getMenu("phone_loading_materials_offline"), appw);
+			app.getToolTipManager()
+					.showBottomMessage(
+							appw.getLocalization().getMenu("phone_loading_materials_offline"), appw);
 		} else if (!appw.getLoginOperation().isLoggedIn()) {
-			app.getToolTipManager().showBottomMessage(appw
-					.getLocalization()
-					.getMenu("SaveAccountFailed"), appw);
+			app.getToolTipManager()
+					.showBottomMessage(appw.getLocalization().getMenu("SaveAccountFailed"), appw);
 		}
 	}
 
@@ -236,8 +249,9 @@ public abstract class FileManager extends MaterialsManager {
 		this.fileHandle = handle;
 		this.provider = Material.Provider.LOCAL;
 		handle.getFile().then(file -> {
-			app.getKernel().getConstruction().setTitle(
-					StringUtil.removeFolderName(StringUtil.removeFileExtension(file.name)));
+			app.getKernel()
+					.getConstruction()
+					.setTitle(StringUtil.removeFolderName(StringUtil.removeFileExtension(file.name)));
 			return null;
 		});
 	}
@@ -277,6 +291,9 @@ public abstract class FileManager extends MaterialsManager {
 		fileHandle = null;
 	}
 
+	/**
+	 * @return whether the app is running on the offline platform
+	 */
 	public boolean isOfflinePlatform() {
 		return app.getPlatform() == GeoGebraConstants.Platform.OFFLINE;
 	}

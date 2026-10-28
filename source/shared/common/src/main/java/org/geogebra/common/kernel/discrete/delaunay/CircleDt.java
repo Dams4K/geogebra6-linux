@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.discrete.delaunay;
 
 /**
@@ -5,7 +21,7 @@ package org.geogebra.common.kernel.discrete.delaunay;
  * it is used by the Delaunay Triangulation class. <br>
  * <br>
  * note that this class is immutable.
- * 
+ *
  * @see DelaunayTriangulation
  */
 public class CircleDt {
@@ -16,7 +32,7 @@ public class CircleDt {
 	/**
 	 * Constructor. <br>
 	 * Constructs a new Circle_dt.
-	 * 
+	 *
 	 * @param c
 	 *            Center of the circle.
 	 * @param r
@@ -30,7 +46,7 @@ public class CircleDt {
 	/**
 	 * Copy Constructor. <br>
 	 * Creates a new Circle with same properties of <code>circ</code>.
-	 * 
+	 *
 	 * @param circ
 	 *            Circle to clone.
 	 */
@@ -41,13 +57,12 @@ public class CircleDt {
 
 	@Override
 	public String toString() {
-		return " Circle[" + c.toString() + "|" + r + "|"
-				+ (int) Math.round(Math.sqrt(r)) + "]";
+		return " Circle[" + c.toString() + "|" + r + "|" + (int) Math.round(Math.sqrt(r)) + "]";
 	}
 
 	/**
 	 * Gets the center of the circle.
-	 * 
+	 *
 	 * @return the center of the circle.
 	 */
 	public PointDt center() {
@@ -56,7 +71,7 @@ public class CircleDt {
 
 	/**
 	 * Gets the radius of the circle.
-	 * 
+	 *
 	 * @return the radius of the circle.
 	 */
 	public double radius() {

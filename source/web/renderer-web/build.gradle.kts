@@ -1,16 +1,16 @@
-import org.docstr.gradle.plugins.gwt.GwtDev
-
 plugins {
     alias(libs.plugins.geogebra.java.library)
     alias(libs.plugins.geogebra.gwt)
-    alias(libs.plugins.geogebra.javadoc.workaround)
     alias(libs.plugins.geogebra.gwt.dist)
 }
 
 gwt {
-    maxHeapSize = "2000M"
-    modules("com.himamis.retex.renderer.JLaTeXMathGWTExportedLibrary")
-    devModules("com.himamis.retex.renderer.JLaTeXMathGWTDev")
+    war = file("war")
+    modules.add("com.himamis.retex.renderer.JLaTeXMathGWTExportedLibrary")
+    devMode {
+        modules.add("com.himamis.retex.renderer.JLaTeXMathGWTDev")
+    }
+    sourceLevel = "17"
 }
 
 gwtDistribution {
@@ -19,7 +19,10 @@ gwtDistribution {
 
 dependencies {
     api("com.himamis.retex:renderer-base")
+    api("org.geogebra:ggbjdk")
     api(project(":gwtutil"))
+    api(project(":canvas-web"))
+    implementation("org.geogebra:ggbjdk")
     api(files(file("build/generated/sources/annotationProcessor/java/main/")))
 
     api(libs.gwt.core)
@@ -32,18 +35,11 @@ dependencies {
 
     annotationProcessor(project(":gwt-generator"))
     annotationProcessor(libs.gwt.resources.processor)
+    compileOnly(libs.jakarta.servlet.api)
 }
 
 tasks.compileJava.get().options.sourcepath = files(tasks.processResources.get().destinationDir)
         .builtBy(tasks.processResources)
-
-tasks.register<GwtDev>("run") {
-    dependsOn(tasks.jar)
-    war = file("war")
-    cacheDir = file("build/gwt/devModeCache")
-    maxHeapSize = "4096m"
-    description = "Starts a codeserver, and a simple webserver for development"
-}
 
 tasks.register<Jar>("jarSources") {
     dependsOn(tasks.classes)

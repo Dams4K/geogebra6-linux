@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main.error;
 
 import org.geogebra.common.kernel.CircularDefinitionException;
@@ -15,7 +31,7 @@ import org.geogebra.common.util.debug.Log;
 public class ErrorHelper {
 	/**
 	 * Converts exception to string and sends it to error handler
-	 * 
+	 *
 	 * @param e
 	 *            exception
 	 * @param app
@@ -23,8 +39,7 @@ public class ErrorHelper {
 	 * @param handler
 	 *            handler
 	 */
-	public static void handleException(Exception e, App app,
-			ErrorHandler handler) {
+	public static void handleException(Exception e, App app, ErrorHandler handler) {
 
 		if (handler == null) {
 			return;
@@ -55,7 +70,6 @@ public class ErrorHelper {
 		} else {
 			handler.showError(loc.getInvalidInputError());
 		}
-
 	}
 
 	/**
@@ -66,20 +80,21 @@ public class ErrorHelper {
 	 * @param handler
 	 *            error handler
 	 */
-	public static void handleCommandError(Localization loc, String localCommand,
-			ErrorHandler handler) {
+	public static void handleCommandError(
+			Localization loc, String localCommand, ErrorHandler handler) {
 		String cmd = loc.getReverseCommand(localCommand);
-		handler.showCommandError(cmd, loc.getInvalidInputError()
+		handler.showCommandError(
+				cmd,
+				loc.getInvalidInputError()
 						+ ":\n"
 						+ localCommand + "\n\n"
 						+ loc.getMenu("Syntax") + ":\n"
 						+ loc.getCommandSyntax(cmd));
-
 	}
 
 	/**
 	 * Forwards error to error handler
-	 * 
+	 *
 	 * @param e
 	 *            error
 	 * @param cmd
@@ -89,17 +104,15 @@ public class ErrorHelper {
 	 * @param handler
 	 *            handler
 	 */
-	public static void handleError(MyError e, String cmd, Localization loc,
-			ErrorHandler handler) {
+	public static void handleError(MyError e, String cmd, Localization loc, ErrorHandler handler) {
 		if (handler instanceof ErrorLogger) {
 			((ErrorLogger) handler).log(e);
 		} else {
 			Log.debug(e);
 		}
 
-		if (e.getcommandName() != null) {
-			String internal = loc
-					.getReverseCommand(e.getcommandName());
+		if (e.getCommandName() != null) {
+			String internal = loc.getReverseCommand(e.getCommandName());
 			handler.showCommandError(internal, e.getLocalizedMessage());
 		} else {
 			handler.showError(e.getLocalizedMessage());
@@ -118,8 +131,7 @@ public class ErrorHelper {
 	 * @param handler
 	 *            error handler
 	 */
-	public static void handleInvalidInput(String str, Localization loc,
-			ErrorHandler handler) {
+	public static void handleInvalidInput(String str, Localization loc, ErrorHandler handler) {
 		if (loc != null) {
 			handler.showError(loc.getInvalidInputError() + ":\n" + str);
 		} else {
@@ -134,7 +146,7 @@ public class ErrorHelper {
 		return new SilentErrorHandler();
 	}
 
-	private static class SilentErrorHandler implements ErrorHandler, ErrorLogger {
+	private static final class SilentErrorHandler implements ErrorLogger {
 
 		@Override
 		public void showError(String msg) {
@@ -157,8 +169,7 @@ public class ErrorHelper {
 		}
 
 		@Override
-		public boolean onUndefinedVariables(String string,
-				AsyncOperation<String[]> callback) {
+		public boolean onUndefinedVariables(String string, AsyncOperation<String[]> callback) {
 			return false;
 		}
 

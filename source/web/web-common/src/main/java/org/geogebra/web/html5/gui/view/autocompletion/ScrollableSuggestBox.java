@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.view.autocompletion;
 
 import org.geogebra.common.main.App;
@@ -15,8 +31,7 @@ import org.gwtproject.user.client.ui.Widget;
  */
 public class ScrollableSuggestBox extends GSuggestBox {
 
-	public static final class CustomSuggestionDisplay extends
-	        DefaultSuggestionDisplay {
+	public static final class CustomSuggestionDisplay extends DefaultSuggestionDisplay {
 
 		public CustomSuggestionDisplay(Panel panel, App app) {
 			super(panel, app);
@@ -41,7 +56,9 @@ public class ScrollableSuggestBox extends GSuggestBox {
 	 * @param oracle supplies suggestions based upon the current contents of the text widget
 	 */
 	public ScrollableSuggestBox(SuggestOracle oracle, Panel panel, App app) {
-		super(oracle, new GTextBox(false, ((AppW) app).getGlobalHandlers()),
+		super(
+				oracle,
+				new GTextBox(false, ((AppW) app).getGlobalHandlers()),
 				new CustomSuggestionDisplay(panel, app));
 	}
 
@@ -52,6 +69,9 @@ public class ScrollableSuggestBox extends GSuggestBox {
 		getDefaultSuggestionDisplay().hideSuggestions();
 	}
 
+	/**
+	 * @return whether suggestion popup is visible
+	 */
 	public boolean isSuggestionListVisible() {
 		return getDefaultSuggestionDisplay().isSuggestionListShowing();
 	}
@@ -59,5 +79,4 @@ public class ScrollableSuggestBox extends GSuggestBox {
 	private DefaultSuggestionDisplay getDefaultSuggestionDisplay() {
 		return (DefaultSuggestionDisplay) getSuggestionDisplay();
 	}
-
 }

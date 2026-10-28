@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main;
 
 import org.geogebra.common.gui.view.spreadsheet.MyTableInterface;
@@ -13,17 +29,18 @@ import org.geogebra.common.spreadsheet.style.CellFormatInterface;
 /**
  * Abstract class for managing spreadsheet GeoElement cells in a table model
  * that supports the spreadsheet.
- * 
+ *
  * The View interface is implemented so that the model can adapt when
  * GeoElements with spreadsheet labels (e.g. A1) are changed.
- * 
+ *
  * @author G. Sturr
- * 
+ *
  */
 public abstract class SpreadsheetTableModel implements UpdateLocationView {
 
 	/** application */
 	protected final App app;
+
 	private int highestUsedColumn = -1;
 	private int highestUsedRow = -1;
 
@@ -35,11 +52,12 @@ public abstract class SpreadsheetTableModel implements UpdateLocationView {
 	 * updates to the cell range lists as cells are added or removed
 	 */
 	private final AlgoCellRangeManager cellRangeManager;
+
 	private CellFormatInterface formatHandler;
 
 	/***************************************************
 	 * Constructor
-	 * 
+	 *
 	 * @param app
 	 *            ggb Application
 	 */
@@ -188,6 +206,10 @@ public abstract class SpreadsheetTableModel implements UpdateLocationView {
 	public void add(GeoElement geo) {
 		update(geo);
 		addToCellRangeAlgos(geo);
+		GuiManagerInterface guiManager = app.getGuiManager();
+		if (guiManager != null) {
+			guiManager.scrollSpreadsheetToCell(geo, null);
+		}
 	}
 
 	private void addWithoutTrace(GeoElement geo) {
@@ -227,7 +249,6 @@ public abstract class SpreadsheetTableModel implements UpdateLocationView {
 		if (!isIniting && geo.getSpreadsheetTrace()) {
 			app.getTraceManager().traceToSpreadsheet(geo);
 		}
-
 	}
 
 	private void addToCellRangeAlgos(GeoElement geo) {
@@ -235,7 +256,6 @@ public abstract class SpreadsheetTableModel implements UpdateLocationView {
 		if (location != null) {
 			cellRangeManager.addToCellRangeAlgos(geo, location);
 		}
-
 	}
 
 	private void updateWithoutTrace(GeoElement geo) {
@@ -259,7 +279,6 @@ public abstract class SpreadsheetTableModel implements UpdateLocationView {
 			 * app.getTraceManager().addSpreadsheetTraceGeo(geo); }
 			 */
 		}
-
 	}
 
 	@Override
@@ -269,15 +288,18 @@ public abstract class SpreadsheetTableModel implements UpdateLocationView {
 
 	@Override
 	public void clearView() {
+		resetValues();
+		highestUsedColumn = -1;
+		highestUsedRow = -1;
+		cellRangeManager.clear();
+	}
 
+	protected void resetValues() {
 		for (int c = 0; c < getColumnCount(); ++c) {
 			for (int r = 0; r < getRowCount(); ++r) {
 				setValueAt(null, r, c);
 			}
 		}
-		highestUsedColumn = -1;
-		highestUsedRow = -1;
-		cellRangeManager.clear();
 	}
 
 	@Override
@@ -285,8 +307,8 @@ public abstract class SpreadsheetTableModel implements UpdateLocationView {
 		if (prop == GProperty.FONT && geo instanceof TextProperties) {
 			SpreadsheetCoords pt = geo.getSpreadsheetCoords();
 			if (pt != null) {
-				getCellFormat(null).setFormat(pt, CellFormat.FORMAT_FONTSTYLE,
-						((TextProperties) geo).getFontStyle());
+				getCellFormat(null)
+						.setFormat(pt, CellFormat.FORMAT_FONTSTYLE, ((TextProperties) geo).getFontStyle());
 			}
 		}
 		updateWithoutTrace(geo);
@@ -334,7 +356,6 @@ public abstract class SpreadsheetTableModel implements UpdateLocationView {
 			formatHandler.setTable(table);
 		}
 		return formatHandler;
-
 	}
 
 	/**

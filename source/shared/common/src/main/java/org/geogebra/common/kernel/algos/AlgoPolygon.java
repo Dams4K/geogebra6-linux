@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -28,7 +32,7 @@ import org.geogebra.common.plugin.GeoClass;
 
 /**
  * Creates a Polygon from a given list of points or point array.
- * 
+ *
  * @author Markus Hohenwarter
  */
 public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
@@ -49,6 +53,7 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 	protected GeoDirectionND direction;
 	/** String builder for description */
 	protected StringBuilder sb;
+
 	private double[] tmp3;
 
 	public AlgoPolygon(Construction cons, String[] labels, GeoList geoList) {
@@ -59,13 +64,12 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 		this(cons, labels, points, null);
 	}
 
-	public AlgoPolygon(Construction cons, String[] labels, GeoPointND[] points,
-			boolean createSegments) {
+	public AlgoPolygon(
+			Construction cons, String[] labels, GeoPointND[] points, boolean createSegments) {
 		this(cons, labels, points, null, null, createSegments, null, null);
 	}
 
-	protected AlgoPolygon(Construction cons, String[] labels,
-			GeoPointND[] points, GeoList geoList) {
+	protected AlgoPolygon(Construction cons, String[] labels, GeoPointND[] points, GeoList geoList) {
 		this(cons, labels, points, geoList, null, true, null, null);
 	}
 
@@ -85,9 +89,14 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 	 * @param direction
 	 *            normal direction, used for 3D
 	 */
-	public AlgoPolygon(Construction cons, GeoPointND[] points,
-			GeoList geoList, CoordSys cs2D, boolean createSegments,
-			GeoElement polyhedron, GeoDirectionND direction) {
+	public AlgoPolygon(
+			Construction cons,
+			GeoPointND[] points,
+			GeoList geoList,
+			CoordSys cs2D,
+			boolean createSegments,
+			GeoElement polyhedron,
+			GeoDirectionND direction) {
 		super(cons);
 		this.points = points;
 		this.geoList = geoList;
@@ -127,13 +136,17 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 	 * @param direction
 	 *            normal direction, used for 3D
 	 */
-	protected AlgoPolygon(Construction cons, String[] labels,
-			GeoPointND[] points, GeoList geoList, CoordSys cs2D,
-			boolean createSegments, GeoElement polyhedron,
+	protected AlgoPolygon(
+			Construction cons,
+			String[] labels,
+			GeoPointND[] points,
+			GeoList geoList,
+			CoordSys cs2D,
+			boolean createSegments,
+			GeoElement polyhedron,
 			GeoDirectionND direction) {
 
-		this(cons, points, geoList, cs2D, createSegments, polyhedron,
-				direction);
+		this(cons, points, geoList, cs2D, createSegments, polyhedron, direction);
 
 		// Do not label segments or points for polygons
 		// formed by a geolist.
@@ -151,12 +164,15 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 
 	/**
 	 * create the polygon
-	 * 
+	 *
 	 * @param createSegments
 	 *            says if the polygon has to creates its edges (3D only)
 	 */
 	protected void createPolygon(boolean createSegments) {
-		poly = new GeoPolygon(this.cons, this.points, null,
+		poly = new GeoPolygon(
+				this.cons,
+				this.points,
+				null,
 				createSegments && !cons.getApplication().isWhiteboardActive());
 	}
 
@@ -172,7 +188,7 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 
 	/**
 	 * Update point array of polygon using the given array list
-	 * 
+	 *
 	 */
 	protected void updatePointArray() {
 		// check if we have a point list
@@ -222,7 +238,7 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 
 	/**
 	 * modify input points
-	 * 
+	 *
 	 * @param newPoints
 	 *            new input points
 	 */
@@ -236,7 +252,6 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 		setInputOutput();
 
 		compute();
-
 	}
 
 	// for AlgoElement
@@ -350,12 +365,12 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 	 * changed name from calcArea as we need the sign when calculating the
 	 * centroid Michael Borcherds 2008-01-26 TODO Does not work if polygon is
 	 * self-entrant
-	 * 
+	 *
 	 * @param points2
 	 *            array of points
 	 * @return directed area
 	 */
-	final static public double calcAreaWithSign(GeoPointND[] points2) {
+	public static double calcAreaWithSign(GeoPointND[] points2) {
 		if (points2 == null || points2.length < 2) {
 			return Double.NaN;
 		}
@@ -371,9 +386,7 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 		int last = points2.length - 1;
 		double sum = 0;
 		for (i = 0; i < last; i++) {
-			sum += GeoPoint.det((GeoPoint) points2[i],
-					(GeoPoint) points2[i + 1]);
-
+			sum += GeoPoint.det((GeoPoint) points2[i], (GeoPoint) points2[i + 1]);
 		}
 		sum += GeoPoint.det((GeoPoint) points2[last], (GeoPoint) points2[0]);
 		return sum / 2.0; // positive (anticlockwise points) or negative
@@ -385,35 +398,32 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 	 * given point. algorithm at
 	 * http://local.wasp.uwa.edu.au/~pbourke/geometry/polyarea/ TODO Does not
 	 * work if polygon is self-entrant
-	 * 
+	 *
 	 * @param centroid
 	 *            point to store result
 	 */
-	public static void calcCentroid(double[] centroid, double signedArea,
-			GeoPointND[] points2) {
+	public static void calcCentroid(double[] centroid, double signedArea, GeoPointND[] points2) {
 		if (Double.isNaN(signedArea) || Double.isInfinite(signedArea)) { // ||
-																			// points2
-																			// ==
-																			// null
-																			// ||
-																			// points2.length
-																			// ==
-																			// 0)
-																			// {
+			// points2
+			// ==
+			// null
+			// ||
+			// points2.length
+			// ==
+			// 0)
+			// {
 			centroid[0] = Double.NaN;
 			return;
 		}
 
 		double xsum = 0;
 		double ysum = 0;
-		double factor = 0;
+		double factor;
 		for (int i = 0; i < points2.length; i++) {
 			factor = pointsClosedX(i, points2) * pointsClosedY(i + 1, points2)
 					- pointsClosedX(i + 1, points2) * pointsClosedY(i, points2);
-			xsum += (pointsClosedX(i, points2) + pointsClosedX(i + 1, points2))
-					* factor;
-			ysum += (pointsClosedY(i, points2) + pointsClosedY(i + 1, points2))
-					* factor;
+			xsum += (pointsClosedX(i, points2) + pointsClosedX(i + 1, points2)) * factor;
+			ysum += (pointsClosedY(i, points2) + pointsClosedY(i + 1, points2)) * factor;
 		}
 		centroid[0] = xsum;
 		centroid[1] = ysum;
@@ -448,7 +458,7 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 
 	/**
 	 * String builder for description
-	 * 
+	 *
 	 * @param tpl
 	 *            string template
 	 */
@@ -480,11 +490,10 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 		}
 
 		sb.append(getLoc().getPlainDefault("PolygonA", "Polygon %0", label));
-
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		createStringBuilder(tpl);
 		return sb.toString();
 	}
@@ -510,7 +519,5 @@ public class AlgoPolygon extends AlgoElement implements PolygonAlgo {
 		} else {
 			p.setCoords(tmp3[0], tmp3[1], tmp3[2]);
 		}
-
 	}
-
 }

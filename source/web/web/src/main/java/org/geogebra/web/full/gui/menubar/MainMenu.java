@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.menubar;
 
 import java.util.ArrayList;
@@ -37,7 +53,7 @@ import org.gwtproject.user.client.ui.Widget;
  *
  *
  */
-public class MainMenu extends FlowPanel
+public final class MainMenu extends FlowPanel
 		implements EventRenderable, BooleanRenderable, KeyDownHandler {
 
 	AppWFull app;
@@ -60,7 +76,7 @@ public class MainMenu extends FlowPanel
 	final SignInMenu signInMenu;
 
 	private final ClassicMenuItemProvider actionProvider;
-	private final ExamController examController = GlobalScope.examController;
+	private final ExamController examController;
 
 	/**
 	 * Constructs the menubar
@@ -73,6 +89,7 @@ public class MainMenu extends FlowPanel
 			this.addStyleName("menuBarClassic");
 		}
 		this.actionProvider = new ClassicMenuItemProvider(app);
+		this.examController = GlobalScope.getExamController(app);
 		signInMenu = new SignInMenu(app);
 		this.app = app;
 		init();
@@ -131,8 +148,7 @@ public class MainMenu extends FlowPanel
 				dispatchOpenEvent();
 
 				if (index >= 0 && index < menus.size()) {
-					app.getGuiManager().setDraggingViews(
-							menus.get(index).isViewDraggingMenu(), false);
+					app.getGuiManager().setDraggingViews(menus.get(index).isViewDraggingMenu(), false);
 				}
 			}
 
@@ -156,9 +172,8 @@ public class MainMenu extends FlowPanel
 					// check if SignIn was clicked
 					// if we are offline, the last item is actually Help
 					Widget clicked = index >= 0 ? this.getWidget(index) : null;
-					if (clicked instanceof Submenu
-							&& ((Submenu) clicked).isEmpty()) {
-						((Submenu) clicked).handleHeaderClick();
+					if (clicked instanceof Submenu clickedSubmenu && clickedSubmenu.isEmpty()) {
+						clickedSubmenu.handleHeaderClick();
 						app.hideMenu();
 						return;
 					}
@@ -195,7 +210,8 @@ public class MainMenu extends FlowPanel
 					return;
 				}
 
-				String menuText = expand ? getHTMLExpand(menu.getImage(), title)
+				String menuText = expand
+						? getHTMLExpand(menu.getImage(), title)
 						: getHTMLCollapse(menu.getImage(), title);
 
 				setStackText(index, menuText, title, expand);
@@ -221,8 +237,7 @@ public class MainMenu extends FlowPanel
 			 * @param expanded
 			 *            for compatibility with AriaStackPanel
 			 */
-			public void setStackText(int index, @IsSafeHtml String text, String ariaLabel,
-					Boolean expanded) {
+			void setStackText(int index, @IsSafeHtml String text, String ariaLabel, Boolean expanded) {
 				super.setStackText(index, text);
 				setAriaLabel(index, ariaLabel, expanded);
 			}
@@ -231,10 +246,8 @@ public class MainMenu extends FlowPanel
 			public void add(Widget w, @IsSafeHtml String stackText, boolean asHTML) {
 				add(w);
 				int index = getWidgetCount() - 1;
-				setStackText(index, stackText, getMenuAt(index).getTitle(app.getLocalization()),
-						null);
-				TestHarness.setAttr(w,
-						"menu_" + getMenuAt(index).getTitleTranslationKey());
+				setStackText(index, stackText, getMenuAt(index).getTitle(app.getLocalization()), null);
+				TestHarness.setAttr(w, "menu_" + getMenuAt(index).getTitleTranslationKey());
 			}
 
 			@Override
@@ -427,8 +440,8 @@ public class MainMenu extends FlowPanel
 			if (index < 0 || index > menus.size() - 1) {
 				index = 0;
 			}
-			app.dispatchEvent(new org.geogebra.common.plugin.Event(EventType.OPEN_MENU, null,
-					menus.get(index).getMenuTitle()));
+			app.dispatchEvent(new org.geogebra.common.plugin.Event(
+					EventType.OPEN_MENU, null, menus.get(index).getMenuTitle()));
 		}
 	}
 
@@ -548,8 +561,8 @@ public class MainMenu extends FlowPanel
 	 *            localized text
 	 * @return HTML
 	 */
-	public static AriaMenuItem getMenuBarItem(final ResourcePrototype imgRes,
-			String name, Scheduler.ScheduledCommand cmd) {
+	public static AriaMenuItem getMenuBarItem(
+			final ResourcePrototype imgRes, String name, Scheduler.ScheduledCommand cmd) {
 		return new AriaMenuItem(name, imgRes, cmd);
 	}
 
@@ -560,8 +573,8 @@ public class MainMenu extends FlowPanel
 	 *            localized text
 	 * @return HTML
 	 */
-	public static AriaMenuItem getMenuBarItem(final IconSpec imgRes,
-			String name, Scheduler.ScheduledCommand cmd) {
+	public static AriaMenuItem getMenuBarItem(
+			final IconSpec imgRes, String name, Scheduler.ScheduledCommand cmd) {
 		return new AriaMenuItem(name, cmd, imgRes);
 	}
 
@@ -570,8 +583,7 @@ public class MainMenu extends FlowPanel
 	 *            manu item localized name
 	 * @return item HTML
 	 */
-	public static AriaMenuItem getMenuBarHtmlEmptyIcon(String name,
-			Scheduler.ScheduledCommand cmd) {
+	public static AriaMenuItem getMenuBarHtmlEmptyIcon(String name, Scheduler.ScheduledCommand cmd) {
 		return MainMenu.getMenuBarItem(AppResources.INSTANCE.empty(), name, cmd);
 	}
 }

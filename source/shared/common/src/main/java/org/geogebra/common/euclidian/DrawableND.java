@@ -1,17 +1,32 @@
-package org.geogebra.common.euclidian;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
+package org.geogebra.common.euclidian;
 
 import org.geogebra.common.awt.GRectangle;
 import org.geogebra.common.awt.GRectangle2D;
 import org.geogebra.common.kernel.geos.GProperty;
 import org.geogebra.common.kernel.geos.GeoElement;
+import org.jspecify.annotations.Nullable;
 
 import com.google.j2objc.annotations.Weak;
 
 /**
  * Class for drawables in any dimension
- * 
+ *
  * @author Mathieu
  *
  */
@@ -23,11 +38,12 @@ public abstract class DrawableND {
 	/** drawList that has created this */
 	@Weak
 	private DrawableND drawList;
+
 	private boolean needsUpdate = false;
 
 	/**
 	 * sets that this has been created by the DrawList
-	 * 
+	 *
 	 * @param drawList
 	 *            true if created by DrawList
 	 */
@@ -40,18 +56,16 @@ public abstract class DrawableND {
 		} else {
 			this.drawList = drawList;
 		}
-
 	}
 
 	/**
 	 * sets if this is visible when the DrawList is visible
-	 * 
+	 *
 	 * @param flag
 	 *            true to make this visible when the DrawList is visible
 	 */
 	public void setCreatedByDrawListVisible(boolean flag) {
 		createdByDrawListVisible = flag;
-
 	}
 
 	/**
@@ -59,7 +73,6 @@ public abstract class DrawableND {
 	 */
 	public boolean createdByDrawList() {
 		return createdByDrawList;
-
 	}
 
 	/**
@@ -67,7 +80,6 @@ public abstract class DrawableND {
 	 */
 	public boolean isCreatedByDrawListVisible() {
 		return createdByDrawListVisible;
-
 	}
 
 	/**
@@ -92,7 +104,7 @@ public abstract class DrawableND {
 
 	/**
 	 * says that the drawable has to be updated for visual style
-	 * 
+	 *
 	 * @param prop
 	 *            TODO
 	 */
@@ -142,7 +154,7 @@ public abstract class DrawableND {
 	/**
 	 * @return rectangle for stylebar
 	 */
-	public @CheckForNull GRectangle2D getBoundsForStylebarPosition() {
+	public @Nullable GRectangle2D getBoundsForStylebarPosition() {
 		return null;
 	}
 
@@ -156,7 +168,7 @@ public abstract class DrawableND {
 	/**
 	 * Checks for broken compatibility (eg if inequality changes to function,
 	 * drawable is invalid)
-	 * 
+	 *
 	 * @return whether the drawable still fits the geo
 	 */
 	public boolean isCompatibleWithGeo() {
@@ -166,7 +178,7 @@ public abstract class DrawableND {
 	/**
 	 * By default create new drawable from view, overridden for composite
 	 * drawable to avoid deep nesting.
-	 * 
+	 *
 	 * @param listElement
 	 *            element
 	 * @return drawable for element

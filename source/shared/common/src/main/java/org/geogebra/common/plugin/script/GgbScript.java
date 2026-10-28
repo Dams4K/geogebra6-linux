@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.plugin.script;
 
 import java.util.ArrayList;
@@ -56,12 +72,10 @@ public class GgbScript extends Script {
 				continue;
 			}
 			try {
-				GeoElementND[] res = proc
-						.processAlgebraCommandNoExceptionHandling(line, false,
-								new ScriptErrorHandler(app, evt, i), false,
-								null);
+				GeoElementND[] res = proc.processAlgebraCommandNoExceptionHandling(
+						line, false, new ScriptErrorHandler(app, evt, i), false, null);
 				success = success && res != null;
-			} catch (Throwable e) {
+			} catch (Throwable ignored) {
 				// error handler should actually catch it
 			}
 		}
@@ -88,13 +102,13 @@ public class GgbScript extends Script {
 		EditorContent editorState = editor.getEditorStateWithQuestionMarks();
 		StringBuilder content = new StringBuilder();
 		boolean valid = editor.getGeoInputBox().validate(editorState, content);
-		return scriptText.replace("%1", content.toString())
-				.replace("%2", String.valueOf(valid));
+		return scriptText.replace("%1", content.toString()).replace("%2", String.valueOf(valid));
 	}
 
 	private SymbolicEditor getEditor(String argument) {
 		SymbolicEditor editor = app.getActiveEuclidianView().getSymbolicEditor();
-		if (editor == null || editor.getGeoInputBox() == null
+		if (editor == null
+				|| editor.getGeoInputBox() == null
 				|| !argument.equals(editor.getGeoInputBox().getLabelSimple())) {
 			return null;
 		}
@@ -103,7 +117,7 @@ public class GgbScript extends Script {
 
 	/**
 	 * Localize the script.
-	 * 
+	 *
 	 * @param app
 	 *            app
 	 * @param st
@@ -149,7 +163,7 @@ public class GgbScript extends Script {
 
 	/**
 	 * Delocalize a script
-	 * 
+	 *
 	 * @param app
 	 *            the application
 	 * @param st
@@ -186,10 +200,8 @@ public class GgbScript extends Script {
 					} else {
 						retone.append(app.getInternalCommand(starr[i]));
 					}
-				} else if (app.getParserFunctions()
-						.getInternal(app.getLocalization(), starr[i]) != null) {
-					retone.append(app.getParserFunctions()
-							.getInternal(app.getLocalization(), starr[i]));
+				} else if (app.getParserFunctions().getInternal(app.getLocalization(), starr[i]) != null) {
+					retone.append(app.getParserFunctions().getInternal(app.getLocalization(), starr[i]));
 				} else {
 					// fallback for wrong call in English already
 					// or if someone writes an English command into an
@@ -204,7 +216,7 @@ public class GgbScript extends Script {
 	/**
 	 * This method should split a GeoGebra script into the following format: ""
 	 * or "something"; "command"; "something"; "command"; "something"; ...
-	 * 
+	 *
 	 * @param st
 	 *            String GeoGebra script
 	 * @return String [] the GeoGebra script split into and array
@@ -274,7 +286,7 @@ public class GgbScript extends Script {
 		if (before_bracket) {
 			ret.add(0, "");
 		}
-		final String[] ex = { "" };
+		final String[] ex = {""};
 		return ret.toArray(ex);
 	}
 
@@ -295,13 +307,12 @@ public class GgbScript extends Script {
 	/**
 	 * The text of this script is modified by changing every whole word oldLabel
 	 * to newLabel.
-	 * 
+	 *
 	 * @return whether any renaming happened
 	 */
 	@Override
 	public boolean renameGeo(String oldLabel, String newLabel) {
-		if (oldLabel == null || "".equals(oldLabel) || newLabel == null
-				|| "".equals(newLabel)) {
+		if (oldLabel == null || "".equals(oldLabel) || newLabel == null || "".equals(newLabel)) {
 			return false;
 		}
 		ArrayList<String> work = StringUtil.wholeWordTokenize(text);
@@ -320,8 +331,7 @@ public class GgbScript extends Script {
 				// there is at least a non-null element there
 				// but better to check...
 				if (i + 1 < work.size() && work.get(i + 1) != null) {
-					if ((work.get(i + 1).length() > 0)
-							&& '[' == work.get(i + 1).charAt(0)) {
+					if ((work.get(i + 1).length() > 0) && '[' == work.get(i + 1).charAt(0)) {
 						// Now it's still possible that oldLabel
 						// is used as a command name here,
 						// so we have to rule out that possibility first.

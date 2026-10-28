@@ -1,13 +1,17 @@
-/* 
- GeoGebra - Dynamic Mathematics for Everyone
- http://www.geogebra.org
-
- This file is part of GeoGebra.
-
- This program is free software; you can redistribute it and/or modify it 
- under the terms of the GNU General Public License as published by 
- the Free Software Foundation.
- 
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.geos;
@@ -21,6 +25,7 @@ import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.EuclidianViewInterfaceCommon;
 import org.geogebra.common.euclidian.EuclidianViewInterfaceSlim;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.CircularDefinitionException;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.StringTemplate;
@@ -31,6 +36,7 @@ import org.geogebra.common.kernel.arithmetic.ValidExpression;
 import org.geogebra.common.kernel.arithmetic.ValueType;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
+import org.geogebra.common.main.GeoGebraColorConstants;
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.plugin.GeoClass;
 import org.geogebra.common.util.DoubleUtil;
@@ -38,11 +44,11 @@ import org.geogebra.common.util.ExtendedBoolean;
 import org.geogebra.common.util.StringUtil;
 
 /**
- * 
+ *
  * @author Markus
  */
-public class GeoBoolean extends GeoElement implements BooleanValue,
-		GeoNumberValue, AbsoluteScreenLocateable, HasExtendedAV, HasCorners {
+public class GeoBoolean extends GeoElement
+		implements BooleanValue, GeoNumberValue, AbsoluteScreenLocateable, HasExtendedAV, HasCorners {
 
 	private boolean value = false;
 	private boolean isDefined = true;
@@ -55,7 +61,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 
 	/**
 	 * Creates new boolean
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 */
@@ -69,7 +75,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 
 	/**
 	 * Creates new boolean
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param value
@@ -92,7 +98,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 
 	/**
 	 * Changes value of this boolean
-	 * 
+	 *
 	 * @param val
 	 *            new value
 	 */
@@ -102,12 +108,12 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	}
 
 	@Override
-	final public boolean getBoolean() {
+	public final boolean getBoolean() {
 		return value;
 	}
 
 	@Override
-	final public MyBoolean getMyBoolean() {
+	public final MyBoolean getMyBoolean() {
 		return new MyBoolean(kernel, value);
 	}
 
@@ -121,7 +127,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	/**
 	 * Registers geo as a listener for updates of this boolean object. If this
 	 * object is updated it calls geo.updateConditions()
-	 * 
+	 *
 	 * @param geo
 	 *            geo which should use this boolean as condition to show
 	 */
@@ -133,7 +139,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 
 	/**
 	 * Unregisters geo as a listener for updates of this boolean object.
-	 * 
+	 *
 	 * @param geo
 	 *            geo which uses this boolean as condition to show
 	 */
@@ -152,7 +158,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 		super.update(drag);
 
 		// update all registered conditionals (they have this boolean as condition to show object)
-		for (GeoElement geo: conditionals) {
+		for (GeoElement geo : conditionals) {
 			geo.notifyUpdate();
 		}
 	}
@@ -182,8 +188,10 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	@Override
 	public boolean isFixable() {
 		// visible checkbox should not be fixable
-		return isIndependent() && !isSetEuclidianVisible()
-				&& this.condShowObject == null && !isDefaultGeo();
+		return isIndependent()
+				&& !isSetEuclidianVisible()
+				&& this.condShowObject == null
+				&& !isDefaultGeo();
 	}
 
 	@Override
@@ -209,7 +217,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	 * Changes value to false. See also GeoBoolean.setUndefinedProverOnly()
 	 */
 	@Override
-	final public void setUndefined() {
+	public final void setUndefined() {
 		// don't change this, needed for compatibility
 		// eg SetValue[a,?] sets it to false
 		value = false;
@@ -219,7 +227,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	 * Set the undefined flag. Normal algos should use setUndefined which
 	 * changes value to false.
 	 */
-	final public void setUndefinedProverOnly() {
+	public final void setUndefinedProverOnly() {
 		// Needed for prover's yes/no/undefined trichotomy
 		// Reset value => boolean arithmetic is predictable without checking for ? everywhere
 		isDefined = false;
@@ -229,17 +237,17 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	/**
 	 * Changes the defined flag of this boolean
 	 */
-	final public void setDefined() {
+	public final void setDefined() {
 		isDefined = true;
 	}
 
 	@Override
-	final public boolean isDefined() {
+	public final boolean isDefined() {
 		return isDefined;
 	}
 
 	@Override
-	final public String toValueString(StringTemplate tpl) {
+	public final String toValueString(StringTemplate tpl) {
 		if (!isDefined) {
 			return "?";
 		}
@@ -247,7 +255,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		StringBuilder sbToString = new StringBuilder();
 		sbToString.setLength(0);
 		sbToString.append(label);
@@ -260,23 +268,23 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	 * returns all class-specific xml tags for saveXML
 	 */
 	@Override
-	protected void getXMLtags(StringBuilder sb) {
-		sb.append("\t<value val=\"");
-		sb.append(value);
-		sb.append("\"/>\n");
+	protected void getXMLTags(XMLStringBuilder sb) {
+		sb.startTag("value");
+		sb.attr("val", value);
+		sb.endTag();
 
 		getStyleXML(sb);
 	}
 
 	@Override
-	protected void getStyleXML(StringBuilder sb) {
-		XMLBuilder.getXMLvisualTags(this, sb, isIndependent());
-		getXMLfixedTag(sb);
+	protected void getStyleXML(XMLStringBuilder sb) {
+		XMLBuilder.getXMLVisualTags(this, sb, isIndependent());
+		getXMLFixedTag(sb);
 		getAuxiliaryXML(sb);
 		getBreakpointXML(sb);
 		// checkbox fixed
 		if (checkboxFixed) {
-			sb.append("\t<checkbox fixed=\"true\"/>\n");
+			sb.startTag("checkbox").attr("fixed", true).endTag();
 		}
 		getScriptTags(sb);
 		getCaptionXML(sb);
@@ -354,10 +362,10 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 
 	// Michael Borcherds 2008-04-30
 	@Override
-	final public ExtendedBoolean isEqualExtended(GeoElementND geo) {
+	public final ExtendedBoolean isEqualExtended(GeoElementND geo) {
 		// return false if it's a different type, otherwise check
-		return ExtendedBoolean.newExtendedBoolean(geo.isGeoBoolean()
-				&& value == ((GeoBoolean) geo).getBoolean());
+		return ExtendedBoolean.newExtendedBoolean(
+				geo.isGeoBoolean() && value == ((GeoBoolean) geo).getBoolean());
 	}
 
 	@Override
@@ -383,7 +391,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	 * label description
 	 */
 	@Override
-	final public boolean isLabelValueShowable() {
+	public final boolean isLabelValueShowable() {
 		return false;
 	}
 
@@ -393,7 +401,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	}
 
 	@Override
-	final public boolean isCasEvaluableObject() {
+	public final boolean isCasEvaluableObject() {
 		return true;
 	}
 
@@ -406,7 +414,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 		GeoBoolean geoBoolean = (GeoBoolean) oldGeo;
 		conditionals.clear();
 		conditionals.addAll(geoBoolean.conditionals);
-		for (GeoElement el: conditionals) {
+		for (GeoElement el : conditionals) {
 			el.condShowObject = this;
 			kernel.notifyUpdateVisualStyle(el, GProperty.VISIBLE);
 		}
@@ -414,8 +422,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 
 	@Override
 	public void setEuclidianVisible(boolean visible) {
-		if (visible && labelOffsetX == 0 && labelOffsetY == 0
-				&& isIndependent()) {
+		if (visible && labelOffsetX == 0 && labelOffsetY == 0 && isIndependent()) {
 			initScreenLocation();
 		}
 		super.setEuclidianVisible(visible);
@@ -424,8 +431,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	private void initScreenLocation() {
 		int count = countCheckboxes();
 		labelOffsetX = 5;
-		EuclidianViewInterfaceSlim ev = kernel.getApplication()
-				.getActiveEuclidianView();
+		EuclidianViewInterfaceSlim ev = kernel.getApplication().getActiveEuclidianView();
 		if (ev != null) {
 			labelOffsetY = ev.getSliderOffsetY() - 45 + 30 * count;
 		} else {
@@ -452,7 +458,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	}
 
 	@Override
-	final public HitType getLastHitType() {
+	public final HitType getLastHitType() {
 		return HitType.ON_FILLING;
 	}
 
@@ -478,9 +484,11 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 
 	@Override
 	public int getTotalWidth(EuclidianViewInterfaceCommon ev) {
-		return (int) (32 + StringUtil.getPrototype().estimateLength(
-				getCaption(StringTemplate.defaultTemplate),
-				ev.getApplication().getFontCanDisplay(label)));
+		return (int) (32
+				+ StringUtil.getPrototype()
+						.estimateLength(
+								getCaption(StringTemplate.defaultTemplate),
+								ev.getApplication().getFontCanDisplay(label)));
 	}
 
 	@Override
@@ -500,7 +508,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 
 	@Override
 	public void addAuralType(ScreenReaderBuilder sb) {
-		sb.appendMenuDefault("Checkbox", "Checkbox");
+		sb.appendMenuDefault("CheckBox", "Check box");
 		sb.appendSpace();
 	}
 
@@ -518,8 +526,7 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 		}
 
 		if (getBoolean()) {
-			sb.append(
-					loc.getMenuDefault("PressSpaceCheckboxOff", "Press space to uncheck checkbox"));
+			sb.append(loc.getMenuDefault("PressSpaceCheckboxOff", "Press space to uncheck checkbox"));
 		} else {
 			sb.append(loc.getMenuDefault("PressSpaceCheckboxOn", "Press space to check checkbox"));
 		}
@@ -540,7 +547,6 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 			sb.appendMenuDefault("Checked", "checked");
 		} else {
 			sb.appendMenuDefault("Unchecked", "unchecked");
-
 		}
 		sb.append(".");
 		return sb.toString();
@@ -612,5 +618,10 @@ public class GeoBoolean extends GeoElement implements BooleanValue,
 	@Override
 	public void setNeedsUpdatedBoundingBox(boolean needsUpdate) {
 		this.needsUpdateBoundingBox = needsUpdate;
+	}
+
+	@Override
+	public boolean usesDisabledStyle(EuclidianViewInterfaceSlim ev) {
+		return !isSelectionAllowed(ev) && objColor == GeoGebraColorConstants.NEUTRAL_900;
 	}
 }

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -28,13 +32,12 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * Iteration[ f(x), x0, n ]
- * 
+ *
  * IterationList[ f(A), A, {A_lis_val}, n ]
- * 
+ *
  * @author Markus Hohenwarter
  * @version 15-07-2007
  */
-
 public class AlgoIterationList extends AlgoElement {
 
 	private GeoFunction f; // input
@@ -49,12 +52,13 @@ public class AlgoIterationList extends AlgoElement {
 	private GeoElement expression; // input expression dependent on var
 	private GeoElement[] vars; // input: local variable
 	private int varCount;
-	private GeoList[] over;
+	private GeoList initialValues;
 
 	private boolean expIsFunctionOrCurve;
 	private boolean isEmpty;
 	private AlgoElement expressionParentAlgo;
 
+	/** Iteration type, shared with Iteration algo. */
 	enum IterationType {
 		/** u(n+1)=f(u(n)) */
 		SIMPLE,
@@ -83,8 +87,8 @@ public class AlgoIterationList extends AlgoElement {
 	 * @param n
 	 *            number of iterations
 	 */
-	public AlgoIterationList(Construction cons, String label, GeoFunction f,
-			GeoNumberValue startValue, GeoNumberValue n) {
+	public AlgoIterationList(
+			Construction cons, String label, GeoFunction f, GeoNumberValue startValue, GeoNumberValue n) {
 		super(cons);
 		this.f = f;
 		this.startValue = startValue;
@@ -101,7 +105,7 @@ public class AlgoIterationList extends AlgoElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -113,8 +117,12 @@ public class AlgoIterationList extends AlgoElement {
 	 * @param n
 	 *            number of iterations
 	 */
-	public AlgoIterationList(Construction cons, String label,
-			GeoFunctionNVar fNVar, GeoList startValues, GeoNumberValue n) {
+	public AlgoIterationList(
+			Construction cons,
+			String label,
+			GeoFunctionNVar fNVar,
+			GeoList startValues,
+			GeoNumberValue n) {
 		super(cons);
 		this.fNVar = fNVar;
 		this.startValueGeo = this.startValues = startValues;
@@ -131,24 +139,28 @@ public class AlgoIterationList extends AlgoElement {
 
 	/**
 	 * Creates a new algorithm to create a sequence of objects that form a list.
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param expression
 	 *            expression first argument of IterationList
 	 * @param vars
 	 *            variables
-	 * @param over
+	 * @param initialValues
 	 *            lists from which the variables should be taken
 	 * @param n
 	 *            number of iterations
 	 */
-	public AlgoIterationList(Construction cons, GeoElement expression,
-			GeoElement[] vars, GeoList[] over, GeoNumberValue n) {
+	public AlgoIterationList(
+			Construction cons,
+			GeoElement expression,
+			GeoElement[] vars,
+			GeoList initialValues,
+			GeoNumberValue n) {
 		super(cons);
 		this.expression = expression;
 		this.vars = vars;
-		this.over = over;
+		this.initialValues = initialValues;
 		this.n = n;
 		this.nGeo = n.toGeoElement();
 		type = IterationType.DEFAULT;
@@ -162,7 +174,6 @@ public class AlgoIterationList extends AlgoElement {
 		setInputOutput(); // for AlgoElement
 
 		compute();
-
 	}
 
 	@Override
@@ -173,31 +184,29 @@ public class AlgoIterationList extends AlgoElement {
 	@Override
 	protected void setInputOutput() {
 		switch (type) {
-		case SIMPLE:
-			simpleDependency(f);
-			break;
-		case DOUBLE:
-			simpleDependency(fNVar); // done by AlgoElement
-			break;
-		case DEFAULT:
-		default:
-			input = new GeoElement[3 + varCount];
-			input[0] = expression;
-			for (int i = 0; i < varCount; i++) {
-				input[i + 1] = vars[i];
+			case SIMPLE:
+				simpleDependency(f);
+				break;
+			case DOUBLE:
+				simpleDependency(fNVar); // done by AlgoElement
+				break;
+			case DEFAULT:
+			default:
+				input = new GeoElement[3 + varCount];
+				input[0] = expression;
+				for (int i = 0; i < varCount; i++) {
+					input[i + 1] = vars[i];
+				}
+				input[1 + varCount] = initialValues;
+				input[2 + varCount] = nGeo;
 
-			}
-			input[1 + varCount] = over[0];
-			input[2 + varCount] = nGeo;
+				setOnlyOutput(list);
 
-			setOnlyOutput(list);
+				list.setTypeStringForXML(expression.getXMLTypeString());
 
-			list.setTypeStringForXML(expression.getXMLtypeString());
-
-			setDependencies(); // done by AlgoElement
-			break;
+				setDependencies(); // done by AlgoElement
+				break;
 		}
-
 	}
 
 	private void simpleDependency(GeoElement f2) {
@@ -208,7 +217,6 @@ public class AlgoIterationList extends AlgoElement {
 
 		setOnlyOutput(list);
 		setDependencies(); // done by AlgoElement
-
 	}
 
 	/**
@@ -218,17 +226,17 @@ public class AlgoIterationList extends AlgoElement {
 	@Override
 	public GeoElementND[] getInputForUpdateSetPropagation() {
 		switch (type) {
-		case SIMPLE:
-		case DOUBLE:
-			return super.getInputForUpdateSetPropagation();
-		case DEFAULT:
-		default:
-			GeoElement[] realInput = new GeoElement[3];
-			realInput[0] = expression;
-			realInput[1] = over[0];
-			realInput[2] = nGeo;
+			case SIMPLE:
+			case DOUBLE:
+				return super.getInputForUpdateSetPropagation();
+			case DEFAULT:
+			default:
+				GeoElement[] realInput = new GeoElement[3];
+				realInput[0] = expression;
+				realInput[1] = initialValues;
+				realInput[2] = nGeo;
 
-			return realInput;
+				return realInput;
 		}
 	}
 
@@ -243,16 +251,16 @@ public class AlgoIterationList extends AlgoElement {
 	public final void compute() {
 
 		switch (type) {
-		case SIMPLE:
-			computeSimple();
-			return;
-		case DOUBLE:
-			computeDouble();
-			return;
-		case DEFAULT:
-		default:
-			// done below
-			break;
+			case SIMPLE:
+				computeSimple();
+				return;
+			case DOUBLE:
+				computeDouble();
+				return;
+			case DEFAULT:
+			default:
+				// done below
+				break;
 		}
 
 		if (updateRunning) {
@@ -260,25 +268,23 @@ public class AlgoIterationList extends AlgoElement {
 		}
 		updateRunning = true;
 
-		for (int i = 2; i < input.length - 1; i += 2) {
-			if (!input[i].isDefined()) {
-				list.setUndefined();
-				updateRunning = false;
-				iterationsOld = -1;
-				return;
-			}
+		if (!n.isDefined() || !initialValues.isDefined()) {
+			list.setUndefined();
+			updateRunning = false;
+			iterationsOld = -1;
+			return;
 		}
 		list.setDefined(true);
 
 		int iterations = (int) Math.round(n.getDouble());
-		if (iterations < 0 || varCount > over[0].size()) {
+		if (iterations < 0 || varCount > initialValues.size()) {
 			list.setUndefined();
 			updateRunning = false;
 			iterationsOld = -1;
 			return;
 		}
 
-		isEmpty = over[0].size() == 0;
+		isEmpty = initialValues.size() == 0;
 
 		boolean setValuesOnly = iterations == iterationsOld;
 		setValuesOnly = setValuesOnly && !expIsFunctionOrCurve;
@@ -301,16 +307,16 @@ public class AlgoIterationList extends AlgoElement {
 
 	private void createNewList() {
 		int iterations = (int) Math.round(n.getDouble());
-		int i = Math.min(over[0].size(), iterations);
+		int i = Math.min(initialValues.size(), iterations);
 		int oldListSize = list.size();
 		list.clear();
-		for (int j = 0; j < over[0].size() && j < iterations + 1; j++) {
-			list.add(over[0].get(j).copyInternal(cons));
+		for (int j = 0; j < initialValues.size() && j < iterations + 1; j++) {
+			list.add(initialValues.get(j).copyInternal(cons));
 			if (j + 1 < varCount) {
-				vars[j + 1].set(over[0].get(j));
+				vars[j + 1].set(initialValues.get(j));
 			}
 		}
-		if (iterations + 1 <= over[0].size()) {
+		if (iterations + 1 <= initialValues.size()) {
 			return;
 		}
 		if (!isEmpty) {
@@ -326,8 +332,7 @@ public class AlgoIterationList extends AlgoElement {
 					long mem = kernel.getApplication().freeMemory();
 					list.clearCache();
 					kernel.initUndoInfo(); // clear all undo info
-					Log.debug("AlgoIterationList aborted: free memory reached "
-							+ mem);
+					Log.debug("AlgoIterationList aborted: free memory reached " + mem);
 					return;
 				}
 
@@ -349,7 +354,7 @@ public class AlgoIterationList extends AlgoElement {
 
 	private void addElement(int i) {
 		// only add new objects
-		GeoElement listElement = null;
+		GeoElement listElement;
 		int cacheListSize = list.getCacheSize();
 
 		if (i < cacheListSize) {
@@ -372,7 +377,7 @@ public class AlgoIterationList extends AlgoElement {
 		// return early if it's the first element - we will add the start
 		// position to this
 		if (i == 0) {
-			listElement.set(over[0].get(0));
+			listElement.set(initialValues.get(0));
 			listElement.update();
 			list.add(listElement);
 			return;
@@ -396,20 +401,16 @@ public class AlgoIterationList extends AlgoElement {
 
 	private void copyDrawAlgo(GeoElement listElement) {
 		AlgoElement drawAlgo = expression.getDrawAlgorithm();
-		if (listElement instanceof GeoNumeric
-				&& drawAlgo instanceof DrawInformationAlgo) {
-			DrawInformationAlgo algoCopy = ((DrawInformationAlgo) drawAlgo)
-					.copy();
+		if (listElement instanceof GeoNumeric && drawAlgo instanceof DrawInformationAlgo) {
+			DrawInformationAlgo algoCopy = ((DrawInformationAlgo) drawAlgo).copy();
 			if (algoCopy instanceof ReplaceChildrenByValues) {
 				for (int j = 0; j < varCount; j++) {
-					((ReplaceChildrenByValues) algoCopy)
-							.replaceChildrenByValues(vars[j]);
+					((ReplaceChildrenByValues) algoCopy).replaceChildrenByValues(vars[j]);
 				}
 			}
 			listElement.setDrawAlgorithm(algoCopy);
 			listElement.setEuclidianVisible(true);
 		}
-
 	}
 
 	private GeoElement createNewListElement() {
@@ -441,14 +442,14 @@ public class AlgoIterationList extends AlgoElement {
 
 		// int currentVal = 0;
 		int listSize = (int) Math.round(n.getDouble()) + 1;
-		int i = over[0].size();
-		for (int j = 0; j < over[0].size() && j < listSize; j++) {
-			list.get(j).set(over[0].get(j));
+		int i = initialValues.size();
+		for (int j = 0; j < initialValues.size() && j < listSize; j++) {
+			list.get(j).set(initialValues.get(j));
 			if (j + 1 < vars.length) {
-				vars[j + 1].set(over[0].get(j));
+				vars[j + 1].set(initialValues.get(j));
 			}
 		}
-		if (over[0].size() >= listSize) {
+		if (initialValues.size() >= listSize) {
 			return;
 		}
 
@@ -460,8 +461,7 @@ public class AlgoIterationList extends AlgoElement {
 				long mem = kernel.getApplication().freeMemory();
 				list.clearCache();
 				kernel.initUndoInfo(); // clear all undo info
-				Log.debug("AlgoIterationList aborted: free memory reached "
-						+ mem);
+				Log.debug("AlgoIterationList aborted: free memory reached " + mem);
 				return;
 			}
 
@@ -475,8 +475,7 @@ public class AlgoIterationList extends AlgoElement {
 				listElement.set(expression);
 				if (listElement.isGeoList()) {
 					for (int j = 0; j < varCount; j++) {
-						((GeoList) listElement)
-								.replaceChildrenByValues(vars[j]);
+						((GeoList) listElement).replaceChildrenByValues(vars[j]);
 					}
 				}
 			} else {
@@ -513,7 +512,6 @@ public class AlgoIterationList extends AlgoElement {
 			this.setStopUpdateCascade(false);
 			expressionParentAlgo.update();
 		}
-
 	}
 
 	private void computeSimple() {
@@ -608,5 +606,4 @@ public class AlgoIterationList extends AlgoElement {
 		list.add(listElement);
 		listElement.setValue(value);
 	}
-
 }

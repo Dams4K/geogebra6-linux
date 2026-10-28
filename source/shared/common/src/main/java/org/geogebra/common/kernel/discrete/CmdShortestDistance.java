@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.discrete;
 
 import org.geogebra.common.kernel.Kernel;
@@ -13,14 +29,14 @@ import org.geogebra.common.main.MyError;
 /**
  * ShortestDistance[ &lt;List of Segments&gt;, &lt;Start Point&gt;, &lt;End Point&gt;,
  * &lt;Boolean Weighted&gt; ]
- * 
+ *
  * @author Michael Borcherds
  */
 public class CmdShortestDistance extends CommandProcessor {
 
 	/**
 	 * Creates new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -36,13 +52,17 @@ public class CmdShortestDistance extends CommandProcessor {
 		arg = resArgs(c, info);
 
 		if (n == 4) {
-			if ((ok[0] = arg[0].isGeoList()) && (ok[1] = arg[1].isGeoPoint())
+			if ((ok[0] = arg[0].isGeoList())
+					&& (ok[1] = arg[1].isGeoPoint())
 					&& (ok[2] = arg[2].isGeoPoint())
 					&& (ok[3] = arg[3].isGeoBoolean())) {
 
-				GeoElement[] ret = {new AlgoShortestDistance(cons,
-						(GeoList) arg[0], (GeoPointND) arg[1],
-						(GeoPointND) arg[2], (GeoBoolean) arg[3]).getResult()};
+				GeoElement[] ret = {
+					new AlgoShortestDistance(
+									cons, (GeoList) arg[0], (GeoPointND) arg[1], (GeoPointND) arg[2], (GeoBoolean)
+											arg[3])
+							.getResult()
+				};
 				ret[0].setLabel(c.getLabel());
 				return ret;
 			}
@@ -50,5 +70,4 @@ public class CmdShortestDistance extends CommandProcessor {
 		}
 		throw argNumErr(c);
 	}
-
 }

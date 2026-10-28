@@ -1,6 +1,20 @@
-package org.geogebra.common.kernel.commands;
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
 
-import javax.annotation.CheckForNull;
+package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.algos.AlgoFunctionFreehand;
@@ -13,6 +27,7 @@ import org.geogebra.common.kernel.geos.GeoList;
 import org.geogebra.common.kernel.geos.GeoNumberValue;
 import org.geogebra.common.main.MyError;
 import org.geogebra.common.plugin.GeoClass;
+import org.jspecify.annotations.Nullable;
 
 /**
  * abstract class for Commands with one list argument eg Mean[ &lt;List&gt; ]
@@ -39,51 +54,44 @@ public abstract class CmdOneListFunction extends CommandProcessor {
 		arg = resArgs(c, info);
 
 		switch (n) {
-		case 0:
-			throw argNumErr(c);
-		case 1:
-			return new GeoElement[] { process(c, info, arg[0]) };
+			case 0:
+				throw argNumErr(c);
+			case 1:
+				return new GeoElement[] {process(c, info, arg[0])};
 			// more than one argument
-		default:
+			default:
 
-			// two lists (e.g. grouped mean)
-			if (n == 2 && arg[0].isGeoList() && arg[1].isGeoList()) {
-				GeoElement[] ret = { doCommand(c.getLabel(), c,
-						(GeoList) arg[0], (GeoList) arg[1]) };
-				return ret;
-			}
-			// two lists plus flag to indicate useFrequency (needed for SIGMAXX)
-			else if (n == 3 && arg[0].isGeoList() && arg[1].isGeoList()
-					&& arg[2].isGeoBoolean()) {
-				GeoElement[] ret = {
-						doCommand(c.getLabel(), c, (GeoList) arg[0],
-								(GeoList) arg[1], (GeoBoolean) arg[2]) };
-				return ret;
-			}
-
-			else if (arg[0] instanceof GeoNumberValue) {
-				// try to create list of numbers
-				GeoList list = wrapInList(kernel, arg, arg.length,
-						GeoClass.NUMERIC);
-				if (list != null) {
-					list.setDefinedWithCurlyBrackets(false);
-					GeoElement[] ret = { doCommand(c.getLabel(), list, info) };
+				// two lists (e.g. grouped mean)
+				if (n == 2 && arg[0].isGeoList() && arg[1].isGeoList()) {
+					GeoElement[] ret = {doCommand(c.getLabel(), c, (GeoList) arg[0], (GeoList) arg[1])};
 					return ret;
 				}
-			} else if (arg[0] instanceof VectorValue) {
-				// try to create list of points (eg FitExp[])
-				GeoList list = wrapInList(kernel, arg, arg.length,
-						GeoClass.POINT);
-				if (list != null) {
-					GeoElement[] ret = { doCommand(c.getLabel(), list, info) };
+				// two lists plus flag to indicate useFrequency (needed for SIGMAXX)
+				else if (n == 3 && arg[0].isGeoList() && arg[1].isGeoList() && arg[2].isGeoBoolean()) {
+					GeoElement[] ret = {
+						doCommand(c.getLabel(), c, (GeoList) arg[0], (GeoList) arg[1], (GeoBoolean) arg[2])
+					};
 					return ret;
+				} else if (arg[0] instanceof GeoNumberValue) {
+					// try to create list of numbers
+					GeoList list = wrapInList(kernel, arg, arg.length, GeoClass.NUMERIC);
+					if (list != null) {
+						list.setDefinedWithCurlyBrackets(false);
+						GeoElement[] ret = {doCommand(c.getLabel(), list, info)};
+						return ret;
+					}
+				} else if (arg[0] instanceof VectorValue) {
+					// try to create list of points (eg FitExp[])
+					GeoList list = wrapInList(kernel, arg, arg.length, GeoClass.POINT);
+					if (list != null) {
+						GeoElement[] ret = {doCommand(c.getLabel(), list, info)};
+						return ret;
+					}
 				}
-
-			}
-			if (n == 2) {
-				throw argErr(c, arg[0].isGeoList() ? arg[1] : arg[0]);
-			}
-			throw argNumErr(c);
+				if (n == 2) {
+					throw argErr(c, arg[0].isGeoList() ? arg[1] : arg[0]);
+				}
+				throw argNumErr(c);
 		}
 	}
 
@@ -98,37 +106,35 @@ public abstract class CmdOneListFunction extends CommandProcessor {
 
 			if (fun.getParentAlgorithm() instanceof AlgoFunctionFreehand) {
 
-				GeoList list = wrapFreehandFunctionArgInList(kernel,
-						(AlgoFunctionFreehand) fun.getParentAlgorithm());
+				GeoList list =
+						wrapFreehandFunctionArgInList(kernel, (AlgoFunctionFreehand) fun.getParentAlgorithm());
 
 				if (list != null) {
 					return doCommand(command.getLabel(), list, info);
 				}
-
 			}
-
 		}
 		throw argErr(command, element);
 	}
 
-	protected GeoElement doCommand(String label, GeoList list, @CheckForNull EvalInfo info) {
+	protected GeoElement doCommand(String label, GeoList list, @Nullable EvalInfo info) {
 		return doCommand(label, list);
 	}
 
 	/**
 	 * Perform the actual command
-	 * 
+	 *
 	 * @param label
 	 *            label for output
 	 * @param list
 	 *            input list
 	 * @return resulting element
 	 */
-	abstract protected GeoElement doCommand(String label, GeoList list);
+	protected abstract GeoElement doCommand(String label, GeoList list);
 
 	/**
 	 * Perform the actual command with frequency data
-	 * 
+	 *
 	 * @param label
 	 *            label for output
 	 * @param c
@@ -139,15 +145,14 @@ public abstract class CmdOneListFunction extends CommandProcessor {
 	 *            another list (data frequencies)
 	 * @return resulting element
 	 */
-	protected GeoElement doCommand(String label, Command c, GeoList list,
-			GeoList list2) {
+	protected GeoElement doCommand(String label, Command c, GeoList list, GeoList list2) {
 		throw argNumErr(c);
 	}
 
 	/**
 	 * Perform the actual command with frequency data and a flag (needed for
 	 * CmdSigmaXX)
-	 * 
+	 *
 	 * @param label
 	 *            label for result
 	 * @param c
@@ -160,9 +165,8 @@ public abstract class CmdOneListFunction extends CommandProcessor {
 	 *            flag to distinguish between two syntaxes (eg SigmaXX)
 	 * @return resulting element
 	 */
-	protected GeoElement doCommand(String label, Command c, GeoList list,
-			GeoList list2, GeoBoolean flag) {
+	protected GeoElement doCommand(
+			String label, Command c, GeoList list, GeoList list2, GeoBoolean flag) {
 		throw argNumErr(c);
 	}
-
 }

@@ -1,16 +1,51 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.probcalculator;
 
+import static org.geogebra.common.gui.view.probcalculator.Procedure.ZMEAN_TEST;
+
+import java.util.List;
+
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.kernel.arithmetic.ExpressionNodeConstants;
-import org.geogebra.common.util.StringUtil;
 
 /**
  * @author G. Sturr
- * 
+ *
  */
 public class StatisticsCollection {
 	public static final String tail_left = "<";
 	public static final String tail_right = ">";
 	public static final String tail_two = ExpressionNodeConstants.strNOT_EQUAL;
+	public static final List<Procedure> statisticalTests = List.of(
+			Procedure.ZMEAN_TEST,
+			Procedure.TMEAN_TEST,
+			Procedure.ZMEAN2_TEST,
+			Procedure.TMEAN2_TEST,
+			Procedure.ZPROP_TEST,
+			Procedure.ZPROP2_TEST,
+			Procedure.ZMEAN_CI,
+			Procedure.TMEAN_CI,
+			Procedure.ZMEAN2_CI,
+			Procedure.TMEAN2_CI,
+			Procedure.ZPROP_CI,
+			Procedure.ZPROP2_CI,
+			Procedure.GOF_TEST,
+			Procedure.CHISQ_TEST);
 
 	public double mean;
 	public double mean2;
@@ -44,7 +79,7 @@ public class StatisticsCollection {
 	public double[][] diff;
 	public double[] columnSum;
 	public double[] rowSum;
-	private Procedure selectedProcedure;
+	private Procedure selectedProcedure = ZMEAN_TEST;
 	private boolean active;
 	public boolean showExpected;
 	public boolean showDiff;
@@ -55,7 +90,6 @@ public class StatisticsCollection {
 	 * Construct StatisticsCollection
 	 */
 	public StatisticsCollection() {
-
 		mean = Double.NaN;
 		mean2 = Double.NaN;
 		sd = Double.NaN;
@@ -74,7 +108,7 @@ public class StatisticsCollection {
 		count2 = Double.NaN;
 
 		level = .95;
-		setSelectedProcedure(Procedure.ZMEAN_TEST);
+		setSelectedProcedure(ZMEAN_TEST);
 	}
 
 	public void setActive(boolean active) {
@@ -111,7 +145,6 @@ public class StatisticsCollection {
 
 		columnSum = new double[initColumns];
 		rowSum = new double[initRows];
-
 	}
 
 	/**
@@ -167,67 +200,55 @@ public class StatisticsCollection {
 
 	/**
 	 * Add this to XML string
-	 * 
+	 *
 	 * @param sb
 	 *            string builder
 	 */
-	public void getXML(StringBuilder sb) {
-		sb.append("<statisticsCollection procedure=\"");
-		sb.append(getSelectedProcedure().name());
-		add(sb, mean, "mean");
-		add(sb, sd, "sd");
-		add(sb, n, "n");
-		add(sb, count, "count");
+	public void getXML(XMLStringBuilder sb) {
+		boolean hasChildren = chiSquareData != null && chiSquareData.length > 0;
+		if (hasChildren) {
+			sb.startOpeningTag("statisticsCollection", 0);
+		} else {
+			sb.startTag("statisticsCollection", 0);
+		}
+		sb.attrRaw("procedure", getSelectedProcedure().name());
+		sb.attr("mean", mean);
+		sb.attr("sd", sd);
+		sb.attr("n", n);
+		sb.attr("count", count);
 
-		add(sb, mean2, "mean2");
-		add(sb, sd2, "sd2");
-		add(sb, n2, "n2");
-		add(sb, count2, "count2");
+		sb.attr("mean2", mean2);
+		sb.attr("sd2", sd2);
+		sb.attr("n2", n2);
+		sb.attr("count2", count2);
 
-		add(sb, nullHyp, "nullHyp");
-		add(sb, level, "level");
-		sb.append("\" tail=\"");
-		sb.append(getTail());
-		add(sb, active, "active");
-		add(sb, showExpected, "showExpected");
-		add(sb, showDiff, "showDiff");
-		add(sb, showRowPercent, "showRowPercent");
-		add(sb, showColPercent, "showColPercent");
-		if (chiSquareData != null && chiSquareData.length > 0) {
+		sb.attr("nullHyp", nullHyp);
+		sb.attr("level", level);
+		sb.attrRaw("tail", getTail());
+		sb.attr("active", active);
+		sb.attr("showExpected", showExpected);
+		sb.attr("showDiff", showDiff);
+		sb.attr("showRowPercent", showRowPercent);
+		sb.attr("showColPercent", showColPercent);
+		if (hasChildren) {
 			// add(sb, chiSquareData.length, "columns");
-			add(sb, chiSquareData[0].length, "columns");
-			sb.append("\">");
+			sb.attr("columns", chiSquareData[0].length);
+			sb.endTag();
 			for (int row = 0; row < chiSquareData.length; row++) {
 				addObservedRow(sb, row);
 			}
-			sb.append("</statisticsCollection>");
+			sb.closeTag("statisticsCollection");
 		} else {
-			sb.append("\"/>");
+			sb.endTag();
 		}
 	}
 
-	private void addObservedRow(StringBuilder sb, int row) {
+	private void addObservedRow(XMLStringBuilder sb, int row) {
 		for (int column = 0; column < chiSquareData[0].length; column++) {
-			sb.append("<entry val=\"");
-			if (chiSquareData[row][column] != null) {
-				StringUtil.encodeXML(sb, chiSquareData[row][column]);
-			}
-			sb.append("\"/>\n");
+			sb.startTag("entry");
+			sb.attr("val", chiSquareData[row][column] != null ? chiSquareData[row][column] : "");
+			sb.endTag();
 		}
-	}
-
-	private static void add(StringBuilder sb, double sd3, String string) {
-		sb.append("\" ");
-		sb.append(string);
-		sb.append("=\"");
-		sb.append(sd3);
-	}
-
-	private static void add(StringBuilder sb, boolean sd3, String string) {
-		sb.append("\" ");
-		sb.append(string);
-		sb.append("=\"");
-		sb.append(sd3);
 	}
 
 	public Procedure getSelectedProcedure() {
@@ -247,8 +268,7 @@ public class StatisticsCollection {
 	 *            one of &lt;, &gt;, !=
 	 */
 	public void setTail(String tail) {
-		if (tail_two.equals(tail) || tail_left.equals(tail)
-				|| tail_right.equals(tail)) {
+		if (tail_two.equals(tail) || tail_left.equals(tail) || tail_right.equals(tail)) {
 			this.tail = tail;
 		}
 	}

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.web.full.gui.view.algebra;
@@ -23,11 +27,11 @@ import org.gwtproject.core.client.Scheduler;
 
 /**
  * Slider item for Algebra View.
- * 
+ *
  * @author laszlo
  *
  */
-public class SliderTreeItemRetex extends LaTeXTreeItem {
+public final class SliderTreeItemRetex extends LaTeXTreeItem {
 
 	private static final int SLIDER_EXT = 15;
 
@@ -39,13 +43,13 @@ public class SliderTreeItemRetex extends LaTeXTreeItem {
 	/**
 	 * panel to display animation related controls
 	 */
-
 	private MinMaxPanel minMaxPanel;
-	private GeoNumeric num;
+
+	private final GeoNumeric num;
 
 	/**
 	 * Creates a SliderTreeItem for AV sliders
-	 * 
+	 *
 	 * @param geo0
 	 *            the existing GeoElement to display/edit
 	 */
@@ -79,19 +83,18 @@ public class SliderTreeItemRetex extends LaTeXTreeItem {
 	}
 
 	private void createSliderGUI() {
-		if (num.getIntervalMinObject() != null
-				&& num.getIntervalMaxObject() != null) {
-			boolean degree = geo.isGeoAngle()
-					&& kernel.degreesMode();
-			slider = new SliderPanelW(num.getIntervalMin(),
-					num.getIntervalMax(), app.getKernel(), degree);
+		if (num.getIntervalMinObject() != null && num.getIntervalMaxObject() != null) {
+			boolean degree = geo.isGeoAngle() && kernel.degreesMode();
+			slider =
+					new SliderPanelW(num.getIntervalMin(), num.getIntervalMax(), app.getKernel(), degree);
 
 			getSlider().setValue(num.getValue());
 
 			getSlider().setStep(num.getAnimationStep());
 
-			getSlider().getSlider().addInputHandler(() ->
-					getSliderController().onValueChange(getSlider().getValue()));
+			getSlider()
+					.getSlider()
+					.addInputHandler(() -> getSliderController().onValueChange(getSlider().getValue()));
 			ClickEndHandler.init(getSlider(), new ClickEndHandler() {
 				@Override
 				public void onClickEnd(int x, int y, PointerEventType type) {
@@ -129,8 +132,7 @@ public class SliderTreeItemRetex extends LaTeXTreeItem {
 			return;
 		}
 
-		int width = getAV().getOffsetWidth() - 2 * marblePanel.getOffsetWidth()
-				+ SLIDER_EXT;
+		int width = getAV().getOffsetWidth() - 2 * marblePanel.getOffsetWidth() + SLIDER_EXT;
 		if (controls.getAnimPanel() != null) {
 			width -= AnimPanel.PLAY_BUTTON_SIZE;
 		}
@@ -169,8 +171,7 @@ public class SliderTreeItemRetex extends LaTeXTreeItem {
 
 		double min = num.getIntervalMin();
 		double max = num.getIntervalMax();
-		boolean degree = geo.isGeoAngle()
-				&& kernel.degreesMode();
+		boolean degree = geo.isGeoAngle() && kernel.degreesMode();
 		getSlider().setMinimum(min, degree);
 		getSlider().setMaximum(max, degree);
 
@@ -263,7 +264,7 @@ public class SliderTreeItemRetex extends LaTeXTreeItem {
 	/**
 	 * @return number
 	 */
-	protected GeoNumeric getNum() {
+	GeoNumeric getNum() {
 		return num;
 	}
 

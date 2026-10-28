@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.kernel.Kernel;
@@ -17,18 +33,18 @@ import org.geogebra.common.main.MyError;
 
 /**
  * (2nd argument is the mirror)
- * 
+ *
  * Mirror[ &lt;Object&gt;, &lt;GeoPoint&gt; ]
- * 
+ *
  * Mirror[ &lt;Object&gt;, &lt;GeoLine&gt; ]
- * 
+ *
  * Mirror[ &lt;Object&gt;, &lt;GeoConic&gt; ]
  */
 public class CmdMirror extends CommandProcessor {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -44,30 +60,30 @@ public class CmdMirror extends CommandProcessor {
 		GeoElement[] arg;
 
 		switch (n) {
-		case 2:
-			arg = resArgs(c, info);
+			case 2:
+				arg = resArgs(c, info);
 
-			GeoElement[] ret = process2(label, arg, ok);
+				GeoElement[] ret = process2(label, arg, ok);
 
-			if (ret != null) {
-				return ret;
-			}
+				if (ret != null) {
+					return ret;
+				}
 
-			// syntax error
+				// syntax error
 
-			if (!ok[0]) {
-				throw argErr(c, arg[0]);
-			}
-			throw argErr(c, arg[1]);
+				if (!ok[0]) {
+					throw argErr(c, arg[0]);
+				}
+				throw argErr(c, arg[1]);
 
-		default:
-			throw argNumErr(c);
+			default:
+				throw argNumErr(c);
 		}
 	}
 
 	/**
 	 * process angle when 2 arguments
-	 * 
+	 *
 	 * @param label
 	 *            for the result
 	 * @param arg
@@ -76,26 +92,25 @@ public class CmdMirror extends CommandProcessor {
 	 *            ok array
 	 * @return result (if one)
 	 */
-	protected GeoElement[] process2(String label, GeoElement[] arg,
-			boolean[] ok) {
+	protected GeoElement[] process2(String label, GeoElement[] arg, boolean[] ok) {
 
-		GeoElement[] ret = new GeoElement[1];
+		GeoElement[] ret;
 
 		if (arg[1].isGeoConic()) { // mirror point in circle Michael
 			// Borcherds 2008-02-10
 			GeoConicND conic1 = (GeoConicND) arg[1];
 
-			if (conic1.getType() == GeoConicNDConstants.CONIC_CIRCLE
-					&& arg[0].isGeoConic() || arg[0].isGeoPoint()
+			if (conic1.getType() == GeoConicNDConstants.CONIC_CIRCLE && arg[0].isGeoConic()
+					|| arg[0].isGeoPoint()
 					|| arg[0] instanceof GeoCurveCartesian
-					|| arg[0] instanceof GeoLine || arg[0] instanceof GeoPoly
+					|| arg[0] instanceof GeoLine
+					|| arg[0] instanceof GeoPoly
 					|| arg[0] instanceof GeoFunction
 					|| arg[0] instanceof GeoList
 					|| arg[0] instanceof GeoImplicit) {
 				ret = getAlgoDispatcher().mirror(label, arg[0], conic1);
 				return ret;
 			}
-
 		}
 
 		// mirror object

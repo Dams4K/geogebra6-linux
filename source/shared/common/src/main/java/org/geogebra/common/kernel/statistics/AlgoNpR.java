@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.statistics;
 
 import java.math.BigDecimal;
@@ -40,7 +56,7 @@ public class AlgoNpR {
 			// (determined by trial and error) eg 17P16
 			if (n <= 16) {
 				return ncr;
-			// if (r<2.8+Math.exp((250-n)/100) && n<59000) return ncr;
+				// if (r<2.8+Math.exp((250-n)/100) && n<59000) return ncr;
 			}
 
 			// NpRBig is more accurate but slower
@@ -68,7 +84,6 @@ public class AlgoNpR {
 			ncr = ncr.multiply(nr);
 
 			nr = nr.add(BigInteger.ONE);
-
 		}
 		return ncr.doubleValue();
 	}
@@ -78,9 +93,6 @@ public class AlgoNpR {
 		// also if r<2.8+Math.exp((250-n)/100) && n<59000
 		// eg NpR2(38,19) is wrong
 
-		return Math.floor(0.5 + Math
-				.exp(MyMath2.logGamma(n + 1d) - MyMath2.logGamma(n - r + 1)));
-
+		return Math.floor(0.5 + Math.exp(MyMath2.logGamma(n + 1d) - MyMath2.logGamma(n - r + 1)));
 	}
-
 }

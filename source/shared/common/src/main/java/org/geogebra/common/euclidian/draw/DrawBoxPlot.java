@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
@@ -57,15 +73,15 @@ public class DrawBoxPlot extends Drawable {
 				if (isHighlighted()) {
 					g2.setPaint(sum.getSelColor());
 					g2.setStroke(selStroke);
-					g2.draw(gp);
+					gp.draw(g2);
 				}
 			} catch (Exception e) {
 				Log.debug(e.getMessage());
 			}
 
 			try {
-				fill(g2, gp); // fill using default/hatching/image as
-								// appropriate
+				fill(g2, gp.getGeneralPath()); // fill using default/hatching/image as
+				// appropriate
 			} catch (Exception e) {
 				Log.debug(e);
 			}
@@ -74,7 +90,7 @@ public class DrawBoxPlot extends Drawable {
 				if (geo.getLineThickness() > 0) {
 					g2.setPaint(getObjectColor());
 					g2.setStroke(objStroke);
-					g2.draw(gp);
+					gp.draw(g2);
 				}
 			} catch (Exception e) {
 				Log.debug(e.getMessage());
@@ -90,8 +106,7 @@ public class DrawBoxPlot extends Drawable {
 
 	@Override
 	public boolean hit(int x, int y, int hitThreshold) {
-		return gp != null
-				&& (gp.contains(x, y) || gp.intersects(x, y, hitThreshold));
+		return gp != null && (gp.contains(x, y) || gp.intersects(x, y, hitThreshold));
 	}
 
 	@Override
@@ -227,7 +242,7 @@ public class DrawBoxPlot extends Drawable {
 		}
 
 		// gp on screen?
-		if (!view.intersects(gp)) {
+		if (!view.intersects(gp.getGeneralPath())) {
 			isVisible = false;
 		}
 	}
@@ -236,11 +251,10 @@ public class DrawBoxPlot extends Drawable {
 	 * Returns the bounding box of this Drawable in screen coordinates.
 	 */
 	@Override
-	final public GRectangle getBounds() {
+	public final GRectangle getBounds() {
 		if (!geo.isDefined() || !geo.isEuclidianVisible() || gp == null) {
 			return null;
 		}
 		return gp.getBounds();
 	}
-
 }

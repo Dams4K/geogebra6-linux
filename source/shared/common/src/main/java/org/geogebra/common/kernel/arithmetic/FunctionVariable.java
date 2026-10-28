@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.arithmetic;
@@ -25,7 +29,7 @@ public class FunctionVariable extends MyDouble {
 
 	/**
 	 * Creates new function variable
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -35,7 +39,7 @@ public class FunctionVariable extends MyDouble {
 
 	/**
 	 * Creates new function variable
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 * @param varStr
@@ -50,18 +54,18 @@ public class FunctionVariable extends MyDouble {
 	 * Returns true to avoid deep copies in an ExpressionNode tree.
 	 */
 	@Override
-	final public boolean isConstant() {
+	public final boolean isConstant() {
 		return false;
 	}
 
 	@Override
-	final public FunctionVariable deepCopy(Kernel k) {
+	public final FunctionVariable deepCopy(Kernel k) {
 		return new FunctionVariable(k, varStr);
 	}
 
 	/**
 	 * Changes variable name
-	 * 
+	 *
 	 * @param varStr
 	 *            new variable name
 	 */
@@ -77,7 +81,7 @@ public class FunctionVariable extends MyDouble {
 	}
 
 	@Override
-	final public String toString(final StringTemplate tpl) {
+	public final String toString(final StringTemplate tpl) {
 		return tpl.printVariableName(varStr);
 	}
 
@@ -100,28 +104,13 @@ public class FunctionVariable extends MyDouble {
 	@Override
 	public ExpressionValue integral(FunctionVariable fv, Kernel kernel0) {
 		if (fv == this) {
-			return new ExpressionNode(kernel0, this, Operation.POWER,
-					new MyDouble(kernel0, 2)).divide(2);
+			return new ExpressionNode(kernel0, this, Operation.POWER, new MyDouble(kernel0, 2)).divide(2);
 		}
 		return new ExpressionNode(kernel0, this, Operation.MULTIPLY, fv);
-	}
-
-	/**
-	 * checks if set to same value, not if it's the same FunctionVariable object
-	 */
-	@Override
-	public boolean equals(Object o) {
-		return super.equals(o);
-	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
 	}
 
 	@Override
 	public boolean isDigits() {
 		return false;
 	}
-
 }

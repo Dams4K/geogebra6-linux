@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.geogebra3D.web.euclidian3D;
 
 import org.geogebra.common.euclidian.EuclidianConstants;
@@ -18,6 +34,7 @@ import org.geogebra.web.html5.event.PointerEvent;
 import org.geogebra.web.html5.gui.util.LongTouchManager;
 import org.geogebra.web.html5.main.AppW;
 import org.gwtproject.user.client.DOM;
+import org.jspecify.annotations.NonNull;
 
 import elemental2.dom.WheelEvent;
 
@@ -25,8 +42,7 @@ import elemental2.dom.WheelEvent;
  * 3D euclidian controller
  *
  */
-public class EuclidianController3DW extends EuclidianController3D implements
-		IsEuclidianController {
+public class EuclidianController3DW extends EuclidianController3D implements IsEuclidianController {
 
 	private MouseTouchGestureControllerW mtg;
 	/**
@@ -64,7 +80,7 @@ public class EuclidianController3DW extends EuclidianController3D implements
 	}
 
 	@Override
-	public void handleLongTouch(int x, int y) {
+	public void handleLongTouch(double x, double y) {
 		if (!draggingOccurred) {
 			mtg.handleLongTouch(x, y);
 		}
@@ -79,8 +95,7 @@ public class EuclidianController3DW extends EuclidianController3D implements
 	@Override
 	public void onPointerEventStart(AbstractEvent event) {
 		if (app.getGuiManager() != null) {
-			((GuiManagerW) app.getGuiManager())
-					.setActivePanelAndToolbar(App.VIEW_EUCLIDIAN3D);
+			((GuiManagerW) app.getGuiManager()).setActivePanelAndToolbar(App.VIEW_EUCLIDIAN3D);
 		} else {
 			setMode(EuclidianConstants.MODE_MOVE, ModeSetter.DOCK_PANEL);
 		}
@@ -127,8 +142,7 @@ public class EuclidianController3DW extends EuclidianController3D implements
 		}
 
 		// check center difference
-		double centerDiff = MyMath.length(oldCenterX3D - centerX, oldCenterY3D
-				- centerY);
+		double centerDiff = MyMath.length(oldCenterX3D - centerX, oldCenterY3D - centerY);
 		if (centerDiff <= MouseTouchGestureController.MIN_MOVE) {
 			centerDiff = 0;
 		}
@@ -136,9 +150,9 @@ public class EuclidianController3DW extends EuclidianController3D implements
 		// process highest difference
 		if (2 * centerDiff > zoomDiff) {
 			getView().rememberOrigins();
-			getView().setCoordSystemFromMouseMove(centerX - oldCenterX3D,
-					centerY
-					- oldCenterY3D, MoveMode.ROTATE_VIEW);
+			getView()
+					.setCoordSystemFromMouseMove(
+							centerX - oldCenterX3D, centerY - oldCenterY3D, MoveMode.ROTATE_VIEW);
 			viewRotationOccurred = true;
 			getView().repaintView();
 
@@ -166,7 +180,7 @@ public class EuclidianController3DW extends EuclidianController3D implements
 	}
 
 	@Override
-	protected void processMouseMoved(AbstractEvent e) {
+	protected void processMouseMoved(@NonNull AbstractEvent e) {
 		super.processMouseMoved(e);
 		processMouseMoved();
 	}

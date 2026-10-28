@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.inputfield;
 
 import org.geogebra.common.awt.GColor;
@@ -71,13 +87,13 @@ public final class DefaultTextFieldController implements TextFieldController {
 
 	private TextAlign textAlignToCssAlign(HorizontalAlignment alignment) {
 		switch (alignment) {
-		default:
-		case LEFT:
-			return TextAlign.LEFT;
-		case CENTER:
-			return TextAlign.CENTER;
-		case RIGHT:
-			return TextAlign.RIGHT;
+			default:
+			case LEFT:
+				return TextAlign.LEFT;
+			case CENTER:
+				return TextAlign.CENTER;
+			case RIGHT:
+				return TextAlign.RIGHT;
 		}
 	}
 
@@ -88,7 +104,11 @@ public final class DefaultTextFieldController implements TextFieldController {
 
 	@Override
 	public void setForegroundColor(GColor color) {
-		textField.getTextField().getValueBox().getElement().getStyle()
+		textField
+				.getTextField()
+				.getValueBox()
+				.getElement()
+				.getStyle()
 				.setColor(GColor.getColorString(color));
 	}
 
@@ -109,15 +129,13 @@ public final class DefaultTextFieldController implements TextFieldController {
 
 	@Override
 	public int getSelectionEnd() {
-		return getSelectionStart()
-				+ textField.getTextField().getValueBox().getSelectionLength();
+		return getSelectionStart() + textField.getTextField().getValueBox().getSelectionLength();
 	}
 
 	@Override
 	public void clearSelection() {
 		ValueBoxBase<String> valueBox = textField.getTextField().getValueBox();
-		int start = textField.getText()
-				.indexOf(valueBox.getSelectedText());
+		int start = textField.getText().indexOf(valueBox.getSelectedText());
 		int end = start + valueBox.getSelectionLength();
 		// clear selection if there is one
 		if (start != end) {
@@ -129,6 +147,5 @@ public final class DefaultTextFieldController implements TextFieldController {
 				textField.setCaretPosition(pos);
 			}
 		}
-
 	}
 }

@@ -1,16 +1,20 @@
-package org.geogebra.common.kernel.statistics;
-
-/* 
- GeoGebra - Dynamic Mathematics for Everyone
- http://www.geogebra.org
-
- This file is part of GeoGebra.
-
- This program is free software; you can redistribute it and/or modify it 
- under the terms of the GNU General Public License as published by 
- the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
+
+package org.geogebra.common.kernel.statistics;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -52,8 +56,7 @@ public class AlgoFitImplicit extends AlgoElement {
 	 * @param arg
 	 *            order of implicit polynomial to fit
 	 */
-	public AlgoFitImplicit(Construction cons, String label, GeoList pointlist,
-			GeoNumberValue arg) {
+	public AlgoFitImplicit(Construction cons, String label, GeoList pointlist, GeoNumberValue arg) {
 		super(cons);
 
 		this.pointlist = pointlist;
@@ -114,8 +117,7 @@ public class AlgoFitImplicit extends AlgoElement {
 				return;
 			}
 
-			SingularValueDecomposition svd = new SingularValueDecomposition(
-					M);
+			SingularValueDecomposition svd = new SingularValueDecomposition(M);
 
 			V = svd.getV();
 
@@ -127,9 +129,7 @@ public class AlgoFitImplicit extends AlgoElement {
 	}
 
 	// Get info from lists into matrixes and functionarray
-	private final boolean makeMatrixes() {
-		GeoElement geo = null;
-		GeoPoint point = null;
+	private boolean makeMatrixes() {
 		double x, y;
 
 		int order = (int) orderGeo.evaluateDouble();
@@ -138,11 +138,11 @@ public class AlgoFitImplicit extends AlgoElement {
 		M = new Array2DRowRealMatrix(datasize, (order + 1) * (order + 2) / 2);
 
 		for (int r = 0; r < datasize; r++) {
-			geo = pointlist.get(r);
+			GeoElement geo = pointlist.get(r);
 			if (!geo.isGeoPoint()) {
 				return false;
 			}
-			point = (GeoPoint) geo;
+			GeoPoint point = (GeoPoint) geo;
 
 			x = point.getX() / point.getZ();
 			y = point.getY() / point.getZ();
@@ -163,7 +163,7 @@ public class AlgoFitImplicit extends AlgoElement {
 		return true;
 	}
 
-	private final void makeFunction() {
+	private void makeFunction() {
 		int order = (int) orderGeo.evaluateDouble();
 
 		double[][] coeffs = new double[order + 1][order + 1];

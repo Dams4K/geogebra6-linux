@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.cas;
@@ -31,11 +35,10 @@ import org.geogebra.common.plugin.Operation;
 
 /**
  * tangent to Curve f in point P: (b'(t), -a'(t), a'(t)*b(t)-a(t)*b'(t)).
- * 
+ *
  * @author Victor Franco Espino
  * @version 11-02-2007
  */
-
 public class AlgoTangentCurve extends AlgoElement implements TangentAlgo {
 
 	private GeoPointND P; // input
@@ -60,8 +63,7 @@ public class AlgoTangentCurve extends AlgoElement implements TangentAlgo {
 	 * @param f
 	 *            curve
 	 */
-	public AlgoTangentCurve(Construction cons, String label, GeoPointND P,
-			GeoCurveCartesian f) {
+	public AlgoTangentCurve(Construction cons, String label, GeoPointND P, GeoCurveCartesian f) {
 		super(cons);
 		tangent = new GeoLine(cons);
 		this.P = P;
@@ -88,17 +90,14 @@ public class AlgoTangentCurve extends AlgoElement implements TangentAlgo {
 
 			// special code for curve(t)
 
-			AlgoDependentPoint algoDP = (AlgoDependentPoint) P
-					.getParentAlgorithm();
+			AlgoDependentPoint algoDP = (AlgoDependentPoint) P.getParentAlgorithm();
 
 			ExpressionNode en = algoDP.getExpression();
 
-			if (en.getOperation() == Operation.VEC_FUNCTION
-					&& en.getLeft().unwrap() == f) {
+			if (en.getOperation() == Operation.VEC_FUNCTION && en.getLeft().unwrap() == f) {
 				pointOnCurveSpecial = true;
 				pointOnCurveSpecialParam = en.getRight().unwrap();
 			}
-
 		}
 
 		if (pointOnCurve || pointOnCurveSpecial) {
@@ -189,8 +188,7 @@ public class AlgoTangentCurve extends AlgoElement implements TangentAlgo {
 
 		f.evaluateCurve(tvalue, feval);
 		df.evaluateCurve(tvalue, dfeval);
-		tangent.setCoords(-dfeval[1], dfeval[0],
-				feval[0] * dfeval[1] - dfeval[0] * feval[1]);
+		tangent.setCoords(-dfeval[1], dfeval[0], feval[0] * dfeval[1] - dfeval[0] * feval[1]);
 
 		if (!pointOnCurve && !pointOnCurveSpecial) {
 			T.setCoords(feval[0], feval[1], 1.0);
@@ -204,5 +202,4 @@ public class AlgoTangentCurve extends AlgoElement implements TangentAlgo {
 		}
 		return null;
 	}
-
 }

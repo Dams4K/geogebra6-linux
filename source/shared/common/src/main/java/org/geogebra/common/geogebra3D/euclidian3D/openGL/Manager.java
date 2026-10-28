@@ -1,8 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.openGL;
 
 import java.util.ArrayList;
 
 import org.geogebra.common.awt.GColor;
+import org.geogebra.common.awt.annotations.HasNativeSubclass;
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
 import org.geogebra.common.geogebra3D.euclidian3D.draw.DrawPoint3D;
 import org.geogebra.common.geogebra3D.euclidian3D.draw.Drawable3D;
@@ -13,18 +30,23 @@ import org.geogebra.common.kernel.matrix.Coords3;
 
 /**
  * Class that manage all geometry objects
- * 
+ *
  * @author mathieu
  *
  */
-abstract public class Manager {
+@HasNativeSubclass
+public abstract class Manager {
 
 	/**
 	 * Geometry type.
 	 */
 	public enum Type { // quads and quad strips are not supported in
-								// gwtgl
-		TRIANGLE_STRIP, TRIANGLE_FAN, TRIANGLES, LINE_LOOP, LINE_STRIP
+		// gwtgl
+		TRIANGLE_STRIP,
+		TRIANGLE_FAN,
+		TRIANGLES,
+		LINE_LOOP,
+		LINE_STRIP
 	}
 
 	// geometries
@@ -45,7 +67,7 @@ abstract public class Manager {
 
 	// geogebra stuff
 	private EuclidianView3D view3D;
-	private Coords normalToScaleTmp = new Coords(3);
+	private final Coords normalToScaleTmp = new Coords(3);
 
 	/**
 	 * current scaler (identity/3D view)
@@ -61,10 +83,11 @@ abstract public class Manager {
 	private int curvesIndicesSize;
 	private int fanDirectIndicesSize;
 	private int fanIndirectIndicesSize;
+	private int latitudes = 8;
 
 	/**
 	 * create a manager for geometries
-	 * 
+	 *
 	 * @param renderer
 	 *            openGL renderer
 	 * @param view3D
@@ -78,7 +101,7 @@ abstract public class Manager {
 		// empty constructor
 	}
 
-	final protected void init(Renderer renderer, EuclidianView3D newView3D) {
+	protected final void init(Renderer renderer, EuclidianView3D newView3D) {
 
 		// geogebra
 		this.view3D = newView3D;
@@ -89,7 +112,7 @@ abstract public class Manager {
 		initGeometriesList();
 
 		// creating geometries
-
+		latitudes = newView3D.getLatitudes();
 		brush = newPlotterBrush();
 		surface = newPlotterSurface();
 
@@ -101,12 +124,11 @@ abstract public class Manager {
 		mouseCursor = new PlotterMouseCursor(this);
 
 		completingCursor = new PlotterCompletingCursor(this);
-
 	}
 
 	/**
 	 * set the 3D view
-	 * 
+	 *
 	 * @param view3D
 	 *            3D view
 	 */
@@ -115,7 +137,14 @@ abstract public class Manager {
 	}
 
 	/**
-	 * 
+	 * @return number of latitude-wise splits for curves
+	 */
+	public int getCurveLatitudeSplits() {
+		return latitudes;
+	}
+
+	/**
+	 *
 	 * @return new plotter brush
 	 */
 	protected PlotterBrush newPlotterBrush() {
@@ -123,7 +152,7 @@ abstract public class Manager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return new plotter surface
 	 */
 	protected PlotterSurface newPlotterSurface() {
@@ -141,17 +170,17 @@ abstract public class Manager {
 
 	/**
 	 * set the renderer
-	 * 
+	 *
 	 * @param renderer
 	 *            renderer
 	 */
-	abstract protected void setRenderer(Renderer renderer);
+	protected abstract void setRenderer(Renderer renderer);
 
 	/**
-	 * 
+	 *
 	 * @return the renderer
 	 */
-	abstract protected Renderer getRenderer();
+	protected abstract Renderer getRenderer();
 
 	public PlotterViewInFrontOf getViewInFrontOf() {
 		return viewInFrontOf;
@@ -183,7 +212,7 @@ abstract public class Manager {
 
 	/**
 	 * return the 3D view
-	 * 
+	 *
 	 * @return the 3D view
 	 */
 	public EuclidianView3D getView3D() {
@@ -199,22 +228,22 @@ abstract public class Manager {
 	 * @param mayBePacked whether to allow packing
 	 * @return list index
 	 */
-	abstract public int startNewList(int old, boolean mayBePacked);
+	public abstract int startNewList(int old, boolean mayBePacked);
 
 	/**
 	 * End current list.
 	 */
-	abstract public void endList();
+	public abstract void endList();
 
 	/**
 	 * Start a new geometry.
 	 * @param type geometry type
 	 */
-	abstract public void startGeometry(Type type);
+	public abstract void startGeometry(Type type);
 
 	/**
 	 * direct write in buffer mode
-	 * 
+	 *
 	 * @param type
 	 *            geometry type
 	 * @param size
@@ -227,7 +256,7 @@ abstract public class Manager {
 	/**
 	 * End current geometry.
 	 */
-	abstract public void endGeometry();
+	public abstract void endGeometry();
 
 	/**
 	 * end current geometry (direct buffer mode)
@@ -238,7 +267,7 @@ abstract public class Manager {
 
 	/**
 	 * end current geometry (only with shaders + elements, with type)
-	 * 
+	 *
 	 * @param size
 	 *            geometry size
 	 * @param type
@@ -250,17 +279,17 @@ abstract public class Manager {
 
 	/**
 	 * start drawing polygons
-	 * 
+	 *
 	 * @param d
 	 *            3D drawable
-	 * 
+	 *
 	 * @return geometry index for the polygons
 	 */
-	abstract public int startPolygons(Drawable3D d);
+	public abstract int startPolygons(Drawable3D d);
 
 	/**
 	 * draw a convex polygon
-	 * 
+	 *
 	 * @param n
 	 *            normal
 	 * @param v
@@ -270,8 +299,7 @@ abstract public class Manager {
 	 * @param reverse
 	 *            vertex order has to be reversed
 	 */
-	public void drawPolygonConvex(Coords n, Coords[] v, int length,
-			boolean reverse) {
+	public void drawPolygonConvex(Coords n, Coords[] v, int length, boolean reverse) {
 
 		startGeometry(Type.TRIANGLE_FAN);
 
@@ -299,11 +327,11 @@ abstract public class Manager {
 	/**
 	 * set dummy texture (needed for GLList)
 	 */
-	abstract protected void setDummyTexture();
+	protected abstract void setDummyTexture();
 
 	/**
 	 * draw a triangle fan
-	 * 
+	 *
 	 * @param n
 	 *            normal
 	 * @param v
@@ -311,8 +339,7 @@ abstract public class Manager {
 	 * @param triFan
 	 *            indices
 	 */
-	private void drawTriangleFan(Coords n, Coords[] v,
-			TriangleFan triFan) {
+	private void drawTriangleFan(Coords n, Coords[] v, TriangleFan triFan) {
 		startGeometry(Type.TRIANGLE_FAN);
 
 		// set texture
@@ -334,11 +361,11 @@ abstract public class Manager {
 
 	/**
 	 * end the polygons
-	 * 
+	 *
 	 * @param d
 	 *            3D drawable
 	 */
-	abstract public void endPolygons(Drawable3D d);
+	public abstract void endPolygons(Drawable3D d);
 
 	// ///////////////////////////////////////////
 	// DRAWING METHODS
@@ -348,23 +375,23 @@ abstract public class Manager {
 	 * Draw a geometry set.
 	 * @param index index of the set
 	 */
-	abstract public void draw(int index);
+	public abstract void draw(int index);
 
 	/**
 	 * Draw label for the current geometry set.
 	 * @param index index of the set
 	 */
-	abstract public void drawLabel(int index);
+	public abstract void drawLabel(int index);
 
 	/**
 	 * Remove a geometry set.
 	 * @param index index of the set
 	 */
-	abstract public void remove(int index);
+	public abstract void remove(int index);
 
 	/**
 	 * creates a vertex at coordinates (x,y,z)
-	 * 
+	 *
 	 * @param x
 	 *            x coord
 	 * @param y
@@ -372,11 +399,11 @@ abstract public class Manager {
 	 * @param z
 	 *            z coord
 	 */
-	abstract protected void vertex(double x, double y, double z);
+	protected abstract void vertex(double x, double y, double z);
 
 	/**
 	 * creates a vertex at coordinates (x,y,z) (direct buffer mode)
-	 * 
+	 *
 	 * @param x
 	 *            x coord
 	 * @param y
@@ -390,7 +417,7 @@ abstract public class Manager {
 
 	/**
 	 * creates a vertex at coordinates (x,y,z)
-	 * 
+	 *
 	 * @param x
 	 *            x coord
 	 * @param y
@@ -398,57 +425,56 @@ abstract public class Manager {
 	 * @param z
 	 *            z coord
 	 */
-	abstract protected void vertexInt(double x, double y, double z);
+	protected abstract void vertexInt(double x, double y, double z);
 
 	/**
 	 * creates a vertex at coordinates v
-	 * 
+	 *
 	 * @param v
 	 *            vertex
 	 */
-	final protected void vertex(Coords v) {
+	protected final void vertex(Coords v) {
 		vertex(v.getX(), v.getY(), v.getZ());
 	}
 
 	/**
 	 * scale vertex and draw it
-	 * 
+	 *
 	 * @param v
 	 *            vertex
 	 */
-	final protected void vertexToScale(Coords v) {
+	protected final void vertexToScale(Coords v) {
 		vertexToScale(v.getX(), v.getY(), v.getZ());
 	}
 
 	/**
 	 * scale vertex and draw it
-	 * 
+	 *
 	 * @param x
 	 *            x
 	 * @param y
 	 *            y
 	 * @param z
 	 *            z
-	 * 
+	 *
 	 */
-	final protected void vertexToScale(double x, double y, double z) {
+	protected final void vertexToScale(double x, double y, double z) {
 		vertex(x * getXscale(), y * getYscale(), z * getZscale());
 	}
 
 	/**
 	 * creates a vertex at coordinates v (direct buffer mode)
-	 * 
+	 *
 	 * @param v
 	 *            vertex
 	 */
 	protected void vertexDirect(Coords3 v) {
 		vertexDirect(v.getXf(), v.getYf(), v.getZf());
-
 	}
 
 	/**
 	 * set apex for triangle fan
-	 * 
+	 *
 	 * @param v
 	 *            apex coords
 	 */
@@ -458,7 +484,7 @@ abstract public class Manager {
 
 	/**
 	 * set vertex for triangle fan
-	 * 
+	 *
 	 * @param v
 	 *            apex coords
 	 */
@@ -468,15 +494,15 @@ abstract public class Manager {
 
 	/**
 	 * fill array of vertices
-	 * 
+	 *
 	 * @param vertices
 	 *            array of vertices
 	 */
-	abstract protected void vertices(double[] vertices);
+	protected abstract void vertices(double[] vertices);
 
 	/**
 	 * creates a normal at coordinates (x,y,z)
-	 * 
+	 *
 	 * @param x
 	 *            x coord
 	 * @param y
@@ -484,11 +510,11 @@ abstract public class Manager {
 	 * @param z
 	 *            z coord
 	 */
-	abstract protected void normal(double x, double y, double z);
+	protected abstract void normal(double x, double y, double z);
 
 	/**
 	 * creates a normal at coordinates (x,y,z) (direct buffer mode)
-	 * 
+	 *
 	 * @param x
 	 *            x coord
 	 * @param y
@@ -502,21 +528,21 @@ abstract public class Manager {
 
 	/**
 	 * creates a normal at coordinates n
-	 * 
+	 *
 	 * @param n
 	 *            normal
 	 */
 	protected void normal(Coords n) {
 		normal(n.getX(), n.getY(), n.getZ());
 	}
-	
+
 	/**
 	 * scale normal and draw it
-	 * 
+	 *
 	 * @param n
 	 *            normal
 	 */
-	final protected void normalToScale(Coords n) {
+	protected final void normalToScale(Coords n) {
 		if (getScalerXYZ().scaleAndNormalizeNormalXYZ(n, normalToScaleTmp)) {
 			normal(normalToScaleTmp);
 		} else {
@@ -526,7 +552,7 @@ abstract public class Manager {
 
 	/**
 	 * creates a normal at coordinates n (direct buffer mode)
-	 * 
+	 *
 	 * @param n
 	 *            normal
 	 */
@@ -536,17 +562,17 @@ abstract public class Manager {
 
 	/**
 	 * creates a texture at coordinates (x,y)
-	 * 
+	 *
 	 * @param x
 	 *            x coord
 	 * @param y
 	 *            y coord
 	 */
-	abstract protected void texture(double x, double y);
+	protected abstract void texture(double x, double y);
 
 	/**
 	 * creates a texture at coordinate (x)
-	 * 
+	 *
 	 * @param x
 	 *            x coord
 	 */
@@ -556,20 +582,20 @@ abstract public class Manager {
 
 	/**
 	 * creates a color (r,g,b)
-	 * 
+	 *
 	 * @param r
 	 *            red
 	 * @param g
 	 *            green
 	 * @param b
 	 *            blue
-	 * 
+	 *
 	 */
-	abstract protected void color(double r, double g, double b);
+	protected abstract void color(double r, double g, double b);
 
 	/**
 	 * creates a color (r,g,b,a)
-	 * 
+	 *
 	 * @param r
 	 *            red
 	 * @param g
@@ -578,27 +604,27 @@ abstract public class Manager {
 	 *            blue
 	 * @param a
 	 *            blue alpha
-	 * 
+	 *
 	 */
-	abstract protected void color(double r, double g, double b, double a);
+	protected abstract void color(double r, double g, double b, double a);
 
 	/**
 	 * set the line width (for GL_LINE rendering)
-	 * 
+	 *
 	 * @param width
 	 *            width
 	 */
-	final protected void lineWidth(double width) {
+	protected final void lineWidth(double width) {
 		getRenderer().setLineWidth(width);
 	}
 
 	/**
 	 * set the point size (for GL_POINT rendering)
-	 * 
+	 *
 	 * @param size
 	 *            size
 	 */
-	abstract protected void pointSize(double size);
+	protected abstract void pointSize(double size);
 
 	// ///////////////////////////////////////////
 	// COLOR METHODS
@@ -606,7 +632,7 @@ abstract public class Manager {
 
 	/**
 	 * draws a rectangle
-	 * 
+	 *
 	 * @param x
 	 *            vertex x-coord
 	 * @param y
@@ -621,16 +647,15 @@ abstract public class Manager {
 	 *            index
 	 * @return new index
 	 */
-	final public int rectangle(double x, double y, double z, double width,
-			double height, int old) {
+	public final int rectangle(double x, double y, double z, double width, double height, int old) {
 		int index = startNewList(old, false);
 		rectangleGeometry(x, y, z, width, height);
 		endList();
 		return index;
 	}
 
-	abstract protected void rectangleGeometry(double x, double y, double z,
-			double width, double height);
+	protected abstract void rectangleGeometry(
+			double x, double y, double z, double width, double height);
 
 	/**
 	 * @param x
@@ -649,8 +674,8 @@ abstract public class Manager {
 	 *            bounds line width
 	 * @return new index
 	 */
-	public int rectangleBounds(double x, double y, double z, double width,
-			double height, int old, double lineWidth) {
+	public int rectangleBounds(
+			double x, double y, double z, double width, double height, int old, double lineWidth) {
 		int index = startNewList(old, false);
 		getText().rectangleBounds(x, y, z, width, height, lineWidth);
 		endList();
@@ -658,7 +683,7 @@ abstract public class Manager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return max number of longitudes
 	 */
 	public int getLongitudeMax() {
@@ -666,7 +691,7 @@ abstract public class Manager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return default number of longitudes
 	 */
 	public int getLongitudeDefault() {
@@ -674,7 +699,7 @@ abstract public class Manager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param radius
 	 *            circle radius
 	 * @param viewScale
@@ -695,7 +720,7 @@ abstract public class Manager {
 
 	/**
 	 * draw a point
-	 * 
+	 *
 	 * @param size
 	 *            size
 	 * @param center
@@ -717,7 +742,7 @@ abstract public class Manager {
 
 	/**
 	 * draw a dot (for right angle)
-	 * 
+	 *
 	 * @param d
 	 *            drawable
 	 * @param size
@@ -733,7 +758,7 @@ abstract public class Manager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param size
 	 *            point size
 	 */
@@ -743,7 +768,7 @@ abstract public class Manager {
 
 	/**
 	 * draws a sphere
-	 * 
+	 *
 	 * @param size
 	 *            point size
 	 * @param center
@@ -754,8 +779,7 @@ abstract public class Manager {
 	 *            old geometry index
 	 * @return geometry index
 	 */
-	final protected int drawSphere(float size, Coords center, double radius,
-			int index) {
+	protected final int drawSphere(float size, Coords center, double radius, int index) {
 		surface.start(index);
 		surface.drawSphere(size, center, radius);
 
@@ -764,7 +788,7 @@ abstract public class Manager {
 
 	/**
 	 * draw all triangles fans
-	 * 
+	 *
 	 * @param n
 	 *            normal
 	 * @param verticesWithIntersections
@@ -774,8 +798,8 @@ abstract public class Manager {
 	 * @param triFanList
 	 *            fans list
 	 */
-	public void drawTriangleFans(Coords n, Coords[] verticesWithIntersections,
-			int length, ArrayList<TriangleFan> triFanList) {
+	public void drawTriangleFans(
+			Coords n, Coords[] verticesWithIntersections, int length, ArrayList<TriangleFan> triFanList) {
 		for (TriangleFan triFan : triFanList) {
 			drawTriangleFan(n, verticesWithIntersections, triFan);
 		}
@@ -783,7 +807,7 @@ abstract public class Manager {
 
 	/**
 	 * (used only for elements)
-	 * 
+	 *
 	 * @param size
 	 *            size
 	 * @return current geometry indices buffer with correct size
@@ -799,18 +823,18 @@ abstract public class Manager {
 	public interface ScalerXYZ {
 		/**
 		 * scale x, y, z values
-		 * 
+		 *
 		 * @param coords
 		 *            coords
 		 */
 		void scaleXYZ(Coords coords);
-		
+
 		/**
 		 * scale and normalize x, y, z values
-		 * 
+		 *
 		 * @param coords
 		 *            coords
-		 *            
+		 *
 		 * @return false if nothing scaled (then use coords instead of ret)
 		 */
 		boolean scaleAndNormalizeNormalXYZ(Coords coords, Coords ret);
@@ -839,7 +863,7 @@ abstract public class Manager {
 		public void scaleXYZ(Coords coords) {
 			// do nothing
 		}
-		
+
 		@Override
 		public boolean scaleAndNormalizeNormalXYZ(Coords coords, Coords ret) {
 			// do nothing
@@ -861,14 +885,14 @@ abstract public class Manager {
 			return 1;
 		}
 	};
-	
+
 	protected ScalerXYZ getScalerXYZ() {
 		return scalerXYZ;
 	}
 
 	/**
 	 * scale coords using current scaler
-	 * 
+	 *
 	 * @param coords
 	 *            coords
 	 */
@@ -920,7 +944,7 @@ abstract public class Manager {
 
 	/**
 	 * set manager in packing mode for surface
-	 * 
+	 *
 	 * @param d
 	 *            drawable
 	 * @param clipped TODO
@@ -931,7 +955,7 @@ abstract public class Manager {
 
 	/**
 	 * set manager in packing mode for curves
-	 * 
+	 *
 	 * @param d
 	 *            drawable calling
 	 * @param clipped
@@ -943,7 +967,7 @@ abstract public class Manager {
 
 	/**
 	 * set manager off packing mode
-	 * 
+	 *
 	 */
 	public void endPacking() {
 		// not needed here
@@ -951,7 +975,7 @@ abstract public class Manager {
 
 	/**
 	 * update geometry color
-	 * 
+	 *
 	 * @param color
 	 *            new color
 	 * @param layer
@@ -965,7 +989,7 @@ abstract public class Manager {
 
 	/**
 	 * update geometry visibility
-	 * 
+	 *
 	 * @param visible
 	 *            if visible
 	 * @param index
@@ -981,7 +1005,7 @@ abstract public class Manager {
 
 	/**
 	 * update
-	 * 
+	 *
 	 * @param reset
 	 *            if needs reset
 	 */
@@ -991,7 +1015,7 @@ abstract public class Manager {
 
 	/**
 	 * set bounds recorders
-	 * 
+	 *
 	 * @param min
 	 *            min
 	 * @param max
@@ -1012,7 +1036,7 @@ abstract public class Manager {
 
 	/**
 	 * enlarge bounds to contain this point
-	 * 
+	 *
 	 * @param point
 	 *            point
 	 */
@@ -1036,23 +1060,19 @@ abstract public class Manager {
 			if (curvesIndices == null) {
 				curvesIndices = GLFactory.getPrototype().newBufferIndices();
 			}
-			curvesIndices.allocate(3 * 2 * size * PlotterBrush.LATITUDES);
+			curvesIndices.allocate(3 * 2 * size * latitudes);
 
 			for (int k = 0; k < size; k++) {
-				for (int i = 0; i < PlotterBrush.LATITUDES; i++) {
-					int iNext = (i + 1) % PlotterBrush.LATITUDES;
+				for (int i = 0; i < latitudes; i++) {
+					int iNext = (i + 1) % latitudes;
 					// first triangle
-					curvesIndices.put((short) (i + k * PlotterBrush.LATITUDES));
-					curvesIndices.put(
-							(short) (i + (k + 1) * PlotterBrush.LATITUDES));
-					curvesIndices.put(
-							(short) (iNext + (k + 1) * PlotterBrush.LATITUDES));
+					curvesIndices.put((short) (i + k * latitudes));
+					curvesIndices.put((short) (i + (k + 1) * latitudes));
+					curvesIndices.put((short) (iNext + (k + 1) * latitudes));
 					// second triangle
-					curvesIndices.put((short) (i + k * PlotterBrush.LATITUDES));
-					curvesIndices.put(
-							(short) (iNext + (k + 1) * PlotterBrush.LATITUDES));
-					curvesIndices
-							.put((short) (iNext + k * PlotterBrush.LATITUDES));
+					curvesIndices.put((short) (i + k * latitudes));
+					curvesIndices.put((short) (iNext + (k + 1) * latitudes));
+					curvesIndices.put((short) (iNext + k * latitudes));
 				}
 			}
 			curvesIndices.rewind();
@@ -1107,8 +1127,7 @@ abstract public class Manager {
 
 			// creates indices buffer
 			if (fanIndirectIndices == null) {
-				fanIndirectIndices = GLFactory.getPrototype()
-						.newBufferIndices();
+				fanIndirectIndices = GLFactory.getPrototype().newBufferIndices();
 			}
 			fanIndirectIndices.allocate(3 * (size - 2));
 

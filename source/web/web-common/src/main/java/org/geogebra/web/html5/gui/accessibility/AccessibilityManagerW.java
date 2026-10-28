@@ -1,22 +1,41 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.gui.accessibility;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import org.geogebra.common.gui.AccessibilityManagerInterface;
 import org.geogebra.common.gui.AltTextTimer;
+import org.geogebra.common.gui.FocusableComponent;
 import org.geogebra.common.gui.GeoTabber;
-import org.geogebra.common.gui.MayHaveFocus;
+import org.geogebra.common.gui.compositefocus.FocusableComposite;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.kernel.geos.GeoText;
 import org.geogebra.common.main.SelectionManager;
 import org.geogebra.web.html5.main.AppW;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Web implementation of AccessibilityManager.
@@ -24,18 +43,17 @@ import org.geogebra.web.html5.main.AppW;
  */
 public class AccessibilityManagerW implements AccessibilityManagerInterface {
 	private final GeoTabber geoTabber;
-	private final AltGeoTabber altGeoTabber;
 	private final AppW app;
 	private final SelectionManager selection;
 	private final ViewAltTexts altTexts;
-	private MayHaveFocus anchor;
+	private FocusableComponent anchor;
 	private SideBarAccessibilityAdapter menuContainer;
 
 	private final AltTextTimer timer;
 
-	private final Comparator<MayHaveFocus> componentComparator = (o1, o2) -> {
-		int viewDiff = o1.getAccessibilityGroup().ordinal()
-				- o2.getAccessibilityGroup().ordinal();
+	private final Comparator<FocusableComponent> componentComparator = (o1, o2) -> {
+		int viewDiff =
+				o1.getAccessibilityGroup().ordinal() - o2.getAccessibilityGroup().ordinal();
 		if (viewDiff != 0) {
 			return viewDiff;
 		}
@@ -45,7 +63,9 @@ public class AccessibilityManagerW implements AccessibilityManagerInterface {
 		return 0;
 	};
 
-	private final TreeSet<MayHaveFocus> components = new TreeSet<>(componentComparator);
+	private final TreeSet<FocusableComponent> components = new TreeSet<>(componentComparator);
+	private final Set<FocusableComposite> compositeFocusOwners = new HashSet<>();
+	private FocusableComposite activeCompositeFocus;
 
 	/**
 	 * Constructor.
@@ -58,39 +78,42 @@ public class AccessibilityManagerW implements AccessibilityManagerInterface {
 		selection = app.getSelectionManager();
 		this.geoTabber = new GeoTabber(app);
 		altTexts = new ViewAltTexts(app);
-		timer = new AltTextTimer(app.getActiveEuclidianView().getScreenReader(),
-				app.getLocalization());
-		altGeoTabber = new AltGeoTabber(app, altTexts);
+		timer = new AltTextTimer(app.getActiveEuclidianView().getScreenReader(), app.getLocalization());
+		AltGeoTabber altGeoTabber = new AltGeoTabber(app, altTexts);
 		components.add(altGeoTabber);
 		components.add(geoTabber);
 		components.add(new PlayButtonTabber(app.getActiveEuclidianView()));
 		components.add(new ResetButtonTabber(app.getActiveEuclidianView()));
-		List<String> externalControlSelectors  = Arrays.stream(
-				app.getAppletParameters().getParamExternalControls().split(","))
-				.filter(s -> ! s.isEmpty())
+		List<String> externalControlSelectors = Arrays.stream(
+						app.getAppletParameters().getParamExternalControls().split(","))
+				.filter(s -> !s.isEmpty())
 				.collect(Collectors.toList());
 		if (!externalControlSelectors.isEmpty()) {
-			components.add(new ExternalControl(externalControlSelectors, this,
-					app.getGlobalHandlers()));
+			components.add(new ExternalControl(externalControlSelectors, this, app.getGlobalHandlers()));
 		}
 	}
 
 	@Override
 	public boolean focusNext() {
-		for (MayHaveFocus entry: components) {
+		removeFocusFromInternals();
+		for (FocusableComponent entry : components) {
 			if (entry.hasFocus()) {
 				if (!entry.focusNext()) {
-					focusFirstVisible(findNext(entry));
+					return focusFirstVisible(findNext(entry), entry);
 				}
 				return true;
 			}
 		}
-		return focusFirstVisible(components.first());
+		return focusFirstVisible(components.first(), null);
 	}
 
-	private boolean focusFirstVisible(@Nonnull MayHaveFocus entry) {
-		MayHaveFocus nextEntry = entry;
+	private boolean focusFirstVisible(
+			@NonNull FocusableComponent entry, @Nullable FocusableComponent origin) {
+		FocusableComponent nextEntry = entry;
 		do {
+			if (shouldNotMoveFocusTo(nextEntry, origin)) {
+				return false;
+			}
 			if (nextEntry.focusIfVisible(false)) {
 				return true;
 			}
@@ -100,9 +123,13 @@ public class AccessibilityManagerW implements AccessibilityManagerInterface {
 		return false;
 	}
 
-	private boolean focusLastVisible(@Nonnull MayHaveFocus entry) {
-		MayHaveFocus nextEntry = entry;
+	private boolean focusLastVisible(
+			@NonNull FocusableComponent entry, @Nullable FocusableComponent origin) {
+		FocusableComponent nextEntry = entry;
 		do {
+			if (shouldNotMoveFocusTo(nextEntry, origin)) {
+				return false;
+			}
 			if (nextEntry.focusIfVisible(true)) {
 				return true;
 			}
@@ -112,16 +139,27 @@ public class AccessibilityManagerW implements AccessibilityManagerInterface {
 		return false;
 	}
 
-	private MayHaveFocus findNext(MayHaveFocus entry) {
-		MayHaveFocus nextEntry = components.higher(entry);
+	/**
+	 * @param nextEntry component to move focus to
+	 * @param origin currently selected
+	 * @return whether moving to the other component is prohibited; in general focusing self again
+	 * 	       is not allowed, except for construction elements
+	 */
+	private boolean shouldNotMoveFocusTo(
+			FocusableComponent nextEntry, @Nullable FocusableComponent origin) {
+		return nextEntry == origin && !(nextEntry instanceof GeoTabber);
+	}
+
+	private FocusableComponent findNext(FocusableComponent entry) {
+		FocusableComponent nextEntry = components.higher(entry);
 		if (nextEntry == null) {
 			return components.first();
 		}
 		return nextEntry;
 	}
 
-	private MayHaveFocus findPrevious(MayHaveFocus entry) {
-		MayHaveFocus nextEntry = components.lower(entry);
+	private FocusableComponent findPrevious(FocusableComponent entry) {
+		FocusableComponent nextEntry = components.lower(entry);
 		if (nextEntry == null) {
 			return components.last();
 		}
@@ -130,26 +168,34 @@ public class AccessibilityManagerW implements AccessibilityManagerInterface {
 
 	@Override
 	public boolean focusPrevious() {
-		for (MayHaveFocus entry: components) {
+		removeFocusFromInternals();
+		for (FocusableComponent entry : components) {
 			if (entry.hasFocus()) {
 				if (!entry.focusPrevious()) {
-					return focusLastVisible(findPrevious(entry));
+					return focusLastVisible(findPrevious(entry), entry);
 				}
 				return true;
 			}
 		}
 
-		return focusLastVisible(components.last());
+		return focusLastVisible(components.last(), null);
+	}
+
+	private void removeFocusFromInternals() {
+		if (activeCompositeFocus != null) {
+			activeCompositeFocus.blur();
+		}
+		activeCompositeFocus = null;
 	}
 
 	@Override
-	public void register(MayHaveFocus focusable) {
+	public void register(FocusableComponent focusable) {
 		components.removeIf(c -> componentComparator.compare(focusable, c) == 0);
 		components.add(focusable);
 	}
 
 	@Override
-	public void unregister(MayHaveFocus focusable) {
+	public void unregister(FocusableComponent focusable) {
 		components.removeIf(c -> componentComparator.compare(focusable, c) == 0);
 	}
 
@@ -157,6 +203,11 @@ public class AccessibilityManagerW implements AccessibilityManagerInterface {
 	public void setTabOverGeos() {
 		geoTabber.setFocused(true);
 		app.getSelectionManager().resetKeyboardSelection();
+	}
+
+	@Override
+	public void resetTabOverGeos() {
+		geoTabber.setFocused(false);
 	}
 
 	@Override
@@ -187,12 +238,12 @@ public class AccessibilityManagerW implements AccessibilityManagerInterface {
 	}
 
 	@Override
-	public void setAnchor(MayHaveFocus anchor) {
+	public void setAnchor(FocusableComponent anchor) {
 		this.anchor = anchor;
 	}
 
 	@Override
-	public MayHaveFocus getAnchor() {
+	public FocusableComponent getAnchor() {
 		return anchor;
 	}
 
@@ -244,10 +295,84 @@ public class AccessibilityManagerW implements AccessibilityManagerInterface {
 	}
 
 	@Override
+	public void registerCompositeFocusContainer(FocusableComposite compositeFocus) {
+		compositeFocusOwners.add(compositeFocus);
+	}
+
+	@Override
+	public void unregisterCompositeFocusContainer(FocusableComposite compositeFocus) {
+		compositeFocusOwners.remove(compositeFocus);
+		if (compositeFocus == activeCompositeFocus) {
+			activeCompositeFocus = null;
+		}
+	}
+
+	@Override
+	public boolean hasFocusInComposite() {
+		findActiveCompositeFocus();
+		return activeCompositeFocus != null && activeCompositeFocus.isFocused();
+	}
+
+	@Override
+	public boolean focusNextInComposite() {
+		findActiveCompositeFocus();
+		if (activeCompositeFocus == null) {
+			return false;
+		}
+		return activeCompositeFocus.hasFocus()
+				? activeCompositeFocus.focusNext()
+				: activeCompositeFocus.focusFirst();
+	}
+
+	@Override
+	public boolean focusPreviousInComposite() {
+		findActiveCompositeFocus();
+		if (activeCompositeFocus == null) {
+			return false;
+		}
+		return activeCompositeFocus.hasFocus()
+				? activeCompositeFocus.focusPrevious()
+				: activeCompositeFocus.focusLast();
+	}
+
+	@Override
+	public void blurCompositeFocus() {
+		findActiveCompositeFocus();
+		if (activeCompositeFocus != null) {
+			activeCompositeFocus.blur();
+			activeCompositeFocus = null;
+		}
+	}
+
+	@Override
+	public boolean handlesEnterInComposite() {
+		return activeCompositeFocus != null && activeCompositeFocus.handlesEnterKeyForSelectedPart();
+	}
+
+	@Override
+	public void clearActiveCompositeFocus() {
+		activeCompositeFocus = null;
+	}
+
+	private void findActiveCompositeFocus() {
+		if (activeCompositeFocus != null && !activeCompositeFocus.isFocused()) {
+			activeCompositeFocus = null;
+		}
+
+		if (activeCompositeFocus == null) {
+			activeCompositeFocus = compositeFocusOwners.stream()
+					.filter(FocusableComposite::isFocused)
+					.findFirst()
+					.orElse(null);
+		}
+	}
+
+	@Override
 	public void readSliderUpdate(GeoNumeric geo) {
 		if (!app.getKernel().getConstruction().isFileLoading()
 				&& (!app.getAppletParameters().preventFocus()
-				|| !geo.isAnimating() || !app.getKernel().isAnimationRunning())) {
+						|| !geo.isAnimating()
+						|| !app.getKernel().isAnimationRunning())) {
 			timer.feed(geo);
 		}
 	}

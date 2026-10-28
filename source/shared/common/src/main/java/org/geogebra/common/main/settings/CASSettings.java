@@ -1,14 +1,30 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main.settings;
 
 import java.util.LinkedList;
 
 /**
  * Stores CAS specific settings
- * 
+ *
  * @author tom
  *
  */
-public class CASSettings extends AbstractSettings {
+public class CASSettings extends AbstractSettings<CASSettings> {
 
 	private long timeoutMillis;
 	private boolean showExpAsRoots;
@@ -18,7 +34,7 @@ public class CASSettings extends AbstractSettings {
 	 * @param listeners
 	 *            listeners
 	 */
-	public CASSettings(LinkedList<SettingListener> listeners) {
+	public CASSettings(LinkedList<SettingListener<CASSettings>> listeners) {
 		super(listeners);
 		init();
 	}
@@ -37,7 +53,7 @@ public class CASSettings extends AbstractSettings {
 
 	/**
 	 * Changes the timeout value for the cas
-	 * 
+	 *
 	 * @param value
 	 *            new timeout value, in milliseconds
 	 */
@@ -50,7 +66,7 @@ public class CASSettings extends AbstractSettings {
 
 	/**
 	 * Changes the showExpAsRoos value for the cas
-	 * 
+	 *
 	 * @param value
 	 *            new boolean value if exponents should be displayed as roots
 	 */

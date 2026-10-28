@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.html5.euclidian;
 
 import java.util.HashSet;
@@ -9,6 +25,7 @@ import elemental2.core.JsString;
 import elemental2.core.RegExpResult;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.FileReader;
+import elemental2.dom.Response;
 import jsinterop.base.Js;
 
 public class BlobResolver {
@@ -53,12 +70,9 @@ public class BlobResolver {
 				callback.accept(serializedSvg);
 			}
 		});
-		DomGlobal.fetch(blobUrl).then((res) -> {
-			return res.blob();
-		}).then(blob -> {
+		DomGlobal.fetch(blobUrl).then(Response::blob).then(blob -> {
 			fr.readAsDataURL(blob);
 			return null;
 		});
 	}
-
 }

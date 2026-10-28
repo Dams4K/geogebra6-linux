@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.desktop.export;
@@ -46,7 +50,6 @@ import org.freehep.graphicsio.emf.EMFPlusGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
 import org.freehep.util.UserProperties;
-import org.geogebra.common.GeoGebraConstants;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.euclidian.Drawable;
 import org.geogebra.common.euclidian.EuclidianView;
@@ -60,9 +63,6 @@ import org.geogebra.common.util.debug.Log;
 import org.geogebra.desktop.awt.GGraphics2DD;
 import org.geogebra.desktop.euclidian.EuclidianViewD;
 import org.geogebra.desktop.euclidianND.EuclidianViewInterfaceD;
-import org.geogebra.desktop.export.epsgraphics.ColorMode;
-import org.geogebra.desktop.export.epsgraphics.EpsGraphics;
-import org.geogebra.desktop.export.epsgraphics.EpsGraphicsD;
 import org.geogebra.desktop.gui.dialog.Dialog;
 import org.geogebra.desktop.gui.util.FileTransferable;
 import org.geogebra.desktop.main.AppD;
@@ -70,8 +70,7 @@ import org.geogebra.desktop.main.FontManagerD;
 import org.geogebra.desktop.main.GeoGebraPreferencesD;
 import org.geogebra.desktop.main.LocalizationD;
 import org.geogebra.desktop.util.UtilD;
-
-import com.himamis.retex.editor.share.util.Unicode;
+import org.geogebra.editor.share.util.Unicode;
 
 /**
  * @author Markus Hohenwarter
@@ -86,6 +85,7 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	private static final String CREATOR = "GeoGebra / FreeHEP Graphics2D Driver";
 
 	private final AppD app;
+
 	@SuppressWarnings("rawtypes")
 	private JComboBox cbFormat;
 
@@ -94,6 +94,7 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	 */
 	@SuppressWarnings("rawtypes")
 	JComboBox cbDPI;
+
 	private JLabel sizeLabel;
 
 	private double exportScale;
@@ -109,11 +110,16 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	boolean transparent = true;
 	/** set true if Braille font installed */
 	boolean braille = false;
+
+	private Font brailleFont = null;
 	/** whether EMF+ is used or EMF */
 	boolean EMFPlus = true;
 
 	private enum Format {
-		PNG, PDF, EPS, SVG, EMF
+		PNG,
+		PDF,
+		SVG,
+		EMF
 	}
 
 	private final EuclidianViewD specifiedEuclidianView;
@@ -125,26 +131,24 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 
 	/**
 	 * Creates a dialog for exporting an image of the active EuclidianView
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 */
 	public GraphicExportDialog(AppD app) {
 		this(app, null);
-
 	}
 
 	/**
 	 * Creates a dialog for exporting an image of the EuclidianView given as a
 	 * parameter.
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param specifiedEuclidianView
 	 *            EV
 	 */
-	public GraphicExportDialog(AppD app,
-			EuclidianViewD specifiedEuclidianView) {
+	public GraphicExportDialog(AppD app, EuclidianViewD specifiedEuclidianView) {
 		super(app.getFrame(), false);
 		this.app = app;
 		this.loc = app.getLocalization();
@@ -159,16 +163,13 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 		initGUI();
 	}
 
-	private Font brailleFont = null;
-
 	/**
 	 * check if a Braille font is installed
 	 */
 	private void checkBrailleFont() {
 		final String preferredBrailleFont = "IDV ComputerBraille (ANSI)";
 
-		GraphicsEnvironment e = GraphicsEnvironment
-				.getLocalGraphicsEnvironment();
+		GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		Font[] fonts = e.getAllFonts(); // Get the fonts
 
 		// check preferred font first
@@ -190,7 +191,6 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 				return;
 			}
 		}
-
 	}
 
 	private EuclidianViewInterfaceD getEuclidianView() {
@@ -211,7 +211,7 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private void initGUI() {
 		setResizable(false);
 		setTitle(loc.getMenu("ExportAsPicture"));
@@ -223,19 +223,18 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 		JPanel formatPanel = new JPanel(new FlowLayout(5));
 		String[] formats;
 
-		if (((EuclidianView) getEuclidianView()).isEuclidianView3D()) {
-			formats = new String[] {
-					loc.getMenu("png") + " (" + FileExtensions.PNG + ")" };
+		if (getEuclidianView().isEuclidianView3D()) {
+			formats = new String[] {loc.getMenu("png") + " (" + FileExtensions.PNG + ")"};
 		} else {
 			formats = new String[] {
-					loc.getMenu("png") + " (" + FileExtensions.PNG + ")",
-					loc.getMenu("pdf"),
-					loc.getMenu("eps") + " (" + FileExtensions.EPS + ")",
-					loc.getMenu("svg") + " (" + FileExtensions.SVG + ")",
-					loc.getMenu("emf") + " (" + FileExtensions.EMF + ")" };
+				loc.getMenu("png") + " (" + FileExtensions.PNG + ")",
+				loc.getMenu("pdf"),
+				loc.getMenu("svg") + " (" + FileExtensions.SVG + ")",
+				loc.getMenu("emf") + " (" + FileExtensions.EMF + ")"
+			};
 		}
 
-		cbFormat = new JComboBox(formats);
+		cbFormat = new JComboBox<>(formats);
 		formatPanel.add(new JLabel(loc.getMenu("Format") + ":"));
 		formatPanel.add(cbFormat);
 		cp.add(formatPanel, BorderLayout.NORTH);
@@ -256,19 +255,15 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 		// dpi combo box
 		final JPanel dpiPanel = new JPanel(new FlowLayout(5));
 
-		String[] dpiStr = { "72", "96", "150", "300", "600" };
-		cbDPI = new JComboBox(dpiStr);
+		String[] dpiStr = {"72", "96", "150", "300", "600"};
+		cbDPI = new JComboBox<>(dpiStr);
 		cbDPI.setSelectedItem("300");
-		final JLabel resolutionInDPILabel = new JLabel(
-				loc.getMenu("ResolutionInDPI") + ":");
-		final JCheckBox cbTransparent = new JCheckBox(
-				loc.getMenu("Transparent"), transparent);
-		final JCheckBox cbBraille = new JCheckBox(loc.getMenu("Braille"),
-				braille);
+		final JLabel resolutionInDPILabel = new JLabel(loc.getMenu("ResolutionInDPI") + ":");
+		final JCheckBox cbTransparent = new JCheckBox(loc.getMenu("Transparent"), transparent);
+		final JCheckBox cbBraille = new JCheckBox(loc.getMenu("Braille"), braille);
 		final JCheckBox cbEMFPlus = new JCheckBox("EMF+", EMFPlus);
 
-		final JCheckBox textAsShapesCB = new JCheckBox(
-				loc.getMenu("ExportTextAsShapes"), textAsShapes);
+		final JCheckBox textAsShapesCB = new JCheckBox(loc.getMenu("ExportTextAsShapes"), textAsShapes);
 
 		// make sure panel is wide enough
 		if (selectedFormat() == Format.PNG) {
@@ -301,52 +296,48 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 		textAsShapesCB.addActionListener(arg0 -> textAsShapes = textAsShapesCB.isSelected());
 
 		cbFormat.addActionListener(arg0 -> {
-			textAsShapesCB.setEnabled(true);
 			switch (selectedFormat()) {
-			case SVG:
-				dpiPanel.remove(resolutionInDPILabel);
-				dpiPanel.remove(cbDPI);
-				dpiPanel.remove(cbEMFPlus);
-				dpiPanel.add(cbTransparent);
-				dpiPanel.add(textAsShapesCB);
-				psp.enableAbsoluteSize(true);
-				break;
-			case EPS:
-				textAsShapesCB.setEnabled(false);
-				//$FALL-THROUGH$
-			case PDF:
-				dpiPanel.remove(resolutionInDPILabel);
-				dpiPanel.remove(cbDPI);
-				dpiPanel.remove(cbEMFPlus);
-				dpiPanel.remove(cbTransparent);
-				dpiPanel.remove(cbBraille);
-				dpiPanel.add(textAsShapesCB);
-				textAsShapesCB.setSelected(true);
-				psp.enableAbsoluteSize(false);
-				break;
-			case EMF:
-				dpiPanel.add(cbEMFPlus);
-				dpiPanel.remove(resolutionInDPILabel);
-				dpiPanel.remove(cbDPI);
-				dpiPanel.remove(cbTransparent);
-				dpiPanel.remove(textAsShapesCB);
-				dpiPanel.remove(cbBraille);
-				psp.enableAbsoluteSize(false);
-				break;
-			default: // PNG
-				dpiPanel.add(resolutionInDPILabel);
-				dpiPanel.add(cbDPI);
-				dpiPanel.remove(cbEMFPlus);
-				dpiPanel.add(cbTransparent);
-				if (braille) {
-					// GGB-766
-					dpiPanel.add(cbBraille);
-				}
-				dpiPanel.remove(textAsShapesCB);
-				cbDPI.setSelectedItem("300");
-				cbDPI.setEnabled(true);
-				psp.enableAbsoluteSize(true);
-				break;
+				case SVG:
+					dpiPanel.remove(resolutionInDPILabel);
+					dpiPanel.remove(cbDPI);
+					dpiPanel.remove(cbEMFPlus);
+					dpiPanel.add(cbTransparent);
+					dpiPanel.add(textAsShapesCB);
+					psp.enableAbsoluteSize(true);
+					break;
+				case PDF:
+					dpiPanel.remove(resolutionInDPILabel);
+					dpiPanel.remove(cbDPI);
+					dpiPanel.remove(cbEMFPlus);
+					dpiPanel.remove(cbTransparent);
+					dpiPanel.remove(cbBraille);
+					dpiPanel.add(textAsShapesCB);
+					textAsShapesCB.setSelected(true);
+					psp.enableAbsoluteSize(false);
+					break;
+				case EMF:
+					dpiPanel.add(cbEMFPlus);
+					dpiPanel.remove(resolutionInDPILabel);
+					dpiPanel.remove(cbDPI);
+					dpiPanel.remove(cbTransparent);
+					dpiPanel.remove(textAsShapesCB);
+					dpiPanel.remove(cbBraille);
+					psp.enableAbsoluteSize(false);
+					break;
+				default: // PNG
+					dpiPanel.add(resolutionInDPILabel);
+					dpiPanel.add(cbDPI);
+					dpiPanel.remove(cbEMFPlus);
+					dpiPanel.add(cbTransparent);
+					if (braille) {
+						// GGB-766
+						dpiPanel.add(cbBraille);
+					}
+					dpiPanel.remove(textAsShapesCB);
+					cbDPI.setSelectedItem("300");
+					cbDPI.setEnabled(true);
+					psp.enableAbsoluteSize(true);
+					break;
 			}
 			updateSizeLabel();
 			SwingUtilities.updateComponentTreeUI(p);
@@ -365,27 +356,21 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 		cancelButton.addActionListener(e -> setVisible(false));
 		JButton exportButton = new JButton(loc.getMenu("Save"));
 		exportButton.addActionListener(e -> {
-			Thread runner = new Thread() {
-				@Override
-				public void run() {
-					setVisible(false);
+			Thread runner = new Thread(() -> {
+				setVisible(false);
 
-					doExport(false);
-				}
-			};
+				doExport(false);
+			});
 			runner.start();
 		});
 
 		JButton exportClipboardButton = new JButton(loc.getMenu("Clipboard"));
 		exportClipboardButton.addActionListener(e -> {
-			Thread runner = new Thread() {
-				@Override
-				public void run() {
-					setVisible(false);
+			Thread runner = new Thread(() -> {
+				setVisible(false);
 
-					doExport(true);
-				}
-			};
+				doExport(true);
+			});
 			runner.start();
 		});
 
@@ -415,92 +400,77 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 				getPreferredSize().width + app.getFontSize() * EXTRA_MARGIN,
 				getPreferredSize().height + app.getFontSize() * EXTRA_MARGIN));
 		centerOnScreen();
-
 	}
 
 	/**
 	 * Creates the picture of the correct format
-	 * 
+	 *
 	 * @param toClipboard
 	 *            whether output is a file or clipboard
 	 */
 	void doExport(boolean toClipboard) {
 		Format index = selectedFormat();
 		switch (index) {
-		case PNG:
+			case PNG:
+				FontManagerD fm = app.getFontManager();
+				int fontSize = fm.getFontSize();
+				File pngDestination = toClipboard ? getTmpPNG() : getPNGDestination();
+				if (pngDestination != null) {
+					if (braille) {
+						// GGB-766
+						fm.updateDefaultFonts(fontSize, brailleFont.getFontName(), brailleFont.getFontName());
 
-			FontManagerD fm = app.getFontManager();
-			int fontSize = fm.getFontSize();
-			File pngDestination = toClipboard ? getTmpPNG()
-					: getPNGDestination();
-			if (pngDestination != null) {
-				if (braille) {
-					// GGB-766
-					fm.updateDefaultFonts(fontSize, brailleFont.getFontName(),
-							brailleFont.getFontName());
+						getEuclidianView().updateFonts();
+					}
 
-					getEuclidianView().updateFonts();
+					exportPNGSilent(
+							pngDestination,
+							toClipboard,
+							transparent,
+							getDPI(),
+							exportScale,
+							app,
+							getEuclidianView(),
+							braille ? ExportType.PNG_BRAILLE : ExportType.PNG);
+
+					if (braille) {
+						// GGB-766
+						fm.updateDefaultFonts(fontSize, "SansSerif", "Serif");
+
+						getEuclidianView().updateFonts();
+					}
 				}
+				break;
 
-				exportPNGSilent(pngDestination, toClipboard, transparent,
-						getDPI(), exportScale, app, getEuclidianView(),
-						braille ? ExportType.PNG_BRAILLE : ExportType.PNG);
+			case EMF: // EMF
+				exportEMF(toClipboard, EMFPlus);
+				break;
 
-				if (braille) {
-					// GGB-766
-					fm.updateDefaultFonts(fontSize, "SansSerif", "Serif");
+			case PDF: // PDF
+				exportPDF(toClipboard);
+				break;
 
-					getEuclidianView().updateFonts();
-				}
-			}
-			break;
-
-		case EPS: // EPS
-			exportEPS(toClipboard);
-			break;
-
-		case EMF: // EMF
-			exportEMF(toClipboard, EMFPlus);
-			break;
-
-		case PDF: // PDF
-			exportPDF(toClipboard);
-			break;
-
-		case SVG: // SVG
-			exportSVG(toClipboard);
-			break;
-
+			case SVG: // SVG
+				exportSVG(toClipboard);
+				break;
 		}
 	}
 
 	private int getDPI() {
-		if (selectedFormat() == Format.EPS || selectedFormat() == Format.SVG) {
+		if (selectedFormat() == Format.SVG) {
 			return 72;
 		}
 
 		return Integer.parseInt((String) cbDPI.getSelectedItem());
 	}
 
-	/**
-	 * Select a dpi item in the
-	 * 
-	 * @param dpi
-	 *            must be one of 72,96,150,300,600
-	 */
-	public void setDPI(String dpi) {
-		cbDPI.setSelectedItem(dpi);
-	}
-
 	private void loadPreferences() {
 		try {
 			// format
 			Format formatID = Format.PNG;
-			String format = GeoGebraPreferencesD.getPref().loadPreference(
-					GeoGebraPreferencesD.EXPORT_PIC_FORMAT, "png");
-			if ("eps".equals(format)) {
-				formatID = Format.EPS;
-			} else if ("svg".equals(format)) {
+			String format = GeoGebraPreferencesD.getPref()
+					.loadPreference(GeoGebraPreferencesD.EXPORT_PIC_FORMAT, "png");
+			if ("svg".equals(format)) {
 				formatID = Format.SVG;
 			}
 			if (formatID.ordinal() < cbFormat.getItemCount()) {
@@ -509,8 +479,8 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 
 			// dpi
 			if (cbDPI.isEnabled()) {
-				String strDPI = GeoGebraPreferencesD.getPref().loadPreference(
-						GeoGebraPreferencesD.EXPORT_PIC_DPI, "300");
+				String strDPI = GeoGebraPreferencesD.getPref()
+						.loadPreference(GeoGebraPreferencesD.EXPORT_PIC_DPI, "300");
 				for (int i = 0; i < cbDPI.getItemCount(); i++) {
 					String dpi = cbDPI.getItemAt(i).toString();
 					if (dpi.equals(strDPI)) {
@@ -534,24 +504,18 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 
 	private void savePreferences() {
 		// dpi
-		GeoGebraPreferencesD.getPref().savePreference(
-				GeoGebraPreferencesD.EXPORT_PIC_DPI,
-				cbDPI.getSelectedItem().toString());
+		GeoGebraPreferencesD.getPref()
+				.savePreference(
+						GeoGebraPreferencesD.EXPORT_PIC_DPI, cbDPI.getSelectedItem().toString());
 
 		// format
 		String format;
-		switch (selectedFormat()) {
-		case EPS:
-			format = "eps";
-			break;
-		case SVG:
+		if (selectedFormat() == Format.SVG) {
 			format = "svg";
-			break;
-		default:
+		} else {
 			format = "png";
 		}
-		GeoGebraPreferencesD.getPref()
-				.savePreference(GeoGebraPreferencesD.EXPORT_PIC_FORMAT, format);
+		GeoGebraPreferencesD.getPref().savePreference(GeoGebraPreferencesD.EXPORT_PIC_FORMAT, format);
 
 		/*
 		 * // scale in cm
@@ -571,52 +535,54 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 
 		StringBuilder sb = new StringBuilder();
 		switch (psp.getMode()) {
-		case SIZEINPX:
-			pixelWidth = psp.getPixelWidth();
-			pixelHeight = psp.getPixelHeight();
-			cmWidth = (pixelWidth * 2.54) / getDPI();
-			cmHeight = (pixelHeight * 2.54) / getDPI();
-			exportScale = pixelWidth / ((double) ev.getExportWidth());
-			break;
+			case SIZEINPX:
+				pixelWidth = psp.getPixelWidth();
+				pixelHeight = psp.getPixelHeight();
+				cmWidth = pixelWidth * 2.54 / getDPI();
+				cmHeight = pixelHeight * 2.54 / getDPI();
+				exportScale = pixelWidth / ((double) ev.getExportWidth());
+				break;
 
-		case FIXED_SIZE:
+			case FIXED_SIZE:
 
-			// what the user typed in the "100 screen pixels = x cm" textfield
-			double screenPixels = DoubleUtil.checkDecimalFraction(
-					100 * ev.getPrintingScale() / ev.getXscale());
+				// what the user typed in the "100 screen pixels = x cm" textfield
+				double screenPixels =
+						DoubleUtil.checkDecimalFraction(100 * ev.getPrintingScale() / ev.getXscale());
 
-			// double screenPixelsY = 100 * ev.getPrintingScale() /
-			// ev.getYscale();
+				// double screenPixelsY = 100 * ev.getPrintingScale() /
+				// ev.getYscale();
 
-			cmWidth = ev.getExportWidth() / 100.0 * screenPixels;
-			// not screenPixelsY
-			// eg
-			// https://help.geogebra.org/topic/picture-export-adds-huge-margin-when-axes-ratio-not-1-1
-			cmHeight = ev.getExportHeight() / 100.0 * screenPixels;
+				cmWidth = ev.getExportWidth() / 100.0 * screenPixels;
+				// not screenPixelsY
+				// eg
+				// https://help.geogebra.org/topic/picture-export-adds-huge-margin-when-axes-ratio-not-1-1
+				cmHeight = ev.getExportHeight() / 100.0 * screenPixels;
 
-			pixelWidth = (int) (cmWidth / 2.54 * getDPI());
-			pixelHeight = (int) (cmHeight / 2.54 * getDPI());
+				pixelWidth = (int) (cmWidth / 2.54 * getDPI());
+				pixelHeight = (int) (cmHeight / 2.54 * getDPI());
 
-			exportScale = pixelWidth / ((double) ev.getExportWidth());
+				exportScale = pixelWidth / ((double) ev.getExportWidth());
 
-			break;
+				break;
 
-		case SIZEINCM:
-			exportScale = (printingScale * getDPI()) / 2.54 / ev.getXscale();
-			// cm size
-			cmWidth = printingScale * (ev.getExportWidth() / ev.getXscale());
+			case SIZEINCM:
+				exportScale = printingScale * getDPI() / 2.54 / ev.getXscale();
+				// cm size
+				cmWidth = printingScale * (ev.getExportWidth() / ev.getXscale());
 
-			// getXscale() is not a typo, see #2894
-			// #4185 changed back to getYscale()
-			// * ev.getYscale() / ev.getXscale() added for when x:y ratio is not
-			// 1:1
-			// https://help.geogebra.org/topic/picture-export-adds-huge-margin-when-axes-ratio-not-1-1
-			cmHeight = printingScale * (ev.getExportHeight() / ev.getYscale())
-					* ev.getYscale() / ev.getXscale();
+				// getXscale() is not a typo, see #2894
+				// #4185 changed back to getYscale()
+				// * ev.getYscale() / ev.getXscale() added for when x:y ratio is not
+				// 1:1
+				// https://help.geogebra.org/topic/picture-export-adds-huge-margin-when-axes-ratio-not-1-1
+				cmHeight = printingScale
+						* (ev.getExportHeight() / ev.getYscale())
+						* ev.getYscale()
+						/ ev.getXscale();
 
-			pixelWidth = (int) Math.floor(ev.getExportWidth() * exportScale);
-			pixelHeight = (int) Math.floor(ev.getExportHeight() * exportScale);
-			break;
+				pixelWidth = (int) Math.floor(ev.getExportWidth() * exportScale);
+				pixelHeight = (int) Math.floor(ev.getExportHeight() * exportScale);
+				break;
 		}
 
 		sb.append(sizeLabelFormat.format(cmWidth));
@@ -656,88 +622,50 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	}
 
 	/**
-	 * Shows save dialog and exports drawing as eps.
-	 */
-	final private boolean exportEPS(final boolean exportToClipboard) {
-
-		final EuclidianView ev = (EuclidianView) getEuclidianView();
-
-		StringBuilder epsOutput = new StringBuilder();
-		exportEPS(app, (EuclidianViewD) ev, epsOutput, textAsShapes, pixelWidth,
-				pixelHeight, exportScale);
-
-		File file;
-
-		if (exportToClipboard) {
-			String tempDir = UtilD.getTempDir();
-			file = new File(tempDir + "geogebra.eps");
-
-		} else {
-			file = app.getGuiManager().showSaveDialog(FileExtensions.EPS, null,
-					loc.getMenu("eps") + " " + loc.getMenu("Files"), true,
-					false);
-
-			if (file == null) {
-				return false;
-			}
-		}
-
-		UtilD.writeStringToFile(epsOutput.toString(), file);
-
-		if (exportToClipboard) {
-			// note this *doesn't* copy as text
-			// so ctrl-V in notepad won't show anything
-			sendToClipboard(file);
-		}
-
-		return true;
-
-	}
-
-	/**
 	 * Exports drawing as emf
 	 */
-	final private boolean exportEMF(boolean exportToClipboard,
-			boolean useEMFplus) {
+	private void exportEMF(boolean exportToClipboard, boolean useEMFplus) {
 
 		File file;
 		if (exportToClipboard) {
 			String tempDir = UtilD.getTempDir();
 			file = new File(tempDir + "geogebra.emf");
 		} else {
-			file = app.getGuiManager().showSaveDialog(FileExtensions.EMF, null,
-					loc.getMenu("emf") + " " + loc.getMenu("Files"), true,
-					false);
-
+			file = app.getGuiManager()
+					.showSaveDialog(
+							FileExtensions.EMF,
+							null,
+							loc.getMenu("emf") + " " + loc.getMenu("Files"),
+							true,
+							false);
 		}
 
 		if (file == null) {
-			return false;
+			return;
 		}
 		try {
-			exportEMF(app, (EuclidianViewD) getEuclidianView(), file,
-					useEMFplus, pixelWidth, pixelHeight, exportScale);
+			exportEMF(
+					(EuclidianViewD) getEuclidianView(),
+					file,
+					useEMFplus,
+					pixelWidth,
+					pixelHeight,
+					exportScale);
 
 			if (exportToClipboard) {
 				sendToClipboard(file);
 			}
 
-			return true;
-		} catch (Exception ex) {
+		} catch (RuntimeException | Error ex) {
 			app.showError(Errors.SaveFileFailed);
 			Log.debug(ex.toString());
-			return false;
-		} catch (Error ex) {
-			app.showError(Errors.SaveFileFailed);
-			Log.debug(ex.toString());
-			return false;
 		}
 	}
 
 	/**
 	 * Exports drawing as pdf
 	 */
-	final private boolean exportPDF(boolean exportToClipboard) {
+	private void exportPDF(boolean exportToClipboard) {
 
 		File file;
 		String tempDir = UtilD.getTempDir();
@@ -745,41 +673,42 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 			file = new File(tempDir + "geogebra.pdf");
 		} else {
 
-			file = app.getGuiManager().showSaveDialog(FileExtensions.PDF, null,
-					loc.getMenu("pdf") + " " + loc.getMenu("Files"), true,
-					false);
+			file = app.getGuiManager()
+					.showSaveDialog(
+							FileExtensions.PDF,
+							null,
+							loc.getMenu("pdf") + " " + loc.getMenu("Files"),
+							true,
+							false);
 		}
 
 		if (file == null) {
-			return false;
+			return;
 		}
 		try {
 
-			exportPDF(app, (EuclidianViewD) getEuclidianView(), file,
-					textAsShapes, pixelWidth, pixelHeight, exportScale);
+			exportPDF(
+					(EuclidianViewD) getEuclidianView(),
+					file,
+					textAsShapes,
+					pixelWidth,
+					pixelHeight,
+					exportScale);
 
 			if (exportToClipboard) {
 				sendToClipboard(file);
 			}
 
-			return true;
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (RuntimeException | Error ex) {
+			Log.debug(ex);
 			app.showError(Errors.SaveFileFailed);
-
-			return false;
-		} catch (Error ex) {
-			ex.printStackTrace();
-			app.showError(Errors.SaveFileFailed);
-
-			return false;
 		}
 	}
 
 	/**
 	 * Exports drawing as SVG
 	 */
-	final private boolean exportSVG(boolean exportToClipboard) {
+	private void exportSVG(boolean exportToClipboard) {
 
 		EuclidianView ev = (EuclidianView) getEuclidianView();
 
@@ -788,45 +717,51 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 		if (exportToClipboard) {
 			file = new File(tempDir + "geogebra.svg");
 		} else {
-			file = app.getGuiManager().showSaveDialog(FileExtensions.SVG, null,
-					loc.getMenu("svg") + " " + loc.getMenu("Files"), true,
-					false);
+			file = app.getGuiManager()
+					.showSaveDialog(
+							FileExtensions.SVG,
+							null,
+							loc.getMenu("svg") + " " + loc.getMenu("Files"),
+							true,
+							false);
 		}
 
 		if (file == null) {
-			return false;
+			return;
 		}
 
 		try {
-			exportSVG(app, ev, file, textAsShapes, pixelWidth,
-					pixelHeight, cmWidth, cmHeight, exportScale, transparent);
+			exportSVG(
+					app,
+					ev,
+					file,
+					textAsShapes,
+					pixelWidth,
+					pixelHeight,
+					cmWidth,
+					cmHeight,
+					exportScale,
+					transparent);
 
 			if (exportToClipboard) {
 				// note this *doesn't* copy as text
 				// so ctrl-V in notepad won't show anything
 				sendToClipboard(file);
 			}
-
-			return true;
 		} catch (Throwable t) {
 			app.showError(Errors.SaveFileFailed);
 			Log.trace(t.getMessage());
-			return false;
 		}
 	}
 
 	/**
 	 * Exports drawing as png with given resolution in dpi
-	 * 
-	 * @return whether successful
 	 */
-	final public static boolean exportPNGClipboard(boolean transparent0,
-			int dpi, double exportScale0, AppD app,
-			EuclidianViewInterfaceD ev) {
+	public static void exportPNGClipboard(
+			boolean transparent0, int dpi, double exportScale0, AppD app, EuclidianViewInterfaceD ev) {
 		File file = getTmpPNG();
 
-		return exportPNGSilent(file, true, transparent0, dpi, exportScale0, app,
-				ev, ExportType.PNG);
+		exportPNGSilent(file, true, transparent0, dpi, exportScale0, app, ev, ExportType.PNG);
 	}
 
 	private static File getTmpPNG() {
@@ -836,33 +771,33 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 
 	private File getPNGDestination() {
 
-		return app.getGuiManager().showSaveDialog(FileExtensions.PNG, null,
-				loc.getMenu("png") + " " + loc.getMenu("Files"), true, false);
+		return app.getGuiManager()
+				.showSaveDialog(
+						FileExtensions.PNG, null, loc.getMenu("png") + " " + loc.getMenu("Files"), true, false);
 	}
 
-	private static boolean exportPNGSilent(File file, boolean exportToClipboard,
-			boolean transparent0, int dpi, double exportScale0, AppD app,
-			EuclidianViewInterfaceD ev, ExportType exportType) {
+	private static void exportPNGSilent(
+			File file,
+			boolean exportToClipboard,
+			boolean transparent0,
+			int dpi,
+			double exportScale0,
+			AppD app,
+			EuclidianViewInterfaceD ev,
+			ExportType exportType) {
 		if (file == null) {
-			return false;
+			return;
 		}
 
 		try {
 			// draw graphics view into image
 			// EuclidianViewInterfaceD ev = getEuclidianView();
 
-			exportPNG(ev, file, transparent0, dpi, exportScale0,
-					exportToClipboard, exportType);
+			exportPNG(ev, file, transparent0, dpi, exportScale0, exportToClipboard, exportType);
 
-			return true;
-		} catch (Exception ex) {
+		} catch (RuntimeException | Error ex) {
 			app.showError(Errors.SaveFileFailed);
-			Log.debug(ex.toString());
-			return false;
-		} catch (Error ex) {
-			app.showError(Errors.SaveFileFailed);
-			Log.debug(ex.toString());
-			return false;
+			Log.debug(ex);
 		}
 	}
 
@@ -893,7 +828,7 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param ev
@@ -915,13 +850,28 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	 * @param transparent0
 	 *            transparent?
 	 */
-	public static void exportSVG(App app, EuclidianView ev, File file,
-			boolean textAsShapes, int pixelWidth, int pixelHeight,
-			double cmWidth, double cmHeight, double exportScale,
+	public static void exportSVG(
+			App app,
+			EuclidianView ev,
+			File file,
+			boolean textAsShapes,
+			int pixelWidth,
+			int pixelHeight,
+			double cmWidth,
+			double cmHeight,
+			double exportScale,
 			boolean transparent0) {
 		try {
-			exportSVG(app, ev, new FileOutputStream(file), textAsShapes,
-					pixelWidth, pixelHeight, cmWidth, cmHeight, exportScale,
+			exportSVG(
+					app,
+					ev,
+					new FileOutputStream(file),
+					textAsShapes,
+					pixelWidth,
+					pixelHeight,
+					cmWidth,
+					cmHeight,
+					exportScale,
 					transparent0);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -930,7 +880,7 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param ev
@@ -952,24 +902,30 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	 * @param transparent0
 	 *            transparent?
 	 */
-	public static void exportSVG(App app, EuclidianView ev, OutputStream file,
-			boolean textAsShapes, int pixelWidth, int pixelHeight,
-			double cmWidth, double cmHeight, double exportScale,
+	public static void exportSVG(
+			App app,
+			EuclidianView ev,
+			OutputStream file,
+			boolean textAsShapes,
+			int pixelWidth,
+			int pixelHeight,
+			double cmWidth,
+			double cmHeight,
+			double exportScale,
 			boolean transparent0) {
-		UserProperties props = (UserProperties) SVGGraphics2D
-				.getDefaultProperties();
+		UserProperties props = (UserProperties) SVGGraphics2D.getDefaultProperties();
 		props.setProperty(SVGGraphics2D.EMBED_FONTS, !textAsShapes);
-		props.setProperty(AbstractVectorGraphicsIO.TEXT_AS_SHAPES,
-				textAsShapes);
+		props.setProperty(AbstractVectorGraphicsIO.TEXT_AS_SHAPES, textAsShapes);
 		SVGGraphics2D.setDefaultProperties(props);
 
 		// added SVGExtensions to support grouped objects in layers
 		SVGExtensions g;
 		try {
-			g = new SVGExtensions(file,
-					new Dimension((int) (pixelWidth / exportScale),
-							(int) (pixelHeight / exportScale)),
-					cmWidth, cmHeight);
+			g = new SVGExtensions(
+					file,
+					new Dimension((int) (pixelWidth / exportScale), (int) (pixelHeight / exportScale)),
+					cmWidth,
+					cmHeight);
 			g.setCreator(CREATOR);
 
 			// make sure LaTeX exported at hi res
@@ -1012,9 +968,7 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	}
 
 	/**
-	 * 
-	 * @param app
-	 *            application
+	 *
 	 * @param ev
 	 *            view
 	 * @param file
@@ -1028,19 +982,21 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	 * @param exportScale
 	 *            scale units / cm
 	 */
-	public static void exportEMF(AppD app, EuclidianViewD ev, File file,
-			boolean useEMFplus, int pixelWidth, int pixelHeight,
+	public static void exportEMF(
+			EuclidianViewD ev,
+			File file,
+			boolean useEMFplus,
+			int pixelWidth,
+			int pixelHeight,
 			double exportScale) {
 
 		VectorGraphics g;
 		try {
 			if (useEMFplus) {
-				g = new EMFPlusGraphics2D(file,
-						new Dimension(pixelWidth, pixelHeight));
+				g = new EMFPlusGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
 
 			} else {
-				g = new EMFGraphics2D(file,
-						new Dimension(pixelWidth, pixelHeight));
+				g = new EMFGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
 			}
 
 			g.setCreator(CREATOR);
@@ -1057,13 +1013,10 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 		} catch (FileNotFoundException e) {
 			Log.debug(e);
 		}
-
 	}
 
 	/**
-	 * 
-	 * @param app2
-	 *            application
+	 *
 	 * @param view
 	 *            view
 	 * @param file
@@ -1077,8 +1030,12 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	 * @param exportScale
 	 *            scale units / cm
 	 */
-	public static void exportPDF(App app2, EuclidianView view, File file,
-			boolean textAsShapes, int pixelWidth, int pixelHeight,
+	public static void exportPDF(
+			EuclidianView view,
+			File file,
+			boolean textAsShapes,
+			int pixelWidth,
+			int pixelHeight,
 			double exportScale) {
 
 		ImageIO.scanForPlugins();
@@ -1086,15 +1043,12 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 		// shapes: better representation
 		// text: smaller file size, but some unicode symbols don't export eg
 		// Upsilon
-		UserProperties props = (UserProperties) PDFGraphics2D
-				.getDefaultProperties();
+		UserProperties props = (UserProperties) PDFGraphics2D.getDefaultProperties();
 
 		// #TRAC-5292
 		props.setProperty(PDFGraphics2D.EMBED_FONTS, !textAsShapes);
-		props.setProperty(PDFGraphics2D.EMBED_FONTS_AS,
-				FontConstants.EMBED_FONTS_TYPE1);
-		props.setProperty(AbstractVectorGraphicsIO.TEXT_AS_SHAPES,
-				textAsShapes);
+		props.setProperty(PDFGraphics2D.EMBED_FONTS_AS, FontConstants.EMBED_FONTS_TYPE1);
+		props.setProperty(AbstractVectorGraphicsIO.TEXT_AS_SHAPES, textAsShapes);
 		PDFGraphics2D.setDefaultProperties(props);
 
 		PDFGraphics2D g;
@@ -1105,9 +1059,8 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 			// TODO: why do we need this to make correct size in cm?
 			double factor = view.getXscale() * 2.54 / 72;
 
-			Dimension size = new Dimension(
-					(int) (view.getExportWidth() * printingScale / factor),
-					(int) (view.getExportHeight() * printingScale / factor));
+			Dimension size = new Dimension((int) (view.getExportWidth() * printingScale / factor), (int)
+					(view.getExportHeight() * printingScale / factor));
 
 			g = new PDFGraphics2D(file, size);
 			g.setCreator(CREATOR);
@@ -1126,8 +1079,11 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 			g.setPageSize(size);
 
 			g.startExport();
-			((EuclidianViewD) view).exportPaint(g, printingScale / factor, textAsShapes
-					? ExportType.PDF_TEXTASSHAPES : ExportType.PDF_EMBEDFONTS);
+			((EuclidianViewD) view)
+					.exportPaint(
+							g,
+							printingScale / factor,
+							textAsShapes ? ExportType.PDF_TEXTASSHAPES : ExportType.PDF_EMBEDFONTS);
 			g.endExport();
 		} catch (FileNotFoundException e) {
 			Log.debug(e);
@@ -1135,39 +1091,7 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	}
 
 	/**
-	 * 
-	 * @param app
-	 *            application
-	 * @param ev
-	 *            view
-	 * @param textAsShapes
-	 *            whether to convert text to curves
-	 * @param pixelWidth
-	 *            width in pixels
-	 * @param pixelHeight
-	 *            height in pixels
-	 * @param exportScale
-	 *            scale units / cm
-	 */
-	public static void exportEPS(AppD app, EuclidianViewD ev,
-			StringBuilder epsOutput, boolean textAsShapes, int pixelWidth,
-			int pixelHeight, double exportScale) {
-
-		EpsGraphics g;
-
-		g = new EpsGraphicsD(
-				GeoGebraConstants.APPLICATION_NAME + ", "
-						+ GeoGebraConstants.GEOGEBRA_WEBSITE,
-				epsOutput, 0, 0, pixelWidth, pixelHeight, ColorMode.COLOR_RGB,
-				ev.getBackgroundCommon());
-
-		// draw to epsGraphics2D
-		ev.exportPaint(g, exportScale, false, ExportType.EPS);
-
-	}
-
-	/**
-	 * 
+	 *
 	 * @param ev
 	 *            view
 	 * @param file
@@ -1180,14 +1104,18 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	 *            scale units / cm
 	 * @param exportToClipboard
 	 *            says if exports to clipboard
-	 * 
+	 *
 	 */
-	public static void exportPNG(EuclidianViewInterfaceD ev, File file,
-			boolean transparent, int dpi, double exportScale,
-			boolean exportToClipboard, ExportType exportType) {
+	public static void exportPNG(
+			EuclidianViewInterfaceD ev,
+			File file,
+			boolean transparent,
+			int dpi,
+			double exportScale,
+			boolean exportToClipboard,
+			ExportType exportType) {
 
-		ev.exportImagePNG(exportScale, transparent, dpi, file,
-				exportToClipboard, exportType);
+		ev.exportImagePNG(exportScale, transparent, dpi, file, exportToClipboard, exportType);
 	}
 
 	/**
@@ -1203,37 +1131,42 @@ public class GraphicExportDialog extends Dialog implements KeyListener {
 	 * @param pixelHeight height
 	 * @param app application
 	 */
-	public static void export(String extension, EuclidianViewInterfaceD ev,
-			File file, boolean transparent, int dpi, double exportScale,
-			boolean textAsShapes, boolean useEMFplus, int pixelWidth,
-			int pixelHeight, AppD app) {
+	public static void export(
+			String extension,
+			EuclidianViewInterfaceD ev,
+			File file,
+			boolean transparent,
+			int dpi,
+			double exportScale,
+			boolean textAsShapes,
+			boolean useEMFplus,
+			int pixelWidth,
+			int pixelHeight,
+			AppD app) {
 		if ("png".equals(extension)) {
 			// can be 3D View
-			GraphicExportDialog.exportPNG(ev, file, transparent, dpi,
-					exportScale, false, ExportType.PNG);
-
-		} else if ("eps".equals(extension)) {
-
-			StringBuilder sb = new StringBuilder();
-
-			GraphicExportDialog.exportEPS(app, (EuclidianViewD) ev, sb,
-					textAsShapes, pixelWidth, pixelHeight, exportScale);
-
-			UtilD.writeStringToFile(sb.toString(), file);
+			GraphicExportDialog.exportPNG(ev, file, transparent, dpi, exportScale, false, ExportType.PNG);
 
 		} else if ("pdf".equals(extension)) {
-			GraphicExportDialog.exportPDF(app, (EuclidianViewD) ev, file,
-					textAsShapes, pixelWidth, pixelHeight, exportScale);
+			GraphicExportDialog.exportPDF(
+					(EuclidianViewD) ev, file, textAsShapes, pixelWidth, pixelHeight, exportScale);
 
 		} else if ("emf".equals(extension)) {
-			GraphicExportDialog.exportEMF(app, (EuclidianViewD) ev, file,
-					useEMFplus, pixelWidth, pixelHeight, exportScale);
+			GraphicExportDialog.exportEMF(
+					(EuclidianViewD) ev, file, useEMFplus, pixelWidth, pixelHeight, exportScale);
 
 		} else if ("svg".equals(extension)) {
-			GraphicExportDialog.exportSVG(app, (EuclidianViewD) ev, file,
-					textAsShapes, pixelWidth, pixelHeight, -1, -1, exportScale,
+			GraphicExportDialog.exportSVG(
+					app,
+					(EuclidianViewD) ev,
+					file,
+					textAsShapes,
+					pixelWidth,
+					pixelHeight,
+					-1,
+					-1,
+					exportScale,
 					transparent);
 		}
 	}
-
 }

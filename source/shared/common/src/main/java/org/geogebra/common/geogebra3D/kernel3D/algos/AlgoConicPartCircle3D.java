@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -45,7 +49,7 @@ public class AlgoConicPartCircle3D extends AlgoConicPart {
 	/**
 	 * Creates a new arc or sector algorithm. The type is either
 	 * GeoConicPart.CONIC_PART_ARC or GeoConicPart.CONIC_PART_ARC
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -59,8 +63,12 @@ public class AlgoConicPartCircle3D extends AlgoConicPart {
 	 * @param type
 	 *            arc type
 	 */
-	public AlgoConicPartCircle3D(Construction cons, String label,
-			GeoPointND center, GeoPointND startPoint, GeoPointND endPoint,
+	public AlgoConicPartCircle3D(
+			Construction cons,
+			String label,
+			GeoPointND center,
+			GeoPointND startPoint,
+			GeoPointND endPoint,
 			int type) {
 		this(cons, label, center, startPoint, endPoint, null, type);
 	}
@@ -81,24 +89,33 @@ public class AlgoConicPartCircle3D extends AlgoConicPart {
 	 * @param type
 	 *            arc type
 	 */
-	public AlgoConicPartCircle3D(Construction cons, String label,
-			GeoPointND center, GeoPointND startPoint, GeoPointND endPoint,
-			GeoDirectionND orientation, int type) {
+	public AlgoConicPartCircle3D(
+			Construction cons,
+			String label,
+			GeoPointND center,
+			GeoPointND startPoint,
+			GeoPointND endPoint,
+			GeoDirectionND orientation,
+			int type) {
 		this(cons, center, startPoint, endPoint, orientation, type);
 		conicPart.setLabel(label);
 	}
 
-	private AlgoConicPartCircle3D(Construction cons, GeoPointND center,
-			GeoPointND startPoint, GeoPointND endPoint,
-			GeoDirectionND orientation, int type) {
+	private AlgoConicPartCircle3D(
+			Construction cons,
+			GeoPointND center,
+			GeoPointND startPoint,
+			GeoPointND endPoint,
+			GeoDirectionND orientation,
+			int type) {
 		super(cons, type);
 		this.center = center;
 		this.startPoint = startPoint;
 		this.endPoint = endPoint;
 
 		// create circle with center through startPoint
-		AlgoCircle3DCenterPointPoint algo = new AlgoCircle3DCenterPointPoint(
-				cons, center, startPoint, endPoint);
+		AlgoCircle3DCenterPointPoint algo =
+				new AlgoCircle3DCenterPointPoint(cons, center, startPoint, endPoint);
 		cons.removeFromConstructionList(algo);
 		conic = algo.getCircle();
 
@@ -127,7 +144,7 @@ public class AlgoConicPartCircle3D extends AlgoConicPart {
 
 	/**
 	 * set orientation for the arc/sector
-	 * 
+	 *
 	 * @param orientation
 	 *            orientation
 	 */
@@ -154,22 +171,18 @@ public class AlgoConicPartCircle3D extends AlgoConicPart {
 
 	@Override
 	public Commands getClassName() {
-		switch (type) {
-		case GeoConicNDConstants.CONIC_PART_ARC:
+		if (type == GeoConicNDConstants.CONIC_PART_ARC) {
 			return Commands.CircleArc;
-		default:
-			return Commands.CircleSector;
 		}
+		return Commands.CircleSector;
 	}
 
 	@Override
 	public int getRelatedModeID() {
-		switch (type) {
-		case GeoConicNDConstants.CONIC_PART_ARC:
+		if (type == GeoConicNDConstants.CONIC_PART_ARC) {
 			return EuclidianConstants.MODE_CIRCLE_ARC_THREE_POINTS;
-		default:
-			return EuclidianConstants.MODE_CIRCLE_SECTOR_THREE_POINTS;
 		}
+		return EuclidianConstants.MODE_CIRCLE_SECTOR_THREE_POINTS;
 	}
 
 	// for AlgoElement
@@ -189,7 +202,7 @@ public class AlgoConicPartCircle3D extends AlgoConicPart {
 
 	/**
 	 * set input
-	 * 
+	 *
 	 * @param n
 	 *            input length
 	 */
@@ -202,7 +215,7 @@ public class AlgoConicPartCircle3D extends AlgoConicPart {
 
 	/**
 	 * set arc/sector when center is aligned between start and end points
-	 * 
+	 *
 	 * @param center1
 	 *            center coords
 	 * @param v1
@@ -236,13 +249,11 @@ public class AlgoConicPartCircle3D extends AlgoConicPart {
 		}
 
 		// the temp points P and Q should lie on the conic
-		startPoint.getInhomCoordsInD3()
-				.projectPlaneInPlaneCoords(cs.getMatrixOrthonormal(), p2d);
+		startPoint.getInhomCoordsInD3().projectPlaneInPlaneCoords(cs.getMatrixOrthonormal(), p2d);
 		p2d.setZ(1);
 		conic.pointChanged(p2d, paramP);
 
-		endPoint.getInhomCoordsInD3()
-				.projectPlaneInPlaneCoords(cs.getMatrixOrthonormal(), p2d);
+		endPoint.getInhomCoordsInD3().projectPlaneInPlaneCoords(cs.getMatrixOrthonormal(), p2d);
 		p2d.setZ(1);
 		conic.pointChanged(p2d, paramQ);
 
@@ -252,7 +263,7 @@ public class AlgoConicPartCircle3D extends AlgoConicPart {
 
 	/**
 	 * set conic part coord sys and parameters
-	 * 
+	 *
 	 * @param start
 	 *            start parameter
 	 * @param end
@@ -260,12 +271,11 @@ public class AlgoConicPartCircle3D extends AlgoConicPart {
 	 */
 	protected void setConicPart(double start, double end) {
 		conicPart.set(conic);
-		((GeoConicPartND) conicPart).setParameters(start, end,
-				getPositiveOrientation());
+		((GeoConicPartND) conicPart).setParameters(start, end, getPositiveOrientation());
 	}
 
 	/**
-	 * 
+	 *
 	 * @return positive orientation
 	 */
 	protected boolean getPositiveOrientation() {
@@ -276,5 +286,4 @@ public class AlgoConicPartCircle3D extends AlgoConicPart {
 	public GeoConicPart3D getConicPart() {
 		return (GeoConicPart3D) super.getConicPart();
 	}
-
 }

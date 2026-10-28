@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import java.util.Arrays;
@@ -18,8 +34,8 @@ public class PlaneEqnModel extends MultipleOptionsModel {
 	public PlaneEqnModel(App app) {
 		super(app);
 
-		eqnValues = Arrays.asList(LinearEquationRepresentable.Form.IMPLICIT,
-				LinearEquationRepresentable.Form.USER);
+		eqnValues = Arrays.asList(
+				LinearEquationRepresentable.Form.IMPLICIT, LinearEquationRepresentable.Form.USER);
 	}
 
 	@Override
@@ -61,13 +77,13 @@ public class PlaneEqnModel extends MultipleOptionsModel {
 			}
 		}
 
-		getListener()
-				.setSelectedIndex(equalMode ? value0 : -1);
+		getListener().setSelectedIndex(equalMode ? value0 : -1);
 	}
 
 	@Override
 	public List<String> getChoices(Localization loc) {
-		return Arrays.asList(loc.getMenu("ImplicitLineEquation"), // index 1
+		return Arrays.asList(
+				loc.getMenu("ImplicitLineEquation"), // index 1
 				loc.getMenu("InputForm"));
 	}
 
@@ -89,5 +105,4 @@ public class PlaneEqnModel extends MultipleOptionsModel {
 	public String getTitle() {
 		return "Equation";
 	}
-
 }

@@ -1,17 +1,31 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.view.algebra;
 
 import java.util.function.Supplier;
 
-import javax.annotation.Nonnull;
-
 import org.geogebra.common.util.shape.Rectangle;
+import org.geogebra.editor.share.syntax.SyntaxHint;
+import org.geogebra.editor.share.syntax.SyntaxTooltipUpdater;
 import org.geogebra.web.full.gui.components.ComponentToast;
 import org.geogebra.web.html5.main.AppW;
+import org.jspecify.annotations.NonNull;
 
-import com.himamis.retex.editor.share.syntax.SyntaxHint;
-import com.himamis.retex.editor.share.syntax.SyntaxTooltipUpdater;
-
-public class ToastController implements SyntaxTooltipUpdater {
+public final class ToastController implements SyntaxTooltipUpdater {
 
 	private final Supplier<Rectangle> boundsSupplier;
 	private final AppW app;
@@ -27,12 +41,12 @@ public class ToastController implements SyntaxTooltipUpdater {
 	}
 
 	@Override
-	public void updateSyntaxTooltip(@Nonnull SyntaxHint sh) {
+	public void updateSyntaxTooltip(@NonNull SyntaxHint sh) {
 		if (!sh.isEmpty()) {
 			Rectangle bounds = boundsSupplier.get();
 
-			String hintHtml = sh.getPrefix() + "<strong>"
-					+ sh.getActivePlaceholder() + "</strong>" + sh.getSuffix();
+			String hintHtml =
+					sh.getPrefix() + "<strong>" + sh.getActivePlaceholder() + "</strong>" + sh.getSuffix();
 
 			if (toast == null) {
 				toast = new ComponentToast(app, hintHtml);
@@ -40,8 +54,8 @@ public class ToastController implements SyntaxTooltipUpdater {
 				toast.updateContent(hintHtml);
 			}
 			if (!toast.isShowing()) {
-				toast.show((int) bounds.getMinX(), (int) bounds.getMinY(), (int) bounds.getMaxY(),
-						(int) bounds.getWidth());
+				toast.show((int) bounds.getMinX(), (int) bounds.getMinY(), (int) bounds.getMaxY(), (int)
+						bounds.getWidth());
 			}
 		} else {
 			hide();

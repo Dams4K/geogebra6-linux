@@ -1,9 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
 
-import javax.annotation.CheckForNull;
-
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GArc2D;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GEllipse2DDouble;
@@ -13,10 +28,10 @@ import org.geogebra.common.awt.GPoint2D;
 import org.geogebra.common.awt.GRectangle;
 import org.geogebra.common.euclidian.Drawable;
 import org.geogebra.common.euclidian.EuclidianView;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.algos.ChartStyle;
 import org.geogebra.common.kernel.statistics.GeoPieChart;
+import org.jspecify.annotations.Nullable;
 
 public class DrawPieChart extends Drawable {
 	private static final double INITIAL_ANGLE = 0.25; // fraction of full angle
@@ -51,8 +66,7 @@ public class DrawPieChart extends Drawable {
 		centerY = view.toScreenCoordYd(chart.getCenter().getY());
 		radiusX = chart.getRadius() * view.getXscale();
 		radiusY = chart.getRadius() * view.getYscale();
-		outline.setFrameFromCenter(centerX, centerY,
-				centerX + radiusX, centerY + radiusY);
+		outline.setFrameFromCenter(centerX, centerY, centerX + radiusX, centerY + radiusY);
 		updateSlices();
 		updateStrokes(geo);
 		updateLabel();
@@ -70,16 +84,24 @@ public class DrawPieChart extends Drawable {
 
 	private void updateSlices() {
 		double old = INITIAL_ANGLE;
-		for (Double val: chart.getData()) {
+		for (Double val : chart.getData()) {
 			GArc2D slice = AwtFactory.getPrototype().newArc2D();
-			slice.setArc(centerX - radiusX, centerY - radiusY,
-					2 * radiusX, 2 * radiusY,
-					old * 360, - val * 360, GArc2D.PIE);
+			slice.setArc(
+					centerX - radiusX,
+					centerY - radiusY,
+					2 * radiusX,
+					2 * radiusY,
+					old * 360,
+					-val * 360,
+					GArc2D.PIE);
 			old = old - val;
 			slices.add(slice);
 			if (geo.getLineThickness() > 0) {
 				GLine2D ray = AwtFactory.getPrototype().newLine2D();
-				ray.setLine(centerX, centerY, centerX + Math.cos(old * Kernel.PI_2) * radiusX,
+				ray.setLine(
+						centerX,
+						centerY,
+						centerX + Math.cos(old * Kernel.PI_2) * radiusX,
 						centerY - Math.sin(old * Kernel.PI_2) * radiusY);
 				rays.add(ray);
 			}
@@ -125,8 +147,7 @@ public class DrawPieChart extends Drawable {
 		double radius = chart.getRadius();
 		double rwx = view.toRealWorldCoordX(x);
 		double rwy = view.toRealWorldCoordY(y);
-		double distSquare = (centerX - rwx) * (centerX - rwx)
-				+ (centerY - rwy) * (centerY - rwy) ;
+		double distSquare = (centerX - rwx) * (centerX - rwx) + (centerY - rwy) * (centerY - rwy);
 		return distSquare <= radius * radius;
 	}
 
@@ -136,7 +157,7 @@ public class DrawPieChart extends Drawable {
 	}
 
 	@Override
-	public @CheckForNull GRectangle getBounds() {
+	public @Nullable GRectangle getBounds() {
 		return outline.getBounds();
 	}
 }

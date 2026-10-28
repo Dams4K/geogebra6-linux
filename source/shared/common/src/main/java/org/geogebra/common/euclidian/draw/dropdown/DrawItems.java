@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw.dropdown;
 
 import static org.geogebra.common.main.GeoGebraColorConstants.NEUTRAL_200;
@@ -5,10 +21,10 @@ import static org.geogebra.common.main.GeoGebraColorConstants.NEUTRAL_900;
 import static org.geogebra.common.main.GeoGebraColorConstants.PURPLE_100;
 import static org.geogebra.common.main.GeoGebraColorConstants.PURPLE_700;
 
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.euclidian.EuclidianStatic;
-import org.geogebra.common.factories.AwtFactory;
 
 class DrawItems {
 	private final OptionScroller scroller;
@@ -18,8 +34,11 @@ class DrawItems {
 	private final DropDownModel model;
 	private static final int MIN_ROW_HEIGHT = 56;
 
-	DrawItems(DrawDropDownList drawDropDownList,
-			DropDownModel model, ItemSelector selector, OptionScroller scroller) {
+	DrawItems(
+			DrawDropDownList drawDropDownList,
+			DropDownModel model,
+			ItemSelector selector,
+			OptionScroller scroller) {
 		this.model = model;
 		this.drawDropDownList = drawDropDownList;
 		this.selector = selector;
@@ -63,10 +82,11 @@ class DrawItems {
 			rectTop += scroller.getUpHeight() + selector.getDragOffsetWithDirection();
 		}
 
-		if (item.getRect() == null || item.getRect().getX() != rectLeft
+		if (item.getRect() == null
+				|| item.getRect().getX() != rectLeft
 				|| item.getRect().getY() != rectTop) {
-			item.setRect(AwtFactory.getPrototype().newRectangle(rectLeft,
-					rectTop, items.getMaxWidth(), items.getMaxHeight()));
+			item.setRect(AwtFactory.getPrototype()
+					.newRectangle(rectLeft, rectTop, items.getMaxWidth(), items.getMaxHeight()));
 		}
 
 		if (!(item.hasNoBounds() || scroller.isActive() && noExtraItem(item))) {
@@ -77,7 +97,8 @@ class DrawItems {
 	private void drawItem(GGraphics2D g2, OptionItem item, boolean highlight) {
 		scroller.clip(g2, item, selector.getDragOffset());
 
-		GColor bgColor = highlight ? (selector.hasKeyboardFocus() ? PURPLE_100 : NEUTRAL_200)
+		GColor bgColor = highlight
+				? (selector.hasKeyboardFocus() ? PURPLE_100 : NEUTRAL_200)
 				: model.getBackgroundColor();
 		g2.setColor(bgColor);
 		drawItem(g2, item);
@@ -97,7 +118,7 @@ class DrawItems {
 
 	private boolean noExtraItem(OptionItem item) {
 		return (item.getIndex() == model.getRange().getStart() - 1
-				&& item.getBottom() < scroller.getUpBottom())
+						&& item.getBottom() < scroller.getUpBottom())
 				|| (scroller.getDownBottom() < item.getBottom());
 	}
 
@@ -107,24 +128,31 @@ class DrawItems {
 		double x = OptionItemList.HORIZONTAL_PADDING;
 		double y = items.getMaxHeight() - OptionItemList.VERTICAL_PADDING;
 
-		EuclidianStatic.drawIndexedString(model.getApp(), g2,
-				item.getText(), item.getLeft() + x, item.getTop() + y, false);
+		EuclidianStatic.drawIndexedString(
+				model.getApp(), g2, item.getText(), item.getLeft() + x, item.getTop() + y, false);
 	}
 
 	private void drawItemAsLatex(GGraphics2D g2, OptionItem item) {
 		int x = item.getLeft();
 		int y = item.getTop();
 
-		drawDropDownList.drawLatex(g2, model.getGeoList(), model.getFont(), item.getText(),
+		drawDropDownList.drawLatex(
+				g2,
+				model.getGeoList(),
+				model.getFont(),
+				item.getText(),
 				x + OptionItemList.HORIZONTAL_PADDING,
 				y + (int) ((item.getBoundsHeight() - item.getHeight()) / 2));
 	}
 
 	private void calculateItemRectangle(OptionItem item) {
 		if (item.getRect() == null) {
-			item.setRect(AwtFactory.getPrototype().newRectangle(item.getLeft(),
-					item.getTop(), items.getMaxWidth(),
-					Math.max(items.getMaxHeight(), MIN_ROW_HEIGHT)));
+			item.setRect(AwtFactory.getPrototype()
+					.newRectangle(
+							item.getLeft(),
+							item.getTop(),
+							items.getMaxWidth(),
+							Math.max(items.getMaxHeight(), MIN_ROW_HEIGHT)));
 		}
 	}
 

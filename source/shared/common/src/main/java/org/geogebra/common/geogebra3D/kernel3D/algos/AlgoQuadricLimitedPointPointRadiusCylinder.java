@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.kernel.Construction;
@@ -12,15 +28,14 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * Algo for cylinder between two end points and given radius.
- * 
+ *
  * @author mathieu
  *
  */
-public class AlgoQuadricLimitedPointPointRadiusCylinder
-		extends AlgoQuadricLimitedPointPointRadius {
+public class AlgoQuadricLimitedPointPointRadiusCylinder extends AlgoQuadricLimitedPointPointRadius {
 
 	/**
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param labels
@@ -32,12 +47,13 @@ public class AlgoQuadricLimitedPointPointRadiusCylinder
 	 * @param r
 	 *            radius
 	 */
-	public AlgoQuadricLimitedPointPointRadiusCylinder(Construction c,
-			String[] labels, GeoPointND origin, GeoPointND secondPoint,
+	public AlgoQuadricLimitedPointPointRadiusCylinder(
+			Construction c,
+			String[] labels,
+			GeoPointND origin,
+			GeoPointND secondPoint,
 			GeoNumberValue r) {
-		super(c, labels, origin, secondPoint, r,
-				GeoQuadricNDConstants.QUADRIC_CYLINDER);
-
+		super(c, labels, origin, secondPoint, r, GeoQuadricNDConstants.QUADRIC_CYLINDER);
 	}
 
 	@Override
@@ -50,13 +66,16 @@ public class AlgoQuadricLimitedPointPointRadiusCylinder
 
 	@Override
 	protected void setOutput() {
-		setOutput(new GeoElement[] { getQuadric(), getQuadric().getBottom(),
-				getQuadric().getTop(), getQuadric().getSide() });
+		setOutput(new GeoElement[] {
+			getQuadric(),
+			getQuadric().getBottom(),
+			getQuadric().getTop(),
+			getQuadric().getSide()
+		});
 	}
 
 	@Override
-	protected void setQuadric(Coords o1, Coords o2, Coords d, double r,
-			double min, double max) {
+	protected void setQuadric(Coords o1, Coords o2, Coords d, double r, double min, double max) {
 		getQuadric().setCylinder(o1, d, r, min, max);
 	}
 
@@ -70,10 +89,8 @@ public class AlgoQuadricLimitedPointPointRadiusCylinder
 	// //////////////////////
 
 	@Override
-	protected AlgoElement getTransformedAlgo(String[] labels, GeoPointND p1,
-			GeoPointND p2, GeoNumeric r) {
-		return new AlgoQuadricLimitedPointPointRadiusCylinder(this.cons, labels,
-				p1, p2, r);
+	protected AlgoElement getTransformedAlgo(
+			String[] labels, GeoPointND p1, GeoPointND p2, GeoNumeric r) {
+		return new AlgoQuadricLimitedPointPointRadiusCylinder(this.cons, labels, p1, p2, r);
 	}
-
 }

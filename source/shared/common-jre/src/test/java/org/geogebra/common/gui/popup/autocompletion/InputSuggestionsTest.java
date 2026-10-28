@@ -1,9 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.popup.autocompletion;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.geogebra.common.BaseUnitTest;
 import org.geogebra.common.io.EditorTyper;
@@ -12,46 +28,46 @@ import org.geogebra.common.io.MathFieldCommon;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoFunction;
 import org.geogebra.common.kernel.geos.GeoText;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.geogebra.editor.share.catalog.TemplateCatalog;
+import org.geogebra.editor.share.controller.EditorState;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import com.himamis.retex.editor.share.controller.EditorState;
-import com.himamis.retex.editor.share.meta.MetaModel;
 import com.himamis.retex.renderer.share.platform.FactoryProvider;
 
-public class InputSuggestionsTest extends BaseUnitTest {
+class InputSuggestionsTest extends BaseUnitTest {
 	private MathFieldCommon mathField;
 	private EditorState editorState;
 
 	/**
 	 * Reset LaTeX factory
 	 */
-	@BeforeClass
-	public static void prepare() {
+	@BeforeAll
+	static void prepare() {
 		if (FactoryProvider.getInstance() == null) {
 			FactoryProvider.setInstance(new FactoryProviderCommon());
 		}
 	}
 
-	@Before
-	public void setupMathField() {
-		mathField = new MathFieldCommon(new MetaModel(), null);
+	@BeforeEach
+	void setupMathField() {
+		mathField = new MathFieldCommon(new TemplateCatalog(), null);
 		editorState = mathField.getInternal().getEditorState();
 	}
 
 	@Test
-	public void testHasSuggestions() {
+	void testHasSuggestions() {
 		shouldHaveSuggestions("Int");
 		shouldHaveSuggestions("Poi");
 	}
-	
+
 	private void shouldHaveSuggestions(String text) {
 		shouldHaveSuggestions(text, null);
 	}
 
 	private void shouldHaveSuggestions(String text, GeoElement geo) {
-		assertFalse(isSuggestionsPrevented(text, geo)) ;
+		assertFalse(isSuggestionsPrevented(text, geo));
 	}
 
 	private void shouldPreventSuggestions(String text) {
@@ -59,7 +75,7 @@ public class InputSuggestionsTest extends BaseUnitTest {
 	}
 
 	private void shouldPreventSuggestions(String text, GeoElement geo) {
-		assertTrue(isSuggestionsPrevented(text, geo)); ;
+		assertTrue(isSuggestionsPrevented(text, geo));
 	}
 
 	private boolean isSuggestionsPrevented(String text, GeoElement geo) {
@@ -69,7 +85,7 @@ public class InputSuggestionsTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testSuggestionsShouldBePrevented() {
+	void testSuggestionsShouldBePrevented() {
 		shouldPreventSuggestions("\"Int");
 		shouldPreventSuggestions("Text(\"Int");
 		shouldPreventSuggestions("v_Point");
@@ -77,7 +93,7 @@ public class InputSuggestionsTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testGetCommand() {
+	void testGetCommand() {
 		assertThat(getCommandFor("a+Seg"), equalTo("Seg"));
 		assertThat(getCommandFor("a_Seg"), equalTo(""));
 	}
@@ -89,14 +105,14 @@ public class InputSuggestionsTest extends BaseUnitTest {
 	}
 
 	@Test
-	public void testSuggestionsShouldBePreventedForTextObjects() {
+	void testSuggestionsShouldBePreventedForTextObjects() {
 		GeoText geo = add("Text(\"Change me\")");
 		shouldPreventSuggestions("Int", geo);
 		shouldPreventSuggestions("Lin", geo);
 	}
 
 	@Test
-	public void testHaveSuggestionsForNonTextObjects() {
+	void testHaveSuggestionsForNonTextObjects() {
 		GeoFunction geo = add("x");
 		shouldHaveSuggestions("Int", geo);
 		shouldHaveSuggestions("Lin", geo);

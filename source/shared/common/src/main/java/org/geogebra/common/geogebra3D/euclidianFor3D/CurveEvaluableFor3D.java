@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidianFor3D;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -8,31 +24,28 @@ import org.geogebra.common.util.DoubleUtil;
 
 /**
  * For 3D curve, evaluator that returns NaN when z != 0
- * 
+ *
  * @author mathieu
  *
  */
 public class CurveEvaluableFor3D implements CurveEvaluable {
 
-	private GeoCurveCartesian3D parent;
-	private double[] parentOut;
+	private final GeoCurveCartesian3D parent;
+	private final double[] parentOut;
 
-	private FunMustBeZero funZ;
+	private final FunMustBeZero funZ;
 
 	/**
 	 * Function that returns NaN if parent z != 0
-	 * 
+	 *
 	 * @author mathieu
 	 *
 	 */
-	private static class FunMustBeZero implements UnivariateFunction {
+	private static final class FunMustBeZero implements UnivariateFunction {
 
 		private UnivariateFunction parentFun;
 
-		protected FunMustBeZero() {
-		}
-
-		public void setParentFun(UnivariateFunction parentFun) {
+		private void setParentFun(UnivariateFunction parentFun) {
 			this.parentFun = parentFun;
 		}
 
@@ -45,12 +58,11 @@ public class CurveEvaluableFor3D implements CurveEvaluable {
 
 			return 0;
 		}
-
 	}
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param parent
 	 *            curve
 	 */
@@ -71,14 +83,12 @@ public class CurveEvaluableFor3D implements CurveEvaluable {
 				out[i] = parentOut[i];
 			}
 		}
-
 	}
 
 	@Override
 	public double[] getDefinedInterval(double a, double b) {
 		funZ.setParentFun(parent.getFun(2));
-		return GeoCurveCartesian3D.getDefinedInterval(a, b, parent.getFun(0),
-				parent.getFun(1), funZ);
+		return GeoCurveCartesian3D.getDefinedInterval(a, b, parent.getFun(0), parent.getFun(1), funZ);
 	}
 
 	@Override
@@ -120,5 +130,4 @@ public class CurveEvaluableFor3D implements CurveEvaluable {
 	public double distanceMax(double[] p1, double[] p2) {
 		return Math.max(Math.abs(p1[0] - p2[0]), Math.abs(p1[1] - p2[1]));
 	}
-
 }

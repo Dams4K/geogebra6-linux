@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoIntersectLines.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -26,17 +24,16 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * Algo for intersection of a line with the interior of a polygon
- * 
+ *
  * @author matthieu
  */
-public class AlgoIntersectPathPlanePolygon3D
-		extends AlgoIntersectPathLinePolygon3D {
+public class AlgoIntersectPathPlanePolygon3D extends AlgoIntersectPathLinePolygon3D {
 	/** plane */
 	protected GeoPlane3D plane;
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param labels
@@ -46,16 +43,15 @@ public class AlgoIntersectPathPlanePolygon3D
 	 * @param p
 	 *            polygon
 	 */
-	public AlgoIntersectPathPlanePolygon3D(Construction c, String[] labels,
-			GeoPlane3D plane, GeoElement p) {
+	public AlgoIntersectPathPlanePolygon3D(
+			Construction c, String[] labels, GeoPlane3D plane, GeoElement p) {
 
 		super(c, labels, plane, p);
-
 	}
 
 	/**
 	 * common constructor
-	 * 
+	 *
 	 * @param c
 	 *            construction
 	 * @param plane
@@ -63,11 +59,9 @@ public class AlgoIntersectPathPlanePolygon3D
 	 * @param p
 	 *            polygon
 	 */
-	public AlgoIntersectPathPlanePolygon3D(Construction c, GeoPlane3D plane,
-			GeoElement p) {
+	public AlgoIntersectPathPlanePolygon3D(Construction c, GeoPlane3D plane, GeoElement p) {
 
 		super(c, plane, p);
-
 	}
 
 	/**
@@ -97,8 +91,7 @@ public class AlgoIntersectPathPlanePolygon3D
 	protected void setIntersectionLine() {
 
 		Coords[] intersection = CoordMatrixUtil.intersectPlanes(
-				plane.getCoordSys().getMatrixOrthonormal(),
-				p.getCoordSys().getMatrixOrthonormal());
+				plane.getCoordSys().getMatrixOrthonormal(), p.getCoordSys().getMatrixOrthonormal());
 
 		o1 = intersection[0];
 		d1 = intersection[1];
@@ -111,5 +104,4 @@ public class AlgoIntersectPathPlanePolygon3D
 	protected boolean checkParameter(double t1) {
 		return true; // nothing to check here
 	}
-
 }

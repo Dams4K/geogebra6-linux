@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.util;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -16,7 +32,7 @@ import org.geogebra.common.kernel.geos.GeoNumeric;
 /**
  * Matrix format allowing conversion from/to MyList and GeoList, supporting
  * matrix operations (inverse, determinant etc.)
- * 
+ *
  * @author Michael Borcherds
  *
  */
@@ -28,7 +44,7 @@ public class GgbMat extends Array2DRowRealMatrix {
 
 	/**
 	 * Creates matrix from GeoList
-	 * 
+	 *
 	 * @param inputList
 	 *            list
 	 */
@@ -84,7 +100,7 @@ public class GgbMat extends Array2DRowRealMatrix {
 
 	/**
 	 * Creates matrix from MyList
-	 * 
+	 *
 	 * @param inputList
 	 *            list
 	 */
@@ -132,8 +148,7 @@ public class GgbMat extends Array2DRowRealMatrix {
 	public void inverseImmediate() {
 
 		try {
-			DecompositionSolver d = new LUDecomposition(this,
-					Kernel.STANDARD_PRECISION).getSolver();
+			DecompositionSolver d = new LUDecomposition(this, Kernel.STANDARD_PRECISION).getSolver();
 			RealMatrix ret = d.getInverse();
 			data = ret.getData();
 			// m = ret.m;
@@ -145,17 +160,16 @@ public class GgbMat extends Array2DRowRealMatrix {
 
 	/**
 	 * Returns determinant of this matrix
-	 * 
+	 *
 	 * @return determinant
 	 */
 	public double determinant() {
-		return new LUDecomposition(this, Kernel.STANDARD_PRECISION)
-				.getDeterminant();
+		return new LUDecomposition(this, Kernel.STANDARD_PRECISION).getDeterminant();
 	}
 
 	/**
 	 * Computes the reduced row echelon form.
-	 * 
+	 *
 	 * code from http://rosettacode.org/wiki/Reduced_row_echelon_form
 	 */
 	public void reducedRowEchelonFormImmediate() {
@@ -229,7 +243,7 @@ public class GgbMat extends Array2DRowRealMatrix {
 
 	/**
 	 * returns GgbMatrix as a GeoList eg { {1,2}, {3,4} }
-	 * 
+	 *
 	 * @param outputList
 	 *            list for the copy
 	 * @param cons
@@ -256,7 +270,7 @@ public class GgbMat extends Array2DRowRealMatrix {
 
 	/**
 	 * returns GgbMatrix as a MyList eg { {1,2}, {3,4} }
-	 * 
+	 *
 	 * @param outputList
 	 *            list for the copy
 	 * @param kernel
@@ -272,8 +286,7 @@ public class GgbMat extends Array2DRowRealMatrix {
 		for (int r = 0; r < getRowDimension(); r++) {
 			MyList columnList = new MyList(kernel);
 			for (int c = 0; c < getColumnDimension(); c++) {
-				columnList.addListElement(new GeoNumeric(
-						kernel.getConstruction(), getEntry(r, c)));
+				columnList.addListElement(new GeoNumeric(kernel.getConstruction(), getEntry(r, c)));
 			}
 			outputList.addListElement(columnList);
 		}
@@ -288,7 +301,7 @@ public class GgbMat extends Array2DRowRealMatrix {
 
 	/**
 	 * Sets the undefined flag to false (e.g. when inverting singular matrix)
-	 * 
+	 *
 	 * @param undefined
 	 *            new undefined flag
 	 */
@@ -298,7 +311,7 @@ public class GgbMat extends Array2DRowRealMatrix {
 
 	/**
 	 * True for matrix formed by integers
-	 * 
+	 *
 	 * @return true if all entries are integers
 	 */
 	public boolean hasOnlyIntegers() {
@@ -334,7 +347,5 @@ public class GgbMat extends Array2DRowRealMatrix {
 		setEntry(2, 2, matrix[2]);
 
 		setIsUndefined(false);
-
 	}
-
 }

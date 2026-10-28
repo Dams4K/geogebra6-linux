@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -37,8 +41,7 @@ public class AlgoDependentGeoCopy extends AlgoElement implements DependentAlgo {
 	 *            original expression
 	 */
 	public AlgoDependentGeoCopy(Construction cons, ExpressionNode origGeoNode) {
-		this(cons, (GeoElement) origGeoNode
-				.evaluate(StringTemplate.defaultTemplate), origGeoNode);
+		this(cons, (GeoElement) origGeoNode.evaluate(StringTemplate.defaultTemplate), origGeoNode);
 	}
 
 	/**
@@ -48,8 +51,7 @@ public class AlgoDependentGeoCopy extends AlgoElement implements DependentAlgo {
 	 *            original element
 	 * @param origGeoNode either "geo" or "geo(x)"
 	 */
-	public AlgoDependentGeoCopy(Construction cons, GeoElement origGeo,
-			ExpressionNode origGeoNode) {
+	public AlgoDependentGeoCopy(Construction cons, GeoElement origGeo, ExpressionNode origGeoNode) {
 		super(cons);
 		this.origGeo = origGeo;
 
@@ -60,7 +62,6 @@ public class AlgoDependentGeoCopy extends AlgoElement implements DependentAlgo {
 		setInputOutput(); // for AlgoElement
 
 		compute();
-
 	}
 
 	@Override
@@ -103,12 +104,12 @@ public class AlgoDependentGeoCopy extends AlgoElement implements DependentAlgo {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// make sure X=(1,2)+t(3,4) does not go to XML as "expression" argument value
-		if (tpl.hasType(StringType.GEOGEBRA_XML) && !origGeo.isLabelSet()
+		if (tpl.hasType(StringType.GEOGEBRA_XML)
+				&& !origGeo.isLabelSet()
 				&& origGeo instanceof GeoLine
-				&& ((GeoLine) origGeo).getEquationForm()
-				== LinearEquationRepresentable.Form.PARAMETRIC) {
+				&& ((GeoLine) origGeo).getEquationForm() == LinearEquationRepresentable.Form.PARAMETRIC) {
 			((GeoLine) origGeo).setEquationForm(LinearEquationRepresentable.Form.EXPLICIT);
 			String ret = origGeo.getLabel(tpl);
 			((GeoLine) origGeo).setEquationForm(LinearEquationRepresentable.Form.PARAMETRIC);
@@ -124,6 +125,10 @@ public class AlgoDependentGeoCopy extends AlgoElement implements DependentAlgo {
 		return origGeoNode;
 	}
 
+	/**
+	 * @apiNote may only be called when there are no transitive dependencies
+	 * @param expression defining expression
+	 */
 	public void setExpression(ExpressionNode expression) {
 		origGeoNode = expression;
 	}
@@ -131,8 +136,8 @@ public class AlgoDependentGeoCopy extends AlgoElement implements DependentAlgo {
 	@Override
 	protected String toExpString(StringTemplate tpl) {
 		if (copyGeo.isLabelSet() && (copyGeo.isGeoFunction() || copyGeo.isGeoFunctionNVar())) {
-			return copyGeo.getLabel(tpl) + "(" + ((VarString) copyGeo).getVarString(tpl)
-					+ ") = " + origGeoNode.toString(tpl);
+			return copyGeo.getLabel(tpl) + "(" + ((VarString) copyGeo).getVarString(tpl) + ") = "
+					+ origGeoNode.toString(tpl);
 		}
 		return super.toExpString(tpl);
 	}

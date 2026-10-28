@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import java.util.Arrays;
@@ -23,10 +39,12 @@ public class LineEqnModel extends MultipleOptionsModel {
 	public LineEqnModel(App app) {
 		super(app);
 
-		eqnValues = Arrays.asList(LinearEquationRepresentable.Form.IMPLICIT,
-				LinearEquationRepresentable.Form.EXPLICIT, LinearEquationRepresentable.Form.PARAMETRIC,
-				LinearEquationRepresentable.Form.GENERAL, LinearEquationRepresentable.Form.USER);
-
+		eqnValues = Arrays.asList(
+				LinearEquationRepresentable.Form.IMPLICIT,
+				LinearEquationRepresentable.Form.EXPLICIT,
+				LinearEquationRepresentable.Form.PARAMETRIC,
+				LinearEquationRepresentable.Form.GENERAL,
+				LinearEquationRepresentable.Form.USER);
 	}
 
 	@Override
@@ -41,7 +59,7 @@ public class LineEqnModel extends MultipleOptionsModel {
 	/**
 	 * For user equations force input form, for command equations
 	 * either don't show them (conic) or force command output (line)
-	 * 
+	 *
 	 * @param geo
 	 *            equation
 	 * @return whether to force input form
@@ -56,8 +74,7 @@ public class LineEqnModel extends MultipleOptionsModel {
 			}
 			if (geo instanceof GeoLine) {
 				AlgoElement algo = geo.getParentAlgorithm();
-				boolean isFitLineOutput = (algo instanceof AlgoFitLineX)
-						|| (algo instanceof AlgoFitLineY);
+				boolean isFitLineOutput = (algo instanceof AlgoFitLineX) || (algo instanceof AlgoFitLineY);
 				if (isFitLineOutput) {
 					return equationBehaviour.getFitLineCommandEquationForm() != null
 							&& !equationBehaviour.allowsChangingEquationFormsByUser();
@@ -90,19 +107,18 @@ public class LineEqnModel extends MultipleOptionsModel {
 			}
 		}
 
-		getListener()
-				.setSelectedIndex(equalMode ? value0 : -1);
+		getListener().setSelectedIndex(equalMode ? value0 : -1);
 	}
 
 	@Override
 	public List<String> getChoices(Localization loc) {
 
-		return Arrays.asList(loc.getMenu("ImplicitLineEquation"), // index 0
+		return Arrays.asList(
+				loc.getMenu("ImplicitLineEquation"), // index 0
 				loc.getMenu("ExplicitLineEquation"), // index 1
 				loc.getMenu("ParametricForm"), // index 2
 				loc.getMenu("GeneralLineEquation"), // index 3
 				loc.getMenu("InputForm"));
-
 	}
 
 	@Override
@@ -123,5 +139,4 @@ public class LineEqnModel extends MultipleOptionsModel {
 	public String getTitle() {
 		return "Equation";
 	}
-
 }

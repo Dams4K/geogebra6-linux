@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.euclidian;
 
 import java.awt.Color;
@@ -14,16 +30,12 @@ import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.euclidian.DrawEquation;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.main.App;
-import org.geogebra.desktop.awt.GColorD;
 import org.geogebra.desktop.awt.GFontD;
 import org.geogebra.desktop.awt.GGraphics2DD;
-import org.geogebra.desktop.export.epsgraphics.EpsGraphicsD;
-import org.geogebra.desktop.export.epsgraphics.EpsGraphicsWrapper;
 import org.geogebra.desktop.main.AppD;
 import org.geogebra.desktop.main.ScaledIcon;
 
 import com.himamis.retex.renderer.desktop.FactoryProviderDesktop;
-import com.himamis.retex.renderer.desktop.graphics.ColorD;
 import com.himamis.retex.renderer.desktop.graphics.Graphics2DD;
 import com.himamis.retex.renderer.share.TeXConstants;
 import com.himamis.retex.renderer.share.cache.JLaTeXMathCache;
@@ -64,7 +76,6 @@ public class DrawEquationD extends DrawEquation {
 			// TeXFont.enableMagnification(false);
 
 		}
-
 	}
 
 	private static void ensureJLMFactoryExists() {
@@ -74,25 +85,23 @@ public class DrawEquationD extends DrawEquation {
 	}
 
 	@Override
-	final public GDimension drawEquation(final App app, final GeoElementND geo,
-			final GGraphics2D g2, final int x, final int y, final String text,
-			final GFont font, final boolean serif, final GColor fgColor,
-			final GColor bgColor, final boolean useCache, boolean updateAgain,
+	public final GDimension drawEquation(
+			final App app,
+			final GeoElementND geo,
+			final GGraphics2D g2,
+			final int x,
+			final int y,
+			final String text,
+			final GFont font,
+			final boolean serif,
+			final GColor fgColor,
+			final GColor bgColor,
+			final boolean useCache,
+			boolean updateAgain,
 			Runnable callback) {
-
-		// EpsGraphicsD eps = null;
-		//
-		// new Graphics2DD(eps);
-
-		Graphics2DInterface g;
-		if (g2 instanceof EpsGraphicsD) {
-			g = new EpsGraphicsWrapper((EpsGraphicsD) g2);
-		} else {
-			g = new Graphics2DD(GGraphics2DD.getAwtGraphics(g2));
-		}
-		GDimension d = drawEquation(app, geo, g, x, y, text, font, serif,
-				ColorD.get(GColorD.getAwtColor(fgColor)),
-				ColorD.get(GColorD.getAwtColor(bgColor)), useCache, null, null);
+		Graphics2DInterface g = new Graphics2DD(GGraphics2DD.getAwtGraphics(g2));
+		GDimension d =
+				drawEquation(app, geo, g, x, y, text, font, serif, fgColor, bgColor, useCache, null, null);
 		if (callback != null) {
 			callback.run();
 		}
@@ -103,7 +112,7 @@ public class DrawEquationD extends DrawEquation {
 	 * Draw a LaTeX image in the cell icon. Drawing is done twice. First draw
 	 * gives the needed size of the image. Second draw renders the image with
 	 * the correct dimensions.
-	 * 
+	 *
 	 * @param app
 	 *            needed for {@link #drawEquation}
 	 * @param latexIcon
@@ -117,28 +126,44 @@ public class DrawEquationD extends DrawEquation {
 	 * @param bgColor
 	 *            background color
 	 */
-	public void drawLatexImageIcon(final AppD app, ScaledIcon latexIcon,
-			final String latex, final Font font, final boolean serif,
-			final Color fgColor, final Color bgColor) {
+	public void drawLatexImageIcon(
+			final AppD app,
+			ScaledIcon latexIcon,
+			final String latex,
+			final Font font,
+			final boolean serif,
+			final Color fgColor,
+			final Color bgColor) {
 
 		// Create image with dummy size, then draw into it to get the correct
 		// size
-		BufferedImage image = new BufferedImage(100, 100,
-				BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2image = image.createGraphics();
 		g2image.setBackground(bgColor);
 		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
 
 		GGraphics2DD.setAntialiasing(g2image);
 
-		GDimension d = drawEquation(app, null, new Graphics2DD(g2image), 0, 0,
+		GDimension d = drawEquation(
+				app,
+				null,
+				new Graphics2DD(g2image),
+				0,
+				0,
 				latex,
-				new GFontD(font), serif, ColorD.get(fgColor),
-				ColorD.get(bgColor), true, null, null);
+				new GFontD(font),
+				serif,
+				toAwtColor(fgColor),
+				toAwtColor(bgColor),
+				true,
+				null,
+				null);
 
 		// Now use this size and draw again to get the final image
-		image = new BufferedImage((int) (d.getWidth() * getPixelRatio()),
-				(int) (d.getHeight() * getPixelRatio()), BufferedImage.TYPE_INT_ARGB);
+		image = new BufferedImage(
+				(int) (d.getWidth() * getPixelRatio()),
+				(int) (d.getHeight() * getPixelRatio()),
+				BufferedImage.TYPE_INT_ARGB);
 		g2image = image.createGraphics();
 		g2image.setBackground(bgColor);
 		g2image.scale(getPixelRatio(), getPixelRatio());
@@ -146,47 +171,62 @@ public class DrawEquationD extends DrawEquation {
 
 		GGraphics2DD.setAntialiasing(g2image);
 
-		drawEquation(app, null, new Graphics2DD(g2image), 0, 0, latex,
-				new GFontD(font), serif, ColorD.get(fgColor),
-				ColorD.get(bgColor), true, null, null);
+		drawEquation(
+				app,
+				null,
+				new Graphics2DD(g2image),
+				0,
+				0,
+				latex,
+				new GFontD(font),
+				serif,
+				toAwtColor(fgColor),
+				toAwtColor(bgColor),
+				true,
+				null,
+				null);
 
 		latexIcon.setImage(image);
 		latexIcon.setRatio(getPixelRatio());
 	}
 
-	@Override
-	public GDimension measureEquation(App app, String text,
-			GFont font, boolean serif) {
-
-		return this.measureEquationJLaTeXMath(app, text, font,
-				serif, null, null);
+	/**
+	 * @param fgColor JDK color
+	 * @return canvas color
+	 */
+	public static GColor toAwtColor(Color fgColor) {
+		if (fgColor == null) {
+			return null;
+		}
+		return GColor.newColorRGB(fgColor.getRGB()).deriveWithAlpha(fgColor.getAlpha());
 	}
 
 	@Override
-	public com.himamis.retex.renderer.share.platform.graphics.Color convertColor(
-			GColor color) {
-		return ColorD.get(GColorD.getAwtColor(color));
+	public GDimension measureEquation(App app, String text, GFont font, boolean serif) {
+
+		return this.measureEquationJLaTeXMath(app, text, font, serif, null, null);
 	}
 
 	@Override
-	public Image getCachedDimensions(String text, GeoElementND geo,
-			com.himamis.retex.renderer.share.platform.graphics.Color fgColor,
-			GFont font, int style, int[] ret) {
+	public Image getCachedDimensions(
+			String text, GeoElementND geo, GColor fgColor, GFont font, int style, int[] ret) {
 		Object key;
 		// if geoText != null then keep track of which key goes with the
 		// GeoText
 		// so that we can remove it from the cache if it changes
 		// eg for a (regular) dynamic LaTeX text eg "\sqrt{"+a+"}"
 		if (geo == null) {
-			key = JLaTeXMathCache.getCachedTeXFormula(text,
-					TeXConstants.STYLE_DISPLAY, style,
+			key = JLaTeXMathCache.getCachedTeXFormula(
+					text,
+					TeXConstants.STYLE_DISPLAY,
+					style,
 					font.getSize() + 3 /* font size */,
 					1 /*
 						 * inset around the label
-						 */, fgColor);
+						 */,
+					fgColor);
 		} else {
-			key = geo.getLaTeXCache().getCachedLaTeXKey(text,
-					font.getSize() + 3, style, fgColor);
+			key = geo.getLaTeXCache().getCachedLaTeXKey(text, font.getSize() + 3, style, fgColor);
 		}
 		JLaTeXMathCache.setPixelRatio(getPixelRatio());
 		int[] ret2 = JLaTeXMathCache.getCachedTeXFormulaDimensions(key);
@@ -202,5 +242,4 @@ public class DrawEquationD extends DrawEquation {
 		}
 		return frame.getGraphicsConfiguration().getDefaultTransform().getScaleX();
 	}
-
 }

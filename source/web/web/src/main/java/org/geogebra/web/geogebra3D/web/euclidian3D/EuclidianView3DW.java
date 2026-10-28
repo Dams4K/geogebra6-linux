@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.geogebra3D.web.euclidian3D;
 
 import java.util.function.Consumer;
@@ -22,15 +38,15 @@ import org.geogebra.common.util.DoubleUtil;
 import org.geogebra.common.util.debug.GeoGebraProfiler;
 import org.geogebra.common.util.debug.Log;
 import org.geogebra.gwtutil.NavigatorUtil;
+import org.geogebra.web.awt.GGraphics2DW;
+import org.geogebra.web.awt.GGraphics2DWI;
 import org.geogebra.web.geogebra3D.web.euclidian3D.openGL.RendererWInterface;
 import org.geogebra.web.geogebra3D.web.euclidian3D.openGL.RendererWithImplW;
 import org.geogebra.web.geogebra3D.web.euclidian3DnoWebGL.RendererWnoWebGL;
-import org.geogebra.web.html5.awt.GGraphics2DW;
 import org.geogebra.web.html5.euclidian.EuclidianPanelWAbstract;
 import org.geogebra.web.html5.euclidian.EuclidianViewW;
 import org.geogebra.web.html5.euclidian.EuclidianViewWInterface;
 import org.geogebra.web.html5.euclidian.EuclidianViewWrapperPanel;
-import org.geogebra.web.html5.euclidian.GGraphics2DWI;
 import org.geogebra.web.html5.euclidian.IsEuclidianController;
 import org.geogebra.web.html5.euclidian.PointerEventHandler;
 import org.geogebra.web.html5.euclidian.ReaderWidget;
@@ -57,12 +73,11 @@ import jsinterop.base.Js;
 
 /**
  * 3D view
- * 
+ *
  * @author mathieu
  *
  */
-public class EuclidianView3DW extends EuclidianView3D implements
-		EuclidianViewWInterface {
+public class EuclidianView3DW extends EuclidianView3D implements EuclidianViewWInterface {
 
 	private EuclidianPanelWAbstract evPanel;
 
@@ -78,7 +93,7 @@ public class EuclidianView3DW extends EuclidianView3D implements
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param ec
 	 *            euclidian controller
 	 * @param settings
@@ -97,15 +112,14 @@ public class EuclidianView3DW extends EuclidianView3D implements
 
 	private void loadCommands() {
 		try {
-			getKernel().getAlgebraProcessor().getCommandDispatcher()
-					.getSpatialCommandProcessorFactory();
-		} catch (CommandNotLoadedError ignore) {
+			getKernel().getAlgebraProcessor().getCommandDispatcher().getSpatialCommandProcessorFactory();
+		} catch (CommandNotLoadedError ignored) {
 			// loading
 		}
 	}
 
-	private void initBaseComponents(EuclidianPanelWAbstract euclidianViewPanel,
-	        EuclidianController euclidiancontroller) {
+	private void initBaseComponents(
+			EuclidianPanelWAbstract euclidianViewPanel, EuclidianController euclidiancontroller) {
 
 		Canvas canvas = euclidianViewPanel.getCanvas();
 		setEvNo();
@@ -118,8 +132,8 @@ public class EuclidianView3DW extends EuclidianView3D implements
 		euclidiancontroller.setView(this);
 
 		registerKeyHandlers(canvas);
-		registerMouseTouchGestureHandlers(euclidianViewPanel,
-				(EuclidianController3DW) euclidiancontroller);
+		registerMouseTouchGestureHandlers(
+				euclidianViewPanel, (EuclidianController3DW) euclidiancontroller);
 
 		EuclidianSettings es = this.app.getSettings().getEuclidian(3);
 		settingsChanged(es);
@@ -152,17 +166,16 @@ public class EuclidianView3DW extends EuclidianView3D implements
 	}
 
 	private void registerMouseTouchGestureHandlers(
-	        EuclidianPanelWAbstract euclidianViewPanel,
-	        EuclidianController3DW euclidiancontroller) {
+			EuclidianPanelWAbstract euclidianViewPanel, EuclidianController3DW euclidiancontroller) {
 		Widget absPanel = euclidianViewPanel.getAbsolutePanel();
-		Dom.addEventListener(absPanel.getElement(), "wheel",
+		Dom.addEventListener(
+				absPanel.getElement(),
+				"wheel",
 				(event) -> euclidiancontroller.onMouseWheel((WheelEvent) event));
 
 		PointerEventHandler pointerHandler = new PointerEventHandler(
-				(IsEuclidianController) euclidianController,
-				euclidiancontroller.getOffsets());
-		pointerHandler.attachTo(absPanel.getElement(),
-				((AppW) app).getGlobalHandlers());
+				(IsEuclidianController) euclidianController, euclidiancontroller.getOffsets());
+		pointerHandler.attachTo(absPanel.getElement(), ((AppW) app).getGlobalHandlers());
 		CancelEventTimer.killTouch(absPanel);
 		absPanel.addBitlessDomHandler(DomEvent::stopPropagation, MouseDownEvent.getType());
 	}
@@ -187,20 +200,20 @@ public class EuclidianView3DW extends EuclidianView3D implements
 
 	/**
 	 * panel for 3D
-	 * 
+	 *
 	 * @author mathieu
 	 *
 	 */
-	private class EuclidianViewWrapperPanel3D extends EuclidianViewWrapperPanel implements
-	        RequiresResize {
+	private final class EuclidianViewWrapperPanel3D extends EuclidianViewWrapperPanel
+			implements RequiresResize {
 
 		/**
 		 * constructor
-		 * 
+		 *
 		 * @param ev
 		 *            euclidian view
 		 */
-		public EuclidianViewWrapperPanel3D(EuclidianView ev) {
+		private EuclidianViewWrapperPanel3D(EuclidianView ev) {
 			super(ev);
 		}
 
@@ -240,36 +253,32 @@ public class EuclidianView3DW extends EuclidianView3D implements
 
 	/**
 	 * Gets the coordinate space width of the &lt;canvas&gt;.
-	 * 
+	 *
 	 * @return the logical width
 	 */
 	@Override
 	public int getWidth() {
-		return g2p == null ? 0
-				: (int) (this.g2p.getCoordinateSpaceWidth() / getPixelRatio());
+		return g2p == null ? 0 : (int) (this.g2p.getCoordinateSpaceWidth() / getPixelRatio());
 	}
 
 	/**
 	 * Gets the coordinate space height of the &lt;canvas&gt;.
-	 * 
+	 *
 	 * @return the logical height
 	 */
 	@Override
 	public int getHeight() {
-		return g2p == null ? 0
-				: (int) (this.g2p.getCoordinateSpaceHeight() / getPixelRatio());
+		return g2p == null ? 0 : (int) (this.g2p.getCoordinateSpaceHeight() / getPixelRatio());
 	}
 
 	@Override
 	public final boolean isShowing() {
-		return g2p != null && g2p.getCanvas() != null
-				&& Dom.isAttachedAndVisible(g2p.getCanvas());
+		return g2p != null && g2p.getCanvas() != null && Dom.isAttachedAndVisible(g2p.getCanvas());
 	}
 
 	@Override
 	protected void createPanel() {
 		evPanel = newMyEuclidianViewPanel();
-
 	}
 
 	@Override
@@ -278,8 +287,8 @@ public class EuclidianView3DW extends EuclidianView3D implements
 		if (webGLcanvas == null) {
 			return new RendererWnoWebGL(this);
 		}
-		return new RendererWithImplW(this, webGLcanvas,
-				((AppW) app).getAppletParameters().getDataParamTransparentGraphics());
+		return new RendererWithImplW(
+				this, webGLcanvas, ((AppW) app).getAppletParameters().getDataParamTransparentGraphics());
 	}
 
 	@Override
@@ -306,7 +315,7 @@ public class EuclidianView3DW extends EuclidianView3D implements
 	}
 
 	@Override
-	final protected void setStyleBarMode(int mode) {
+	protected final void setStyleBarMode(int mode) {
 		if (hasStyleBar()) {
 			getStyleBar().setMode(mode);
 		}
@@ -327,8 +336,7 @@ public class EuclidianView3DW extends EuclidianView3D implements
 	public void setPreferredSize(GDimension preferredSize) {
 		if (renderer != null) {
 			((RendererWInterface) renderer).setPixelRatio(getPixelRatio());
-			renderer.setView(0, 0, preferredSize.getWidth(),
-					preferredSize.getHeight());
+			renderer.setView(0, 0, preferredSize.getWidth(), preferredSize.getHeight());
 		}
 		if (g2p != null && g2p.getContext() != null) {
 			g2p.setPreferredSize(preferredSize);
@@ -394,7 +402,7 @@ public class EuclidianView3DW extends EuclidianView3D implements
 
 	/**
 	 * the file has been set by the App
-	 * 
+	 *
 	 * @param file
 	 *            file
 	 */
@@ -444,7 +452,7 @@ public class EuclidianView3DW extends EuclidianView3D implements
 	}
 
 	@Override
-	final public void waitForNewRepaint() {
+	public final void waitForNewRepaint() {
 		objectsWaitingForNewRepaint++;
 	}
 
@@ -493,29 +501,25 @@ public class EuclidianView3DW extends EuclidianView3D implements
 
 	@Override
 	public String getExportImageDataUrl(double scale, boolean transparent, boolean greyscale) {
-		return getExportImageDataUrl(scale, transparent, ExportType.PNG,
-				greyscale);
+		return getExportImageDataUrl(scale, transparent, ExportType.PNG, greyscale);
 	}
 
 	@Override
-	public String getExportImageDataUrl(double scale, boolean transparent,
-			ExportType format, boolean greyscale) {
-		return getExportCanvas().toDataURL(
-				format == ExportType.WEBP ? "image/webp" : "image/png");
+	public String getExportImageDataUrl(
+			double scale, boolean transparent, ExportType format, boolean greyscale) {
+		return getExportCanvas().toDataURL(format == ExportType.WEBP ? "image/webp" : "image/png");
 	}
 
 	@Override
 	public String getCanvasBase64WithTypeString() {
 		((RendererWInterface) this.renderer).setBuffering(true);
 		this.doRepaint2();
-		String ret = getCanvasBase64WithTypeString(
-				this.getWidth(), getHeight());
+		String ret = getCanvasBase64WithTypeString(this.getWidth(), getHeight());
 		((RendererWInterface) this.renderer).setBuffering(false);
 		return ret;
 	}
 
 	private String getCanvasBase64WithTypeString(double width, double height) {
-		Canvas foreground = ((RendererWInterface) this.renderer).getCanvas();
 		double ratio = width / height;
 		double thx = MyXMLio.THUMBNAIL_PIXELS_X;
 		double thy = MyXMLio.THUMBNAIL_PIXELS_Y;
@@ -531,17 +535,17 @@ public class EuclidianView3DW extends EuclidianView3D implements
 		canv.setWidth((int) thx + "px");
 		canv.setHeight((int) thy + "px");
 		CanvasRenderingContext2D c2 = Js.uncheckedCast(canv.getContext2d());
-
-		c2.drawImage(Js.<HTMLCanvasElement>uncheckedCast(foreground.getCanvasElement()),
-				0, 0, (int) thx, (int) thy);
+		Canvas foreground = ((RendererWInterface) this.renderer).getCanvas();
+		c2.drawImage(
+				Js.<HTMLCanvasElement>uncheckedCast(foreground.getCanvasElement()), 0, 0, (int) thx, (int)
+						thy);
 
 		return EuclidianViewW.dataURL(canv, null);
 	}
 
 	@Override
 	public void setPixelRatio(double pixelRatio) {
-		if (DoubleUtil.isEqual(g2p.getDevicePixelRatio(), pixelRatio)
-				|| pixelRatio == 0) {
+		if (DoubleUtil.isEqual(g2p.getDevicePixelRatio(), pixelRatio) || pixelRatio == 0) {
 			// GGB-2355 we shouldn't set ratio to 0; quit fast before we get
 			// into loop
 			return;
@@ -566,10 +570,8 @@ public class EuclidianView3DW extends EuclidianView3D implements
 		g2p.setCoordinateSpaceSizeNoTransformNoColor(width, height);
 		try {
 			// just resizing the AbsolutePanelSmart, not the whole of DockPanel
-			g2p.getElement().getParentElement().getStyle()
-					.setWidth(width, Unit.PX);
-			g2p.getElement().getParentElement().getStyle()
-					.setHeight(height, Unit.PX);
+			g2p.getElement().getParentElement().getStyle().setWidth(width, Unit.PX);
+			g2p.getElement().getParentElement().getStyle().setHeight(height, Unit.PX);
 			getEuclidianController().calculateEnvironment();
 		} catch (Exception exc) {
 			Log.debug("Problem with the parent element of the canvas");
@@ -602,7 +604,7 @@ public class EuclidianView3DW extends EuclidianView3D implements
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void setExport3D(Format format, boolean showDialog) {
 		super.setExport3D(format, showDialog);
@@ -627,8 +629,8 @@ public class EuclidianView3DW extends EuclidianView3D implements
 	}
 
 	private void addScreenReader() {
-		screenReader = new ReaderWidget(evNo, g2p.getElement());
-		EuclidianViewW.attachReaderWidget(screenReader, app);
+		screenReader = new ReaderWidget(Integer.toString(evNo), g2p.getElement());
+		EuclidianViewW.attachReaderWidget(screenReader, (AppW) app);
 	}
 
 	@Override

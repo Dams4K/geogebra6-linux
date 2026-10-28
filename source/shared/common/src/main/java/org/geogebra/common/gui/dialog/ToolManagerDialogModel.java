@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.gui.dialog;
@@ -30,6 +34,7 @@ import com.google.j2objc.annotations.Weak;
 public class ToolManagerDialogModel {
 	@Weak
 	private final App app;
+
 	final Localization loc;
 	private final List<Macro> deletedMacros;
 	private final ToolManagerDialogListener listener;
@@ -49,7 +54,6 @@ public class ToolManagerDialogModel {
 		 * Refresh custom tools in toolbar.
 		 */
 		void refreshCustomToolsInToolBar();
-
 	}
 
 	/**
@@ -67,7 +71,7 @@ public class ToolManagerDialogModel {
 
 	/**
 	 * Will delete all Macros and add all macros in order
-	 * 
+	 *
 	 * @param macros
 	 *            the Macros to be added
 	 */
@@ -85,7 +89,7 @@ public class ToolManagerDialogModel {
 
 	/**
 	 * Deletes all selected tools that are not used in the construction.
-	 * 
+	 *
 	 * @param sel
 	 *            tools selected for deletion
 	 * @return whether some tools were deleted
@@ -100,15 +104,15 @@ public class ToolManagerDialogModel {
 		boolean foundUsedMacro = false;
 		StringBuilder macroNames = new StringBuilder();
 		Kernel kernel = app.getKernel();
-		app.getSelectionManager().setSelectedGeos(new ArrayList<GeoElement>());
+		app.getSelectionManager().setSelectedGeos(new ArrayList<>());
 		deletedMacros.clear();
 		for (int i = 0; i < sel.size(); i++) {
 			Macro macro = sel.get(i);
 			if (!macro.isUsed()) {
 				// delete macro
 				changeToolBar = changeToolBar || macro.isShowInToolBar();
-				listener.removeMacroFromToolbar(kernel.getMacroID(macro)
-						+ EuclidianConstants.MACRO_MODE_ID_OFFSET);
+				listener.removeMacroFromToolbar(
+						kernel.getMacroID(macro) + EuclidianConstants.MACRO_MODE_ID_OFFSET);
 
 				app.removeMacro(macro);
 				listener.refreshCustomToolsInToolBar();
@@ -151,7 +155,7 @@ public class ToolManagerDialogModel {
 
 	/**
 	 * Saves all selected tools in a new file.
-	 * 
+	 *
 	 * @param sel
 	 *            selected tools
 	 * @return selected tools and dependencies
@@ -176,5 +180,4 @@ public class ToolManagerDialogModel {
 
 		return macros;
 	}
-
 }

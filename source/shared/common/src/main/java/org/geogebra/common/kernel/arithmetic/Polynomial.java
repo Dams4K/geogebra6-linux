@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General private License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.arithmetic;
@@ -30,12 +34,12 @@ import com.google.j2objc.annotations.Weak;
 /**
  * An Polynomial is a list of Terms
  */
-
 public class Polynomial implements HasDebugString {
 
 	private static final int MAX_ALLOWED_DEGREE = 300;
 
 	private ArrayList<Term> terms = new ArrayList<>();
+
 	@Weak
 	private Kernel kernel;
 
@@ -107,7 +111,7 @@ public class Polynomial implements HasDebugString {
 
 	/**
 	 * Returns true if this polynomial equals "1 var"
-	 * 
+	 *
 	 * @param var
 	 *            variable name
 	 * @return true if this polynomial equals "1 var"
@@ -118,7 +122,8 @@ public class Polynomial implements HasDebugString {
 		}
 		try {
 			Term t = terms.get(0);
-			return t.getVars().equals(var) && t.getCoefficient().isConstant()
+			return t.getVars().equals(var)
+					&& t.getCoefficient().isConstant()
 					&& t.getCoefficient().evaluateDouble() == 1.0;
 		} catch (Exception e) {
 			Log.debug(e);
@@ -135,7 +140,7 @@ public class Polynomial implements HasDebugString {
 
 	/**
 	 * add another Polynomial
-	 * 
+	 *
 	 * @param e
 	 *            addend
 	 * @param eq
@@ -152,7 +157,7 @@ public class Polynomial implements HasDebugString {
 
 	/**
 	 * subtract another Polynomial
-	 * 
+	 *
 	 * @param e
 	 *            subtrahend
 	 */
@@ -164,24 +169,22 @@ public class Polynomial implements HasDebugString {
 
 	/**
 	 * add a Number
-	 * 
+	 *
 	 * @param number
 	 *            constant addend
 	 */
-	private void add(ExpressionValue number, Equation equ,
-			boolean keepFraction) {
+	private void add(ExpressionValue number, Equation equ, boolean keepFraction) {
 		append(new Term(number, ""));
 		simplify(equ, keepFraction); // add up parts with same variables
 	}
 
 	/**
 	 * subtract a Number
-	 * 
+	 *
 	 * @param number
 	 *            constant subtrahend
 	 */
-	private void sub(ExpressionValue number, Equation equ,
-			boolean keepFraction) {
+	private void sub(ExpressionValue number, Equation equ, boolean keepFraction) {
 		Term subTerm = new Term(number, "");
 		subTerm.multiply(new MyDouble(kernel, -1.0d), kernel, keepFraction);
 		append(subTerm);
@@ -190,7 +193,7 @@ public class Polynomial implements HasDebugString {
 
 	/**
 	 * multiply with another Polynomial store result in this Polynomial
-	 * 
+	 *
 	 * @param e
 	 *            factor
 	 */
@@ -215,7 +218,7 @@ public class Polynomial implements HasDebugString {
 
 	/**
 	 * multiply every term with a double store result in this Polynomial
-	 * 
+	 *
 	 * @param number
 	 *            constant factor
 	 */
@@ -227,7 +230,7 @@ public class Polynomial implements HasDebugString {
 
 	/**
 	 * divide every term with a ExpressionValue store result in this Polynomial
-	 * 
+	 *
 	 * @param number
 	 *            constant divisor
 	 */
@@ -239,7 +242,7 @@ public class Polynomial implements HasDebugString {
 
 	/**
 	 * multiply every term with a double store result in this Polynomial
-	 * 
+	 *
 	 * @param d
 	 *            constant factor
 	 * @param keepFraction
@@ -251,7 +254,7 @@ public class Polynomial implements HasDebugString {
 
 	/**
 	 * compute Polynomial^power store result in this Polynomial
-	 * 
+	 *
 	 * @param p
 	 *            exponent
 	 */
@@ -277,7 +280,7 @@ public class Polynomial implements HasDebugString {
 	/**
 	 * returns the sum of constant numbers in this Polynomial <BR>
 	 * returns 0 if there is no constant number
-	 * 
+	 *
 	 * @return the sum of constant numbers in this Polynomial
 	 */
 	public ExpressionValue getConstantCoefficient() {
@@ -290,7 +293,7 @@ public class Polynomial implements HasDebugString {
 	 * returns 0 if variable does not occur <BR>
 	 * example: 3x -5y getCoefficient("y") returns -5.0 <BR>
 	 * 3x -72zz +5y +3zz getCoefficient("zz") returns -69.0 <BR>
-	 * 
+	 *
 	 * @param variables
 	 *            variables string
 	 * @return coefficient
@@ -321,7 +324,7 @@ public class Polynomial implements HasDebugString {
 	 * simplifies this Polynomial so that every variable only occurs once.
 	 * example: simplify() on { (4,"xxy"), (7,"xy"), (-84.0,"xx"), (3,"xy") })
 	 * changes the Polynomial to { (4,"xxy"), (10,"xy"), (-84.0,"xx") }
-	 * 
+	 *
 	 * @param eq
 	 *            equation to get feedback when simplification fails
 	 * @param keepFraction
@@ -348,13 +351,11 @@ public class Polynomial implements HasDebugString {
 				for (j = i + 1; j < len; j++) {
 					tj = (Term) t[j];
 					if (tj != null && vars.equals(tj.getVars())) {
-						ti.addToCoefficient(tj.coefficient, kernel,
-								keepFraction);
+						ti.addToCoefficient(tj.coefficient, kernel, keepFraction);
 						t[j] = null;
 					}
 				}
-				ExpressionValue eval = ti.coefficient
-						.evaluate(StringTemplate.defaultTemplate);
+				ExpressionValue eval = ti.coefficient.evaluate(StringTemplate.defaultTemplate);
 				if (!(eval instanceof NumberValue)) {
 					if (eq != null) {
 						eq.setIsPolynomial(false);
@@ -373,8 +374,7 @@ public class Polynomial implements HasDebugString {
 					 */
 				}
 				// add simplified term to list
-				if (!ti.coefficient.isConstant()
-						|| eval.evaluateDouble() != 0.0) {
+				if (!ti.coefficient.isConstant() || eval.evaluateDouble() != 0.0) {
 					list.add(ti);
 				}
 			}
@@ -430,7 +430,7 @@ public class Polynomial implements HasDebugString {
 
 	/**
 	 * eg isFreeOf('z') to check no terms containing z, z^2 etc
-	 * 
+	 *
 	 * @param var
 	 *            variable name
 	 * @return true if does not contain var
@@ -449,7 +449,6 @@ public class Polynomial implements HasDebugString {
 		}
 
 		return true;
-
 	}
 
 	/**
@@ -515,7 +514,6 @@ public class Polynomial implements HasDebugString {
 	@Override
 	public String toString() {
 		return "POLY" + toString(StringTemplate.defaultTemplate);
-
 	}
 
 	private String toString(StringTemplate tpl) {
@@ -550,7 +548,7 @@ public class Polynomial implements HasDebugString {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Coefficient matrix of this polynomial (in x and y)
 	 */
 	public ExpressionValue[][] getCoeff() {
@@ -598,14 +596,13 @@ public class Polynomial implements HasDebugString {
 	 * @return whether this depends on geos
 	 */
 	public boolean isConstant(EvalInfo info) {
-		HashSet<GeoElement> vars = getVariables(
-				info.getSymbolicMode());
+		HashSet<GeoElement> vars = getVariables(info.getSymbolicMode());
 		return vars == null || vars.size() == 0;
 	}
 
 	/**
 	 * Converts expression node to polynomial
-	 * 
+	 *
 	 * @param lhs
 	 *            expression to be converted
 	 * @param eqn
@@ -614,15 +611,14 @@ public class Polynomial implements HasDebugString {
 	 *            whether to use keep coefficients as fractions
 	 * @return polynomial
 	 */
-	static Polynomial fromNode(ExpressionNode lhs, Equation eqn,
-			boolean keepFraction) {
+	static Polynomial fromNode(ExpressionNode lhs, Equation eqn, boolean keepFraction) {
 		ExpressionNode leftEN = lhs.getCopy(lhs.getKernel());
 		return leftEN.makePolynomialTree(eqn, keepFraction);
 	}
 
 	/**
 	 * Applies an operation
-	 * 
+	 *
 	 * @param operation
 	 *            operation
 	 * @param rt
@@ -633,36 +629,34 @@ public class Polynomial implements HasDebugString {
 	 *            whether to use keep coefficients as fractions
 	 * @return result as polynomial
 	 */
-	Polynomial apply(Operation operation, Polynomial rt, Equation equ,
-			boolean keepFraction) {
+	Polynomial apply(Operation operation, Polynomial rt, Equation equ, boolean keepFraction) {
 		switch (operation) {
-		case PLUS:
-			this.add(rt, equ, keepFraction);
-			break;
-		case MINUS:
-			this.sub(rt, equ, keepFraction);
-			break;
-		case MULTIPLY_OR_FUNCTION:
-		case MULTIPLY:
-			this.multiply(rt, equ, keepFraction);
-			break;
-		case DIVIDE:
-		case POWER:
-			if (rt.degree() != 0) {
-				equ.setIsPolynomial(false);
-				return rt;
-			}
-			return apply(operation, rt.getConstantCoefficient(), equ,
-					keepFraction);
-		default:
-			break;
+			case PLUS:
+				this.add(rt, equ, keepFraction);
+				break;
+			case MINUS:
+				this.sub(rt, equ, keepFraction);
+				break;
+			case MULTIPLY_OR_FUNCTION:
+			case MULTIPLY:
+				this.multiply(rt, equ, keepFraction);
+				break;
+			case DIVIDE:
+			case POWER:
+				if (rt.degree() != 0) {
+					equ.setIsPolynomial(false);
+					return rt;
+				}
+				return apply(operation, rt.getConstantCoefficient(), equ, keepFraction);
+			default:
+				break;
 		}
 		return this;
 	}
 
 	/**
 	 * Applies an operation
-	 * 
+	 *
 	 * @param operation
 	 *            operation
 	 * @param rt
@@ -673,44 +667,42 @@ public class Polynomial implements HasDebugString {
 	 *            whether to use keep coefficients as fractions
 	 * @return result as polynomial
 	 */
-	Polynomial apply(Operation operation, ExpressionValue rt, Equation equ,
-			boolean keepFraction) {
+	Polynomial apply(Operation operation, ExpressionValue rt, Equation equ, boolean keepFraction) {
 		switch (operation) {
-		case PLUS:
-			this.add(rt, equ, keepFraction);
-			break;
-		case MINUS:
-			this.sub(rt, equ, keepFraction);
-			break;
-		case MULTIPLY_OR_FUNCTION:
-		case MULTIPLY:
-			this.multiply(rt, keepFraction);
-			break;
-		case POWER:
-			double power = rt.evaluateDouble();
-			if (this.degree() == 0) {
-				terms.get(0).coefficient = terms.get(0).coefficient.wrap()
-						.power(rt);
-			} else if (Inspecting.isDynamicGeoElement(rt)) {
-				if (!(rt.evaluate(
-						StringTemplate.defaultTemplate) instanceof NumberValue)) {
+			case PLUS:
+				this.add(rt, equ, keepFraction);
+				break;
+			case MINUS:
+				this.sub(rt, equ, keepFraction);
+				break;
+			case MULTIPLY_OR_FUNCTION:
+			case MULTIPLY:
+				this.multiply(rt, keepFraction);
+				break;
+			case POWER:
+				double power = rt.evaluateDouble();
+				if (this.degree() == 0) {
+					terms.get(0).coefficient = terms.get(0).coefficient.wrap().power(rt);
+				} else if (Inspecting.isDynamicGeoElement(rt)) {
+					if (!(rt.evaluate(StringTemplate.defaultTemplate) instanceof NumberValue)) {
+						equ.setIsPolynomial(false);
+					} else {
+						this.power((int) power, equ, keepFraction);
+					}
+					equ.addVariableDegree(rt);
+				} else if (!DoubleUtil.isInteger(power)
+						|| DoubleUtil.isGreater(0, power)
+						|| DoubleUtil.isGreater(power, MAX_ALLOWED_DEGREE)) {
 					equ.setIsPolynomial(false);
 				} else {
 					this.power((int) power, equ, keepFraction);
 				}
-				equ.addVariableDegree(rt);
-			} else if (!DoubleUtil.isInteger(power) || DoubleUtil.isGreater(0, power)
-					|| DoubleUtil.isGreater(power, MAX_ALLOWED_DEGREE)) {
-				equ.setIsPolynomial(false);
-			} else {
-				this.power((int) power, equ, keepFraction);
-			}
-			break;
-		case DIVIDE:
-			this.divide(rt, keepFraction);
-			break;
-		default:
-			break;
+				break;
+			case DIVIDE:
+				this.divide(rt, keepFraction);
+				break;
+			default:
+				break;
 		}
 		return this;
 	}
@@ -727,5 +719,4 @@ public class Polynomial implements HasDebugString {
 		}
 		return sb.toString();
 	}
-
 } // end of class Polynomial

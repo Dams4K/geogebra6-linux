@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -43,7 +47,7 @@ public abstract class AlgoIntersect extends AlgoIntersectND {
 	/**
 	 * Returns the index in output[] of the intersection point that is closest
 	 * to the coordinates (xRW, yRW)
-	 * 
+	 *
 	 * @param xRW
 	 *            initial x-coordinate
 	 * @param yRW
@@ -69,7 +73,7 @@ public abstract class AlgoIntersect extends AlgoIntersectND {
 	/**
 	 * Returns the index in output[] of the intersection point that is closest
 	 * to the GeoPoint refPoint
-	 * 
+	 *
 	 * @param refPoint
 	 *            initial point
 	 * @return closest intersection point
@@ -97,7 +101,7 @@ public abstract class AlgoIntersect extends AlgoIntersectND {
 
 	/**
 	 * Implemented for LocusEqu.
-	 * 
+	 *
 	 * @return a new array with the exact same members as getIntersectionPoints.
 	 */
 	public GeoPoint[] getCopyOfIntersectionPoints() {

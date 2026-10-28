@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.openGL;
 
 import java.util.ArrayList;
@@ -10,8 +26,8 @@ import org.geogebra.common.geogebra3D.euclidian3D.EuclidianController3D;
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianController3D.IntersectionCurve;
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
 import org.geogebra.common.geogebra3D.euclidian3D.Hitting;
-import org.geogebra.common.geogebra3D.euclidian3D.draw.DrawLabel3D;
 import org.geogebra.common.geogebra3D.euclidian3D.draw.Drawable3D;
+import org.geogebra.common.geogebra3D.euclidian3D.draw.DrawableTexture3D;
 import org.geogebra.common.geogebra3D.euclidian3D.xr.XRManagerInterface;
 import org.geogebra.common.io.MyXMLio;
 import org.geogebra.common.kernel.geos.AnimationExportSlider;
@@ -38,7 +54,8 @@ public abstract class Renderer {
 	/**
 	 * used for showing depth instead of color (for testing)
 	 */
-	final public static boolean TEST_DRAW_DEPTH_TO_COLOR = false;
+	public static final boolean TEST_DRAW_DEPTH_TO_COLOR = false;
+
 	protected boolean transparent;
 
 	/**
@@ -63,7 +80,7 @@ public abstract class Renderer {
 	/** min value for layers */
 	public static final int LAYER_MIN = LAYER_PLANE_SHIFT;
 	/** min value for layers (string for shaders) */
-	public static final String LAYER_MIN_STRING_WITH_OP = "" + LAYER_MIN;
+	public static final String LAYER_MIN_STRING_WITH_OP = String.valueOf(LAYER_MIN);
 	/** factor for coding layers (for shaders) */
 	public static final int LAYER_FACTOR_FOR_CODING = 2;
 	/** default layer */
@@ -88,14 +105,13 @@ public abstract class Renderer {
 	public static final float AMBIENT_1 = 0.4f;
 	/** if clipping is enabled */
 	public boolean enableClipPlanes;
+
 	private boolean waitForUpdateClipPlanes = false;
-	static final private float SQRT2_DIV2 = (float) Math.sqrt(2) / 2;
+	private static final float SQRT2_DIV2 = (float) Math.sqrt(2) / 2;
 	/** light position for web */
-	public static final float[] LIGHT_POSITION_W = { SQRT2_DIV2, 0f,
-			SQRT2_DIV2 };
+	public static final float[] LIGHT_POSITION_W = {SQRT2_DIV2, 0f, SQRT2_DIV2};
 	/** light position for desktop */
-	static final public float[] LIGHT_POSITION_D = { SQRT2_DIV2, 0f, SQRT2_DIV2,
-			0f };
+	public static final float[] LIGHT_POSITION_D = {SQRT2_DIV2, 0f, SQRT2_DIV2, 0f};
 	/** if needs to export image */
 	protected boolean needExportImage = false;
 
@@ -132,8 +148,9 @@ public abstract class Renderer {
 	public double obliqueX;
 	/** oblique projection y factor */
 	public double obliqueY;
+
 	private Coords obliqueOrthoDirection; // direction "orthogonal" to the
-											// screen (i.e. not visible)
+	// screen (i.e. not visible)
 	private ExportType exportType = ExportType.NONE;
 	private int export_n;
 	private double export_val;
@@ -195,100 +212,97 @@ public abstract class Renderer {
 		return 1;
 	}
 
-    /**
-     * Start AR session
-     */
+	/**
+	 * Start AR session
+	 */
 	public void setARShouldStart() {
-        arShouldStart = true;
-    }
+		arShouldStart = true;
+	}
 
 	/**
 	 * start AR if needed
 	 */
-    public void mayStartAR() {
-        if (arShouldStart) {
+	public void mayStartAR() {
+		if (arShouldStart) {
 			doStartAR();
-            arShouldStart = false;
-        }
-    }
+			arShouldStart = false;
+		}
+	}
 
 	/**
 	 * do start AR
 	 */
-	abstract protected void doStartAR();
+	protected abstract void doStartAR();
 
 	/**
-     * @param ret Hitting Direction from AR. Override in RendererWithImplA
+	 * @param ret Hitting Direction from AR. Override in RendererWithImplA
 	 */
-    public void getHittingDirectionAR(Coords ret) {
+	public void getHittingDirectionAR(Coords ret) {
 		XRManagerInterface<?> arManager = getXRManager();
 		if (arManager != null) {
-            arManager.fromXRCoordsToGGBCoords(arManager.getHittingDirection(), ret);
+			arManager.fromXRCoordsToGGBCoords(arManager.getHittingDirection(), ret);
 			ret.normalize();
 		}
-    }
+	}
 
 	/**
 	 * @param ret
-     *            Hitting Origin from AR. Override in RendererWithImplA
+	 *            Hitting Origin from AR. Override in RendererWithImplA
 	 */
 	public void getHittingOriginAR(Coords ret) {
 		XRManagerInterface<?> arManager = getXRManager();
 		if (arManager != null) {
-            arManager.fromXRCoordsToGGBCoords(arManager.getHittingOrigin(), ret);
+			arManager.fromXRCoordsToGGBCoords(arManager.getHittingOrigin(), ret);
 		}
 	}
 
-    /**
-     * @param ret Hitting floor from AR. Override in RendererWithImplA
-     *
-     * @return true if there is an hitting on floor
-     */
-    public boolean getHittingFloorAR(Coords ret) {
+	/**
+	 * @param ret Hitting floor from AR. Override in RendererWithImplA
+	 *
+	 * @return true if there is an hitting on floor
+	 */
+	public boolean getHittingFloorAR(Coords ret) {
 		XRManagerInterface<?> arManager = getXRManager();
 		if (arManager != null) {
 			Coords hittingFloor = arManager.getHittingFloor();
 			if (hittingFloor == null) {
 				return false;
 			}
-            arManager.fromXRCoordsToGGBCoords(hittingFloor, ret);
+			arManager.fromXRCoordsToGGBCoords(hittingFloor, ret);
 			return true;
 		}
 		return false;
+	}
 
-    }
-
-    /**
-     *
-     * @return current hitting distance (in AR)
-     */
-    public double getHittingDistanceAR() {
+	/**
+	 *
+	 * @return current hitting distance (in AR)
+	 */
+	public double getHittingDistanceAR() {
 		XRManagerInterface<?> arManager = getXRManager();
 		if (arManager != null) {
 			return arManager.getHittingDistance();
 		}
 		return 0;
-    }
+	}
 
-    /**
-     * Check if z coordinate should be changed regarding current hit (in AR)
-     * @param z calculated z value
-     * @return hit z value (if already computed)
-     */
-    public double checkHittingFloorZ(double z) {
+	/**
+	 * Check if z coordinate should be changed regarding current hit (in AR)
+	 * @param z calculated z value
+	 * @return hit z value (if already computed)
+	 */
+	public double checkHittingFloorZ(double z) {
 		XRManagerInterface<?> arManager = getXRManager();
 		if (arManager != null) {
 			return arManager.checkHittingFloorZ(z) + view3D.getARFloorShift();
 		}
 		return 0;
-    }
+	}
 
 	/**
 	 * dummy renderer (when no GL available)
 	 */
-	public Renderer() {
-
-	}
+	public Renderer() {}
 
 	/**
 	 *
@@ -344,8 +358,7 @@ public abstract class Renderer {
 	public void drawScene() {
 
 		// update 3D controller
-		((EuclidianController3D) view3D.getEuclidianController())
-				.updateInput3D();
+		((EuclidianController3D) view3D.getEuclidianController()).updateInput3D();
 
 		rendererImpl.useShaderProgram();
 
@@ -370,8 +383,7 @@ public abstract class Renderer {
 
 		// time = System.currentTimeMillis();
 
-		if (view3D
-				.getProjection() == EuclidianView3DInterface.PROJECTION_GLASSES) {
+		if (view3D.getProjection() == EuclidianView3DInterface.PROJECTION_GLASSES) {
 
 			// left eye
 			setDrawLeft();
@@ -413,7 +425,7 @@ public abstract class Renderer {
 		// prepare correct color mask for next clear
 		rendererImpl.setColorMask(ColorMask.ALL);
 
-        endOfDrawScene();
+		endOfDrawScene();
 	}
 
 	protected void maybeUpdateClipPlanes() {
@@ -431,19 +443,19 @@ public abstract class Renderer {
 	 * called at end of scene drawing
 	 */
 	public void endOfDrawScene() {
-        boolean nei = needExportImage;
+		boolean nei = needExportImage;
 
-        exportImage();
+		exportImage();
 
-        if (nei) {
+		if (nei) {
 			rendererImpl.unselectFBO();
-        }
+		}
 
-        if (export3DRunnable != null) {
-            export3DRunnable.run();
-            export3DRunnable = null;
-        }
-    }
+		if (export3DRunnable != null) {
+			export3DRunnable.run();
+			export3DRunnable = null;
+		}
+	}
 
 	/**
 	 * says that an export image is needed, and call immediate display
@@ -451,12 +463,10 @@ public abstract class Renderer {
 	public void needExportImage() {
 
 		setExportImageForThumbnail(true);
-		double scale = Math.min(MyXMLio.THUMBNAIL_PIXELS_X / getWidth(),
-				MyXMLio.THUMBNAIL_PIXELS_Y / getHeight());
+		double scale =
+				Math.min(MyXMLio.THUMBNAIL_PIXELS_X / getWidth(), MyXMLio.THUMBNAIL_PIXELS_Y / getHeight());
 
-		needExportImage(scale, (int) (getWidth() * scale),
-				(int) (getHeight() * scale));
-
+		needExportImage(scale, (int) (getWidth() * scale), (int) (getHeight() * scale));
 	}
 
 	/**
@@ -469,8 +479,7 @@ public abstract class Renderer {
 
 		setExportImageForThumbnail(true);
 
-		needExportImage(scale, (int) (getWidth() * scale),
-				(int) (getHeight() * scale));
+		needExportImage(scale, (int) (getWidth() * scale), (int) (getHeight() * scale));
 
 		return getExportImage();
 	}
@@ -497,8 +506,7 @@ public abstract class Renderer {
 	public void needExportImage(double scale, boolean forThumbnail) {
 
 		setExportImageForThumbnail(forThumbnail);
-		needExportImage(scale, (int) (getWidth() * scale),
-				(int) (getHeight() * scale));
+		needExportImage(scale, (int) (getWidth() * scale), (int) (getHeight() * scale));
 	}
 
 	/**
@@ -526,9 +534,14 @@ public abstract class Renderer {
 	 * @param step
 	 *            slider step
 	 */
-	public void startAnimatedGIFExport(Object gifEncoder,
-			AnimationExportSlider num, int n, double val, double min,
-			double max, double step) {
+	public void startAnimatedGIFExport(
+			Object gifEncoder,
+			AnimationExportSlider num,
+			int n,
+			double val,
+			double min,
+			double max,
+			double step) {
 		setExportType(ExportType.ANIMATEDGIF);
 
 		num.setValue(val);
@@ -544,7 +557,6 @@ public abstract class Renderer {
 		setGIFEncoder(gifEncoder);
 
 		needExportImage(1, false);
-
 	}
 
 	/**
@@ -560,7 +572,7 @@ public abstract class Renderer {
 	/**
 	 * set drawing for left eye
 	 */
-	final protected void setDrawLeft() {
+	protected final void setDrawLeft() {
 		if (view3D.getCompanion().isStereoBuffered()) {
 			setBufferLeft();
 			clearColorBuffer();
@@ -573,14 +585,13 @@ public abstract class Renderer {
 	/**
 	 * set drawing for right eye
 	 */
-	final protected void setDrawRight() {
+	protected final void setDrawRight() {
 		if (view3D.getCompanion().isStereoBuffered()) {
 			setBufferRight();
 			clearColorBuffer();
 		}
 
-		if (view3D.getCompanion().isStereoBuffered()
-				&& !view3D.getCompanion().wantsStereo()) {
+		if (view3D.getCompanion().isStereoBuffered() && !view3D.getCompanion().wantsStereo()) {
 			// draw again left eye if no stereo glasses detected
 			eye = EYE_LEFT;
 		} else {
@@ -611,7 +622,6 @@ public abstract class Renderer {
 		}
 
 		rendererImpl.setLight(0);
-
 	}
 
 	/**
@@ -698,9 +708,9 @@ public abstract class Renderer {
 		if (enableClipPlanes) {
 			rendererImpl.enableClipPlanes();
 		}
-        if (view3D.isXRDrawing()) {
-            view3D.updateAxesDecorationPosition();
-        }
+		if (view3D.isXRDrawing()) {
+			view3D.updateAxesDecorationPosition();
+		}
 		drawFaceToScreen();
 	}
 
@@ -770,7 +780,6 @@ public abstract class Renderer {
 		rendererImpl.disableCulling();
 		rendererImpl.drawSurfacesForHiding(); // non closed surfaces
 		setColorMask();
-
 	}
 
 	private void drawNotHidden() {
@@ -824,7 +833,7 @@ public abstract class Renderer {
 
 	/**
 	 * draw view cursor
-	 * 
+	 *
 	 * <p>WARNING: needs to be protected for iOS
 	 */
 	protected void drawCursor() {
@@ -851,10 +860,9 @@ public abstract class Renderer {
 	 *            (r,g,b,a) vector
 	 *
 	 */
-	final public void setColor(Coords color) {
-		rendererImpl.setColor((float) color.getX(), (float) color.getY(),
-				(float) color.getZ(), (float) color.getW());
-
+	public final void setColor(Coords color) {
+		rendererImpl.setColor(
+				(float) color.getX(), (float) color.getY(), (float) color.getZ(), (float) color.getW());
 	}
 
 	/**
@@ -863,9 +871,12 @@ public abstract class Renderer {
 	 * @param color
 	 *            (r,g,b,a)
 	 */
-	final public void setColor(GColor color) {
-		rendererImpl.setColor(color.getRed() / 255f, color.getGreen() / 255f,
-				color.getBlue() / 255f, color.getAlpha() / 255f);
+	public final void setColor(GColor color) {
+		rendererImpl.setColor(
+				color.getRed() / 255f,
+				color.getGreen() / 255f,
+				color.getBlue() / 255f,
+				color.getAlpha() / 255f);
 	}
 
 	/**
@@ -888,15 +899,15 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return geometry manager
 	 */
-	final public Manager getGeometryManager() {
+	public final Manager getGeometryManager() {
 		return geometryManager;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return textures manager
 	 */
 	public Textures getTextures() {
@@ -927,27 +938,24 @@ public abstract class Renderer {
 
 	/**
 	 * draws a 3D cross cursor; doesn't modify the lighting
-	 * 
+	 *
 	 * @param dotMatrix
 	 *            matrix for target dot
 	 * @param circleMatrix
 	 *            matrix for target circle
 	 *
 	 */
-	public void drawTarget(CoordMatrix4x4 dotMatrix,
-			CoordMatrix4x4 circleMatrix) {
+	public void drawTarget(CoordMatrix4x4 dotMatrix, CoordMatrix4x4 circleMatrix) {
 		rendererImpl.setNormalToNone();
 		rendererImpl.disableLighting();
 		rendererImpl.disableDepthMask();
 		enableBlending();
 		setMatrix(dotMatrix);
 		rendererImpl.initMatrix();
-		geometryManager.draw(
-				geometryManager.cursor.getIndex(PlotterCursor.Type.SPHERE));
+		geometryManager.draw(geometryManager.cursor.getIndex(PlotterCursor.Type.SPHERE));
 		setMatrix(circleMatrix);
 		rendererImpl.initMatrix();
-		geometryManager.draw(geometryManager.cursor
-				.getIndex(PlotterCursor.Type.TARGET_CIRCLE));
+		geometryManager.draw(geometryManager.cursor.getIndex(PlotterCursor.Type.TARGET_CIRCLE));
 		rendererImpl.resetMatrix();
 		disableBlending();
 		rendererImpl.enableDepthMask();
@@ -971,13 +979,12 @@ public abstract class Renderer {
 		geometryManager.getCompletingCursor().drawCompleting(value, out);
 		disableBlending();
 		rendererImpl.resetMatrix();
-
 	}
 
 	/**
 	 * draws a view button
 	 */
-	final public void drawViewInFrontOf() {
+	public final void drawViewInFrontOf() {
 		rendererImpl.initMatrix();
 		disableBlending();
 		geometryManager.draw(geometryManager.getViewInFrontOf().getIndex());
@@ -1030,11 +1037,10 @@ public abstract class Renderer {
 		}
 		GColor c = view3D.getAppliedBackground();
 		float r, g, b;
-		if (view3D
-				.getProjection() == EuclidianView3DInterface.PROJECTION_GLASSES
+		if (view3D.getProjection() == EuclidianView3DInterface.PROJECTION_GLASSES
 				&& !view3D.getCompanion().isStereoBuffered()) { // grayscale for
-																// anaglyph
-																// glasses
+			// anaglyph
+			// glasses
 			r = (float) (c.getGrayScale() / 255);
 			g = r;
 			b = r;
@@ -1048,7 +1054,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return screen left
 	 */
 	public int getLeft() {
@@ -1056,7 +1062,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return screen right
 	 */
 	public int getRight() {
@@ -1064,7 +1070,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return screen width
 	 */
 	public int getWidth() {
@@ -1081,7 +1087,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return screen bottom
 	 */
 	public int getBottom() {
@@ -1089,7 +1095,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return screen top
 	 */
 	public int getTop() {
@@ -1097,7 +1103,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return screen height
 	 */
 	public int getHeight() {
@@ -1114,15 +1120,29 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 * @return offset viewport horizontally
+	 */
+	public int getViewportHorizontalOffset() {
+		return 0;
+	}
+
+	/**
+	 * @return offset viewport vertically
+	 */
+	public int getViewportVerticalOffset() {
+		return 0;
+	}
+
+	/**
+	 *
 	 * @return visible depth
 	 */
-	final public double getVisibleDepth() {
+	public final double getVisibleDepth() {
 		return getWidth() * 2;
 	} // keep visible objects at twice center-to-right distance
 
 	/**
-	 * 
+	 *
 	 * @return near distance
 	 */
 	public int getNear() {
@@ -1130,7 +1150,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return far distance
 	 */
 	public int getFar() {
@@ -1151,8 +1171,7 @@ public abstract class Renderer {
 	 *            says if it looks to real depth bounds, or working depth bounds
 	 * @return interval to draw the line
 	 */
-	public double[] getIntervalInFrustum(double[] minmax, Coords o, Coords v,
-			boolean extendedDepth) {
+	public double[] getIntervalInFrustum(double[] minmax, Coords o, Coords v, boolean extendedDepth) {
 
 		double left1 = (getLeft() - o.get(1)) / v.get(1);
 		double right1 = (getRight() - o.get(1)) / v.get(1);
@@ -1181,8 +1200,7 @@ public abstract class Renderer {
 	 *            second value
 	 * @return intersection interval
 	 */
-	private static double[] updateIntervalInFrustum(double[] minmax, double v1,
-			double v2) {
+	private static double[] updateIntervalInFrustum(double[] minmax, double v1, double v2) {
 		double vMin = v1;
 		double vMax = v2;
 
@@ -1211,17 +1229,17 @@ public abstract class Renderer {
 		} else {
 			switch (view3D.getProjection()) {
 				default:
-			case EuclidianView3DInterface.PROJECTION_ORTHOGRAPHIC:
-				rendererImpl.viewOrtho();
+				case EuclidianView3DInterface.PROJECTION_ORTHOGRAPHIC:
+					rendererImpl.viewOrtho();
 					break;
-			case EuclidianView3DInterface.PROJECTION_PERSPECTIVE:
-				rendererImpl.viewPersp();
+				case EuclidianView3DInterface.PROJECTION_PERSPECTIVE:
+					rendererImpl.viewPersp();
 					break;
-			case EuclidianView3DInterface.PROJECTION_GLASSES:
-				rendererImpl.viewGlasses();
+				case EuclidianView3DInterface.PROJECTION_GLASSES:
+					rendererImpl.viewGlasses();
 					break;
-			case EuclidianView3DInterface.PROJECTION_OBLIQUE:
-				rendererImpl.viewOblique();
+				case EuclidianView3DInterface.PROJECTION_OBLIQUE:
+					rendererImpl.viewOblique();
 					break;
 			}
 		}
@@ -1235,7 +1253,7 @@ public abstract class Renderer {
 	 * @param right
 	 *            right eye distance
 	 */
-	final public void setNear(double left, double right) {
+	public final void setNear(double left, double right) {
 		eyeToScreenDistance[EYE_LEFT] = left;
 		eyeToScreenDistance[EYE_RIGHT] = right;
 		updatePerspValues();
@@ -1252,8 +1270,8 @@ public abstract class Renderer {
 	}
 
 	private void updatePerspEye() {
-		perspEye = new Coords(glassesEyeX[1], glassesEyeY[1],
-				eyeToScreenDistance[EYE_LEFT], 1); // perspFocus is negative
+		perspEye = new Coords(
+				glassesEyeX[1], glassesEyeY[1], eyeToScreenDistance[EYE_LEFT], 1); // perspFocus is negative
 	}
 
 	/**
@@ -1290,20 +1308,17 @@ public abstract class Renderer {
 	 * set the color mask
 	 */
 	protected void setColorMask() {
-		if (view3D
-				.getProjection() == EuclidianView3DInterface.PROJECTION_GLASSES
+		if (view3D.getProjection() == EuclidianView3DInterface.PROJECTION_GLASSES
 				&& !view3D.getCompanion().isStereoBuffered()) {
 			if (eye == EYE_LEFT) {
 				rendererImpl.setColorMask(ColorMask.RED); // cyan
 			} else {
 				rendererImpl.setColorMask(
-						view3D.isGlassesShutDownGreen() ? ColorMask.BLUE
-						: ColorMask.BLUE_AND_GREEN); // red
+						view3D.isGlassesShutDownGreen() ? ColorMask.BLUE : ColorMask.BLUE_AND_GREEN); // red
 			}
 		} else {
 			rendererImpl.setColorMask(ColorMask.ALL);
 		}
-
 	}
 
 	/**
@@ -1354,7 +1369,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return oblique orthogonal direction
 	 */
 	public Coords getObliqueOrthoDirection() {
@@ -1385,22 +1400,22 @@ public abstract class Renderer {
 		}
 
 		switch (view3D.getProjection()) {
-		default:
-		case EuclidianView3DInterface.PROJECTION_ORTHOGRAPHIC:
-			updateOrthoValues();
-			break;
-		case EuclidianView3DInterface.PROJECTION_PERSPECTIVE:
-			updatePerspValues();
-			updatePerspEye();
-			break;
-		case EuclidianView3DInterface.PROJECTION_GLASSES:
-			updatePerspValues();
-			updateGlassesValues();
-			updatePerspEye();
-			break;
-		case EuclidianView3DInterface.PROJECTION_OBLIQUE:
-			updateProjectionObliqueValues();
-			break;
+			default:
+			case EuclidianView3DInterface.PROJECTION_ORTHOGRAPHIC:
+				updateOrthoValues();
+				break;
+			case EuclidianView3DInterface.PROJECTION_PERSPECTIVE:
+				updatePerspValues();
+				updatePerspEye();
+				break;
+			case EuclidianView3DInterface.PROJECTION_GLASSES:
+				updatePerspValues();
+				updateGlassesValues();
+				updatePerspEye();
+				break;
+			case EuclidianView3DInterface.PROJECTION_OBLIQUE:
+				updateProjectionObliqueValues();
+				break;
 		}
 
 		setView();
@@ -1431,10 +1446,8 @@ public abstract class Renderer {
 	 * @return eye to screen distance
 	 */
 	public double getEyeToScreenDistance() {
-		if (view3D
-				.getProjection() == EuclidianView3DInterface.PROJECTION_PERSPECTIVE
-				|| view3D
-						.getProjection() == EuclidianView3DInterface.PROJECTION_GLASSES) {
+		if (view3D.getProjection() == EuclidianView3DInterface.PROJECTION_PERSPECTIVE
+				|| view3D.getProjection() == EuclidianView3DInterface.PROJECTION_GLASSES) {
 			return eyeToScreenDistance[EYE_LEFT];
 		}
 
@@ -1470,8 +1483,7 @@ public abstract class Renderer {
 		float diffuse0 = 1f - AMBIENT_0;
 		float diffuse1 = 1f - AMBIENT_1;
 
-		rendererImpl.setLightAmbientDiffuse(AMBIENT_0, diffuse0, AMBIENT_1,
-				diffuse1);
+		rendererImpl.setLightAmbientDiffuse(AMBIENT_0, diffuse0, AMBIENT_1, diffuse1);
 
 		// material and light
 		rendererImpl.setColorMaterial();
@@ -1504,7 +1516,6 @@ public abstract class Renderer {
 
 		// ensure that animation is on (needed when undocking/docking 3D view)
 		resumeAnimator();
-
 	}
 
 	/**
@@ -1517,17 +1528,17 @@ public abstract class Renderer {
 	/**
 	 * set the depth function
 	 */
-	abstract protected void setDepthFunc();
+	protected abstract void setDepthFunc();
 
 	/**
 	 * enable polygon offset fill
 	 */
-	abstract protected void enablePolygonOffsetFill();
+	protected abstract void enablePolygonOffsetFill();
 
 	/**
 	 * set the blend function
 	 */
-	abstract protected void setBlendFunc();
+	protected abstract void setBlendFunc();
 
 	/**
 	 * enable text textures
@@ -1541,12 +1552,12 @@ public abstract class Renderer {
 	 *
 	 * @return the 3D view attached
 	 */
-	final public EuclidianView3D getView() {
+	public final EuclidianView3D getView() {
 		return view3D;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return scene to screen matrix
 	 */
 	public CoordMatrix4x4 getToScreenMatrix() {
@@ -1557,12 +1568,12 @@ public abstract class Renderer {
 	 * @param flag
 	 *            image export flag
 	 */
-	final public void setNeedExportImage(boolean flag) {
+	public final void setNeedExportImage(boolean flag) {
 		needExportImage = flag;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return current export type
 	 */
 	protected ExportType getExportType() {
@@ -1570,7 +1581,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return slider used for exporting animated gifs
 	 */
 	protected AnimationExportSlider getExportNum() {
@@ -1578,7 +1589,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return current slider value for exporting animated gifs
 	 */
 	protected double getExportVal() {
@@ -1586,7 +1597,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return slider max value for exporting animated gifs
 	 */
 	protected double getExportMax() {
@@ -1594,7 +1605,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return slider min value for exporting animated gifs
 	 */
 	protected double getExportMin() {
@@ -1602,7 +1613,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return animated gifs current image id
 	 */
 	protected int getExportI() {
@@ -1610,7 +1621,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return animated gifs images count
 	 */
 	protected double getExportN() {
@@ -1618,7 +1629,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return slider step for exporting animated gifs
 	 */
 	protected double getExportStep() {
@@ -1626,7 +1637,7 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return renderer type
 	 */
 	protected RendererType getType() {
@@ -1635,7 +1646,7 @@ public abstract class Renderer {
 
 	/**
 	 * set renderer type
-	 * 
+	 *
 	 * @param t
 	 *            type
 	 */
@@ -1645,7 +1656,7 @@ public abstract class Renderer {
 
 	/**
 	 * set slider step for exporting animated gifs
-	 * 
+	 *
 	 * @param step
 	 *            step
 	 */
@@ -1655,7 +1666,7 @@ public abstract class Renderer {
 
 	/**
 	 * set slider value for exporting animated gifs
-	 * 
+	 *
 	 * @param val
 	 *            value
 	 */
@@ -1665,7 +1676,7 @@ public abstract class Renderer {
 
 	/**
 	 * set animated gifs image id
-	 * 
+	 *
 	 * @param i
 	 *            id
 	 */
@@ -1675,7 +1686,7 @@ public abstract class Renderer {
 
 	/**
 	 * set export type
-	 * 
+	 *
 	 * @param type
 	 *            type
 	 */
@@ -1697,7 +1708,7 @@ public abstract class Renderer {
 	public void setARScaleAtStart() {
 		XRManagerInterface<?> arManager = getXRManager();
 		if (arManager != null) {
-            arManager.setXRScaleAtStart();
+			arManager.setXRScaleAtStart();
 		}
 	}
 
@@ -1713,7 +1724,7 @@ public abstract class Renderer {
 
 	/**
 	 * set background style
-	 * 
+	 *
 	 * @param backgroundStyle
 	 *            style
 	 */
@@ -1752,7 +1763,7 @@ public abstract class Renderer {
 	 * @param minMax
 	 *            min/max for x/y/z
 	 */
-	final public void setClipPlanes(double[][] minMax) {
+	public final void setClipPlanes(double[][] minMax) {
 		if (rendererImpl != null) {
 			rendererImpl.setClipPlanes(minMax);
 		}
@@ -1776,7 +1787,7 @@ public abstract class Renderer {
 	/**
 	 * for shaders : update projection matrix
 	 */
-	final public void updateOrthoValues() {
+	public final void updateOrthoValues() {
 		if (rendererImpl != null) {
 			rendererImpl.updateOrthoValues();
 		}
@@ -1806,75 +1817,74 @@ public abstract class Renderer {
 	/**
 	 * enable culling
 	 */
-	final public void enableCulling() {
+	public final void enableCulling() {
 		rendererImpl.glEnable(rendererImpl.getGL_CULL_FACE());
 	}
 
 	/**
 	 * disable blending
 	 */
-	final public void disableBlending() {
+	public final void disableBlending() {
 		rendererImpl.glDisable(rendererImpl.getGL_BLEND());
 	}
 
 	/**
 	 * enable blending
 	 */
-	final public void enableBlending() {
+	public final void enableBlending() {
 		rendererImpl.glEnable(rendererImpl.getGL_BLEND());
 	}
 
 	/**
 	 * enable depth test
 	 */
-	final public void enableDepthTest() {
+	public final void enableDepthTest() {
 		rendererImpl.glEnable(rendererImpl.getGL_DEPTH_TEST());
 	}
 
 	/**
 	 * disable depth test
 	 */
-	final public void disableDepthTest() {
+	public final void disableDepthTest() {
 		rendererImpl.glDisable(rendererImpl.getGL_DEPTH_TEST());
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if uses shaders
 	 */
 	public boolean useShaders() {
-		return rendererImpl.useShaders();
+		return rendererImpl != null && rendererImpl.useShaders();
 	}
 
 	/**
 	 * set hits for mouse location
-	 * 
+	 *
 	 * @param mouseLoc
 	 *            mouse location
 	 * @param threshold
 	 *            threshold
 	 */
-	final public void setHits(GPoint mouseLoc, int threshold) {
+	public final void setHits(GPoint mouseLoc, int threshold) {
 
 		if (mouseLoc == null) {
 			return;
 		}
 
 		hitting.setHits(mouseLoc, threshold);
-
 	}
 
 	/**
 	 *
 	 * @return hitting
 	 */
-	final public Hitting getHitting() {
+	public final Hitting getHitting() {
 		return hitting;
 	}
 
 	/**
 	 * set label hits for mouse location
-	 * 
+	 *
 	 * @param mouseLoc
 	 *            mouse location
 	 * @return first geo hit on label
@@ -1893,16 +1903,17 @@ public abstract class Renderer {
 	 */
 	public void pickIntersectionCurves() {
 
-		ArrayList<IntersectionCurve> curves = ((EuclidianController3D) view3D
-				.getEuclidianController()).getIntersectionCurves();
+		ArrayList<IntersectionCurve> curves =
+				((EuclidianController3D) view3D.getEuclidianController()).getIntersectionCurves();
 
 		// picking objects
 		for (IntersectionCurve intersectionCurve : curves) {
 			Drawable3D d = intersectionCurve.drawable;
-			if (!d.hit(hitting)
-					|| d.getPickingType() != PickingType.POINT_OR_CURVE) {
+			if (!d.hit(hitting) || d.getPickingType() != PickingType.POINT_OR_CURVE) {
 				// we assume that hitting infos are updated from last mouse move
-				d.setZPick(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY,
+				d.setZPick(
+						Double.NEGATIVE_INFINITY,
+						Double.NEGATIVE_INFINITY,
 						hitting.discardPositiveHits(),
 						Double.POSITIVE_INFINITY);
 			}
@@ -1911,21 +1922,21 @@ public abstract class Renderer {
 
 	/**
 	 * get alpha channel of the array ARGB description
-	 * 
+	 *
 	 * @param label
 	 *            label
-	 * 
+	 *
 	 * @param pix
 	 *            bitmap
 	 * @return the alpha channel of the array ARGB description
 	 */
-	protected static byte[] argbToAlpha(DrawLabel3D label, int[] pix) {
+	protected static byte[] argbToAlpha(DrawableTexture3D label, int[] pix) {
 		return argbToAlpha(label, label.getWidth(), label.getHeight(), pix);
 	}
 
 	/**
 	 * get alpha channel of the array ARGB description
-	 * 
+	 *
 	 * @param label
 	 *            label
 	 * @param labelWidthRes
@@ -1936,8 +1947,8 @@ public abstract class Renderer {
 	 *            bitmap
 	 * @return the alpha channel of the array ARGB description
 	 */
-	protected static byte[] argbToAlpha(DrawLabel3D label, int labelWidthRes,
-			int labelHeightRes, int[] pix) {
+	protected static byte[] argbToAlpha(
+			DrawableTexture3D label, int labelWidthRes, int labelHeightRes, int[] pix) {
 
 		// calculates 2^n dimensions
 		int w = firstPowerOfTwoGreaterThan(labelWidthRes);
@@ -1965,7 +1976,6 @@ public abstract class Renderer {
 					if (y > ymax) {
 						ymax = y;
 					}
-
 				}
 				bytes[bytesIndex] = b;
 				bytesIndex++;
@@ -2061,50 +2071,49 @@ public abstract class Renderer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return canvas (for desktop version at least)
 	 */
-	abstract public Object getCanvas();
+	public abstract Object getCanvas();
 
 	/**
 	 * set line width
-	 * 
+	 *
 	 * @param width
 	 *            line width
 	 */
-	abstract public void setLineWidth(double width);
+	public abstract void setLineWidth(double width);
 
 	/**
 	 * enable GL textures 2D
 	 */
-	abstract public void enableTextures2D();
+	public abstract void enableTextures2D();
 
 	/**
 	 * disable GL textures 2D
 	 */
-	abstract public void disableTextures2D();
+	public abstract void disableTextures2D();
 
 	/**
-	 * 
+	 *
 	 * @param label
 	 *            label
 	 * @return buffered image for drawing label
 	 */
-	abstract public GBufferedImage createBufferedImage(DrawLabel3D label);
+	public abstract GBufferedImage createBufferedImage(DrawableTexture3D label);
 
 	/**
 	 * create alpha texture for label from image
-	 * 
+	 *
 	 * @param label
 	 *            label
-	 * @param bimg
+	 * @param img
 	 *            buffered image
 	 */
-	abstract public void createAlphaTexture(DrawLabel3D label,
-			GBufferedImage bimg);
+	public abstract void createAlphaTexture(DrawableTexture3D label, GBufferedImage img);
 
 	/**
-	 * 
+	 *
 	 * @param sizeX
 	 *            width
 	 * @param sizeY
@@ -2113,7 +2122,7 @@ public abstract class Renderer {
 	 *            image data
 	 * @return a texture for alpha channel
 	 */
-	abstract public int createAlphaTexture(int sizeX, int sizeY, byte[] buf);
+	public abstract int createAlphaTexture(int sizeX, int sizeY, byte[] buf);
 
 	/**
 	 * @param sizeX
@@ -2123,32 +2132,32 @@ public abstract class Renderer {
 	 * @param buf
 	 *            image data
 	 */
-	abstract public void textureImage2D(int sizeX, int sizeY, byte[] buf);
+	public abstract void textureImage2D(int sizeX, int sizeY, byte[] buf);
 
 	/**
 	 * set texture linear parameters
 	 */
-	abstract public void setTextureLinear();
+	public abstract void setTextureLinear();
 
 	/**
 	 * set texture nearest parameters
 	 */
-	abstract public void setTextureNearest();
+	public abstract void setTextureNearest();
 
 	/**
 	 * ensure that animation is on (needed when undocking/docking 3D view)
 	 */
-	abstract public void resumeAnimator();
+	public abstract void resumeAnimator();
 
 	/**
 	 * Restart AR session.
 	 */
-	abstract public void setARShouldRestart();
+	public abstract void setARShouldRestart();
 
-    /**
-     *
-     * @return XR manager (can be null)
-     */
+	/**
+	 *
+	 * @return XR manager (can be null)
+	 */
 	public XRManagerInterface<?> getXRManager() {
 		return null;
 	}
@@ -2192,6 +2201,9 @@ public abstract class Renderer {
 		// only needed for some platforms
 	}
 
+	/**
+	 * @return whether the renderer is ready to render.
+	 */
 	public boolean isReadyToRender() {
 		return true;
 	}

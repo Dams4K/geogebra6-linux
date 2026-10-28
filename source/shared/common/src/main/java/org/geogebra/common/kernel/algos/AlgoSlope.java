@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoSlope.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 30. August 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -39,7 +37,7 @@ public class AlgoSlope extends AlgoElement implements DrawInformationAlgo {
 
 	/**
 	 * Creates new AlgoDirection
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param g
@@ -59,7 +57,7 @@ public class AlgoSlope extends AlgoElement implements DrawInformationAlgo {
 
 	/**
 	 * For dummy copy only
-	 * 
+	 *
 	 * @param g
 	 *            line
 	 */
@@ -70,7 +68,7 @@ public class AlgoSlope extends AlgoElement implements DrawInformationAlgo {
 
 	/**
 	 * For dummy copy only
-	 * 
+	 *
 	 * @param f
 	 *            function
 	 */
@@ -108,7 +106,7 @@ public class AlgoSlope extends AlgoElement implements DrawInformationAlgo {
 
 	/**
 	 * Get start point of the slope triangle into array of coords.
-	 * 
+	 *
 	 * @param coords
 	 *            output coords
 	 */
@@ -133,8 +131,7 @@ public class AlgoSlope extends AlgoElement implements DrawInformationAlgo {
 			slope.setValue(g.getSlope());
 		} else {
 			if (f.isDefined()) {
-				slope.setValue(
-						f.getFunction().getDerivativeNoCAS(1).value(0));
+				slope.setValue(f.getFunction().getDerivativeNoCAS(1).value(0));
 			} else {
 				slope.setUndefined();
 			}
@@ -142,11 +139,10 @@ public class AlgoSlope extends AlgoElement implements DrawInformationAlgo {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("SlopeOfA", "Slope of %0",
-				(g != null ? g : f).getLabel(tpl));
+		return getLoc().getPlainDefault("SlopeOfA", "Slope of %0", (g != null ? g : f).getLabel(tpl));
 	}
 
 	@Override
@@ -156,5 +152,4 @@ public class AlgoSlope extends AlgoElement implements DrawInformationAlgo {
 		}
 		return new AlgoSlope(f.copy());
 	}
-
 }

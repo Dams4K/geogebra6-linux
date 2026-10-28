@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.layout.panels;
 
 import org.geogebra.web.full.gui.layout.DockPanelW;
@@ -29,8 +45,7 @@ public abstract class NavigableDockPanelW extends DockPanelW {
 	@Override
 	public final void updateNavigationBar() {
 		if (app.getShowCPNavNeedsUpdate(id)) {
-			app.setShowConstructionProtocolNavigation(
-					app.showConsProtNavigation(id), id);
+			app.setShowConstructionProtocolNavigation(app.showConsProtNavigation(id), id);
 		}
 		if (app.showConsProtNavigation(id) && consProtNav == null) {
 			this.addNavigationBar();
@@ -61,8 +76,7 @@ public abstract class NavigableDockPanelW extends DockPanelW {
 
 	@Override
 	public int navHeight() {
-		if (this.consProtNav != null
-				&& this.consProtNav.getImpl().getOffsetHeight() != 0) {
+		if (this.consProtNav != null && this.consProtNav.getImpl().getOffsetHeight() != 0) {
 			return this.consProtNav.getImpl().getOffsetHeight();
 		}
 		return 30;
@@ -72,14 +86,14 @@ public abstract class NavigableDockPanelW extends DockPanelW {
 	 * Add construction navigation bar.
 	 */
 	public final void addNavigationBar() {
-		consProtNav = (ConstructionProtocolNavigationW) app.getGuiManager()
-				.getConstructionProtocolNavigation(id);
+		consProtNav =
+				(ConstructionProtocolNavigationW) app.getGuiManager().getConstructionProtocolNavigation(id);
 		consProtNav.getImpl().addStyleName("consProtNav");
 		if (innerPanel == null) {
 			loadComponent();
 		}
 		innerPanel.add(consProtNav.getImpl()); // may be invisible, but
-													// made
+		// made
 		// visible later
 		updateNavigationBar();
 	}

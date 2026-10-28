@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoJoinPointsSegment
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 21. August 2003
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -46,8 +44,9 @@ import org.geogebra.common.kernel.prover.polynomial.PVariable;
  * @author Markus
  */
 public class AlgoJoinPointsSegment extends AlgoElement
-		implements AlgoJoinPointsSegmentInterface, SymbolicParametersBotanaAlgo,
-		SymbolicParametersAlgo {
+		implements AlgoJoinPointsSegmentInterface,
+				SymbolicParametersBotanaAlgo,
+				SymbolicParametersAlgo {
 
 	private GeoPoint P; // input
 	private GeoPoint Q; // input
@@ -68,8 +67,7 @@ public class AlgoJoinPointsSegment extends AlgoElement
 	 * @param Q
 	 *            end point
 	 */
-	public AlgoJoinPointsSegment(Construction cons, GeoPoint P,
-			GeoPoint Q) {
+	public AlgoJoinPointsSegment(Construction cons, GeoPoint P, GeoPoint Q) {
 		this(cons, P, Q, null, true);
 	}
 
@@ -85,8 +83,8 @@ public class AlgoJoinPointsSegment extends AlgoElement
 	 * @param addToConstructionList
 	 *            add to construction?
 	 */
-	public AlgoJoinPointsSegment(Construction cons, GeoPoint P, GeoPoint Q,
-			GeoPolygon poly, boolean addToConstructionList) {
+	public AlgoJoinPointsSegment(
+			Construction cons, GeoPoint P, GeoPoint Q, GeoPolygon poly, boolean addToConstructionList) {
 		super(cons, addToConstructionList);
 
 		// make sure that this helper algorithm is updated right after its
@@ -239,14 +237,13 @@ public class AlgoJoinPointsSegment extends AlgoElement
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
-		return getLoc().getPlainDefault("SegmentAB", "Segment %0, %1",
-					P.getLabel(tpl), Q.getLabel(tpl));
+	public final String toString(StringTemplate tpl) {
+		return getLoc()
+				.getPlainDefault("SegmentAB", "Segment %0, %1", P.getLabel(tpl), Q.getLabel(tpl));
 	}
 
 	@Override
-	public PVariable[] getBotanaVars(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PVariable[] getBotanaVars(GeoElementND geo) throws NoSymbolicParametersException {
 		if (botanaVars == null) {
 			botanaVars = SymbolicParameters.addBotanaVarsJoinPoints(input);
 		}
@@ -254,8 +251,7 @@ public class AlgoJoinPointsSegment extends AlgoElement
 	}
 
 	@Override
-	public PPolynomial[] getBotanaPolynomials(GeoElementND geo)
-			throws NoSymbolicParametersException {
+	public PPolynomial[] getBotanaPolynomials(GeoElementND geo) throws NoSymbolicParametersException {
 		// It's OK, polynomials for lines/segments are only created when a third
 		// point is lying on them, too:
 		return null;
@@ -267,32 +263,27 @@ public class AlgoJoinPointsSegment extends AlgoElement
 	}
 
 	@Override
-	public void getFreeVariables(HashSet<PVariable> variables)
-			throws NoSymbolicParametersException {
+	public void getFreeVariables(HashSet<PVariable> variables) throws NoSymbolicParametersException {
 		if (P != null && Q != null) {
 			P.getFreeVariables(variables);
 			Q.getFreeVariables(variables);
 			return;
 		}
 		throw new NoSymbolicParametersException();
-
 	}
 
 	@Override
-	public int[] getDegrees(AbstractProverReciosMethod a)
-			throws NoSymbolicParametersException {
+	public int[] getDegrees(AbstractProverReciosMethod a) throws NoSymbolicParametersException {
 		if (P != null && Q != null) {
 			int[] degree1 = P.getDegrees(a);
 			int[] degree2 = Q.getDegrees(a);
 			return SymbolicParameters.crossDegree(degree1, degree2);
 		}
 		throw new NoSymbolicParametersException();
-
 	}
 
 	@Override
-	public BigInteger[] getExactCoordinates(
-			final HashMap<PVariable, BigInteger> values)
+	public BigInteger[] getExactCoordinates(final HashMap<PVariable, BigInteger> values)
 			throws NoSymbolicParametersException {
 		if (P != null && Q != null) {
 			BigInteger[] coords1 = P.getExactCoordinates(values);
@@ -323,8 +314,7 @@ public class AlgoJoinPointsSegment extends AlgoElement
 
 	@Override
 	public ArrayList<GeoElementND> getFreeInputPoints() {
-		if (poly == null
-				|| !(poly.getParentAlgorithm() instanceof AlgoPolygonRegular)) {
+		if (poly == null || !(poly.getParentAlgorithm() instanceof AlgoPolygonRegular)) {
 			return super.getFreeInputPoints();
 		}
 
@@ -335,5 +325,4 @@ public class AlgoJoinPointsSegment extends AlgoElement
 	public boolean hasOnlyFreeInputPoints(EuclidianViewInterfaceSlim view) {
 		return view.getFreeInputPoints(this).size() == 2;
 	}
-
 }

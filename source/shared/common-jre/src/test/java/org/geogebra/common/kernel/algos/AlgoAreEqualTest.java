@@ -1,7 +1,23 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.algos;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.geogebra.common.AppCommonFactory;
 import org.geogebra.common.jre.headless.AppCommon;
@@ -11,12 +27,11 @@ import org.geogebra.common.kernel.geos.GeoInputBox;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.kernel.prover.AlgoAreEqual;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.geogebra.editor.share.util.Unicode;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import com.himamis.retex.editor.share.util.Unicode;
-
-public class AlgoAreEqualTest {
+class AlgoAreEqualTest {
 
 	private static AppCommon app;
 	private static Construction cons;
@@ -24,14 +39,14 @@ public class AlgoAreEqualTest {
 	/**
 	 * Set up the app
 	 */
-	@BeforeClass
-	public static void setUp() {
+	@BeforeAll
+	static void setUp() {
 		app = AppCommonFactory.create();
 		cons = app.getKernel().getConstruction();
 	}
 
 	@Test
-	public void simpleAlgebraicExpressions() {
+	void simpleAlgebraicExpressions() {
 		assertTrue(compare("0", "0"));
 		assertTrue(compare("2/4", "1/2"));
 		assertFalse(compare("0.3333333333333333", "1/3"));
@@ -54,14 +69,14 @@ public class AlgoAreEqualTest {
 	}
 
 	@Test
-	public void largeNumbers() {
+	void largeNumbers() {
 		assertTrue(compare("(73205*pi)/6", "73205*(pi/6)"));
 		assertTrue(compare("(73205*pi)/6", "(73205/6)*pi"));
 		assertTrue(compare("73205*(pi/6)", "(73205/6)*pi"));
 	}
 
 	@Test
-	public void expressionsContainingVariables() {
+	void expressionsContainingVariables() {
 		assertFalse(compare("1+a", "2"));
 		GeoNumeric n = new GeoNumeric(cons, 1);
 		n.setLabel("a");
@@ -69,7 +84,7 @@ public class AlgoAreEqualTest {
 	}
 
 	@Test
-	public void incorrectSyntax() {
+	void incorrectSyntax() {
 		assertFalse(compare("1+", "1"));
 	}
 
@@ -78,8 +93,8 @@ public class AlgoAreEqualTest {
 		GeoInputBox inputBox = new GeoInputBox(cons, linkedGeo);
 		inputBox.updateLinkedGeo(inputBoxContent);
 
-		GeoElementND[] parsed = app.getKernel().getAlgebraProcessor()
-				.processAlgebraCommand(expression, false);
+		GeoElementND[] parsed =
+				app.getKernel().getAlgebraProcessor().processAlgebraCommand(expression, false);
 
 		AlgoAreEqual areEqual = new AlgoAreEqual(cons, inputBox, (GeoElement) parsed[0]);
 

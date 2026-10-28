@@ -1,6 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel;
 
-import javax.annotation.CheckForNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An umbrella for objects representable by quadratic equations (e.g., conics, quadrics).
@@ -44,24 +60,24 @@ public interface QuadraticEquationRepresentable {
 		 * @return The enum case whose rawValue matches the passed-in rawValue, or {@code null}
 		 * if no such enum case was found.
 		 */
-		public static @CheckForNull Form valueOf(int rawValue) {
+		public static @Nullable Form valueOf(int rawValue) {
 			switch (rawValue) {
-			case CONST_IMPLICIT:
-				return IMPLICIT;
-			case CONST_EXPLICIT:
-				return EXPLICIT;
-			case CONST_SPECIFIC:
-				return SPECIFIC;
-			case CONST_PARAMETRIC:
-				return PARAMETRIC;
-			case CONST_USER:
-				return USER;
-			case CONST_VERTEX:
-				return VERTEX;
-			case CONST_CONICFORM:
-				return CONICFORM;
-			default:
-				return null;
+				case CONST_IMPLICIT:
+					return IMPLICIT;
+				case CONST_EXPLICIT:
+					return EXPLICIT;
+				case CONST_SPECIFIC:
+					return SPECIFIC;
+				case CONST_PARAMETRIC:
+					return PARAMETRIC;
+				case CONST_USER:
+					return USER;
+				case CONST_VERTEX:
+					return VERTEX;
+				case CONST_CONICFORM:
+					return CONICFORM;
+				default:
+					return null;
 			}
 		}
 
@@ -69,17 +85,17 @@ public interface QuadraticEquationRepresentable {
 			this.rawValue = rawValue;
 		}
 	}
-	
+
 	/**
 	 * @return The equation form of this object.
 	 */
-	@CheckForNull Form getEquationForm();
+	@Nullable Form getEquationForm();
 
 	/**
 	 * Set the equation form of this object.
 	 * @param equationForm the equation form. If {@code null}, this method has no effect.
 	 */
-	void setEquationForm(@CheckForNull Form equationForm);
+	void setEquationForm(@Nullable Form equationForm);
 
 	/**
 	 * Set the equation form to {@code IMPLICIT}.

@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoIntersectPolynomialConic.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 14.07.2010, 14:28
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -44,7 +42,7 @@ public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 	private GeoConic c;
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param h
@@ -52,8 +50,7 @@ public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 	 * @param c
 	 *            conic
 	 */
-	public AlgoIntersectPolynomialConic(Construction cons, GeoFunction h,
-			GeoConic c) {
+	public AlgoIntersectPolynomialConic(Construction cons, GeoFunction h, GeoConic c) {
 		super(cons, h, c);
 		this.h = h;
 		this.c = c;
@@ -69,22 +66,17 @@ public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 		double[] A = c.getFlatMatrix();
 		PolyFunction pf = null;
 		if (h.isPolynomialFunction(false)) {
-			pf = h.getFunction().getNumericPolynomialDerivative(0, false,
-					false, false);
-
+			pf = h.getFunction().getNumericPolynomialDerivative(0, false, false, false);
 		}
 		if (pf != null) {
 			PolynomialFunction y = new PolynomialFunction(pf.getCoeffs());
-			PolynomialFunction r = new PolynomialFunction(
-					new double[] { A[2], 2 * A[4], A[0] });
-			r = r.add(y.multiply(new PolynomialFunction(
-					new double[] { 2 * A[5], 2 * A[3] })));
-			r = r.add(y.multiply(
-					y.multiply(new PolynomialFunction(new double[] { A[1] }))));
+			PolynomialFunction r = new PolynomialFunction(new double[] {A[2], 2 * A[4], A[0]});
+			r = r.add(y.multiply(new PolynomialFunction(new double[] {2 * A[5], 2 * A[3]})));
+			r = r.add(y.multiply(y.multiply(new PolynomialFunction(new double[] {A[1]}))));
 			setRootsPolynomial(r);
 		} else {
 			Kernel ker = cons.getKernel();
-			boolean oldSilentMode = ker.isSilentMode();
+			final boolean oldSilentMode = ker.isSilentMode();
 			ker.setSilentMode(true);
 
 			GeoImplicit iPoly = kernel.newImplicitPoly(cons);
@@ -123,23 +115,23 @@ public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 				halfAxes = c.getHalfAxes();
 			}
 
-			AlgoRoots algo = null;
+			AlgoRoots algo;
 			if (midPoint != null && halfAxes != null) {
-				algo = new AlgoRoots(cons, paramEquation,
-						new GeoNumeric(cons,
-								midPoint.getX() - ellipseCircleFactor
-										* Math.max(halfAxes[0], halfAxes[1])),
-						new GeoNumeric(cons,
-								midPoint.getX() + ellipseCircleFactor
-										* Math.max(halfAxes[0], halfAxes[1])));
+				algo = new AlgoRoots(
+						cons,
+						paramEquation,
+						new GeoNumeric(
+								cons, midPoint.getX() - ellipseCircleFactor * Math.max(halfAxes[0], halfAxes[1])),
+						new GeoNumeric(
+								cons, midPoint.getX() + ellipseCircleFactor * Math.max(halfAxes[0], halfAxes[1])));
 			} else {
-				algo = new AlgoRoots(cons, paramEquation,
-						new GeoNumeric(cons,
-								h.getMinParameter() - hyperParaBolaFactor
-										* Math.abs(h.getMinParameter())),
-						new GeoNumeric(cons,
-								h.getMaxParameter() + hyperParaBolaFactor
-										* Math.abs(h.getMaxParameter())));
+				algo = new AlgoRoots(
+						cons,
+						paramEquation,
+						new GeoNumeric(
+								cons, h.getMinParameter() - hyperParaBolaFactor * Math.abs(h.getMinParameter())),
+						new GeoNumeric(
+								cons, h.getMaxParameter() + hyperParaBolaFactor * Math.abs(h.getMaxParameter())));
 
 				// Log.debug("interval(hyperbola/parabola): "
 				// + (h.getMinParameter() - Math.abs(h.getMinParameter()
@@ -153,16 +145,13 @@ public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 			List<double[]> valPairs = new ArrayList<>();
 			for (int i = 0; i < rootPoints.length; i++) {
 				double t = rootPoints[i].getX();
-				valPairs.add(new double[] { t, h.value(t) });
+				valPairs.add(new double[] {t, h.value(t)});
 			}
 
 			ker.setSilentMode(oldSilentMode);
 
 			setPoints(valPairs);
-			return;
-
 		}
-
 	}
 
 	@Override
@@ -179,5 +168,4 @@ public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 	protected double getYValue(double x) {
 		return h.value(x);
 	}
-
 }

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Schools
-Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -24,11 +28,10 @@ import org.geogebra.common.kernel.geos.GeoPoint;
 /**
  * Command: SumSquaredErrors[&lt;List&gt;,&lt;Function&gt;] Calculates
  * Sum[(y(&lt;List&gt;)-f(x( &lt;List&gt;))^2] for a function f(x) fitted to the list.
- * 
+ *
  * @author Hans-Petter Ulven
  * @version 2010-02-21
  */
-
 public class AlgoSumSquaredErrors extends AlgoElement {
 
 	private GeoList inputList; // input
@@ -46,8 +49,8 @@ public class AlgoSumSquaredErrors extends AlgoElement {
 	 * @param function
 	 *            function (model)
 	 */
-	public AlgoSumSquaredErrors(Construction cons, String label,
-			GeoList inputList, GeoFunctionable function) {
+	public AlgoSumSquaredErrors(
+			Construction cons, String label, GeoList inputList, GeoFunctionable function) {
 		this(cons, inputList, function);
 		sse.setLabel(label);
 	}
@@ -55,14 +58,13 @@ public class AlgoSumSquaredErrors extends AlgoElement {
 	/**
 	 * @param cons
 	 *            construction
-	 * 
+	 *
 	 * @param inputList
 	 *            list of points
 	 * @param function
 	 *            function (model)
 	 */
-	public AlgoSumSquaredErrors(Construction cons, GeoList inputList,
-			GeoFunctionable function) {
+	public AlgoSumSquaredErrors(Construction cons, GeoList inputList, GeoFunctionable function) {
 		super(cons);
 		this.inputList = inputList;
 		this.function = function;
@@ -106,8 +108,8 @@ public class AlgoSumSquaredErrors extends AlgoElement {
 
 		// Calculate sse:
 		double errorsum = 0.0d;
-		GeoElement geo = null;
-		GeoPoint point = null;
+		GeoElement geo;
+		GeoPoint point;
 		double x, y, v;
 		for (int i = 0; i < size; i++) {
 			geo = inputList.get(i);
@@ -125,5 +127,4 @@ public class AlgoSumSquaredErrors extends AlgoElement {
 
 		sse.setValue(errorsum);
 	}
-
 }

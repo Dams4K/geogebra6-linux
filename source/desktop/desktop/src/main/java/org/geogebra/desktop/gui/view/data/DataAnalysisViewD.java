@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.gui.view.data;
 
 import java.awt.BorderLayout;
@@ -33,7 +49,6 @@ import org.geogebra.common.kernel.ModeSetter;
 import org.geogebra.common.kernel.View;
 import org.geogebra.common.kernel.geos.GProperty;
 import org.geogebra.common.kernel.geos.GeoElement;
-import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.GeoGebraColorConstants;
 import org.geogebra.desktop.export.PrintPreviewD;
@@ -42,9 +57,9 @@ import org.geogebra.desktop.main.AppD;
 
 /**
  * View to display plots and statistical analysis of data.
- * 
+ *
  * @author G. Sturr
- * 
+ *
  */
 public class DataAnalysisViewD extends JPanel
 		implements View, Printable, SetLabels, IDataAnalysisListener {
@@ -59,28 +74,37 @@ public class DataAnalysisViewD extends JPanel
 	private DataAnalysisStyleBar stylebar;
 
 	// colors
-	public static final Color TABLE_GRID_COLOR = org.geogebra.desktop.awt.GColorD
-			.getAwtColor(GeoGebraColorConstants.TABLE_GRID_COLOR);
+	public static final Color TABLE_GRID_COLOR =
+			org.geogebra.desktop.awt.GColorD.getAwtColor(GeoGebraColorConstants.TABLE_GRID_COLOR);
 	public static final Color TABLE_HEADER_COLOR = new Color(240, 240, 240);
-	public static final Color HISTOGRAM_COLOR = org.geogebra.desktop.awt.GColorD
-			.getAwtColor(GColor.BLUE);
-	public static final Color BOXPLOT_COLOR = org.geogebra.desktop.awt.GColorD
-			.getAwtColor(GeoGebraColorConstants.GGB_RED);
-	public static final Color BARCHART_COLOR = org.geogebra.desktop.awt.GColorD
-			.getAwtColor(GeoGebraColorConstants.GGB_GREEN);
+	public static final Color HISTOGRAM_COLOR =
+			org.geogebra.desktop.awt.GColorD.getAwtColor(GColor.BLUE);
+	public static final Color BOXPLOT_COLOR =
+			org.geogebra.desktop.awt.GColorD.getAwtColor(GeoGebraColorConstants.GGB_RED);
+	public static final Color BARCHART_COLOR =
+			org.geogebra.desktop.awt.GColorD.getAwtColor(GeoGebraColorConstants.GGB_GREEN);
 
-	public static final Color DOTPLOT_COLOR = org.geogebra.desktop.awt.GColorD
-			.getAwtColor(GeoGebraColorConstants.GRAY5);
-	public static final Color NQPLOT_COLOR = org.geogebra.desktop.awt.GColorD
-			.getAwtColor(GeoGebraColorConstants.GRAY5);
+	public static final Color DOTPLOT_COLOR =
+			org.geogebra.desktop.awt.GColorD.getAwtColor(GeoGebraColorConstants.GRAY5);
+	public static final Color NQPLOT_COLOR =
+			org.geogebra.desktop.awt.GColorD.getAwtColor(GeoGebraColorConstants.GRAY5);
 	public static final Color REGRESSION_COLOR = Color.RED;
-	public static final Color OVERLAY_COLOR = org.geogebra.desktop.awt.GColorD
-			.getAwtColor(GeoGebraColorConstants.DARKBLUE);
+	public static final Color OVERLAY_COLOR =
+			org.geogebra.desktop.awt.GColorD.getAwtColor(GeoGebraColorConstants.DARKBLUE);
 
-	private Color[] colors = { TABLE_GRID_COLOR, TABLE_HEADER_COLOR,
-			HISTOGRAM_COLOR, BOXPLOT_COLOR, BARCHART_COLOR, DOTPLOT_COLOR,
-			NQPLOT_COLOR, REGRESSION_COLOR, OVERLAY_COLOR, Color.BLACK,
-			Color.WHITE };
+	private Color[] colors = {
+		TABLE_GRID_COLOR,
+		TABLE_HEADER_COLOR,
+		HISTOGRAM_COLOR,
+		BOXPLOT_COLOR,
+		BARCHART_COLOR,
+		DOTPLOT_COLOR,
+		NQPLOT_COLOR,
+		REGRESSION_COLOR,
+		OVERLAY_COLOR,
+		Color.BLACK,
+		Color.WHITE
+	};
 
 	// main GUI panels
 	private DataPanelD dataPanel;
@@ -100,7 +124,7 @@ public class DataAnalysisViewD extends JPanel
 
 	/*************************************************
 	 * Constructs the view.
-	 * 
+	 *
 	 * @param app application
 	 * @param mode mode
 	 */
@@ -116,22 +140,17 @@ public class DataAnalysisViewD extends JPanel
 
 		setView(null, mode, false);
 		model.setIniting(false);
-
 	}
 
 	/*************************************************
 	 * END constructor
 	 */
-
-	protected void setView(DataSource dataSource, int mode,
-			boolean forceModeUpdate) {
+	protected void setView(DataSource dataSource, int mode, boolean forceModeUpdate) {
 		app.getSettings().getDataAnalysis().setMode(mode);
-		model.setView(dataSource, mode,
-				app.getSettings().getDataAnalysis(), forceModeUpdate);
+		model.setView(dataSource, mode, app.getSettings().getDataAnalysis(), forceModeUpdate);
 		updateFonts();
 		updateGUI();
 		revalidate();
-
 	}
 
 	/**
@@ -155,33 +174,27 @@ public class DataAnalysisViewD extends JPanel
 	}
 
 	@Override
-	public void setPlotPanelOVNotNumeric(int mode, PlotType plotType1,
-			PlotType plotType2) {
+	public void setPlotPanelOVNotNumeric(int mode, PlotType plotType1, PlotType plotType2) {
 		dataDisplayPanel1.setPanel(plotType1, mode);
 		dataDisplayPanel2.setPanel(plotType2, mode);
-
 	}
 
 	@Override
-	public void setPlotPanelOVRawData(int mode, PlotType plotType1,
-			PlotType plotType2) {
+	public void setPlotPanelOVRawData(int mode, PlotType plotType1, PlotType plotType2) {
 		dataDisplayPanel1.setPanel(plotType1, mode);
 		dataDisplayPanel2.setPanel(plotType2, mode);
-
 	}
 
 	@Override
 	public void setPlotPanelOVFrequency(int mode, PlotType pt1, PlotType pt2) {
 		dataDisplayPanel1.setPanel(pt1, mode);
 		dataDisplayPanel2.setPanel(pt2, mode);
-
 	}
 
 	@Override
 	public void setPlotPanelOVClass(int mode, PlotType pt1, PlotType pt2) {
 		dataDisplayPanel1.setPanel(pt1, mode);
 		dataDisplayPanel2.setPanel(pt2, mode);
-
 	}
 
 	@Override
@@ -193,7 +206,6 @@ public class DataAnalysisViewD extends JPanel
 	@Override
 	public void setPlotPanelMultiVar(int mode, PlotType pt1) {
 		dataDisplayPanel1.setPanel(pt1, mode);
-
 	}
 
 	/**
@@ -217,7 +229,6 @@ public class DataAnalysisViewD extends JPanel
 		}
 
 		return dataPanel;
-
 	}
 
 	@Override
@@ -244,14 +255,12 @@ public class DataAnalysisViewD extends JPanel
 		// statData panel
 
 		if (!model.isMultiVar()) {
-			statDataPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-					statisticsPanel, null);
+			statDataPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, statisticsPanel, null);
 			statDataPanel.setResizeWeight(0.5);
 			statDataPanel.setBorder(BorderFactory.createEmptyBorder());
 		}
 		if (model.isMultiVar()) {
-			statDataPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-					statisticsPanel, null);
+			statDataPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, statisticsPanel, null);
 			statDataPanel.setDividerSize(0);
 			statDataPanel.setBorder(BorderFactory.createEmptyBorder());
 		}
@@ -267,8 +276,8 @@ public class DataAnalysisViewD extends JPanel
 		// plotComboPanel panel
 
 		// create a splitPane to hold the two plotComboPanels
-		comboPanelSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				dataDisplayPanel1, dataDisplayPanel2);
+		comboPanelSplit =
+				new JSplitPane(JSplitPane.VERTICAL_SPLIT, dataDisplayPanel1, dataDisplayPanel2);
 
 		comboPanelSplit.setDividerLocation(0.5);
 		comboPanelSplit.setBorder(BorderFactory.createEmptyBorder());
@@ -282,14 +291,11 @@ public class DataAnalysisViewD extends JPanel
 		// display panel
 		// ============================================
 		if (!model.isMultiVar()) {
-			displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-					statDataPanel, plotComboPanel);
+			displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, statDataPanel, plotComboPanel);
 			displayPanel.setResizeWeight(0.5);
 		} else {
-			displayPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-					plotComboPanel, statDataPanel);
+			displayPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, plotComboPanel, statDataPanel);
 			displayPanel.setResizeWeight(1);
-
 		}
 		displayPanel.setBorder(BorderFactory.createEmptyBorder());
 
@@ -315,7 +321,6 @@ public class DataAnalysisViewD extends JPanel
 
 		model.setShowComboPanel2(model.showDataDisplayPanel2());
 		updateStatDataPanelVisibility();
-
 	}
 
 	/**
@@ -334,6 +339,9 @@ public class DataAnalysisViewD extends JPanel
 		return daCtrl;
 	}
 
+	/**
+	 * @return data source
+	 */
 	public DataSource getDataSource() {
 		return model.getDataSource();
 	}
@@ -363,7 +371,7 @@ public class DataAnalysisViewD extends JPanel
 
 	/**
 	 * Component representation of this view
-	 * 
+	 *
 	 * @return reference to self
 	 */
 	public JComponent getDataAnalysisViewComponent() {
@@ -375,6 +383,9 @@ public class DataAnalysisViewD extends JPanel
 		return daCtrl;
 	}
 
+	/**
+	 * @return regression model geo
+	 */
 	public GeoElement getRegressionModel() {
 		return daCtrl.getRegressionModel();
 	}
@@ -436,14 +447,12 @@ public class DataAnalysisViewD extends JPanel
 				if (displayPanel.getLeftComponent() == null) {
 					displayPanel.setLeftComponent(statDataPanel);
 					// displayPanel.resetToPreferredSizes();
-					displayPanel.setDividerLocation(
-							displayPanel.getLastDividerLocation());
+					displayPanel.setDividerLocation(displayPanel.getLastDividerLocation());
 					displayPanel.setDividerSize(defaultDividerSize);
 				}
 
 			} else { // statData panel is empty, so hide it
-				displayPanel.setLastDividerLocation(
-						displayPanel.getDividerLocation());
+				displayPanel.setLastDividerLocation(displayPanel.getDividerLocation());
 				displayPanel.setLeftComponent(null);
 				displayPanel.setDividerSize(0);
 			}
@@ -454,18 +463,14 @@ public class DataAnalysisViewD extends JPanel
 				if (displayPanel.getBottomComponent() == null) {
 					displayPanel.setBottomComponent(statDataPanel);
 					// displayPanel.resetToPreferredSizes();
-					displayPanel.setDividerLocation(
-							displayPanel.getLastDividerLocation());
+					displayPanel.setDividerLocation(displayPanel.getLastDividerLocation());
 					displayPanel.setDividerSize(defaultDividerSize);
 				}
 			} else {
-				displayPanel.setLastDividerLocation(
-						displayPanel.getDividerLocation());
+				displayPanel.setLastDividerLocation(displayPanel.getDividerLocation());
 				displayPanel.setBottomComponent(null);
 				displayPanel.setDividerSize(0);
-
 			}
-
 		}
 
 		updateFonts();
@@ -477,8 +482,7 @@ public class DataAnalysisViewD extends JPanel
 	 * Print this view
 	 */
 	public void doPrint() {
-		PrintPreviewD.get(app, App.VIEW_DATA_ANALYSIS, PageFormat.LANDSCAPE)
-				.setVisible(true);
+		PrintPreviewD.get(app, App.VIEW_DATA_ANALYSIS, PageFormat.LANDSCAPE).setVisible(true);
 	}
 
 	// =================================================
@@ -533,7 +537,6 @@ public class DataAnalysisViewD extends JPanel
 				setFontRecursive((Container) com, font);
 			}
 		}
-
 	}
 
 	@Override
@@ -586,7 +589,7 @@ public class DataAnalysisViewD extends JPanel
 	}
 
 	@Override
-	final public void updateVisualStyle(GeoElement geo, GProperty prop) {
+	public final void updateVisualStyle(GeoElement geo, GProperty prop) {
 		update(geo);
 	}
 
@@ -634,7 +637,8 @@ public class DataAnalysisViewD extends JPanel
 	 * Attach this view
 	 */
 	public void attachView() {
-		model.updateFromSettings();
+		model.updateFromSettings(
+				() -> app.getGuiManager().getSpreadsheetView().getSpreadsheetTable().getSelectedRanges());
 		kernel.attach(this);
 
 		// attachView to plot panels
@@ -660,6 +664,9 @@ public class DataAnalysisViewD extends JPanel
 		// kernel.notifyRemoveAll(this);
 	}
 
+	/**
+	 * @return data titles
+	 */
 	public String[] getDataTitles() {
 		return daCtrl.getDataTitles();
 	}
@@ -684,8 +691,7 @@ public class DataAnalysisViewD extends JPanel
 		Construction cons = kernel.getConstruction();
 		String title = cons.getTitle();
 		if (!"".equals(title)) {
-			Font titleFont = app.getBoldFont().deriveFont(Font.BOLD,
-					app.getBoldFont().getSize() + 2);
+			Font titleFont = app.getBoldFont().deriveFont(Font.BOLD, app.getBoldFont().getSize() + 2);
 			g2d.setFont(titleFont);
 			g2d.setColor(Color.black);
 			// Font fn = g2d.getFont();
@@ -723,8 +729,7 @@ public class DataAnalysisViewD extends JPanel
 
 		// scale the dialog so that it fits on one page.
 		double xScale = pageFormat.getImageableWidth() / this.getWidth();
-		double yScale = (pageFormat.getImageableHeight() - (y + 20))
-				/ this.getHeight();
+		double yScale = (pageFormat.getImageableHeight() - (y + 20)) / this.getHeight();
 		double scale = Math.min(xScale, yScale);
 
 		this.paint(g2d, scale);
@@ -740,7 +745,6 @@ public class DataAnalysisViewD extends JPanel
 		Graphics2D g2 = (Graphics2D) graphics;
 		g2.scale(scale, scale);
 		super.paint(graphics);
-
 	}
 
 	@Override
@@ -748,6 +752,9 @@ public class DataAnalysisViewD extends JPanel
 		return App.VIEW_DATA_ANALYSIS;
 	}
 
+	/**
+	 * @return export menu
+	 */
 	public JPopupMenu getExportMenu() {
 		return dataDisplayPanel1.getExportMenu();
 	}
@@ -774,7 +781,6 @@ public class DataAnalysisViewD extends JPanel
 
 		setDataPlotPanels(plotType1, plotType2);
 		updateLayout();
-
 	}
 
 	@Override
@@ -785,12 +791,10 @@ public class DataAnalysisViewD extends JPanel
 			comboPanelSplit.setDividerSize(4);
 		} else {
 			comboPanelSplit.setBottomComponent(null);
-			comboPanelSplit.setLastDividerLocation(
-					comboPanelSplit.getDividerLocation());
+			comboPanelSplit.setLastDividerLocation(comboPanelSplit.getDividerLocation());
 			comboPanelSplit.setDividerLocation(0);
 			comboPanelSplit.setDividerSize(0);
 		}
-
 	}
 
 	/**
@@ -819,13 +823,10 @@ public class DataAnalysisViewD extends JPanel
 		} else {
 			dataDisplayPanel1.update();
 		}
-
 	}
 
 	@Override
 	public DataDisplayModel getDisplayModel(int index) {
-		return index == 0 ? this.dataDisplayPanel1.getModel()
-				: this.dataDisplayPanel2.getModel();
+		return index == 0 ? this.dataDisplayPanel1.getModel() : this.dataDisplayPanel2.getModel();
 	}
-
 }

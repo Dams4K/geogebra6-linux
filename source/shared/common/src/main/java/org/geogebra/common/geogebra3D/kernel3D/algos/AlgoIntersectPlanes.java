@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoJoinPointsSegment
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 21. August 2003
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.geogebra3D.kernel3D.algos;
@@ -33,13 +31,12 @@ import org.geogebra.common.util.DoubleUtil;
 /**
  *
  * @author ggb3D
- * 
+ *
  *         Calculate the GeoPoint3D intersection of two coord sys (eg line and
  *         plane).
- * 
+ *
  */
-public class AlgoIntersectPlanes extends AlgoIntersectCoordSys
-		implements HasShortSyntax {
+public class AlgoIntersectPlanes extends AlgoIntersectCoordSys implements HasShortSyntax {
 	/** unknown */
 	public static final int RESULTCATEGORY_NA = -1;
 	/** intersecting */
@@ -58,7 +55,7 @@ public class AlgoIntersectPlanes extends AlgoIntersectCoordSys
 
 	/**
 	 * Creates new AlgoIntersectLinePlane
-	 * 
+	 *
 	 * @param cons
 	 *            the construction
 	 * @param label
@@ -68,8 +65,7 @@ public class AlgoIntersectPlanes extends AlgoIntersectCoordSys
 	 * @param cs2
 	 *            second coord sys
 	 */
-	public AlgoIntersectPlanes(Construction cons, String label, GeoPlaneND cs1,
-			GeoPlaneND cs2) {
+	public AlgoIntersectPlanes(Construction cons, String label, GeoPlaneND cs1, GeoPlaneND cs2) {
 
 		super(cons, label, cs1, cs2, false);
 	}
@@ -82,8 +78,7 @@ public class AlgoIntersectPlanes extends AlgoIntersectCoordSys
 	 * @param cs2
 	 *            second plane
 	 */
-	public AlgoIntersectPlanes(Construction cons, GeoPlaneND cs1,
-			GeoPlaneND cs2) {
+	public AlgoIntersectPlanes(Construction cons, GeoPlaneND cs1, GeoPlaneND cs2) {
 		super(cons, cs1, cs2, false);
 	}
 
@@ -139,7 +134,7 @@ public class AlgoIntersectPlanes extends AlgoIntersectCoordSys
 
 	/**
 	 * TODO optimize it, using the coefficients of planes directly
-	 * 
+	 *
 	 * @param cs1
 	 *            first plane
 	 * @param cs2
@@ -161,8 +156,7 @@ public class AlgoIntersectPlanes extends AlgoIntersectCoordSys
 		if (cs1.getNormal().crossProduct(cs2.getNormal()).isZero()) {
 			// one normal vector is perpendicular to the difference of the two
 			// two origins
-			if (DoubleUtil.isZero(cs2.getOrigin().sub(cs1.getOrigin())
-					.dotproduct(cs1.getNormal()))) {
+			if (DoubleUtil.isZero(cs2.getOrigin().sub(cs1.getOrigin()).dotproduct(cs1.getNormal()))) {
 				return RESULTCATEGORY_CONTAINED;
 			}
 			return RESULTCATEGORY_PARALLEL;
@@ -181,17 +175,16 @@ public class AlgoIntersectPlanes extends AlgoIntersectCoordSys
 	}
 
 	@Override
-	final public String getDefinition(StringTemplate tpl) {
+	public final String getDefinition(StringTemplate tpl) {
 		if (shortSyntax) {
-			return "(" + getCS1().getLabel(tpl) + "," + getCS2().getLabel(tpl)
-				+ ")";
+			return "(" + getCS1().getLabel(tpl) + "," + getCS2().getLabel(tpl) + ")";
 		}
 		return super.getDefinition(tpl);
 	}
 
 	@Override
-	public void setShortSyntax(boolean b) {
-		this.shortSyntax = b;
+	public void setShortSyntax(boolean shortSyntax) {
+		this.shortSyntax = shortSyntax;
 	}
 
 	@Override
@@ -200,8 +193,7 @@ public class AlgoIntersectPlanes extends AlgoIntersectCoordSys
 	}
 
 	@Override
-	final public String toExpString(StringTemplate tpl) {
+	public final String toExpString(StringTemplate tpl) {
 		return getDefinition(tpl);
 	}
-
 }

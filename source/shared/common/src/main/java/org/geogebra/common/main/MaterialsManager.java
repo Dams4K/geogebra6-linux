@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main;
 
 import org.geogebra.common.move.ggtapi.models.Material;
@@ -29,7 +45,7 @@ public abstract class MaterialsManager implements MaterialsManagerI {
 
 	/**
 	 * Remove all reserved characters from a ggb file title
-	 * 
+	 *
 	 * @param title
 	 *            title for ggb file
 	 * @return title without reserved characters
@@ -40,8 +56,7 @@ public abstract class MaterialsManager implements MaterialsManagerI {
 		return sb.toString();
 	}
 
-	private static void appendTitleWithoutReservedCharacters(String title,
-			StringBuilder sb) {
+	private static void appendTitleWithoutReservedCharacters(String title, StringBuilder sb) {
 		for (int i = 0; i < title.length(); i++) {
 			if (reservedCharacters.indexOf(title.charAt(i)) == -1) {
 				sb.append(title.charAt(i));
@@ -60,19 +75,19 @@ public abstract class MaterialsManager implements MaterialsManagerI {
 
 	/**
 	 * returns the ID from the given key. (key is of form "file_ID_fileName")
-	 * 
+	 *
 	 * @param key
 	 *            String
 	 * @return int ID
 	 */
 	public static int getIDFromKey(String key) {
-		return Integer.parseInt(key.substring(FILE_PREFIX.length(),
-				key.indexOf("_", FILE_PREFIX.length())));
+		return Integer.parseInt(
+				key.substring(FILE_PREFIX.length(), key.indexOf("_", FILE_PREFIX.length())));
 	}
 
 	/**
 	 * key is of form "file_ID_title"
-	 * 
+	 *
 	 * @param key
 	 *            file key
 	 * @return the title
@@ -83,7 +98,7 @@ public abstract class MaterialsManager implements MaterialsManagerI {
 
 	/**
 	 * Update local copy
-	 * 
+	 *
 	 * @param title
 	 *            new title
 	 * @param modified
@@ -91,8 +106,7 @@ public abstract class MaterialsManager implements MaterialsManagerI {
 	 * @param material
 	 *            material
 	 */
-	protected abstract void updateFile(String title, long modified,
-			Material material);
+	protected abstract void updateFile(String title, long modified, Material material);
 
 	protected abstract void showTooltip(Material mat);
 

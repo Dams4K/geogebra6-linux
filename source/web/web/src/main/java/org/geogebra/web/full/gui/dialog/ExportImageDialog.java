@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.dialog;
 
 import org.geogebra.common.euclidian.EuclidianView;
@@ -24,7 +40,7 @@ import jsinterop.base.Js;
  * @author csilla
  *
  */
-public class ExportImageDialog extends ComponentDialog {
+public final class ExportImageDialog extends ComponentDialog {
 	private FlowPanel contentPanel;
 	private NoDragImage previewImage;
 	private Frame iframePDF;
@@ -49,8 +65,7 @@ public class ExportImageDialog extends ComponentDialog {
 		buildContent();
 
 		setOnPositiveAction(() -> {
-			Browser.exportImage(base64Url,
-					app.getExportTitle() + getExtension(base64Url));
+			Browser.exportImage(base64Url, app.getExportTitle() + getExtension(base64Url));
 		});
 		setOnNegativeAction(app::copyGraphicsViewToClipboard);
 	}
@@ -80,8 +95,7 @@ public class ExportImageDialog extends ComponentDialog {
 		boolean greyscale = false;
 
 		return StringUtil.pngMarker
-				+ app.getGgbApi().getPNGBase64(exportScale, transparent, dpi,
-						false, greyscale);
+				+ app.getGgbApi().getPNGBase64(exportScale, transparent, dpi, false, greyscale);
 	}
 
 	private void buildContent() {
@@ -126,8 +140,7 @@ public class ExportImageDialog extends ComponentDialog {
 				iframe.setTabIndex(-1);
 				iframe.setSrc(imgStr);
 
-				Js.<HTMLIFrameElement>uncheckedCast(iframe)
-						.addEventListener("load", (event) -> center());
+				Js.<HTMLIFrameElement>uncheckedCast(iframe).addEventListener("load", (event) -> center());
 			} else {
 				previewImage = new NoDragImage(imgStr);
 				previewImage.addStyleName("prevImg");

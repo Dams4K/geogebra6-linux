@@ -1,8 +1,32 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.plot.interval;
+
+import static org.geogebra.common.kernel.interval.IntervalSetOps.connected;
+import static org.geogebra.common.kernel.interval.IntervalSetOps.connectedInterval;
+import static org.geogebra.common.kernel.interval.IntervalSetOps.empty;
+import static org.geogebra.common.kernel.interval.IntervalSetOps.invertedGap;
+import static org.geogebra.common.kernel.interval.IntervalSetOps.zero;
 
 import org.geogebra.common.awt.GPoint;
 import org.geogebra.common.euclidian.plot.LabelPositionCalculator;
 import org.geogebra.common.kernel.interval.Interval;
+import org.geogebra.common.kernel.interval.IntervalSet;
+import org.geogebra.common.kernel.interval.IntervalSetOps;
 import org.geogebra.common.kernel.interval.function.IntervalTuple;
 
 public class IntervalPath {
@@ -10,14 +34,12 @@ public class IntervalPath {
 	private final IntervalPathPlotter gp;
 	private final EuclidianViewBounds bounds;
 	private final QueryFunctionData data;
-	private Interval lastY;
+	private IntervalSet lastY;
 	private final DrawInterval drawInterval;
 	private final DrawInvertedInterval drawInvertedInterval;
 
 	private final LabelPositionCalculator labelPositionCalculator;
 	private GPoint labelPoint = null;
-
-	private int lastPiece = 0;
 
 	/**
 	 * Constructor.
@@ -25,13 +47,12 @@ public class IntervalPath {
 	 * @param bounds {@link EuclidianViewBounds}
 	 * @param data {@link IntervalFunctionModelImpl}
 	 */
-	public IntervalPath(IntervalPathPlotter gp, EuclidianViewBounds bounds,
-			QueryFunctionData data) {
+	public IntervalPath(IntervalPathPlotter gp, EuclidianViewBounds bounds, QueryFunctionData data) {
 		this.gp = gp;
 		this.bounds = bounds;
 		this.data = data;
 		labelPositionCalculator = new LabelPositionCalculator(bounds);
-		lastY = new Interval();
+		lastY = empty();
 		drawInterval = new DrawInterval(gp, bounds);
 		drawInvertedInterval = new DrawInvertedInterval(gp, data, bounds);
 	}
@@ -45,55 +66,56 @@ public class IntervalPath {
 	}
 
 	private void drawAt(int index) {
-		IntervalTuple tuple = data.at(index);
-		if (tuple.isUndefined() || isPieceChanged(tuple)) {
+		IntervalSet ySet = data.yTopologyAt(index);
+		if (shouldBreakPath(ySet)) {
 			noJoinForNextTuple();
 		} else {
 			drawTupleAt(index);
 		}
-		drawInterval.setJoinToPrevious(!tuple.isUndefined()
-				&& !isPieceChanged(tuple));
+		drawInterval.setJoinToPrevious(shouldDraw(ySet));
+	}
+
+	private boolean shouldBreakPath(IntervalSet ySet) {
+		return ySet.isEmpty() || ySet.isOverflow();
+	}
+
+	private boolean shouldDraw(IntervalSet ySet) {
+		return !shouldBreakPath(ySet);
 	}
 
 	private void noJoinForNextTuple() {
-		lastY.setUndefined();
+		lastY = empty();
 	}
 
 	private void drawTupleAt(int index) {
-		if (isJoinNeeded(index)) {
+		if (isJoinNeeded()) {
 			drawTupleJoined(index);
 		} else {
 			drawTupleIndependent(index);
 		}
 	}
 
-	private boolean isPieceChanged(IntervalTuple tuple) {
-		if (tuple.piece() != lastPiece) {
-			lastPiece = tuple.piece();
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean isJoinNeeded(int index) {
-		return !(lastY.isUndefined() || isPieceChanged(data.at(index)));
+	private boolean isJoinNeeded() {
+		return !lastY.isEmpty();
 	}
 
 	private void drawTupleJoined(int index) {
 		IntervalTuple tuple = data.at(index);
-		if (tuple.isInverted()) {
+		IntervalSet yTopology = data.yTopologyAt(index);
+		if (yTopology.isEmpty()) {
+			noJoinForNextTuple();
+		} else if (yTopology.isInverted()) {
 			drawInvertedJoined(index);
-		} else if (tuple.y().isWhole()) {
-			drawWhole(tuple.x());
-		} else if (!lastY.isUndefined()) {
+		} else if (yTopology.isWhole()) {
+			drawWhole(connectedInterval(tuple.xSet()));
+		} else if (!lastY.isEmpty()) {
 			drawNonInverted(tuple);
 		}
 		calculateLabelPoint(data.at(index));
 	}
 
 	private void drawNonInverted(IntervalTuple tuple) {
-		if (tuple.y().hasInfinity()) {
+		if (IntervalSetOps.hasInfinity(tuple.ySet())) {
 			drawNormalInfinity(tuple);
 		} else {
 			drawNormalJoined(tuple);
@@ -101,7 +123,7 @@ public class IntervalPath {
 	}
 
 	private void drawInvertedJoined(int index) {
-		if (!isJoinNeeded(index) || data.isWholeAt(index)) {
+		if (!isJoinNeeded()) {
 			noJoinForNextTuple();
 		} else {
 			lastY = drawInvertedInterval.drawJoined(index, lastY);
@@ -109,25 +131,24 @@ public class IntervalPath {
 	}
 
 	private void drawNormalJoined(IntervalTuple tuple) {
-		Interval screenY = bounds.toScreenIntervalY(tuple.y());
-
-		drawInterval.drawJoined(lastY,
-				bounds.toScreenIntervalX(tuple.x()),
-				screenY);
-		lastY.set(screenY);
+		Interval screenY = bounds.toScreenIntervalY(connectedInterval(tuple.ySet()));
+		drawInterval.drawJoined(
+				lastY, bounds.toScreenIntervalX(connectedInterval(tuple.xSet())), screenY);
+		lastY = connected(screenY);
 	}
 
 	private void drawNormalInfinity(IntervalTuple tuple) {
-		Interval x = tuple.x();
-		Interval y = tuple.y();
+		Interval x = connectedInterval(tuple.xSet());
+		Interval y = connectedInterval(tuple.ySet());
 		if (bounds.range().contains(y.getLow()) && Double.isInfinite(y.getHigh())) {
 			gp.leftToTop(bounds, x, y);
-			lastY.set(0);
+			lastY = zero();
 		} else if (bounds.range().contains(y.getHigh())) {
 			gp.leftToBottom(bounds, x, y);
-			lastY.set(bounds.getHeight());
+			int height = bounds.getHeight();
+			lastY = connected(height, height);
 		} else {
-			lastY.setUndefined();
+			lastY = empty();
 		}
 	}
 
@@ -140,8 +161,7 @@ public class IntervalPath {
 		if (data.isInvertedAt(index)) {
 			drawInvertedInterval.draw(index);
 		} else {
-			Interval lastValue = drawInterval.drawIndependent(data.at(index));
-			lastY.set(lastValue);
+			lastY = drawInterval.drawIndependent(data.at(index));
 		}
 	}
 
@@ -155,9 +175,24 @@ public class IntervalPath {
 	}
 
 	private void calculateLabelPoint(IntervalTuple tuple) {
-		if (labelPoint == null && bounds.isOnView(tuple.x().getLow(), tuple.y().getLow())) {
-			this.labelPoint = labelPositionCalculator.calculate(tuple.x().getLow(),
-					tuple.y().getLow());
+		if (labelPoint != null) {
+			return;
+		}
+
+		Interval x = connectedInterval(tuple.xSet());
+		IntervalSet ySet = tuple.ySet();
+		if (ySet.isWhole() || ySet.isEmpty()) {
+			this.labelPoint = labelPositionCalculator.calculate(0, 0);
+			return;
+		}
+
+		if (!ySet.isInverted() && !ySet.isConnected()) {
+			return;
+		}
+
+		Interval y = ySet.isInverted() ? invertedGap(ySet) : connectedInterval(ySet);
+		if (bounds.isOnView(x.getLow(), y.getLow())) {
+			this.labelPoint = labelPositionCalculator.calculate(x.getLow(), y.getLow());
 		}
 	}
 

@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.desktop.util;
 
 import java.awt.Color;
@@ -16,8 +32,6 @@ import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.geos.GeoCasCell;
@@ -25,9 +39,9 @@ import org.geogebra.common.main.App;
 import org.geogebra.desktop.cas.view.CASTableD;
 import org.geogebra.desktop.gui.util.GeoGebraIconD;
 import org.geogebra.desktop.main.AppD;
+import org.geogebra.desktop.main.ScaledIcon;
 
-public class CASDragGestureListener
-		implements DragGestureListener, DragSourceListener {
+public class CASDragGestureListener implements DragGestureListener, DragSourceListener {
 
 	private Kernel kernel;
 	private App app;
@@ -54,8 +68,7 @@ public class CASDragGestureListener
 	 */
 	public void enableDnD() {
 		if (dgr == null) {
-			dgr = ds.createDefaultDragGestureRecognizer(table,
-					DnDConstants.ACTION_COPY_OR_MOVE, this);
+			dgr = ds.createDefaultDragGestureRecognizer(table, DnDConstants.ACTION_COPY_OR_MOVE, this);
 		}
 	}
 
@@ -64,7 +77,7 @@ public class CASDragGestureListener
 		table.stopEditing();
 
 		if (geoLabelList == null) {
-			geoLabelList = new ArrayList<String>();
+			geoLabelList = new ArrayList<>();
 		} else {
 			geoLabelList.clear();
 		}
@@ -81,18 +94,16 @@ public class CASDragGestureListener
 		// String tableRef = "$" + (cellnumber+1);
 
 		String latex;
-		latex = cell.getLaTeXAlgebraDescription(true,
-				StringTemplate.latexTemplate);
-		ImageIcon ic = GeoGebraIconD.createLatexIcon((AppD) app, latex,
-				((AppD) app).getPlainFont(), Color.DARK_GRAY, null);
+		latex = cell.getLaTeXAlgebraDescription(true, StringTemplate.latexTemplate);
+		ScaledIcon ic = GeoGebraIconD.createScaledLatexIcon(
+				(AppD) app, latex, ((AppD) app).getPlainFont(), Color.DARK_GRAY);
 
-		TransferableCAS transferable = new TransferableCAS(geoLabelList,
-				cellnumber);
+		TransferableCAS transferable = new TransferableCAS(geoLabelList, cellnumber);
 		transferable.setIsAssignment(cell.isAssignmentVariableDefined());
 
 		// start drag
-		ds.startDrag(dge, DragSource.DefaultCopyDrop, ic.getImage(),
-				new Point(-5, -30), transferable, this);
+		ds.startDrag(
+				dge, DragSource.DefaultCopyDrop, ic.getImage(), new Point(-5, -30), transferable, this);
 	}
 
 	/**
@@ -106,8 +117,8 @@ public class CASDragGestureListener
 	static class TransferableCAS implements Transferable {
 
 		private final DataFlavor[] supportedFlavors = {
-				AlgebraViewTransferHandler.algebraViewFlavor,
-				CASTransferHandler.casTableFlavor, };
+			AlgebraViewTransferHandler.algebraViewFlavor, CASTransferHandler.casTableFlavor,
+		};
 
 		private ArrayList<String> geoLabels;
 		private int tableRef;
@@ -119,7 +130,7 @@ public class CASDragGestureListener
 		 * @param tableRef
 		 *            table reference
 		 */
-		public TransferableCAS(ArrayList<String> geoLabelList, int tableRef) {
+		TransferableCAS(ArrayList<String> geoLabelList, int tableRef) {
 			this.geoLabels = geoLabelList;
 			this.tableRef = tableRef;
 			isAssignment = false;
@@ -134,8 +145,7 @@ public class CASDragGestureListener
 		public boolean isDataFlavorSupported(DataFlavor flavor) {
 			// algebraViewFlavor can only be used if the cas cell contains an
 			// assignment
-			if (flavor.equals(AlgebraViewTransferHandler.algebraViewFlavor)
-					&& isAssignment) {
+			if (flavor.equals(AlgebraViewTransferHandler.algebraViewFlavor) && isAssignment) {
 				return true;
 			}
 			if (flavor.equals(CASTransferHandler.casTableFlavor)) {
@@ -146,8 +156,7 @@ public class CASDragGestureListener
 		}
 
 		@Override
-		public Object getTransferData(DataFlavor flavor)
-				throws UnsupportedFlavorException {
+		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
 			if (flavor.equals(AlgebraViewTransferHandler.algebraViewFlavor)) {
 				return geoLabels;
 			}
@@ -158,13 +167,12 @@ public class CASDragGestureListener
 		}
 
 		/**
-		 * @param ass
+		 * @param isAssignment
 		 *            whether the cell contains assignment
 		 */
-		public void setIsAssignment(boolean ass) {
-			isAssignment = ass;
+		void setIsAssignment(boolean isAssignment) {
+			this.isAssignment = isAssignment;
 		}
-
 	}
 
 	// =====================================================

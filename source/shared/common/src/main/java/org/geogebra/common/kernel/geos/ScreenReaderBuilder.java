@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.geos;
 
 import org.geogebra.common.kernel.arithmetic.ExpressionNodeConstants;
@@ -5,14 +21,14 @@ import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.main.ScreenReader;
+import org.geogebra.editor.share.util.Unicode;
 
-import com.himamis.retex.editor.share.util.Unicode;
 import com.himamis.retex.renderer.share.TeXFormula;
 import com.himamis.retex.renderer.share.serialize.TeXAtomSerializer;
 
 /**
  * String builder wrapper for screen reader; avoids double spaces and dots.
- * 
+ *
  * @author Zbynek
  */
 public class ScreenReaderBuilder {
@@ -40,7 +56,7 @@ public class ScreenReaderBuilder {
 
 	/**
 	 * Append string, make sure . is followed by space.
-	 * 
+	 *
 	 * @param o
 	 *            string to be appended
 	 */
@@ -79,7 +95,7 @@ public class ScreenReaderBuilder {
 	protected StringBuilder getStringBuilder() {
 		return sb;
 	}
-	
+
 	/**
 	 *
 	 * @return whether the user is on mobile or desktop
@@ -151,13 +167,13 @@ public class ScreenReaderBuilder {
 	private static void appendNamedPrime(StringBuilder sb, int count, Localization loc) {
 		sb.append(" ");
 		if (count == 2) {
-			sb.append(loc.getMenu("double"));
-			sb.append(" ");
+			sb.append(loc.getMenuDefault("ScreenReader.doublePrime", "double prime"));
 		} else if (count == 3) {
-			sb.append(loc.getMenu("triple"));
-			sb.append(" ");
+			sb.append(loc.getMenuDefault("ScreenReader.triplePrime", "triple prime"));
+		} else {
+			sb.append(getPrime(loc));
 		}
-		sb.append(getPrime(loc));
+		sb.append(" ");
 	}
 
 	private static void appendManyPrimes(StringBuilder sb, int count, Localization loc) {
@@ -165,10 +181,11 @@ public class ScreenReaderBuilder {
 			sb.append(" ");
 			sb.append(getPrime(loc));
 		}
+		sb.append(" ");
 	}
 
 	private static String getPrime(Localization loc) {
-		return loc.getMenu("prime");
+		return loc.getMenuDefault("ScreenReader.prime", "prime");
 	}
 
 	protected void appendDegreeIfNeeded(GeoElementND geo, String valueString) {

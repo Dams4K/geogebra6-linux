@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.dialog.options.model;
 
 import org.geogebra.common.annotation.MissingDoc;
@@ -30,11 +46,11 @@ public class ScriptInputModel extends OptionsModel {
 	 */
 	public static ScriptInputModel[] getModels(App app) {
 		return new ScriptInputModel[] {
-				new ScriptInputModel(app, EventType.CLICK, "OnClick"),
-				new ScriptInputModel(app, EventType.UPDATE, "OnUpdate"),
-				new ScriptInputModel(app, EventType.DRAG_END, "OnDragEnd"),
-				new ScriptInputModel(app, EventType.EDITOR_KEY_TYPED, "OnChange"),
-				new ScriptInputModel(app,  EventType.LOAD_PAGE, "GlobalJavaScript")
+			new ScriptInputModel(app, EventType.CLICK, "OnClick"),
+			new ScriptInputModel(app, EventType.UPDATE, "OnUpdate"),
+			new ScriptInputModel(app, EventType.DRAG_END, "OnDragEnd"),
+			new ScriptInputModel(app, EventType.EDITOR_KEY_TYPED, "OnChange"),
+			new ScriptInputModel(app, EventType.LOAD_PAGE, "GlobalJavaScript")
 		};
 	}
 
@@ -42,14 +58,12 @@ public class ScriptInputModel extends OptionsModel {
 		return type == EventType.LOAD_PAGE;
 	}
 
-
 	public interface IScriptInputListener extends PropertyListener {
 		@MissingDoc
 		void setInput(String text, ScriptType type);
 	}
 
-	public ScriptInputModel(App app,
-			EventType type, String title) {
+	public ScriptInputModel(App app, EventType type, String title) {
 		super(app);
 		this.type = type;
 		this.title = title;
@@ -131,34 +145,33 @@ public class ScriptInputModel extends OptionsModel {
 	@Override
 	public boolean checkGeos() {
 		boolean isSingleGeo = getGeosLength() == 1;
-		switch(type){
-		case LOAD_PAGE:
-			return app.getScriptManager().isJsEnabled()
-					&& !app.getEventDispatcher().isDisabled(ScriptType.JAVASCRIPT);
-		case CLICK:
-			return isSingleGeo && getGeo().canHaveClickScript();
-		case UPDATE:
-			return isSingleGeo && getGeo().canHaveUpdateScript();
-		case EDITOR_KEY_TYPED:
-			return isSingleGeo && getGeo().isGeoInputBox();
-		case DRAG_END:
-			// checkboxes are draggable, but do not need a drag-end script
-			return isSingleGeo && isDraggable(getGeo()) && !getGeo().isGeoBoolean();
-		default:
-			return false;
+		switch (type) {
+			case LOAD_PAGE:
+				return app.getScriptManager().isJsEnabled()
+						&& !app.getEventDispatcher().isDisabled(ScriptType.JAVASCRIPT);
+			case CLICK:
+				return isSingleGeo && getGeo().canHaveClickScript();
+			case UPDATE:
+				return isSingleGeo && getGeo().canHaveUpdateScript();
+			case EDITOR_KEY_TYPED:
+				return isSingleGeo && getGeo().isGeoInputBox();
+			case DRAG_END:
+				// checkboxes are draggable, but do not need a drag-end script
+				return isSingleGeo && isDraggable(getGeo()) && !getGeo().isGeoBoolean();
+			default:
+				return false;
 		}
 	}
 
 	private boolean isDraggable(GeoElement geo) {
 		EuclidianViewInterfaceCommon view = SelectionManager.getViewOf(geo, app);
-		return !geo.isLocked() && (geo.isPointerChangeable() || geo.isMoveable()
-					|| geo.hasMoveableInputPoints(view));
+		return !geo.isLocked()
+				&& (geo.isPointerChangeable() || geo.isMoveable() || geo.hasMoveableInputPoints(view));
 	}
 
 	@Override
 	public void updateProperties() {
-		// TODO Auto-generated method stub
-
+		// nothing to do
 	}
 
 	public boolean isEditOccurred() {

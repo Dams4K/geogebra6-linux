@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.openGL;
 
 import java.util.ArrayList;
@@ -8,7 +24,7 @@ import org.geogebra.common.util.debug.Log;
 
 /**
  * Geometry (set of vertices, normals, etc. for e.g. triangles)
- * 
+ *
  * @author mathieu
  *
  */
@@ -27,7 +43,7 @@ public class Geometry implements GeometryForExport {
 
 	/**
 	 * Start a new geometry
-	 * 
+	 *
 	 * @param manager
 	 *            manager
 	 * @param type
@@ -51,7 +67,7 @@ public class Geometry implements GeometryForExport {
 
 	/**
 	 * set the geometry type and mark buffers as empty
-	 * 
+	 *
 	 * @param type
 	 *            geometry type
 	 */
@@ -65,7 +81,7 @@ public class Geometry implements GeometryForExport {
 
 	/**
 	 * allocate memory for buffers (for direct write)
-	 * 
+	 *
 	 * @param size
 	 *            vertices size
 	 */
@@ -77,7 +93,7 @@ public class Geometry implements GeometryForExport {
 
 	/**
 	 * put vertex values into buffer
-	 * 
+	 *
 	 * @param x
 	 *            x-coord
 	 * @param y
@@ -94,7 +110,7 @@ public class Geometry implements GeometryForExport {
 
 	/**
 	 * put normal values into buffer
-	 * 
+	 *
 	 * @param x
 	 *            x-coord
 	 * @param y
@@ -126,7 +142,7 @@ public class Geometry implements GeometryForExport {
 
 	/**
 	 * set double buffer for vertices
-	 * 
+	 *
 	 * @param array
 	 *            double array
 	 * @param length
@@ -137,7 +153,7 @@ public class Geometry implements GeometryForExport {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return vertices buffer
 	 */
 	public GLBuffer getVertices() {
@@ -146,7 +162,7 @@ public class Geometry implements GeometryForExport {
 
 	/**
 	 * set double buffer for normals
-	 * 
+	 *
 	 * @param array
 	 *            double array
 	 * @param length
@@ -157,7 +173,7 @@ public class Geometry implements GeometryForExport {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return normals buffer
 	 */
 	public GLBuffer getNormals() {
@@ -166,7 +182,7 @@ public class Geometry implements GeometryForExport {
 
 	/**
 	 * set double buffer for texture
-	 * 
+	 *
 	 * @param array
 	 *            double array
 	 * @param length
@@ -191,7 +207,7 @@ public class Geometry implements GeometryForExport {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return texture buffer
 	 */
 	public GLBuffer getTextures() {
@@ -200,7 +216,7 @@ public class Geometry implements GeometryForExport {
 
 	/**
 	 * set double buffer for colors
-	 * 
+	 *
 	 * @param array
 	 *            double array
 	 * @param length
@@ -211,7 +227,7 @@ public class Geometry implements GeometryForExport {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return colors buffer
 	 */
 	public GLBuffer getColors() {
@@ -220,7 +236,7 @@ public class Geometry implements GeometryForExport {
 
 	/**
 	 * set vertices length
-	 * 
+	 *
 	 * @param l
 	 *            vertices length
 	 */
@@ -229,7 +245,7 @@ public class Geometry implements GeometryForExport {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return vertices length
 	 */
 	public int getLength() {
@@ -238,7 +254,7 @@ public class Geometry implements GeometryForExport {
 
 	/**
 	 * draw to renderer
-	 * 
+	 *
 	 * @param r
 	 *            renderer to draw into
 	 */
@@ -252,19 +268,17 @@ public class Geometry implements GeometryForExport {
 		r.getRendererImpl().loadNormalBuffer(getNormals(), getLength());
 		r.getRendererImpl().loadColorBuffer(getColors(), getLength());
 		if (r.getRendererImpl().areTexturesEnabled()) {
-			r.getRendererImpl().loadTextureBuffer(getTextures(),
-					getLength());
+			r.getRendererImpl().loadTextureBuffer(getTextures(), getLength());
 		} else {
 			r.getRendererImpl().disableTextureBuffer();
 		}
 		r.getRendererImpl().loadIndicesBuffer(arrayI, indicesLength);
 		r.getRendererImpl().draw(getType(), indicesLength);
-
 	}
 
 	/**
 	 * draw as label to renderer
-	 * 
+	 *
 	 * @param r
 	 *            renderer to draw into
 	 */
@@ -276,8 +290,7 @@ public class Geometry implements GeometryForExport {
 
 		r.getRendererImpl().loadVertexBuffer(getVertices(), getLength());
 		if (r.getRendererImpl().areTexturesEnabled()) {
-			r.getRendererImpl().loadTextureBuffer(getTextures(),
-					getLength());
+			r.getRendererImpl().loadTextureBuffer(getTextures(), getLength());
 		}
 		r.getRendererImpl().loadIndicesBuffer(arrayI, indicesLength);
 		r.getRendererImpl().draw(getType(), indicesLength);
@@ -285,7 +298,7 @@ public class Geometry implements GeometryForExport {
 
 	/**
 	 * bind the geometry to its GL buffer
-	 * 
+	 *
 	 * @param size
 	 *            indices size
 	 * @param typeElement
@@ -294,60 +307,61 @@ public class Geometry implements GeometryForExport {
 	public void bind(int size, TypeElement typeElement) {
 
 		switch (typeElement) {
-		case NONE:
-			if (hasSharedIndexBuffer) {
-				// need specific index if was sharing one
-				arrayI = null;
-			}
-			if (arrayI == null) {
-				arrayI = GLFactory.getPrototype().newBufferIndices();
-			}
-
-			indicesLength = getLength();
-
-			if (!manager.getIndicesDone() || typeElement != manager.getOldType()
-					|| arrayI.capacity() < indicesLength) {
-				arrayI.allocate(indicesLength);
-				for (short i = 0; i < indicesLength; i++) {
-					arrayI.put(i);
+			case NONE:
+				if (hasSharedIndexBuffer) {
+					// need specific index if was sharing one
+					arrayI = null;
 				}
-				arrayI.rewind();
-				manager.setIndicesDone(true);
-			}
+				if (arrayI == null) {
+					arrayI = GLFactory.getPrototype().newBufferIndices();
+				}
 
-			hasSharedIndexBuffer = false;
-			break;
+				indicesLength = getLength();
 
-		case CURVE:
-			arrayI = manager.getBufferIndicesForCurve(size);
-			indicesLength = 3 * 2 * size * PlotterBrush.LATITUDES;
-			hasSharedIndexBuffer = true;
-			break;
+				if (!manager.getIndicesDone()
+						|| typeElement != manager.getOldType()
+						|| arrayI.capacity() < indicesLength) {
+					arrayI.allocate(indicesLength);
+					for (short i = 0; i < indicesLength; i++) {
+						arrayI.put(i);
+					}
+					arrayI.rewind();
+					manager.setIndicesDone(true);
+				}
 
-		case SURFACE:
-			indicesLength = size;
-			hasSharedIndexBuffer = false;
-			break;
+				hasSharedIndexBuffer = false;
+				break;
 
-		case FAN_DIRECT:
-			arrayI = manager.getBufferIndicesForFanDirect(size);
-			indicesLength = 3 * (size - 2);
-			hasSharedIndexBuffer = true;
-			break;
-		case FAN_INDIRECT:
-			arrayI = manager.getBufferIndicesForFanIndirect(size);
-			indicesLength = 3 * (size - 2);
-			hasSharedIndexBuffer = true;
-			break;
-		default:
-			Log.debug("Missing case: " + typeElement);
+			case CURVE:
+				arrayI = manager.getBufferIndicesForCurve(size);
+				indicesLength = 3 * 2 * size * manager.getCurveLatitudeSplits();
+				hasSharedIndexBuffer = true;
+				break;
+
+			case SURFACE:
+				indicesLength = size;
+				hasSharedIndexBuffer = false;
+				break;
+
+			case FAN_DIRECT:
+				arrayI = manager.getBufferIndicesForFanDirect(size);
+				indicesLength = 3 * (size - 2);
+				hasSharedIndexBuffer = true;
+				break;
+			case FAN_INDIRECT:
+				arrayI = manager.getBufferIndicesForFanIndirect(size);
+				indicesLength = 3 * (size - 2);
+				hasSharedIndexBuffer = true;
+				break;
+			default:
+				Log.debug("Missing case: " + typeElement);
 		}
 
 		manager.setOldType(typeElement);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param size
 	 *            size
 	 * @return indices buffer with correct size
@@ -394,5 +408,4 @@ public class Geometry implements GeometryForExport {
 	public GLBuffer getNormalsForExport() {
 		return getNormals();
 	}
-
 }

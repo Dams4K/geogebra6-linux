@@ -1,8 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.gui.view.table;
 
 import java.util.Objects;
-
-import javax.annotation.Nonnull;
 
 import org.geogebra.common.gui.dialog.handler.DefineFunctionHandler;
 import org.geogebra.common.kernel.Construction;
@@ -11,6 +25,7 @@ import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoFunction;
 import org.geogebra.common.kernel.geos.LabelManager;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Controller for the data table functionality in Scientific Calculator
@@ -118,9 +133,8 @@ public final class ScientificDataTableController {
 	 * @param input The new definition for the function.
 	 * @return True if the definition of the function did change, false otherwise.
 	 */
-	private boolean defineFunction(DefineFunctionHandler handler,
-			GeoFunction function,
-			String input) {
+	private boolean defineFunction(
+			DefineFunctionHandler handler, GeoFunction function, String input) {
 		String oldDefinition = getDefinitionOf(function);
 		handler.handle(input, function);
 		String newDefinition = getDefinitionOf(function);
@@ -162,7 +176,7 @@ public final class ScientificDataTableController {
 		return getFunction("g");
 	}
 
-	private GeoFunction getFunction(@Nonnull String unprefixedLabel) {
+	private GeoFunction getFunction(@NonNull String unprefixedLabel) {
 		GeoElement element = kernel.lookupLabel(LabelManager.HIDDEN_PREFIX + unprefixedLabel);
 		if (!(element instanceof GeoFunction)) {
 			return null;

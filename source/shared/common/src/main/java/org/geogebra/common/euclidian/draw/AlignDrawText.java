@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
 import org.geogebra.common.awt.font.GTextLayout;
@@ -10,7 +26,7 @@ public class AlignDrawText {
 
 	private int oldHorizontal;
 	private int oldVertical;
-	private final static int MARGIN = 6;
+	private static final int MARGIN = 6;
 
 	AlignDrawText(GeoText text, DrawText drawText) {
 		this.text = text;
@@ -19,21 +35,19 @@ public class AlignDrawText {
 
 	void apply(double width, double height) {
 		drawText.xLabel = (int) getXLabelAligned(width);
-		drawText.yLabel = (int) (text.isLaTeX()
-				? getYLabelAlignedForLatex(height)
-				: getYLabelAlignedForPlain(height));
+		drawText.yLabel = (int)
+				(text.isLaTeX() ? getYLabelAlignedForLatex(height) : getYLabelAlignedForPlain(height));
 	}
 
 	private double getXLabelAligned(double width) {
 		switch (getHorizontalAlignment()) {
-		case -1:
-			return getXLabelForLeft(width);
-		case 0:
-			return getXLabelForCenter(width) ;
-		case 1:
-		default:
-			return getXLabelForRight();
-
+			case -1:
+				return getXLabelForLeft(width);
+			case 0:
+				return getXLabelForCenter(width);
+			case 1:
+			default:
+				return getXLabelForRight();
 		}
 	}
 
@@ -51,13 +65,13 @@ public class AlignDrawText {
 
 	private double getYLabelAlignedForLatex(double height) {
 		switch (getVerticalAlignment()) {
-		case -1:
-			return drawText.yLabel + MARGIN;
-		case 0:
-			return drawText.yLabel - height / 2 + MARGIN + 1;
-		case 1:
-		default:
-			return drawText.yLabel - height;
+			case -1:
+				return drawText.yLabel + MARGIN;
+			case 0:
+				return drawText.yLabel - height / 2 + MARGIN + 1;
+			case 1:
+			default:
+				return drawText.yLabel - height;
 		}
 	}
 
@@ -66,13 +80,13 @@ public class AlignDrawText {
 		double maxHeightInText = layout.getAscent() + layout.getDescent();
 		double heightDifference = height - maxHeightInText;
 		switch (getVerticalAlignment()) {
-		case -1:
-			return drawText.yLabel + maxHeightInText + MARGIN;
-		case 0:
-			return drawText.yLabel + (heightDifference / 2);
-		case 1:
-		default:
-			return drawText.yLabel - heightDifference;
+			case -1:
+				return drawText.yLabel + maxHeightInText + MARGIN;
+			case 0:
+				return drawText.yLabel + (heightDifference / 2);
+			case 1:
+			default:
+				return drawText.yLabel - heightDifference;
 		}
 	}
 
@@ -81,8 +95,7 @@ public class AlignDrawText {
 	}
 
 	boolean hasChanged() {
-		return oldVertical != getVerticalAlignment()
-				|| oldHorizontal != getVerticalAlignment();
+		return oldVertical != getVerticalAlignment() || oldHorizontal != getVerticalAlignment();
 	}
 
 	private int getVerticalAlignment() {

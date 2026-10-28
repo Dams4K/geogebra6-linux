@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.euclidian3D.openGL;
 
 import org.geogebra.common.kernel.Kernel;
@@ -5,7 +21,7 @@ import org.geogebra.common.kernel.matrix.Coords;
 
 /**
  * class describing the section of the brush
- * 
+ *
  * @author mathieu
  *
  */
@@ -46,6 +62,7 @@ public class PlotterBrushSection {
 
 	/** normal deviation along direction */
 	private double normalDevD = 0;
+
 	private double normalDevN = 1;
 
 	/** thickness = radius of the section */
@@ -55,7 +72,7 @@ public class PlotterBrushSection {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param manager
 	 *            geometry manager
 	 */
@@ -80,7 +97,7 @@ public class PlotterBrushSection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param point
 	 *            point
 	 * @return true if section center is equal to point with Kernel standard
@@ -96,8 +113,7 @@ public class PlotterBrushSection {
 	 * @param thickness
 	 *            thickness
 	 */
-	public void set(Coords point, float thickness, Coords clockU,
-			Coords clockV) {
+	public void set(Coords point, float thickness, Coords clockU, Coords clockV) {
 		setCenter(point);
 		this.thickness = thickness;
 		this.clockU.set(clockU);
@@ -131,74 +147,73 @@ public class PlotterBrushSection {
 	 * @param thickness
 	 *            thickness
 	 */
-	public void set(PlotterBrushSection s, Coords point, float thickness,
-			boolean updateClock, TickStep tick) {
+	public void set(
+			PlotterBrushSection s, Coords point, float thickness, boolean updateClock, TickStep tick) {
 		setCenter(point);
 		this.thickness = thickness;
 
 		switch (tick) {
-		case START:
-			normal.setMul(s.direction, -1);
-			direction.set(s.direction);
-			break;
-		case MIDDLE:
-			normal.setUndefined();
-			normalDevD = 0;
-			direction.set(s.direction);
-			break;
-		case END:
-			normal.set(s.direction);
-			direction.set(s.direction);
-			break;
-		case OUT:
-			// normal will be set at next step
-			direction.set(s.direction);
-			break;
-		case NOT:
-		default:
-			direction.setSub(center, s.center);
-
-			if (center.equalsForKernel(s.center, Kernel.STANDARD_PRECISION)) {
-				if (this.thickness < s.thickness) {
-					normal.set(s.direction);
-				} else {
-					normal.setMul(s.direction, -1);
-				}
-				s.normal.set(normal);
-				// keep last direction
+			case START:
+				normal.setMul(s.direction, -1);
 				direction.set(s.direction);
-
-				normalDevD = 0;
-			} else {
-				// calc normal deviation
-				double dt = this.thickness - s.thickness;
-				if (dt != 0) {
-					direction.calcNorm();
-					double l = direction.getNorm();
-					double h = Math.sqrt(l * l + dt * dt);
-					normalDevD = -dt / h;
-					normalDevN = l / h;
-
-					// normalDevD = 0.0000; normalDevN = 1;
-
-					s.normalDevD = normalDevD;
-					s.normalDevN = normalDevN;
-				} else {
-					normalDevD = 0;
-				}
-
-				direction.normalize();
-				s.direction.set(direction);
+				break;
+			case MIDDLE:
 				normal.setUndefined();
-				s.normal.setUndefined();
+				normalDevD = 0;
+				direction.set(s.direction);
+				break;
+			case END:
+				normal.set(s.direction);
+				direction.set(s.direction);
+				break;
+			case OUT:
+				// normal will be set at next step
+				direction.set(s.direction);
+				break;
+			case NOT:
+			default:
+				direction.setSub(center, s.center);
 
-				// calc new clocks
-				if (updateClock) {
-					direction.completeOrthonormal(s.clockU, s.clockV);
+				if (center.equalsForKernel(s.center, Kernel.STANDARD_PRECISION)) {
+					if (this.thickness < s.thickness) {
+						normal.set(s.direction);
+					} else {
+						normal.setMul(s.direction, -1);
+					}
+					s.normal.set(normal);
+					// keep last direction
+					direction.set(s.direction);
+
+					normalDevD = 0;
+				} else {
+					// calc normal deviation
+					double dt = this.thickness - s.thickness;
+					if (dt != 0) {
+						direction.calcNorm();
+						double l = direction.getNorm();
+						double h = Math.sqrt(l * l + dt * dt);
+						normalDevD = -dt / h;
+						normalDevN = l / h;
+
+						// normalDevD = 0.0000; normalDevN = 1;
+
+						s.normalDevD = normalDevD;
+						s.normalDevN = normalDevN;
+					} else {
+						normalDevD = 0;
+					}
+
+					direction.normalize();
+					s.direction.set(direction);
+					normal.setUndefined();
+					s.normal.setUndefined();
+
+					// calc new clocks
+					if (updateClock) {
+						direction.completeOrthonormal(s.clockU, s.clockV);
+					}
 				}
-
-			}
-			break;
+				break;
 		}
 		clockU.set(s.clockU);
 		clockV.set(s.clockV);
@@ -206,7 +221,7 @@ public class PlotterBrushSection {
 
 	/**
 	 * set the normal vector and position for parameters u,v
-	 * 
+	 *
 	 * @param u
 	 *            cosinus
 	 * @param v
@@ -216,8 +231,7 @@ public class PlotterBrushSection {
 	 * @param pos
 	 *            position
 	 */
-	public void getNormalAndPosition(double u, double v, Coords vn,
-			Coords pos) {
+	public void getNormalAndPosition(double u, double v, Coords vn, Coords pos) {
 
 		vn.setAdd(vn.setMul(clockU, u), tmpCoords.setMul(clockV, v));
 		pos.setAdd(pos.setMul(vn, thickness), center);
@@ -225,10 +239,8 @@ public class PlotterBrushSection {
 		if (normal.isDefined()) {
 			vn.setValues(normal, 3);
 		} else if (normalDevD != 0) {
-			vn.setAdd(vn.setMul(vn, normalDevN),
-					tmpCoords.setMul(direction, normalDevD));
+			vn.setAdd(vn.setMul(vn, normalDevN), tmpCoords.setMul(direction, normalDevD));
 		}
-
 	}
 
 	/**
@@ -270,5 +282,4 @@ public class PlotterBrushSection {
 		normal.setUndefined();
 		normalDevD = 0;
 	}
-
 }

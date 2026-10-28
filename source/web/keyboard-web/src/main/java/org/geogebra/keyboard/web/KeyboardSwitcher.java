@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.keyboard.web;
 
 import java.util.HashMap;
@@ -104,16 +120,14 @@ public class KeyboardSwitcher extends FlowPanel {
 	}
 
 	protected void addCloseButton() {
-		ToggleButton closeButton = new ToggleButton(KeyboardResources.INSTANCE
-				.keyboard_close_black()) {
+		ToggleButton closeButton = new ToggleButton(KeyboardResources.INSTANCE.keyboard_close_black()) {
 			@Override
 			public void setFocus(boolean focused) {
 				// Do not focus the button
 			}
 		};
 		closeButton.removeStyleName("ToggleButton");
-		closeButton.getElement().setAttribute("aria-label",
-				tabbedkeyboard.locale.getMenu("Close"));
+		closeButton.getElement().setAttribute("aria-label", tabbedkeyboard.locale.getMenu("Close"));
 		closeButton.addStyleName("closeTabbedKeyboardButton");
 		closeButton.getElement().setAttribute("data-test", "closeKeyboardButton");
 		ClickStartHandler.init(closeButton, new ClickStartHandler() {
@@ -135,17 +149,15 @@ public class KeyboardSwitcher extends FlowPanel {
 	}
 
 	private void createMoreButton() {
-		moreButton = new ToggleButton(KeyboardResources.INSTANCE.keyboard_more(),
-				KeyboardResources.INSTANCE.keyboard_more());
-		moreButton.getElement().setAttribute("aria-label",
-				tabbedkeyboard.locale.getMenu("Commands"));
+		moreButton = new ToggleButton(
+				KeyboardResources.INSTANCE.keyboard_more(), KeyboardResources.INSTANCE.keyboard_more());
+		moreButton.getElement().setAttribute("aria-label", tabbedkeyboard.locale.getMenu("Commands"));
 
 		moreButton.removeStyleName("ToggleButton");
 		moreButton.addStyleName("moreKeyboardButton");
 
-		moreButton.addFastClickHandler((source) -> tabbedkeyboard.toggleHelp(moreButton
-						.getAbsoluteLeft() + moreButton.getOffsetWidth(),
-				moreButton.getAbsoluteTop()));
+		moreButton.addFastClickHandler((source) -> tabbedkeyboard.toggleHelp(
+				moreButton.getAbsoluteLeft() + moreButton.getOffsetWidth(), moreButton.getAbsoluteTop()));
 	}
 
 	protected void reset() {

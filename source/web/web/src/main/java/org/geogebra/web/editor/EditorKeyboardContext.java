@@ -1,7 +1,22 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.editor;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.geogebra.common.kernel.geos.inputbox.InputBoxType;
 import org.geogebra.common.main.AppKeyboardType;
@@ -12,7 +27,7 @@ import org.geogebra.web.html5.bridge.AttributeProvider;
 
 import elemental2.dom.DomGlobal;
 
-public class EditorKeyboardContext implements HasKeyboard {
+public final class EditorKeyboardContext implements HasKeyboard {
 
 	private final AttributeProvider element;
 
@@ -45,15 +60,13 @@ public class EditorKeyboardContext implements HasKeyboard {
 			}
 
 			@Override
-			public String getMenu(String key) {
-				return key;
+			public String getMenuDefault(String key, String fallback) {
+				return fallback.isEmpty() ? key : fallback;
 			}
 
 			@Override
 			public String getKeyboardRow(int i) {
-				String[] rows = {"qQwWeErRtTyYuUiIoOpP",
-						"aAsSdDfFgGhHjJkKlL",
-						"zZxXcCvVbBnNmM"};
+				String[] rows = {"qQwWeErRtTyYuUiIoOpP", "aAsSdDfFgGhHjJkKlL", "zZxXcCvVbBnNmM"};
 				return rows[i - 1];
 			}
 		};
@@ -82,10 +95,5 @@ public class EditorKeyboardContext implements HasKeyboard {
 	@Override
 	public TemplateKeyProvider getTemplateKeyProvider() {
 		return null;
-	}
-
-	@Override
-	public void showMatrixInputDialog(Consumer<String> ignore) {
-		// Not needed
 	}
 }

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.statistics;
@@ -25,7 +29,7 @@ import org.geogebra.common.util.MyMath2;
 
 /**
  * Computes RandomPoisson[lambda]
- * 
+ *
  * @author Michael Borcherds
  */
 public class AlgoRandomPoisson extends AlgoElement implements SetRandomValue {
@@ -38,7 +42,7 @@ public class AlgoRandomPoisson extends AlgoElement implements SetRandomValue {
 	private static double[] logtable = new double[10];
 
 	/**
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -46,8 +50,7 @@ public class AlgoRandomPoisson extends AlgoElement implements SetRandomValue {
 	 * @param lambda
 	 *            mean
 	 */
-	public AlgoRandomPoisson(Construction cons, String label,
-			GeoNumberValue lambda) {
+	public AlgoRandomPoisson(Construction cons, String label, GeoNumberValue lambda) {
 		super(cons);
 		this.lambda = lambda;
 
@@ -105,15 +108,14 @@ public class AlgoRandomPoisson extends AlgoElement implements SetRandomValue {
 		int k = 0;
 		do {
 			k++;
-			p *= kernel.getApplication().getRandomNumber();
+			p *= kernel.randomNumberGenerator.getRandomNumber();
 		} while (p >= L);
 
 		return k - 1;
-
 	}
 
 	/*
-	 * 
+	 *
 	 * Hermann, Wolfgang: The transformed rejection method for generating
 	 * Poisson random variables Algorithm PTRS
 	 * http://statmath.wu-wien.ac.at/papers/92-04-13.wh.ps.gz
@@ -137,8 +139,8 @@ public class AlgoRandomPoisson extends AlgoElement implements SetRandomValue {
 
 			int k = -1;
 			while (k < 0 || (us < 0.013 && v > us)) {
-				double u = kernel.getApplication().getRandomNumber() - 0.5;
-				v = kernel.getApplication().getRandomNumber();
+				double u = kernel.randomNumberGenerator.getRandomNumber() - 0.5;
+				v = kernel.randomNumberGenerator.getRandomNumber();
 				us = 0.5 - Math.abs(u);
 				k = (int) Math.floor((2 * a1 / us + b) * u + mu + 0.43);
 				if (us >= 0.07 && v < v_r) {
@@ -151,12 +153,10 @@ public class AlgoRandomPoisson extends AlgoElement implements SetRandomValue {
 
 			v = v * alpha / (a1 / (us * us) + b);
 
-			if (Math.log(v * alpha / (a1 / us / us + b)) <= -mu + k * lnmu
-					- logOfKFactorial(k)) {
+			if (Math.log(v * alpha / (a1 / us / us + b)) <= -mu + k * lnmu - logOfKFactorial(k)) {
 				return k;
 			}
 		}
-
 	}
 
 	private static double logOfKFactorial(int k) {
@@ -168,9 +168,10 @@ public class AlgoRandomPoisson extends AlgoElement implements SetRandomValue {
 		}
 
 		// Stirling approximation
-		return halflog2pi + (k + 0.5) * Math.log(k + 1) - (k + 1)
-				+ (1 / 12.0 - (1 / 360.0 - 1 / 1260.0 / (k + 1) / (k + 1))
-						/ (k + 1) / (k + 1)) / (k + 1);
+		return halflog2pi
+				+ (k + 0.5) * Math.log(k + 1)
+				- (k + 1)
+				+ (1 / 12.0 - (1 / 360.0 - 1 / 1260.0 / (k + 1) / (k + 1)) / (k + 1) / (k + 1)) / (k + 1);
 	}
 
 	@Override
@@ -179,5 +180,4 @@ public class AlgoRandomPoisson extends AlgoElement implements SetRandomValue {
 		num.setValue(Math.max(0, d));
 		return true;
 	}
-
 }

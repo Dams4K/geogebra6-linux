@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.keyboard.web;
 
 import java.util.ArrayList;
@@ -32,7 +48,7 @@ public class KeyPanelBase extends FlowPanel {
 
 	/**
 	 * adds the given button to the row with given index.
-	 * 
+	 *
 	 * @param index
 	 *            int
 	 * @param button
@@ -81,8 +97,7 @@ public class KeyPanelBase extends FlowPanel {
 		updatePanelSize();
 	}
 
-	private static void addSecondary(BaseKeyboardButton btn,
-			WeightedButton wb) {
+	private static void addSecondary(BaseKeyboardButton btn, WeightedButton wb) {
 		if (wb.getActionsSize() > 1) {
 			btn.setSecondaryAction(wb.getActionName(1));
 		}
@@ -112,19 +127,17 @@ public class KeyPanelBase extends FlowPanel {
 				} else {
 					button = buttons.get(buttonIndex);
 					if (offset > 0) {
-						button.getElement().getStyle().setMarginLeft(
-								offset * baseSize + margins / 2d, Unit.PX);
+						button.getElement().getStyle().setMarginLeft(offset * baseSize + margins / 2d, Unit.PX);
 					}
-					button.getElement().getStyle().setWidth(
-							wb.getWeight() * baseSize - margins, Unit.PX);
+					button.getElement().getStyle().setWidth(wb.getWeight() * baseSize - margins, Unit.PX);
 					offset = 0;
 					buttonIndex++;
 				}
 			}
-			if (Action.NONE.name().equals(row.getButtons()
-					.get(row.getButtons().size() - 1).getPrimaryActionName())) {
-				button.getElement().getStyle().setMarginRight(
-						offset * baseSize + margins / 2d, Unit.PX);
+			if (Action.NONE
+					.name()
+					.equals(row.getButtons().get(row.getButtons().size() - 1).getPrimaryActionName())) {
+				button.getElement().getStyle().setMarginRight(offset * baseSize + margins / 2d, Unit.PX);
 			}
 		}
 	}

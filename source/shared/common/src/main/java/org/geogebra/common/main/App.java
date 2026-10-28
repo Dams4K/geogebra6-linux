@@ -1,27 +1,42 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
 import java.util.function.Predicate;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
+import java.util.function.Supplier;
 
 import org.geogebra.common.GeoGebraConstants;
 import org.geogebra.common.GeoGebraConstants.Platform;
 import org.geogebra.common.SuiteSubApp;
+import org.geogebra.common.awt.AwtFactory;
 import org.geogebra.common.awt.GBufferedImage;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GDimension;
 import org.geogebra.common.awt.GFont;
 import org.geogebra.common.awt.MyImage;
+import org.geogebra.common.awt.annotations.HasNativeSubclass;
 import org.geogebra.common.euclidian.Drawable;
 import org.geogebra.common.euclidian.EmbedManager;
 import org.geogebra.common.euclidian.EuclidianConstants;
@@ -29,6 +44,7 @@ import org.geogebra.common.euclidian.EuclidianController;
 import org.geogebra.common.euclidian.EuclidianHost;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.EuclidianViewInterfaceCommon;
+import org.geogebra.common.euclidian.EuclidianViewInterfaceSlim;
 import org.geogebra.common.euclidian.MaskWidgetList;
 import org.geogebra.common.euclidian.draw.dropdown.DrawDropDownList;
 import org.geogebra.common.euclidian.event.AbstractEvent;
@@ -38,11 +54,7 @@ import org.geogebra.common.euclidian.inline.InlineTableController;
 import org.geogebra.common.euclidian.inline.InlineTextController;
 import org.geogebra.common.euclidian.smallscreen.AdjustViews;
 import org.geogebra.common.euclidian3D.EuclidianView3DInterface;
-import org.geogebra.common.exam.ExamType;
-import org.geogebra.common.exam.restrictions.ExamFeatureRestriction;
-import org.geogebra.common.exam.restrictions.ExamRestrictable;
 import org.geogebra.common.export.pstricks.GeoGebraExport;
-import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.geogebra3D.euclidian3D.printer3D.Format;
 import org.geogebra.common.gui.AccessibilityManagerInterface;
 import org.geogebra.common.gui.AccessibilityManagerNoGui;
@@ -66,6 +78,7 @@ import org.geogebra.common.gui.view.algebra.filter.ProtectiveAlgebraOutputFilter
 import org.geogebra.common.gui.view.properties.PropertiesView;
 import org.geogebra.common.gui.view.table.regression.RegressionSpecificationBuilder;
 import org.geogebra.common.io.MyXMLio;
+import org.geogebra.common.io.XMLStringBuilder;
 import org.geogebra.common.io.file.ByteArrayZipFile;
 import org.geogebra.common.io.file.ZipFile;
 import org.geogebra.common.io.layout.Perspective;
@@ -78,9 +91,9 @@ import org.geogebra.common.kernel.GeoGebraCasInterface;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.Macro;
 import org.geogebra.common.kernel.ModeSetter;
+import org.geogebra.common.kernel.RandomNumberGenerator;
 import org.geogebra.common.kernel.Relation;
 import org.geogebra.common.kernel.StringTemplate;
-import org.geogebra.common.kernel.View;
 import org.geogebra.common.kernel.arithmetic.Surds;
 import org.geogebra.common.kernel.arithmetic.simplifiers.Rationalization;
 import org.geogebra.common.kernel.commands.CommandDispatcher;
@@ -126,6 +139,7 @@ import org.geogebra.common.main.undo.UndoableDeletionExecutor;
 import org.geogebra.common.media.VideoManager;
 import org.geogebra.common.move.ggtapi.models.Material;
 import org.geogebra.common.move.ggtapi.operations.LogInOperation;
+import org.geogebra.common.ownership.AppScope;
 import org.geogebra.common.plugin.EuclidianStyleConstants;
 import org.geogebra.common.plugin.Event;
 import org.geogebra.common.plugin.EventDispatcher;
@@ -135,26 +149,43 @@ import org.geogebra.common.plugin.ScriptManager;
 import org.geogebra.common.plugin.ScriptType;
 import org.geogebra.common.plugin.script.GgbScript;
 import org.geogebra.common.plugin.script.Script;
+import org.geogebra.common.restrictions.AlgebraOutputFiltering;
+import org.geogebra.common.restrictions.FeatureRestriction;
+import org.geogebra.common.restrictions.Restrictable;
 import org.geogebra.common.spreadsheet.core.Spreadsheet;
+import org.geogebra.common.spreadsheet.core.SpreadsheetCellDescriptionBuilder;
+import org.geogebra.common.spreadsheet.kernel.DefaultSpreadsheetConstructionDelegate;
+import org.geogebra.common.spreadsheet.kernel.GeoElementCellRendererFactory;
+import org.geogebra.common.spreadsheet.kernel.KernelTabularDataAdapter;
+import org.geogebra.common.spreadsheet.settings.SpreadsheetSettingsAdapter;
 import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.common.util.CopyPaste;
-import org.geogebra.common.util.DoubleUtil;
 import org.geogebra.common.util.LowerCaseDictionary;
 import org.geogebra.common.util.MD5Checksum;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.SyntaxAdapterImpl;
 import org.geogebra.common.util.ToStringConverter;
+import org.geogebra.common.util.debug.AccessibilityAnalyticsContext;
 import org.geogebra.common.util.debug.Log;
 import org.geogebra.common.util.profiler.FpsProfiler;
+import org.geogebra.editor.share.editor.EditorFeatures;
+import org.geogebra.editor.share.util.Unicode;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import com.himamis.retex.editor.share.editor.EditorFeatures;
-import com.himamis.retex.editor.share.util.Unicode;
+import com.google.j2objc.annotations.Property;
 
 /**
  * Represents an application window, gives access to views and system stuff
  */
-public abstract class App implements UpdateSelection, AppInterface, EuclidianHost,
-		ExamRestrictable, ToolsProvider {
+@HasNativeSubclass
+public abstract class App
+		implements UpdateSelection,
+				AppInterface,
+				EuclidianHost,
+				AlgebraOutputFiltering,
+				Restrictable,
+				ToolsProvider {
 
 	/** id for dummy view */
 	public static final int VIEW_NONE = 0;
@@ -235,10 +266,22 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * Rounding menu options (not internationalized)
 	 */
-	final private static String[] strDecimalSpacesAC = { "0 decimals",
-			"1 decimals", "2 decimals", "3 decimals", "4 decimals",
-			"5 decimals", "10 decimals", "13 decimals", "15 decimals", "",
-			"3 figures", "5 figures", "10 figures", "15 figures" };
+	private static final String[] strDecimalSpacesAC = {
+		"0 decimals",
+		"1 decimals",
+		"2 decimals",
+		"3 decimals",
+		"4 decimals",
+		"5 decimals",
+		"10 decimals",
+		"13 decimals",
+		"15 decimals",
+		"",
+		"3 figures",
+		"5 figures",
+		"10 figures",
+		"15 figures"
+	};
 
 	private static String CASVersionString = "";
 	private static boolean CASViewEnabled = true;
@@ -247,9 +290,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * whether axes should be visible when EV is created first element of this
 	 * array is for x-axis, second for y-axis
 	 */
-	protected final boolean[] showAxes = { true, true };
+	protected final boolean[] showAxes = {true, true};
 	/** whether axes should be logarithmic when EV is created */
-	protected final boolean[] logAxes = { false, false };
+	protected final boolean[] logAxes = {false, false};
 
 	/** This filters unwanted info, such as equations generated by tools, from the output. */
 	private ToStringConverter valueConverter;
@@ -258,6 +301,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * this to hide reset icon from EV)
 	 */
 	public boolean runningInFrame = false;
+
 	public Vector<GeoImage> images = new Vector<>();
 	/**
 	 * Whether AV should show auxiliary objects stored here rather than in
@@ -293,8 +337,8 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * geogebra.common.euclidian.DrawPoint)
 	 */
 	protected int capturingThreshold = DEFAULT_THRESHOLD;
-    /** factor mouse to touch events */
-	static final private int TOUCH_FACTOR = 3;
+	/** factor mouse to touch events */
+	private static final int TOUCH_FACTOR = 3;
 	/** on touch devices we want larger threshold for point hit testing */
 	protected int capturingThresholdTouch = TOUCH_FACTOR * DEFAULT_THRESHOLD;
 
@@ -333,6 +377,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * User Sign in handling
 	 */
 	protected LogInOperation loginOperation = null;
+
+	private final AccessibilityAnalyticsContext accessibilityAnalyticsContext =
+			new AccessibilityAnalyticsContext();
 	/** XML input / output handler */
 	private MyXMLio myXMLio;
 	/** kernel */
@@ -361,6 +408,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * whether menubar should be visible
 	 */
 	protected boolean showMenuBar = true;
+
 	protected String uniqueId;
 	private Perspective tmpPerspective = null;
 	/**
@@ -374,11 +422,12 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * whether shift, drag and zoom features are enabled
 	 */
 	protected boolean shiftDragZoomEnabled = true;
+
 	protected boolean useFullGui = false;
 	protected boolean needsSpreadsheetTableModel = false;
 	protected HashMap<Integer, Boolean> showConstProtNavigationNeedsUpdate = null;
 	protected HashMap<Integer, Boolean> showConsProtNavigation = null;
-	protected AppCompanion companion;
+	protected final @NonNull AppCompanion companion;
 
 	private boolean showResetIcon = false;
 	private ParserFunctions pf;
@@ -402,6 +451,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * flag for current state
 	 */
 	private CoordSystemStateForUndo storeUndoInfoForSetCoordSystem = CoordSystemStateForUndo.NONE;
+
 	private boolean blockUpdateScripts = false;
 	private boolean useBrowserForJavaScript = true;
 	private EventDispatcher eventDispatcher;
@@ -413,7 +463,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	private boolean scriptingDisabled = false;
 	private double exportScale = 1;
 	private PropertiesView propertiesView;
-	private Random random = new Random();
+	public final @NonNull RandomNumberGenerator randomNumberGenerator = new RandomNumberGenerator();
 	private GeoScriptRunner geoScriptRunner;
 	private GeoElement geoForCopyStyle;
 	private boolean isErrorDialogsActive = true;
@@ -423,19 +473,21 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 
 	private Platform platform;
 
-	static final protected long SCHEDULE_PREVIEW_DELAY_IN_MILLISECONDS = 100;
+	protected static final long SCHEDULE_PREVIEW_DELAY_IN_MILLISECONDS = 100;
 
 	private ArrayList<String> mLastCommandsSelectedFromHelp;
 	// TODO: move following methods somewhere else
 	private String tubeID = null;
 	private AdjustViews adjustViews = null;
-	final static public long CE_ID_COUNTER_START = 1;
+	public static final long CE_ID_COUNTER_START = 1;
 	private long ceIDcounter = CE_ID_COUNTER_START;
 	private int nextVariableID = 1;
 	private SpecialPointsManager specialPointsManager;
 
 	private boolean areCommands3DEnabled = true;
 	private boolean spreadsheetRestricted;
+	private Spreadsheet spreadsheet;
+	private SpreadsheetSettingsAdapter spreadsheetSettingsAdapter;
 	protected AccessibilityManagerInterface accessibilityManager;
 	private SettingsUpdater settingsUpdater;
 	private FontCreator fontCreator;
@@ -443,12 +495,16 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 
 	protected AppConfig appConfig = new AppConfigDefault();
 
+	@Property("readonly")
+	public final AppScope appScope = new AppScope(this);
+
 	private Material activeMaterial;
 	private EditorFeatures editorFeatures;
 	/** Syntax filter enforced by AppConfig. */
 	protected SyntaxFilter primarySyntaxFilter;
-	private final RegressionSpecificationBuilder regressionSpecificationBuilder
-			= new RegressionSpecificationBuilder();
+
+	private final RegressionSpecificationBuilder regressionSpecificationBuilder =
+			new RegressionSpecificationBuilder();
 	private InitialViewState initialViewState;
 
 	public static String[] getStrDecimalSpacesAC() {
@@ -459,7 +515,8 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * Please call setPlatform right after this
 	 */
 	public App() {
-		init();
+		companion = newAppCompanion();
+		resetUniqueId();
 	}
 
 	/**
@@ -470,11 +527,6 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	public App(Platform platform) {
 		this();
 		this.platform = platform;
-	}
-
-	protected void init() {
-		companion = newAppCompanion();
-		resetUniqueId();
 	}
 
 	/**
@@ -507,7 +559,6 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 */
 	public static String getCASVersionString() {
 		return CASVersionString;
-
 	}
 
 	/**
@@ -525,7 +576,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *            string version, eg 4.9.38.0
 	 * @return version as list of ints, eg [4,9,38,0]
 	 */
-	static public int[] getSubValues(String version) {
+	public static int[] getSubValues(String version) {
 		String[] values = version.split("\\.");
 		int[] ret = new int[values.length];
 		for (int i = 0; i < values.length; i++) {
@@ -583,7 +634,6 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		}
 
 		return id == App.VIEW_EUCLIDIAN3D_2;
-
 	}
 
 	/**
@@ -592,18 +642,17 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @return capturing threshold
 	 */
 	public int getCapturingThreshold(PointerEventType type) {
-		return type == PointerEventType.TOUCH ? this.capturingThresholdTouch
-				: this.capturingThreshold;
+		return type == PointerEventType.TOUCH ? this.capturingThresholdTouch : this.capturingThreshold;
 	}
 
-    /**
-     * @param type
-     *            mouse or touch
-     * @return factor
-     */
-    public int getFactorFor(PointerEventType type) {
-        return type == PointerEventType.TOUCH ? TOUCH_FACTOR : 1;
-    }
+	/**
+	 * @param type
+	 *            mouse or touch
+	 * @return factor
+	 */
+	public int getFactorFor(PointerEventType type) {
+		return type == PointerEventType.TOUCH ? TOUCH_FACTOR : 1;
+	}
 
 	/**
 	 * @param i
@@ -638,8 +687,8 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		// ready to fill the casCommandDict. In that case, we will fill the
 		// dict during fillCommandDict :)
 
-		if (!getLocalization().isCommandChanged() && ((commandDictCAS != null)
-				|| getLocalization().isCommandNull())) {
+		if (!getLocalization().isCommandChanged()
+				&& ((commandDictCAS != null) || getLocalization().isCommandNull())) {
 			return;
 		}
 		GeoGebraCasInterface cas = kernel.getGeoGebraCAS();
@@ -659,8 +708,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 			commandDictCAS.addEntry(cmd);
 		}
 
-		CommandDispatcher commandDispatcher =
-				getKernel().getAlgebraProcessor().getCommandDispatcher();
+		CommandDispatcher commandDispatcher = getKernel().getAlgebraProcessor().getCommandDispatcher();
 		// iterate through all available CAS commands, add them (translated if
 		// available, otherwise untranslated)
 		for (String cmd : cas.getAvailableCommandNames()) {
@@ -720,7 +768,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * Initializes the translated command names for this application. Note: this
 	 * will load the properties files first.
 	 */
-	final public void initTranslatedCommands() {
+	public final void initTranslatedCommands() {
 		synchronized (commandDictLock) {
 			if (getLocalization().isCommandNull() || subCommandDict == null) {
 				getLocalization().initCommand();
@@ -776,8 +824,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		createSubCommandDictIfNeeded();
 		clearSubCommandDict();
 
-		HashMap<String, String> translateCommandTable = getLocalization()
-				.getTranslateCommandTable();
+		HashMap<String, String> translateCommandTable = getLocalization().getTranslateCommandTable();
 
 		for (Commands comm : Commands.values()) {
 			if (!cf.isAllowedByCommandFilters(comm)) {
@@ -824,33 +871,28 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		}
 	}
 
-	private void addCommandEntry(Commands comm, String translated,
-			HashMap<String, String> translateCommandTable) {
+	private void addCommandEntry(
+			Commands comm, String translated, HashMap<String, String> translateCommandTable) {
 		putInTranslateCommandTable(comm, translated);
 		if (translated != null) {
 			String local = translated.trim();
 			// case is ignored in translating local command names to
 			// internal names!0
-			translateCommandTable.put(StringUtil.toLowerCaseUS(translated),
-					comm.name());
+			translateCommandTable.put(StringUtil.toLowerCaseUS(translated), comm.name());
 			commandDict.addEntry(local);
 			// add public commands to the sub-command dictionaries
 			subCommandDict[comm.getTable()].addEntry(local);
 		}
-
 	}
 
 	private boolean putInTranslateCommandTable(Commands comm, String local) {
 		String internal = comm.name();
 		// Check that we don't overwrite local with English
-		HashMap<String, String> translateCommandTable = getLocalization()
-				.getTranslateCommandTable();
+		HashMap<String, String> translateCommandTable = getLocalization().getTranslateCommandTable();
 		int added = 0;
 		String lowerCaseUS = StringUtil.toLowerCaseUS(internal);
-		if (!translateCommandTable
-				.containsKey(lowerCaseUS)) {
-			translateCommandTable.put(lowerCaseUS,
-					Commands.englishToInternal(comm).name());
+		if (!translateCommandTable.containsKey(lowerCaseUS)) {
+			translateCommandTable.put(lowerCaseUS, Commands.englishToInternal(comm).name());
 			added++;
 		}
 		if (comm.getTable() == CommandsConstants.TABLE_ENGLISH) {
@@ -858,8 +900,8 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		}
 
 		if (local != null) {
-			String old = translateCommandTable.put(StringUtil.toLowerCaseUS(local),
-					Commands.englishToInternal(comm).name());
+			String old = translateCommandTable.put(
+					StringUtil.toLowerCaseUS(local), Commands.englishToInternal(comm).name());
 			if (old == null) {
 				added++;
 			}
@@ -881,7 +923,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 			try {
 				Commands.valueOf(command);
 				return command;
-			} catch (Exception e) {
+			} catch (Exception expected) {
 				// not a valid command, fall through
 			}
 		}
@@ -948,8 +990,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param storeForMode
 	 *            whether to store a mode undo point too
 	 */
-	final public void storeUndoInfoAndStateForModeStarting(
-			boolean storeForMode) {
+	public final void storeUndoInfoAndStateForModeStarting(boolean storeForMode) {
 		if (isUndoActive()) {
 			if (storeForMode) {
 				kernel.storeUndoInfoAndStateForModeStarting();
@@ -989,6 +1030,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		}
 	}
 
+	/**
+	 * @return the undo manager of the construction
+	 */
 	public UndoManager getUndoManager() {
 		return kernel.getConstruction().getUndoManager();
 	}
@@ -1018,13 +1062,6 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @return whether deletion is allowed
 	 */
 	public boolean letDelete() {
-		return true;
-	}
-
-	/**
-	 * @return whether redefinition is allowed
-	 */
-	public boolean letRedefine() {
 		return true;
 	}
 
@@ -1080,7 +1117,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *             the english command name.
 	 * @return the internal key of the command
 	 */
-	public String englishToInternal(String englishName)  {
+	public String englishToInternal(String englishName) {
 		initTranslatedCommands();
 		String s;
 		String cmdLower = StringUtil.toLowerCaseUS(englishName);
@@ -1089,8 +1126,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 
 			// make sure that when si[] is typed in script, it's changed to
 			// Si[] etc
-			if (StringUtil.toLowerCaseUS(getLocalization().getEnglishCommand(s))
-					.equals(cmdLower)) {
+			if (StringUtil.toLowerCaseUS(getLocalization().getEnglishCommand(s)).equals(cmdLower)) {
 				return s;
 			}
 		}
@@ -1137,7 +1173,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * @return script manager
 	 */
-	final public ScriptManager getScriptManager() {
+	public final ScriptManager getScriptManager() {
 		if (scriptManager == null) {
 			scriptManager = newScriptManager();
 		}
@@ -1171,10 +1207,10 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * @param ge
 	 *            geo
-	 * @return trace-related XML elements
+	 * @param sb builder to which trace-related XML elements are added
 	 */
-	final public String getTraceXML(GeoElement ge) {
-		return getTraceManager().getTraceXML(ge);
+	public final void getTraceXML(GeoElement ge, XMLStringBuilder sb) {
+		getTraceManager().getTraceXML(ge, sb);
 	}
 
 	/**
@@ -1194,7 +1230,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *            geo
 	 */
 	public void resetTraceColumn(GeoElement ge) {
-		getTraceManager().setNeedsColumnReset(ge, true);
+		if (kernel.getConstruction().hasSpreadsheetTracingGeos()) {
+			getTraceManager().setNeedsColumnReset(ge, true);
+		}
 	}
 
 	/**
@@ -1223,7 +1261,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * @return last created GeoElement
 	 */
-	final public GeoElement getLastCreatedGeoElement() {
+	public final GeoElement getLastCreatedGeoElement() {
 		return kernel.getConstruction().getLastGeoElement();
 	}
 
@@ -1241,11 +1279,11 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	public void deleteSelectedObjects(boolean isCut, Predicate<GeoElement> filter) {
 		if (letDelete()) {
 			// also delete just created geos if possible
-			ArrayList<GeoElement> geos2 = new ArrayList<>(getActiveEuclidianView()
-					.getEuclidianController().getJustCreatedGeos());
+			ArrayList<GeoElement> geos2 =
+					new ArrayList<>(getActiveEuclidianView().getEuclidianController().getJustCreatedGeos());
 			geos2.addAll(selection.getSelectedGeos());
-			DeletionExecutor recorder = isWhiteboardActive() ? new UndoableDeletionExecutor()
-					: new DefaultDeletionExecutor();
+			DeletionExecutor recorder =
+					isWhiteboardActive() ? new UndoableDeletionExecutor() : new DefaultDeletionExecutor();
 			geos2.stream().filter(filter).forEach(geo -> {
 				boolean isChartEmbed = geo.getParentAlgorithm() instanceof AlgoTableToChart;
 				if (isCut && !isChartEmbed && geo.getParentAlgorithm() != null) {
@@ -1258,10 +1296,8 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 				recorder.delete(geo);
 			});
 
-			getActiveEuclidianView().getEuclidianController()
-					.clearJustCreatedGeos();
-			getActiveEuclidianView().getEuclidianController()
-					.clearSelectionAndRectangle();
+			getActiveEuclidianView().getEuclidianController().clearJustCreatedGeos();
+			getActiveEuclidianView().getEuclidianController().clearSelectionAndRectangle();
 			if (recorder.storeUndoAction(kernel)) {
 				setUnsaved();
 			}
@@ -1272,8 +1308,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @return recently created geos
 	 */
 	public ArrayList<GeoElement> getJustCreatedGeos() {
-		return getActiveEuclidianView().getEuclidianController()
-				.getJustCreatedGeos();
+		return getActiveEuclidianView().getEuclidianController().getJustCreatedGeos();
 	}
 
 	/**
@@ -1289,7 +1324,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param sb
 	 *            string builder
 	 */
-	public void getKeyboardXML(StringBuilder sb) {
+	public void getKeyboardXML(XMLStringBuilder sb) {
 		// desktop only
 	}
 
@@ -1375,8 +1410,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	}
 
 	/**
-	 * @param v
-	 *            version parts
+	 * @param v version parts
 	 * @return whether given version is newer than this code
 	 */
 	public boolean fileVersionBefore(int... v) {
@@ -1422,7 +1456,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *
 	 * @return current mode
 	 */
-	final public int getMode() {
+	public final int getMode() {
 		EuclidianView view = getActiveEuclidianView();
 		if (view == null) {
 			view = getEuclidianView1();
@@ -1463,7 +1497,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * @return whether label dragging is enabled
 	 */
-	final public boolean isLabelDragsEnabled() {
+	public final boolean isLabelDragsEnabled() {
 		return labelDragsEnabled;
 	}
 
@@ -1531,7 +1565,8 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *         present
 	 */
 	public final boolean isSaved() {
-		return isSaved || kernel.getConstruction() == null
+		return isSaved
+				|| kernel.getConstruction() == null
 				|| !kernel.getConstruction().isStarted();
 	}
 
@@ -1596,11 +1631,10 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		String header = allXml.substring(0, allXml.indexOf("<construction"));
 		String footer = allXml.substring(allXml.indexOf("</construction>"));
 		StringBuilder sb = new StringBuilder();
-		editMacro.getXML(sb);
+		editMacro.getXML(new XMLStringBuilder(sb));
 		String macroXml = sb.toString();
 		String newXml = header
-				+ macroXml.substring(macroXml.indexOf("<construction"),
-						macroXml.indexOf("</construction>"))
+				+ macroXml.substring(macroXml.indexOf("<construction"), macroXml.indexOf("</construction>"))
 				+ footer;
 		this.editMacro = editMacro;
 		setEditMacroPreviousName(editMacro.getEditName());
@@ -1627,7 +1661,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * @return XML for all macros or empty string if there are none
 	 */
-	public String getAllMacrosXMLorEmpty() {
+	public String getAllMacrosXMLOrEmpty() {
 		if (!kernel.hasMacros()) {
 			return "";
 		}
@@ -1646,7 +1680,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param macro is the macro for which the XML is returned
 	 * @return XML for the given macro or empty string if it is null
 	 */
-	public String getMacroXMLorEmpty(Macro macro) {
+	public String getMacroXMLOrEmpty(Macro macro) {
 		if (macro == null) {
 			return "";
 		}
@@ -1659,8 +1693,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @return whether secondary EV with given index is showing
 	 */
 	public boolean hasEuclidianView2(int idx) {
-		return (getGuiManager() != null)
-				&& getGuiManager().hasEuclidianView2(idx);
+		return (getGuiManager() != null) && getGuiManager().hasEuclidianView2(idx);
 	}
 
 	/**
@@ -1716,88 +1749,30 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * @param viewID
 	 *            view id
-	 * @return view with given ID
+	 * @return view with given ID, null if the ID does not belong to an EV
 	 */
-	public View getView(int viewID) {
+	public EuclidianViewInterfaceSlim getEuclidianViewById(int viewID) {
 		// check for PlotPanel ID family first
-		if ((getGuiManager() != null)
-				&& (getGuiManager().getPlotPanelView(viewID) != null)) {
+		if ((getGuiManager() != null) && (getGuiManager().getPlotPanelView(viewID) != null)) {
 			return getGuiManager().getPlotPanelView(viewID);
 		}
-		switch (viewID) {
-		case VIEW_EUCLIDIAN:
-			return getEuclidianView1();
-		case VIEW_EUCLIDIAN3D:
-			return getEuclidianView3D();
-		case VIEW_ALGEBRA:
-			return getAlgebraView();
-		case VIEW_SPREADSHEET:
-			if (!isUsingFullGui()) {
-				return null;
-			} else if (getGuiManager() == null) {
-				initGuiManager();
-			}
-			if (getGuiManager() == null) {
-				return null;
-			}
-			return getGuiManager().getSpreadsheetView();
-		case VIEW_CAS:
-			if (!isUsingFullGui()) {
-				return null;
-			} else if (getGuiManager() == null) {
-				initGuiManager();
-			}
-			if (getGuiManager() == null) {
-				return null;
-			}
-			return getGuiManager().getCasView();
-		case VIEW_EUCLIDIAN2:
-			return hasEuclidianView2(1) ? getEuclidianView2(1) : null;
-		case VIEW_CONSTRUCTION_PROTOCOL:
-			if (!isUsingFullGui()) {
-				return null;
-			} else if (getGuiManager() == null) {
-				initGuiManager();
-			}
-			if (getGuiManager() == null) {
-				return null;
-			}
-			return getGuiManager().getConstructionProtocolData();
-		case VIEW_PROBABILITY_CALCULATOR:
-			if (!isUsingFullGui()) {
-				return null;
-			} else if (getGuiManager() == null) {
-				initGuiManager();
-			}
-			if (getGuiManager() == null) {
-				return null;
-			}
-			return getGuiManager().getProbabilityCalculator();
-		case VIEW_DATA_ANALYSIS:
-			if (!isUsingFullGui()) {
-				return null;
-			} else if (getGuiManager() == null) {
-				initGuiManager();
-			}
-			if (getGuiManager() == null) {
-				return null;
-			}
-			return getGuiManager().getDataAnalysisView();
-		}
-
-		return null;
+		return switch (viewID) {
+			case VIEW_EUCLIDIAN -> getEuclidianView1();
+			case VIEW_EUCLIDIAN3D -> getEuclidianView3D();
+			case VIEW_EUCLIDIAN2 -> hasEuclidianView2(1) ? getEuclidianView2(1) : null;
+			default -> null;
+		};
 	}
 
 	/**
+	 * Append  XML for user interface (EVs, spreadsheet, kernel settings) to a builder.
 	 * @param asPreference
 	 *            true if we need this for prefs XML
-	 * @return XML for user interface (EVs, spreadsheet, kernel settings)
+	 * @param sb XML string builder
 	 */
-	public String getCompleteUserInterfaceXML(boolean asPreference) {
-		StringBuilder sb = new StringBuilder();
-
+	public void getCompleteUserInterfaceXML(boolean asPreference, XMLStringBuilder sb) {
 		// save gui tag settings
-		sb.append(getGuiXML(asPreference));
+		getGuiXML(asPreference, sb);
 
 		// save euclidianView settings
 		getEuclidianView1().getXML(sb, asPreference);
@@ -1821,11 +1796,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		kernel.getKernelXML(sb, asPreference);
 		getSettings().getTable().getXML(sb);
 		getScriptingXML(sb, asPreference);
-
-		return sb.toString();
 	}
 
-	protected void getViewsXML(StringBuilder sb, boolean asPreference) {
+	protected void getViewsXML(XMLStringBuilder sb, boolean asPreference) {
 		// save spreadsheet settings
 		getSettings().getSpreadsheet().getXML(sb, asPreference);
 		if (getGuiManager() != null) {
@@ -1833,22 +1806,19 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		}
 	}
 
-	private void getScriptingXML(StringBuilder sb, boolean asPreference) {
-		sb.append("<scripting blocked=\"");
-		sb.append(isBlockUpdateScripts());
-
+	private void getScriptingXML(XMLStringBuilder sb, boolean asPreference) {
+		sb.startTag("scripting", 0);
+		sb.attr("blocked", isBlockUpdateScripts());
 		if (!asPreference) {
-			sb.append("\" disabled=\"");
-			sb.append(isScriptingDisabled());
+			sb.attr("disabled", isScriptingDisabled());
 		}
-
-		sb.append("\"/>\n");
+		sb.endTag();
 	}
 
 	/**
 	 * @return the root settings object
 	 */
-	final public Settings getSettings() {
+	public final @NonNull Settings getSettings() {
 		if (settings == null) {
 			initSettings();
 		}
@@ -1858,7 +1828,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * @return The {@link AlgebraStyle} currently set.
 	 */
-	final public @Nonnull AlgebraStyle getAlgebraStyle() {
+	public final @NonNull AlgebraStyle getAlgebraStyle() {
 		return getSettings().getAlgebra().getStyle();
 	}
 
@@ -1882,15 +1852,15 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		updateGuiForShowAuxiliaryObjects();
 	}
 
-    /**
-     * update GUI for show auxiliary objects flag
-     */
+	/**
+	 * update GUI for show auxiliary objects flag
+	 */
 	public final void updateGuiForShowAuxiliaryObjects() {
-        if (getGuiManager() != null) {
-            getGuiManager().setShowAuxiliaryObjects(showAuxiliaryObjects);
-            // updateMenubar();
-        }
-    }
+		if (getGuiManager() != null) {
+			getGuiManager().setShowAuxiliaryObjects(showAuxiliaryObjects);
+			// updateMenubar();
+		}
+	}
 
 	/**
 	 * Returns labeling style. See the constants in ConstructionDefaults (e.g.
@@ -1936,6 +1906,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		// implemented per platform
 	}
 
+	/**
+	 * @return preferred size of the app, or null if not implemented for this platform
+	 */
 	public GDimension getPreferredSize() {
 		return null;
 	}
@@ -2017,11 +1990,13 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *            font size
 	 * @return font with given parameters
 	 */
-	public GFont getFontCommon(boolean serif, int style, int size) {
-		return AwtFactory.getPrototype().newFont(serif ? "Serif" : "SansSerif",
-				style, size);
+	public GFont getFontCommon(boolean serif, int style, double size) {
+		return AwtFactory.getPrototype().newFont(serif ? "Serif" : "SansSerif", style, size);
 	}
 
+	/**
+	 * @return whether a graphics view export is currently in progress
+	 */
 	public boolean isExporting() {
 		return exportType != ExportType.NONE;
 	}
@@ -2043,6 +2018,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		return exportType;
 	}
 
+	/**
+	 * @param toolbarHelp whether to show toolbar help
+	 */
 	public void setShowToolBarHelpNoUpdate(boolean toolbarHelp) {
 		showToolBarHelp = toolbarHelp;
 	}
@@ -2101,7 +2079,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * init the kernel (used for 3D)
 	 */
-	final public void initKernel() {
+	public final void initKernel() {
 		kernel = companion.newKernel();
 		kernel.setAngleUnit(appConfig.getDefaultAngleUnit());
 		kernel.setSymbolicMode(appConfig.getSymbolicMode());
@@ -2113,14 +2091,13 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * init the EuclidianView
 	 */
-	final public void initEuclidianViews() {
+	public final void initEuclidianViews() {
 
 		euclidianController = newEuclidianController(kernel);
 		euclidianView = newEuclidianView(showAxes, showGrid);
 	}
 
-	abstract protected EuclidianView newEuclidianView(boolean[] showAxes1,
-			boolean showGrid1);
+	protected abstract EuclidianView newEuclidianView(boolean[] showAxes1, boolean showGrid1);
 
 	/**
 	 * TODO refactor to remove this method Creates new animation manager
@@ -2152,15 +2129,14 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param isOnTheFlyPointCreationActive
 	 *            Whether points can be created on the fly
 	 */
-	public final void setOnTheFlyPointCreationActive(
-			boolean isOnTheFlyPointCreationActive) {
+	public final void setOnTheFlyPointCreationActive(boolean isOnTheFlyPointCreationActive) {
 		this.isOnTheFlyPointCreationActive = isOnTheFlyPointCreationActive;
 	}
 
 	/**
 	 * @return spreadsheet trace manager
 	 */
-	final public SpreadsheetTraceManager getTraceManager() {
+	public final SpreadsheetTraceManager getTraceManager() {
 		if (traceManager == null) {
 			traceManager = new SpreadsheetTraceManager(this);
 		}
@@ -2171,7 +2147,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *
 	 * @return true if there is a trace manager
 	 */
-	final public boolean hasTraceManager() {
+	public final boolean hasTraceManager() {
 		return traceManager != null;
 	}
 
@@ -2179,7 +2155,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *
 	 * @return true if at least one geo is traced
 	 */
-	final public boolean hasGeoTraced() {
+	public final boolean hasGeoTraced() {
 		if (traceManager == null) {
 			return false;
 		}
@@ -2296,7 +2272,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * @return kernel for this window
 	 */
-	public final @Nonnull Kernel getKernel() {
+	public final @NonNull Kernel getKernel() {
 		return kernel;
 	}
 
@@ -2308,15 +2284,6 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 */
 	public boolean isRightClick(AbstractEvent e) {
 		return e != null && e.isRightClick();
-	}
-
-	/**
-	 * @param e
-	 *            event
-	 * @return whether Ctrl on Win/Linux or Meta on Mac was pressed
-	 */
-	public boolean isControlDown(AbstractEvent e) {
-		return e != null && e.isControlDown();
 	}
 
 	/**
@@ -2361,7 +2328,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 */
 	public void setSelectionListenerMode(GeoElementSelectionListener sl) {
 		getSelectionManager().resetGeoToggled(); // prevent undo current tool
-													// construction
+		// construction
 		currentSelectionListener = sl;
 		if (sl != null) {
 			setMode(EuclidianConstants.MODE_SELECTION_LISTENER);
@@ -2391,7 +2358,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 			// if showMenuBar is false, we can still update the style bars
 			if (ev != null
 					&& (EuclidianConstants.isMoveOrSelectionMode(ev.getMode())
-					|| ev.getMode() == EuclidianConstants.MODE_TRANSLATEVIEW)) {
+							|| ev.getMode() == EuclidianConstants.MODE_TRANSLATE_VIEW)) {
 				updateStyleBars();
 			}
 
@@ -2400,7 +2367,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 				updateStyleBars();
 			}
 
-			if (updatePropertiesView && propertiesView != null && showMenuBar) {
+			if (updatePropertiesView && propertiesView != null) {
 				propertiesView.updateSelection();
 			}
 		}
@@ -2408,7 +2375,6 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 			ev.setBoundingBox(null);
 		}
 		ScreenReader.updateSelection(this);
-
 	}
 
 	/**
@@ -2449,6 +2415,13 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @return general font size (used for EV and GUI)
 	 */
 	public int getFontSize() {
+		return settings.getFontSettings().getAppFontSize();
+	}
+
+	/**
+	 * @return general font size (used for EV and GUI) as a double
+	 */
+	public double getFontSizeDouble() {
 		return settings.getFontSettings().getAppFontSize();
 	}
 
@@ -2517,8 +2490,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *            font size
 	 * @return font
 	 */
-	public GFont getFontCanDisplay(String testString, boolean serif,
-			int fontStyle, int fontSize) {
+	public GFont getFontCanDisplay(String testString, boolean serif, int fontStyle, double fontSize) {
 		FontCreator fontCreator = getFontCreator();
 		if (serif) {
 			return fontCreator.newSerifFont(testString, fontStyle, fontSize);
@@ -2534,41 +2506,29 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *            whether this is for preferences file
 	 * @return gui settings in XML format
 	 */
-	public String getGuiXML(boolean asPreference) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("<gui>\n");
+	public String getGuiXML(boolean asPreference, XMLStringBuilder sb) {
+		sb.startOpeningTag("gui", 0).endTag();
 
 		getWindowLayoutXML(sb, asPreference);
 
-		sb.append("\t<font ");
-		sb.append(" size=\"");
-		sb.append(getFontSize());
-		sb.append("\"/>\n");
+		sb.startTag("font").attr("size", getFontSize()).endTag();
 
 		if (asPreference) {
 			int guiFontSize = settings.getFontSettings().getGuiFontSize();
-			sb.append("\t<menuFont ");
-			sb.append(" size=\"");
-			sb.append(guiFontSize);
-			sb.append("\"/>\n");
+			sb.startTag("menuFont").attr("size", guiFontSize).endTag();
 
-			sb.append("\t<tooltipSettings ");
+			sb.startTag("tooltipSettings");
 			if (getLocalization().getTooltipLanguageString() != null) {
-				sb.append(" language=\"");
-				sb.append(getLocalization().getTooltipLanguageString());
-				sb.append("\"");
+				sb.attrRaw("language", getLocalization().getTooltipLanguageString());
 			}
-			sb.append(" timeout=\"");
-			sb.append(getTooltipTimeout());
-			sb.append("\"");
-
-			sb.append("/>\n");
+			sb.attr("timeout", getTooltipTimeout());
+			sb.endTag();
 		}
 		if (getGuiManager() != null) {
 			getGuiManager().getExtraViewsXML(sb);
 		}
 
-		sb.append("</gui>\n");
+		sb.closeTag("gui");
 
 		return sb.toString();
 	}
@@ -2585,30 +2545,25 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param asPreference
 	 *            whether this is for preferences
 	 */
-	protected void getWindowLayoutXML(StringBuilder sb, boolean asPreference) {
-		sb.append("\t<window width=\"");
-
-		sb.append(getWindowWidth());
-
-		sb.append("\" height=\"");
-
-		sb.append(getWindowHeight());
-
-		sb.append("\" />\n");
+	protected void getWindowLayoutXML(XMLStringBuilder sb, boolean asPreference) {
+		sb.startTag("window")
+				.attr("width", getWindowWidth())
+				.attr("height", getWindowHeight())
+				.endTag();
 
 		getLayoutXML(sb, asPreference);
 
 		// labeling style
 		// default changed so we need to always save this now
 		// if (labelingStyle != ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC) {
-		sb.append("\t<labelingStyle ");
-		sb.append(" val=\"");
-		sb.append(getLabelingStyle());
-		sb.append("\"/>\n");
+		sb.startTag("labelingStyle").attr("val", getLabelingStyle()).endTag();
 	}
 
-	protected abstract void getLayoutXML(StringBuilder sb,
-			boolean asPreference);
+	protected void getLayoutXML(XMLStringBuilder sb, boolean asPreference) {
+		if (getGuiManager() != null) {
+			getGuiManager().getLayout().getXml(sb, asPreference);
+		}
+	}
 
 	/**
 	 * @return selection listener
@@ -2682,8 +2637,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param useTransparentCursorWhenDragging
 	 *            whether transparent cursor should be used while dragging
 	 */
-	public void setUseTransparentCursorWhenDragging(
-			boolean useTransparentCursorWhenDragging) {
+	public void setUseTransparentCursorWhenDragging(boolean useTransparentCursorWhenDragging) {
 		this.useTransparentCursorWhenDragging = useTransparentCursorWhenDragging;
 	}
 
@@ -2816,7 +2770,6 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		} else {
 			return EuclidianConstants.getModeText(mode);
 		}
-
 	}
 
 	/**
@@ -2828,10 +2781,8 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 			pf = factory.createParserFunctions();
 			pfInputBox = factory.createInputBoxParserFunctions();
 		}
-		pf.setInverseTrig(
-				kernel.getLoadingMode() && kernel.getInverseTrigReturnsAngle());
-		pfInputBox.setInverseTrig(
-				kernel.getLoadingMode() && kernel.getInverseTrigReturnsAngle());
+		pf.setInverseTrig(kernel.getLoadingMode() && kernel.getInverseTrigReturnsAngle());
+		pfInputBox.setInverseTrig(kernel.getLoadingMode() && kernel.getInverseTrigReturnsAngle());
 
 		if (inputBox) {
 			return pfInputBox;
@@ -2840,6 +2791,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		}
 	}
 
+	/**
+	 * @return parser extension for functions, excluding input boxes
+	 */
 	public ParserFunctions getParserFunctions() {
 		return getParserFunctions(false);
 	}
@@ -2851,6 +2805,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		if (kernel.getConstruction() != null) {
 			kernel.getConstruction().setIgnoringNewTypes(true);
 		}
+		resetPen();
 		getEuclidianView1().resetXYMinMaxObjects();
 		getEuclidianView1().setSelectionRectangle(null);
 		if (hasEuclidianView2EitherShowingOrNot(1)) {
@@ -2869,65 +2824,11 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * allows use of seeds to generate the same sequence for a ggb file
 	 *
-	 * @return random number in [0,1]
-	 */
-	public double getRandomNumber() {
-		return random.nextDouble();
-	}
-
-	/**
-	 * @param a
-	 *            low value of distribution interval
-	 * @param b
-	 *            high value of distribution interval
-	 * @return random number from Uniform Distribution[a,b]
-	 */
-	public double randomUniform(double a, double b) {
-		return a + getRandomNumber() * (b - a);
-	}
-
-	/**
-	 * allows use of seeds to generate the same sequence for a ggb file
-	 *
-	 * @param low
-	 *            least possible value of result
-	 * @param high
-	 *            highest possible value of result
-	 *
-	 * @return random integer between a and b inclusive (or NaN for
-	 *         getRandomIntegerBetween(5.5, 5.5))
-	 *
-	 */
-	public int getRandomIntegerBetween(double low, double high) {
-		// make sure 4.000000001 is not rounded up to 5
-		double a = DoubleUtil.checkInteger(low);
-		double b = DoubleUtil.checkInteger(high);
-
-		// Math.floor/ceil to make sure
-		// RandomBetween[3.2, 4.7] is between 3.2 and 4.7
-		int min = (int) Math.ceil(Math.min(a, b));
-		int max = (int) Math.floor(Math.max(a, b));
-
-		// eg RandomBetween[5.499999, 5.500001]
-		// eg RandomBetween[5.5, 5.5]
-		if (min > max) {
-			int tmp = max;
-			max = min;
-			min = tmp;
-		}
-
-		return random.nextInt(max - min + 1) + min;
-
-	}
-
-	/**
-	 * allows use of seeds to generate the same sequence for a ggb file
-	 *
 	 * @param seed
 	 *            new seed
 	 */
 	public void setRandomSeed(int seed) {
-		random = new Random(seed);
+		randomNumberGenerator.setRandomSeed(seed);
 	}
 
 	/**
@@ -2969,8 +2870,8 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 */
 	public String getVersionString() {
 		if (platform != null) {
-			return platform.getVersionString(PreviewFeature.enablePreviewFeatures,
-					getConfig().getAppCode());
+			return platform.getVersionString(
+					PreviewFeature.enablePreviewFeatures, getConfig().getAppCode());
 		}
 
 		// fallback in case version not set properly
@@ -3018,7 +2919,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * @return whether right click features are enabled
 	 */
-	final public boolean isRightClickEnabled() {
+	public final boolean isRightClickEnabled() {
 		return rightClickEnabled;
 	}
 
@@ -3036,7 +2937,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * @return whether right click features are enabled for Algebra View
 	 */
-	final public boolean isRightClickEnabledForAV() {
+	public final boolean isRightClickEnabledForAV() {
 		return rightClickEnabledForAV;
 	}
 
@@ -3081,8 +2982,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *            whether to convert from localized
 	 * @return script object
 	 */
-	public Script createScript(ScriptType type, String scriptText0,
-			boolean translate) {
+	public Script createScript(ScriptType type, String scriptText0, boolean translate) {
 		String scriptText = scriptText0;
 		if (type == ScriptType.GGBSCRIPT && translate) {
 			scriptText = GgbScript.localizedScript2Script(this, scriptText);
@@ -3114,8 +3014,8 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *
 	 * @author Zoltan Kovacs
 	 */
-	public void showRelation(final GeoElement ra, final GeoElement rb,
-			final GeoElement rc, final GeoElement rd) {
+	public void showRelation(
+			final GeoElement ra, final GeoElement rb, final GeoElement rc, final GeoElement rd) {
 		new Relation(this, ra, rb, rc, rd).showDialog();
 	}
 
@@ -3295,19 +3195,19 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * Add space separated list of view IDs that are showing navigation bar
 	 *
-	 * @param sb
+	 * @return
 	 *            XML builder
 	 */
-	public void getConsProtNavigationIds(StringBuilder sb) {
+	public StringBuilder getConsProtNavigationIds() {
+		StringBuilder sb = new StringBuilder();
 		if (showConsProtNavigation == null) {
 			if (showView(App.VIEW_CONSTRUCTION_PROTOCOL)) {
 				sb.append(App.VIEW_CONSTRUCTION_PROTOCOL);
 			}
-			return;
+			return sb;
 		}
 		boolean alreadyOne = false;
-		for (Entry<Integer, Boolean> entry : showConsProtNavigation
-				.entrySet()) {
+		for (Entry<Integer, Boolean> entry : showConsProtNavigation.entrySet()) {
 			int id = entry.getKey();
 			if (entry.getValue()) {
 				if (alreadyOne) {
@@ -3318,6 +3218,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 				sb.append(id);
 			}
 		}
+		return sb;
 	}
 
 	/**
@@ -3351,11 +3252,10 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param showProtButton
 	 *            whether button to show construction protocol should be visible
 	 */
-	public void setShowConstructionProtocolNavigation(boolean show, int id,
-			boolean playButton, double playDelay, boolean showProtButton) {
+	public void setShowConstructionProtocolNavigation(
+			boolean show, int id, boolean playButton, double playDelay, boolean showProtButton) {
 
-		ConstructionProtocolSettings cpSettings = getSettings()
-				.getConstructionProtocol();
+		ConstructionProtocolSettings cpSettings = getSettings().getConstructionProtocol();
 		cpSettings.setShowPlayButton(playButton);
 		cpSettings.setPlayDelay(playDelay);
 		cpSettings.setShowConsProtButton(showProtButton);
@@ -3369,8 +3269,8 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		if (getGuiManager() != null) {
 
 			if (show) {
-				getGuiManager().setShowConstructionProtocolNavigation(show, id,
-						playButton, playDelay, showProtButton);
+				getGuiManager()
+						.setShowConstructionProtocolNavigation(show, id, playButton, playDelay, showProtButton);
 			}
 		}
 	}
@@ -3389,8 +3289,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 
 		if (getGuiManager() != null) {
 			showConsProtNavigation.replaceAll((id, ignore) -> {
-				getGuiManager().setShowConstructionProtocolNavigation(false,
-						id);
+				getGuiManager().setShowConstructionProtocolNavigation(false, id);
 				setShowConstProtNavigationNeedsUpdate(id, false);
 				return false;
 			});
@@ -3418,15 +3317,13 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *            true to show navigation bar
 	 */
 	public void setShowConstructionProtocolNavigation(boolean flag) {
-		dispatchEvent(
-				new Event(EventType.SHOW_NAVIGATION_BAR, null, flag + ""));
+		dispatchEvent(new Event(EventType.SHOW_NAVIGATION_BAR, null, String.valueOf(flag)));
 		if (!flag) {
 			setHideConstructionProtocolNavigation();
 		} else {
 			if (!showConsProtNavigation()) {
 				// show navigation bar in active view
-				setShowConstructionProtocolNavigation(true,
-						getActiveEuclidianView().getViewID());
+				setShowConstructionProtocolNavigation(true, getActiveEuclidianView().getViewID());
 				return;
 
 			} else if (!getShowCPNavNeedsUpdate()) {
@@ -3435,8 +3332,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 
 			if (getGuiManager() != null) {
 				showConsProtNavigation.replaceAll((id, any) -> {
-					getGuiManager().setShowConstructionProtocolNavigation(true,
-							id);
+					getGuiManager().setShowConstructionProtocolNavigation(true, id);
 					setShowConstProtNavigationNeedsUpdate(id, false);
 					return true;
 				});
@@ -3458,14 +3354,12 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		if (showConsProtNavigation == null) {
 			showConsProtNavigation = new HashMap<>();
 		} else {
-			if ((flag == showConsProtNavigation(id))
-					&& !getShowCPNavNeedsUpdate(id)) {
+			if ((flag == showConsProtNavigation(id)) && !getShowCPNavNeedsUpdate(id)) {
 				return;
 			}
 		}
 		showConsProtNavigation.put(id, flag);
-		dispatchEvent(new Event(EventType.SHOW_NAVIGATION_BAR, null,
-				"[" + flag + "," + id + "]"));
+		dispatchEvent(new Event(EventType.SHOW_NAVIGATION_BAR, null, "[" + flag + "," + id + "]"));
 		if (getGuiManager() != null) {
 			getGuiManager().setShowConstructionProtocolNavigation(flag, id);
 			setShowConstProtNavigationNeedsUpdate(id, false);
@@ -3506,8 +3400,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		// updateCenterPanel(true);
 
 		if (getGuiManager() != null) {
-			getGuiManager()
-					.updateCheckBoxesForShowConstructionProtocolNavigation(id);
+			getGuiManager().updateCheckBoxesForShowConstructionProtocolNavigation(id);
 		}
 	}
 
@@ -3537,6 +3430,13 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	}
 
 	/**
+	 * @return Accessibility Analytics Context for this app instance
+	 */
+	public AccessibilityAnalyticsContext getAccessibilityAnalyticsContext() {
+		return accessibilityAnalyticsContext;
+	}
+
+	/**
 	 * Creates a new command dispatcher (platform dependent, to support code splitting).
 	 * @param cmdKernel kernel
 	 * @return command dispatcher
@@ -3557,6 +3457,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		return isErrorDialogsActive;
 	}
 
+	/**
+	 * @param isErrorDialogsActive whether error dialogs are active
+	 */
 	public final void setErrorDialogsActive(boolean isErrorDialogsActive) {
 		this.isErrorDialogsActive = isErrorDialogsActive;
 	}
@@ -3576,11 +3479,11 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		// overwritten in AppW
 	}
 
-	protected AppCompanion newAppCompanion() {
+	protected @NonNull AppCompanion newAppCompanion() {
 		return new AppCompanion(this);
 	}
 
-	public AppCompanion getCompanion() {
+	public final @NonNull AppCompanion getCompanion() {
 		return companion;
 	}
 
@@ -3613,8 +3516,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @return whether more than one of EV1 and EV2 is showing
 	 */
 	public boolean isShowingMultipleEVs() {
-		if (getGuiManager() == null
-				|| getGuiManager().getEuclidianViewCount() < 2) {
+		if (getGuiManager() == null || getGuiManager().getEuclidianViewCount() < 2) {
 			return false;
 		}
 		for (int i = 1; i < getGuiManager().getEuclidianViewCount(); i++) {
@@ -3651,10 +3553,12 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	public boolean addMacroXML(String xml) {
 		boolean ok = true;
 		try {
-			getXMLio().processXMLString(
-					"<geogebra format=\"" + GeoGebraConstants.XML_FILE_FORMAT
-							+ "\">" + xml + "</geogebra>",
-					false, true);
+			getXMLio()
+					.processXMLString(
+							"<geogebra format=\"" + GeoGebraConstants.XML_FILE_FORMAT + "\">" + xml
+									+ "</geogebra>",
+							false,
+							true);
 		} catch (MyError err) {
 			Log.debug(err);
 			showError(err);
@@ -3702,18 +3606,30 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		return false;
 	}
 
+	/**
+	 * @return whether this is an unbundled (single app code) version of GeoGebra
+	 */
 	public boolean isUnbundled() {
 		return false;
 	}
 
+	/**
+	 * @return whether this is the unbundled Graphing Calculator app
+	 */
 	public boolean isUnbundledGraphing() {
 		return false;
 	}
 
+	/**
+	 * @return whether this is the unbundled Geometry app
+	 */
 	public boolean isUnbundledGeometry() {
 		return false;
 	}
 
+	/**
+	 * @return whether the whiteboard (Notes) is currently active
+	 */
 	public boolean isWhiteboardActive() {
 		return false;
 	}
@@ -3734,6 +3650,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		return false;
 	}
 
+	/**
+	 * @return whether this is an unbundled app or the whiteboard is active
+	 */
 	public boolean isUnbundledOrWhiteboard() {
 		return isUnbundled() || isWhiteboardActive();
 	}
@@ -3772,18 +3691,21 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * @return whether euclidian view for plane was initialized
 	 */
-	final public boolean hasEuclidianViewForPlane() {
+	public final boolean hasEuclidianViewForPlane() {
 		return companion.hasEuclidianViewForPlane();
 	}
 
 	/**
 	 * @return whether euclidian view for plane exists and is visible
 	 */
-	final public boolean hasEuclidianViewForPlaneVisible() {
+	public final boolean hasEuclidianViewForPlaneVisible() {
 		return companion.hasEuclidianViewForPlaneVisible();
 	}
 
-	final public EuclidianView getViewForPlaneVisible() {
+	/**
+	 * @return the visible euclidian view for plane, if any
+	 */
+	public final EuclidianView getViewForPlaneVisible() {
 		return companion.getViewForPlaneVisible();
 	}
 
@@ -3793,7 +3715,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param geo
 	 *            geo
 	 */
-	final public void addToViewsForPlane(GeoElement geo) {
+	public final void addToViewsForPlane(GeoElement geo) {
 		companion.addToViewsForPlane(geo);
 	}
 
@@ -3854,39 +3776,28 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 				// between selecting the geo and pressing <Space>, just do nothing
 				return false;
 			}
-			if (geo.isGeoBoolean()) {
+			if (geo instanceof GeoBoolean geoBool) {
 				if (!geo.isIndependent()) {
 					return true;
 				}
-
-				GeoBoolean geoBool = (GeoBoolean) selGeos.get(0);
 				geoBool.setValue(!geoBool.getBoolean());
 				geoBool.updateRepaint();
-			} else if (geo.isGeoInputBox()) {
-				getActiveEuclidianView()
-						.focusAndShowTextField((GeoInputBox) geo);
-			} else if (geo.isGeoList() && ((GeoList) geo).drawAsComboBox()) {
-				Drawable d = (Drawable) getActiveEuclidianView()
-						.getDrawableFor(geo);
+			} else if (geo instanceof GeoInputBox inputBox) {
+				getActiveEuclidianView().focusAndShowTextField(inputBox);
+			} else if (geo instanceof GeoList list && list.drawAsComboBox()) {
+				Drawable d = (Drawable) getActiveEuclidianView().getDrawableFor(geo);
 				if (d != null) {
 					((DrawDropDownList) d).toggleOptions();
 				}
-			} else if (geo.isGeoNumeric()) {
-
-				// <Space> -> toggle slider animation off/on
-				GeoNumeric num = (GeoNumeric) geo;
-				if (num.isAnimatable() && isRightClickEnabled()) {
-					num.setAnimating(!num.isAnimating());
-
-					storeUndoInfo();
-					// update play/pause icon at bottom left
-					getActiveEuclidianView().repaint();
-
-					if (num.isAnimating()) {
-						num.getKernel().getAnimationManager().startAnimation();
-					}
+			} else if (geo instanceof GeoNumeric num) {
+				if (!num.isAnimatable()) {
+					// non-slider (angle, bar chart, ...) -> run scripts
+					ScreenReader.readSpacePressed(geo);
+					geo.runClickScripts(null);
+					return true;
+				} else if (isRightClickEnabled()) {
+					toggleSliderAnimation(num);
 				}
-
 			} else {
 				ScreenReader.readSpacePressed(geo);
 				geo.runClickScripts(null);
@@ -3895,11 +3806,22 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 
 			// read *after* state changed!
 			ScreenReader.readSpacePressed(geo);
-
 			return true;
 		}
 
 		return false;
+	}
+
+	private void toggleSliderAnimation(GeoNumeric num) {
+		num.setAnimating(!num.isAnimating());
+
+		storeUndoInfo();
+		// update play/pause icon at bottom left
+		getActiveEuclidianView().repaint();
+
+		if (num.isAnimating()) {
+			num.getKernel().getAnimationManager().startAnimation();
+		}
 	}
 
 	/**
@@ -3916,7 +3838,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param geo
 	 *            geo
 	 */
-	final public void removeFromViewsForPlane(GeoElement geo) {
+	public final void removeFromViewsForPlane(GeoElement geo) {
 		companion.removeFromViewsForPlane(geo);
 	}
 
@@ -4020,6 +3942,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		return "";
 	}
 
+	/**
+	 * @return the layout, or {@code null} if there is no GUI manager
+	 */
 	public Layout getLayout() {
 		return getGuiManager() == null ? null : getGuiManager().getLayout();
 	}
@@ -4038,14 +3963,16 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	}
 
 	/**
-	 * Split selected strokes (if any) and deletes selected objects.
+	 * Deletes selected objects, including selected parts of strokes.
 	 */
 	public void splitAndDeleteSelectedObjects() {
-		getActiveEuclidianView().getEuclidianController().splitSelectedStrokes(true);
+		getActiveEuclidianView().getEuclidianController().deletePartiallySelectedStrokes();
 		deleteSelectedObjects(false);
-
 	}
 
+	/**
+	 * @return manager for running asynchronous tasks; runs synchronously by default
+	 */
 	public AsyncManagerI getAsyncManager() {
 		return Runnable::run;
 	}
@@ -4064,8 +3991,58 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		return new SyntaxAdapterImpl(kernel);
 	}
 
+	/**
+	 * @return whether the spreadsheet view is available and not restricted (e.g. by an exam)
+	 */
 	public boolean isSpreadsheetEnabled() {
 		return getConfig().hasSpreadsheetView() && !spreadsheetRestricted;
+	}
+
+	/**
+	 * @return the app-owned spreadsheet instance. Returns {@code null} if the app doesn't have
+	 * a spreadsheet view at all (via {@link AppConfig}), or if the spreadsheet is temporarily
+	 * disabled during an exam (via {@link FeatureRestriction#SPREADSHEET}).
+	 */
+	public @Nullable Spreadsheet<GeoElement> getSpreadsheet() {
+		if (!isSpreadsheetEnabled()) {
+			return null;
+		}
+		if (spreadsheet == null) {
+			Kernel kernel = getKernel();
+			KernelTabularDataAdapter tabularData = new KernelTabularDataAdapter(this);
+			kernel.notifyAddAll(tabularData);
+			kernel.attach(tabularData);
+			GeoElementCellRendererFactory factory =
+					getGeoElementCellRendererFactory(this::getFontSizeDouble);
+			spreadsheet = new Spreadsheet<>(
+					tabularData,
+					factory,
+					new DefaultSpreadsheetConstructionDelegate(kernel.getAlgebraProcessor()),
+					getUndoManager());
+			spreadsheet.setSelectionDelegate(selection::setSelectedGeos);
+			spreadsheet.setCellDescriptionBuilder(
+					new SpreadsheetCellDescriptionBuilder(tabularData, getLocalization()));
+			if (!isUnbundled()) {
+				spreadsheet.setDefaultCellSize(
+						getSettings().getSpreadsheet().preferredColumnWidth(),
+						getSettings().getSpreadsheet().preferredRowHeight());
+			}
+			spreadsheetSettingsAdapter = new SpreadsheetSettingsAdapter<>(spreadsheet, this);
+			spreadsheetSettingsAdapter.registerListeners();
+		}
+		return spreadsheet;
+	}
+
+	/** Closes the statistics view if the spreadsheet has been initialized. */
+	public void closeSpreadsheetStatisticsView() {
+		if (spreadsheet != null) {
+			spreadsheet.closeStatisticsView();
+		}
+	}
+
+	protected @NonNull GeoElementCellRendererFactory getGeoElementCellRendererFactory(
+			Supplier<Double> fontSizeProvider) {
+		return new GeoElementCellRendererFactory(gGraphics2D -> null, fontSizeProvider);
 	}
 
 	/**
@@ -4073,18 +4050,18 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *
 	 * <p>
 	 * In the default implementation, all views are always available.
-	 * This suits all platforms that with no view‐restriction policies.
+	 * This suits all platforms that with no view-restriction policies.
 	 * </p>
 	 *
 	 * <p>
-	 * Platforms that need to enforce initial‐view restrictions (web)
+	 * Platforms that need to enforce initial-view restrictions (web)
 	 * should override this method to return a specialized
 	 * {@link InitialViewState} implementation.
 	 * </p>
 	 *
 	 * @return the cached {@link InitialViewState}, creating it if necessary
 	 */
-	public @Nonnull InitialViewState getInitialViewState() {
+	public @NonNull InitialViewState getInitialViewState() {
 		if (initialViewState == null) {
 			initialViewState = new DefaultInitialViewState();
 		}
@@ -4113,23 +4090,34 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * Export types.
 	 */
 	public enum ExportType {
-		NONE, PDF_TEXTASSHAPES, PDF_EMBEDFONTS, PDF_HTML5, EPS, EMF,
+		NONE,
+		PDF_TEXTASSHAPES,
+		PDF_EMBEDFONTS,
+		PDF_HTML5,
+		EPS,
+		EMF,
 
-		PNG, PNG_BRAILLE, SVG, PRINTING, ANIMATED_GIF, WEBP, WEBM;
+		PNG,
+		PNG_BRAILLE,
+		SVG,
+		PRINTING,
+		ANIMATED_GIF,
+		WEBP,
+		WEBM;
 
 		/**
 		 * @return minus sign for axes description
 		 */
 		public char getAxisMinusSign() {
 			switch (this) {
-			case PDF_HTML5:
-				return Unicode.MINUS;
-			case PDF_EMBEDFONTS:
-			case PNG_BRAILLE:
-				return '-';
+				case PDF_HTML5:
+					return Unicode.MINUS;
+				case PDF_EMBEDFONTS:
+				case PNG_BRAILLE:
+					return '-';
 
-			default:
-				return Unicode.N_DASH;
+				default:
+					return Unicode.N_DASH;
 			}
 		}
 	}
@@ -4163,7 +4151,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param zipFile zip file content
 	 * @return success
 	 */
-	final public boolean loadXML(byte[] zipFile) {
+	public final boolean loadXML(byte[] zipFile) {
 		return loadXML(new ByteArrayZipFile(zipFile));
 	}
 
@@ -4174,7 +4162,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *            ggb file
 	 * @return success
 	 */
-	final public boolean loadXML(ZipFile zipFile) {
+	public final boolean loadXML(ZipFile zipFile) {
 		try {
 			// make sure objects are displayed in the correct View
 			setActiveView(App.VIEW_EUCLIDIAN);
@@ -4255,10 +4243,16 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		return url;
 	}
 
+	/**
+	 * @return handler used to report errors to the user
+	 */
 	public ErrorHandler getErrorHandler() {
 		return getDefaultErrorHandler();
 	}
 
+	/**
+	 * @return default error handler, which silently ignores errors
+	 */
 	public ErrorHandler getDefaultErrorHandler() {
 		return ErrorHelper.silent();
 	}
@@ -4299,7 +4293,8 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 				getKernel().setPrintDecimals(roundInt);
 			}
 			if (rounding.contains("r")) {
-				GeoElement defNumber = getKernel().getConstruction()
+				GeoElement defNumber = getKernel()
+						.getConstruction()
 						.getConstructionDefaults()
 						.getDefaultGeo(ConstructionDefaults.DEFAULT_NUMBER);
 				if (defNumber != null) {
@@ -4324,17 +4319,15 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *            max height in px
 	 * @return export image of current EV
 	 */
-	public GBufferedImage getActiveEuclidianViewExportImage(double maxX,
-			double maxY) {
-		return getEuclidianViewExportImage(getActiveEuclidianView(), maxX,
-				maxY);
+	public GBufferedImage getActiveEuclidianViewExportImage(double maxX, double maxY) {
+		return getEuclidianViewExportImage(getActiveEuclidianView(), maxX, maxY);
 	}
 
 	protected static GBufferedImage getEuclidianViewExportImage(
 			EuclidianView ev, double maxX, double maxY) {
 
-		double scale = Math.min(maxX / ev.getSelectedWidthInPixels(),
-				maxY / ev.getSelectedHeightInPixels());
+		double scale =
+				Math.min(maxX / ev.getSelectedWidthInPixels(), maxY / ev.getSelectedHeightInPixels());
 
 		return ev.getExportImage(scale);
 	}
@@ -4390,18 +4383,18 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 */
 	public static String getLabelStyleName(App app, int id) {
 		switch (id) {
-		case -1:
-			return app.getLocalization().getMenu("Hidden");
-		case GeoElementND.LABEL_NAME:
-			return app.getLocalization().getMenu("Name");
-		case GeoElementND.LABEL_NAME_VALUE:
-			return app.getLocalization().getMenu("NameAndValue");
-		case GeoElementND.LABEL_VALUE:
-			return app.getLocalization().getMenu("Value");
-		case GeoElementND.LABEL_CAPTION:
-			return app.getLocalization().getMenu("Caption");
-		default:
-			return "";
+			case -1:
+				return app.getLocalization().getMenu("Hidden");
+			case GeoElementND.LABEL_NAME:
+				return app.getLocalization().getMenu("Name");
+			case GeoElementND.LABEL_NAME_VALUE:
+				return app.getLocalization().getMenu("NameAndValue");
+			case GeoElementND.LABEL_VALUE:
+				return app.getLocalization().getMenu("Value");
+			case GeoElementND.LABEL_CAPTION:
+				return app.getLocalization().getMenu("Caption");
+			default:
+				return "";
 		}
 	}
 
@@ -4433,8 +4426,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param callback
 	 *            GeoGebraToPstricks object
 	 */
-	public void newGeoGebraToPstricks(
-			AsyncOperation<GeoGebraExport> callback) {
+	public void newGeoGebraToPstricks(AsyncOperation<GeoGebraExport> callback) {
 		// overridden in AppD, AppW
 	}
 
@@ -4443,8 +4435,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param callback
 	 *            GeoGebraToAsymptote object
 	 */
-	public void newGeoGebraToAsymptote(
-			AsyncOperation<GeoGebraExport> callback) {
+	public void newGeoGebraToAsymptote(AsyncOperation<GeoGebraExport> callback) {
 		// overridden in AppD, AppW
 	}
 
@@ -4486,7 +4477,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	/**
 	 * @return whether to use transparent cursor for dragging
 	 */
-	final public boolean useTransparentCursorWhenDragging() {
+	public final boolean useTransparentCursorWhenDragging() {
 		return useTransparentCursorWhenDragging;
 	}
 
@@ -4516,12 +4507,12 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	}
 
 	@Override
-	public void addToolsFilter(@Nonnull ToolCollectionFilter filter) {
+	public void addToolsFilter(@NonNull ToolCollectionFilter filter) {
 		toolFilters.add(filter);
 	}
 
 	@Override
-	public void removeToolsFilter(@Nonnull ToolCollectionFilter filter) {
+	public void removeToolsFilter(@NonNull ToolCollectionFilter filter) {
 		toolFilters.remove(filter);
 	}
 
@@ -4530,7 +4521,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * depending on platform (iOS, Android) or during exams.
 	 */
 	@Override
-	public @Nonnull ToolCollection getAvailableTools() {
+	public @NonNull ToolCollection getAvailableTools() {
 		ToolCollection toolCollection = createToolCollectionFactory().createToolCollection();
 		toolCollection.filter(this::isModeValid);
 		if (getPlatform().isMobile()) {
@@ -4601,6 +4592,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		companion.setExport3D(format, false);
 	}
 
+	/**
+	 * @return whether the app is in portrait orientation (height greater than width)
+	 */
 	public boolean isPortrait() {
 		return getHeight() > getWidth();
 	}
@@ -4614,6 +4608,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 */
 	public void setConfig(AppConfig config) {
 		setConfigNoSettingsReset(config);
+		valueConverter = null;
 		if (kernel != null) {
 			initSettingsUpdater().resetSettingsOnAppStart();
 		}
@@ -4628,6 +4623,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 			getLocalization().getCommandSyntax().removeSyntaxFilter(primarySyntaxFilter);
 		}
 		this.appConfig = config;
+		appScope.resetRememberedProperties();
 
 		if (kernel != null) {
 			kernel.setEquationBehaviour(config.getEquationBehaviour());
@@ -4637,7 +4633,6 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		if (primarySyntaxFilter != null && getLocalization() != null) {
 			getLocalization().getCommandSyntax().addSyntaxFilter(primarySyntaxFilter);
 		}
-		resetAlgebraOutputFilter();
 	}
 
 	/**
@@ -4720,8 +4715,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @return whether 3D commands are enabled
 	 */
 	public boolean areCommands3DEnabled() {
-		return areCommands3DEnabled && (getSettings().getEuclidian(-1) == null
-				|| getSettings().getEuclidian(-1).isEnabled());
+		return areCommands3DEnabled
+				&& (getSettings().getEuclidian(-1) == null
+						|| getSettings().getEuclidian(-1).isEnabled());
 	}
 
 	/**
@@ -4729,7 +4725,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *            value in case temp perspective is not defined
 	 * @return perspective called "tmp" or given fallback
 	 */
-	public @CheckForNull Perspective getTmpPerspective(Perspective fallback) {
+	public @Nullable Perspective getTmpPerspective(Perspective fallback) {
 		return tmpPerspective == null ? fallback : tmpPerspective;
 	}
 
@@ -4779,8 +4775,12 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *            corner 2
 	 * @return image
 	 */
-	public GeoImage createImageFromString(final String imgFileName,
-			String imgBase64, GeoImage imageOld, boolean autoCorners, GeoPointND c1,
+	public GeoImage createImageFromString(
+			final String imgFileName,
+			String imgBase64,
+			GeoImage imageOld,
+			boolean autoCorners,
+			GeoPointND c1,
 			GeoPointND c2) {
 		return null;
 	}
@@ -4794,7 +4794,10 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		return MD5Checksum.compute(s);
 	}
 
-	public @CheckForNull EmbedManager getEmbedManager() {
+	/**
+	 * @return manager for embedded applets/widgets, or null if not initialized
+	 */
+	public @Nullable EmbedManager getEmbedManager() {
 		return null;
 	}
 
@@ -4841,8 +4844,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		StringTemplate.editorTemplate.setLocalizeCmds(false);
 		StringTemplate.editorTemplate.setPrintMethodsWithParenthesis(true);
 		StringTemplate.latexTemplate.setLocalizeCmds(false);
-		StringTemplate.latexTemplate
-				.setPrintMethodsWithParenthesis(true);
+		StringTemplate.latexTemplate.setPrintMethodsWithParenthesis(true);
 	}
 
 	/**
@@ -4866,18 +4868,15 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *            parent settings
 	 * @return desktop keyboard settings, dummy settings in other platform
 	 */
-	public AbstractSettings getKeyboardSettings(
-			AbstractSettings keyboardSettings) {
-		return new AbstractSettings() {
-			// no-op
-		};
+	public AbstractSettings getKeyboardSettings(AbstractSettings keyboardSettings) {
+		return new AbstractSettings.Empty();
 	}
 
 	/**
 	 * @param attrs
 	 *            XML attributes
 	 */
-	public void updateKeyboardSettings(LinkedHashMap<String, String> attrs) {
+	public void updateKeyboardSettings(Map<String, String> attrs) {
 		// only desktop
 	}
 
@@ -4898,6 +4897,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		return settingsUpdater;
 	}
 
+	/**
+	 * @return updater for font related settings
+	 */
 	public FontSettingsUpdater getFontSettingsUpdater() {
 		return getSettingsUpdater().getFontSettingsUpdater();
 	}
@@ -4920,7 +4922,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 
 	/**
 	 * Copy image to system clipboard
-	 * 
+	 *
 	 * @param dataURI data URI of image to copy
 	 */
 	public void copyImageToClipboard(String dataURI) {
@@ -4966,6 +4968,9 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		// no-op
 	}
 
+	/**
+	 * @return list of mask widgets, or null if not supported by this platform
+	 */
 	public MaskWidgetList getMaskWidgets() {
 		return null;
 	}
@@ -4975,34 +4980,11 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @apiNote DO NOT CACHE THE RETURN VALUE, the converter may change at runtime (e.g., for
 	 * certain exams).
 	 */
-	public @Nonnull ToStringConverter getGeoElementValueConverter() {
+	public @NonNull ToStringConverter getGeoElementValueConverter() {
 		if (valueConverter == null) {
 			valueConverter = new ProtectiveGeoElementValueConverter(getAlgebraOutputFilter());
 		}
 		return valueConverter;
-	}
-
-	/**
-	 * @return The current {@link AlgebraOutputFilter}.
-	 * @apiNote DO NOT CACHE THE RETURN VALUE, the filter may change at runtime (e.g., for certain
-	 * exams).
-	 */
-	public @Nonnull AlgebraOutputFilter getAlgebraOutputFilter() {
-		if (algebraOutputFilter == null) {
-			if (getConfig().shouldHideEquations()) {
-				algebraOutputFilter = new ProtectiveAlgebraOutputFilter();
-			} else {
-				algebraOutputFilter = new DefaultAlgebraOutputFilter();
-			}
-		}
-		return algebraOutputFilter;
-	}
-
-	/**
-	 * Visible only for testing.
-	 */
-	public void resetAlgebraOutputFilter() {
-		algebraOutputFilter = null;
 	}
 
 	/**
@@ -5014,8 +4996,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 *
 	 * @return an implementation of the text controller.
 	 */
-	public InlineTextController createInlineTextController(EuclidianView view,
-		   GeoInline geo) {
+	public InlineTextController createInlineTextController(EuclidianView view, GeoInline geo) {
 		return null;
 	}
 
@@ -5025,8 +5006,7 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 * @param geo formula
 	 * @return formula controller
 	 */
-	public InlineFormulaController createInlineFormulaController(EuclidianView view,
-			GeoFormula geo) {
+	public InlineFormulaController createInlineFormulaController(EuclidianView view, GeoFormula geo) {
 		return null;
 	}
 
@@ -5090,11 +5070,14 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		}
 	}
 
+	/**
+	 * @return identifier of the thread the app is running on, used for logging
+	 */
 	public String getThreadId() {
 		return "[main thread]";
 	}
 
-	public @CheckForNull Material getActiveMaterial() {
+	public @Nullable Material getActiveMaterial() {
 		return activeMaterial;
 	}
 
@@ -5107,50 +5090,75 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 		return null;
 	}
 
-	// ExamRestrictable
+	// -- AlgebraOutputFiltering --
 
 	@Override
-	public void applyRestrictions(@Nonnull Set<ExamFeatureRestriction> featureRestrictions,
-			@Nonnull ExamType examType) {
-		resetCommandDict();
-
-		algebraOutputFilter = examType.wrapAlgebraOutputFilter(getAlgebraOutputFilter());
-		valueConverter = null;
-
-		if (featureRestrictions.contains(ExamFeatureRestriction.HIDE_SPECIAL_POINTS)) {
-			getSpecialPointsManager().isEnabled = false;
-		}
-		if (featureRestrictions.contains(ExamFeatureRestriction.SURD)) {
-			kernel.setSurds(null);
-		}
-		if (featureRestrictions.contains(ExamFeatureRestriction.RATIONALIZATION)) {
-			kernel.setRationalization(null);
-		}
-		if (featureRestrictions.contains(ExamFeatureRestriction.DISABLE_MIXED_NUMBERS)) {
-			getEditorFeatures().setMixedNumbersEnabled(false);
-		}
-		spreadsheetRestricted = featureRestrictions.contains(ExamFeatureRestriction.SPREADSHEET);
+	public @NonNull AlgebraOutputFilter createBaseAlgebraOutputFilter() {
+		return getConfig().shouldHideEquations()
+				? new ProtectiveAlgebraOutputFilter()
+				: new DefaultAlgebraOutputFilter();
 	}
 
 	@Override
-	public void removeRestrictions(@Nonnull Set<ExamFeatureRestriction> featureRestrictions,
-			@Nonnull ExamType examType) {
-		// null out filters, to recreate on next use
-		algebraOutputFilter = null;
-		valueConverter = null;
-		if (featureRestrictions.contains(ExamFeatureRestriction.HIDE_SPECIAL_POINTS)) {
-			getSpecialPointsManager().isEnabled = true;
+	public @NonNull AlgebraOutputFilter getAlgebraOutputFilter() {
+		if (algebraOutputFilter == null) {
+			algebraOutputFilter = createBaseAlgebraOutputFilter();
 		}
-		if (featureRestrictions.contains(ExamFeatureRestriction.SURD)) {
+		return algebraOutputFilter;
+	}
+
+	@Override
+	public void setAlgebraOutputFilter(@NonNull AlgebraOutputFilter filter) {
+		algebraOutputFilter = filter;
+		valueConverter = null;
+	}
+
+	// -- Restrictable --
+
+	@Override
+	public void applyRestrictions(@NonNull Set<FeatureRestriction> featureRestrictions) {
+		resetCommandDict();
+		valueConverter = null;
+
+		if (featureRestrictions.contains(
+				FeatureRestriction.SPECIAL_POINTS_ONLY_ON_GRAPHICS_VIEW_SELECTION)) {
+			getSpecialPointsManager().setRestrictedToGraphicsViewSelection(true);
+		}
+		if (featureRestrictions.contains(FeatureRestriction.SURD)) {
+			kernel.setSurds(null);
+		}
+		if (featureRestrictions.contains(FeatureRestriction.RATIONALIZATION)) {
+			kernel.setRationalization(null);
+		}
+		if (featureRestrictions.contains(FeatureRestriction.DISABLE_MIXED_NUMBERS)) {
+			getEditorFeatures().setMixedNumbersEnabled(false);
+		}
+		if (regressionSpecificationBuilder != null) {
+			regressionSpecificationBuilder.applyRestrictions(featureRestrictions);
+		}
+		spreadsheetRestricted = featureRestrictions.contains(FeatureRestriction.SPREADSHEET);
+	}
+
+	@Override
+	public void removeRestrictions(@NonNull Set<FeatureRestriction> featureRestrictions) {
+		valueConverter = null;
+		if (featureRestrictions.contains(
+				FeatureRestriction.SPECIAL_POINTS_ONLY_ON_GRAPHICS_VIEW_SELECTION)) {
+			getSpecialPointsManager().setRestrictedToGraphicsViewSelection(false);
+		}
+		if (featureRestrictions.contains(FeatureRestriction.SURD)) {
 			kernel.setSurds(new Surds());
 		}
-		if (featureRestrictions.contains(ExamFeatureRestriction.RATIONALIZATION)) {
+		if (featureRestrictions.contains(FeatureRestriction.RATIONALIZATION)) {
 			kernel.setRationalization(new Rationalization());
 		}
-		if (featureRestrictions.contains(ExamFeatureRestriction.DISABLE_MIXED_NUMBERS)) {
+		if (featureRestrictions.contains(FeatureRestriction.DISABLE_MIXED_NUMBERS)) {
 			getEditorFeatures().setMixedNumbersEnabled(true);
 		}
-		if (featureRestrictions.contains(ExamFeatureRestriction.SPREADSHEET)) {
+		if (regressionSpecificationBuilder != null) {
+			regressionSpecificationBuilder.removeRestrictions(featureRestrictions);
+		}
+		if (featureRestrictions.contains(FeatureRestriction.SPREADSHEET)) {
 			spreadsheetRestricted = false;
 		}
 		resetCommandDict();
@@ -5165,7 +5173,8 @@ public abstract class App implements UpdateSelection, AppInterface, EuclidianHos
 	 */
 	public boolean isAlgebraViewFocused() {
 		GuiManagerInterface guiManager = getGuiManager();
-		if (guiManager == null || guiManager.getLayout() == null
+		if (guiManager == null
+				|| guiManager.getLayout() == null
 				|| guiManager.getLayout().getDockManager() == null) {
 			return false;
 		}

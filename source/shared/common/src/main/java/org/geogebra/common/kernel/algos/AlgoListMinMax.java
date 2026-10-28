@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -21,11 +25,10 @@ import org.geogebra.common.kernel.geos.GeoNumeric;
 
 /**
  * Minimum value of a list.
- * 
+ *
  * @author Markus Hohenwarter
  * @version 15-07-2007
  */
-
 public class AlgoListMinMax extends AlgoElement {
 
 	private final boolean isMin;
@@ -120,8 +123,7 @@ public class AlgoListMinMax extends AlgoElement {
 				GeoElement geo = geoList.get(i);
 				GeoElement freqGeo = freqList.get(i);
 
-				if (!(geo instanceof NumberValue)
-						|| !(freqGeo instanceof NumberValue)) {
+				if (!(geo instanceof NumberValue) || !(freqGeo instanceof NumberValue)) {
 					min.setUndefined();
 					return;
 				}
@@ -144,7 +146,6 @@ public class AlgoListMinMax extends AlgoElement {
 				min.setUndefined();
 				return;
 			}
-
 		}
 
 		min.setValue(minVal);
@@ -153,5 +154,4 @@ public class AlgoListMinMax extends AlgoElement {
 	private double minMax(double a, double b) {
 		return isMin ? Math.min(a, b) : Math.max(a, b);
 	}
-
 }

@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.arithmetic;
@@ -18,7 +22,7 @@ import org.geogebra.common.kernel.algos.AlgoElement;
 
 /**
  * Interface for GeoFunction and GeoFunctionNVar
- * 
+ *
  * @author Markus
  *
  */
@@ -37,7 +41,7 @@ public interface FunctionalNVar extends Evaluate2Var, VarString {
 
 	/**
 	 * Returns true iff the function is boolean
-	 * 
+	 *
 	 * @return true iff the function is boolean
 	 */
 	boolean isBooleanFunction();
@@ -67,7 +71,7 @@ public interface FunctionalNVar extends Evaluate2Var, VarString {
 	/**
 	 * For GeoElements sets the usual defined flag, also works for
 	 * ValidExpressions
-	 * 
+	 *
 	 * @param b
 	 *            whether this is defined
 	 */
@@ -86,7 +90,7 @@ public interface FunctionalNVar extends Evaluate2Var, VarString {
 
 	/**
 	 * GGB-605
-	 * 
+	 *
 	 * @param algo
 	 *            algorithm to be used for value string instead of secret
 	 *            expression

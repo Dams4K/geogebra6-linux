@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.euclidian.draw;
 
 import java.util.ArrayList;
@@ -48,18 +64,17 @@ public class DrawFormula extends Drawable implements DrawInline {
 
 		GPoint2D point = formula.getLocation();
 		if (formulaController != null && point != null) {
+			double contentWidth = formula.getContentWidth();
+			double contentHeight = formula.getContentHeight();
 			double angle = formula.getAngle();
 			double width = formula.getWidth();
 			double height = formula.getHeight();
-			double contentWidth = formula.getContentWidth();
-			double contentHeight = formula.getContentHeight();
 
-			formulaController.setLocation(view.toScreenCoordX(point.getX()),
-					view.toScreenCoordY(point.getY()));
+			formulaController.setLocation(
+					view.toScreenCoordX(point.getX()), view.toScreenCoordY(point.getY()));
 			formulaController.setHeight((int) contentHeight);
 			formulaController.setWidth((int) contentWidth);
-			formulaController.setAngle(angle);
-			formulaController.setScale(width / contentWidth, height / contentHeight);
+			formulaController.setTransform(angle, width / contentWidth, height / contentHeight);
 			formulaController.setColor(geo.getObjectColor());
 			formulaController.setFontSize(view.getFontSize());
 		}
@@ -67,8 +82,7 @@ public class DrawFormula extends Drawable implements DrawInline {
 
 	@Override
 	public void draw(GGraphics2D g2) {
-		if (formula.isEuclidianVisible()
-			&& rectangle.getDirectTransform() != null) {
+		if (formula.isEuclidianVisible() && rectangle.getDirectTransform() != null) {
 			double contentWidth = formula.getContentWidth();
 			double contentHeight = formula.getContentHeight();
 			g2.setStroke(objStroke); // needed eg for \sqrt
@@ -76,17 +90,14 @@ public class DrawFormula extends Drawable implements DrawInline {
 			g2.transform(rectangle.getDirectTransform());
 			if (geo.getBackgroundColor() != null) {
 				g2.setPaint(geo.getBackgroundColor());
-				g2.fillRect(0, 0, (int) formula.getWidth(),
-					(int) formula.getHeight());
+				g2.fillRect(0, 0, (int) formula.getWidth(), (int) formula.getHeight());
 			}
 			rectangle.scaleForZoom(contentWidth, contentHeight);
 			g2.scale(rectangle.realWidth() / contentWidth, rectangle.realHeight() / contentHeight);
 			g2.translate(PADDING, PADDING);
-			GFont font = view.getApplication().getFontCommon(false,
-					GFont.PLAIN, view.getFontSize());
+			GFont font = view.getApplication().getFontCommon(false, GFont.PLAIN, view.getFontSize());
 			if (formulaController == null || !formulaController.isInForeground()) {
-				drawMultilineLaTeX(g2, font,
-						geo.getObjectColor(), view.getBackgroundCommon());
+				drawMultilineLaTeX(g2, font, geo.getObjectColor(), view.getBackgroundCommon());
 			}
 			g2.restoreTransform();
 		}
@@ -147,8 +158,7 @@ public class DrawFormula extends Drawable implements DrawInline {
 
 	@Override
 	public void updateContent() {
-		if (formulaController != null
-				&& !formulaController.getText().equals(formula.getContent())) {
+		if (formulaController != null && !formulaController.getText().equals(formula.getContent())) {
 			formulaController.updateContent(formula.getContent());
 		}
 		// formula created through API: update size
@@ -160,6 +170,12 @@ public class DrawFormula extends Drawable implements DrawInline {
 	}
 
 	@Override
+	public boolean hasContent() {
+		// no controller == loaded from file, assume not empty
+		return formulaController == null || !formulaController.getText().isEmpty();
+	}
+
+	@Override
 	public void toForeground(int x, int y) {
 		if (formulaController != null) {
 			GPoint2D p = rectangle.getInversePoint(x - PADDING, y - PADDING);
@@ -168,9 +184,9 @@ public class DrawFormula extends Drawable implements DrawInline {
 	}
 
 	@Override
-	public void toBackground() {
+	public void toBackground(DrawInline.SuspensionTrigger trigger) {
 		if (formulaController != null) {
-			formulaController.toBackground();
+			formulaController.toBackground(trigger);
 		}
 	}
 
@@ -191,4 +207,8 @@ public class DrawFormula extends Drawable implements DrawInline {
 		}
 	}
 
+	@Override
+	public double getScale() {
+		return rectangle.realWidth() / formula.getContentWidth();
+	}
 }

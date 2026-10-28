@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.arithmetic;
 
 import java.util.ArrayList;
@@ -12,9 +28,9 @@ import org.geogebra.common.util.ExtendedBoolean;
 /**
  * Tree containing inequalities (possibly with NOT) in leaves and AND or OR
  * operations in other nodes
- * 
+ *
  * @author Zbynek Konecny
- * 
+ *
  */
 public class IneqTree {
 	private IneqTree left;
@@ -85,7 +101,7 @@ public class IneqTree {
 
 	/**
 	 * Recomputes coefficients
-	 * 
+	 *
 	 * @return true if this tree contains valid inequalities
 	 */
 	public boolean updateCoef() {
@@ -146,7 +162,6 @@ public class IneqTree {
 			right.recomputeSize();
 			size += right.size;
 		}
-
 	}
 
 	/**
@@ -170,12 +185,10 @@ public class IneqTree {
 	 * @return whether all inequalities are valid
 	 */
 	public boolean isValid() {
-		if (this.ineq != null
-				&& this.ineq.getType() == IneqType.INEQUALITY_INVALID) {
+		if (this.ineq != null && this.ineq.getType() == IneqType.INEQUALITY_INVALID) {
 			return false;
 		}
-		return (left == null || left.isValid())
-				&& (right == null || right.isValid());
+		return (left == null || left.isValid()) && (right == null || right.isValid());
 	}
 
 	/**
@@ -191,15 +204,15 @@ public class IneqTree {
 		}
 		ExtendedBoolean leftVal = expr.getLeft().valueAround(x, y);
 		switch (expr.getOperation()) {
-		case AND_INTERVAL:
-		case AND:
-			return leftVal.and(expr.getRight().valueAround(x, y));
-		case OR:
-			return leftVal.or(expr.getRight().valueAround(x, y));
-		case IMPLICATION:
-			return leftVal.and(expr.getRight().valueAround(x, y).negate()).negate();
-		case NOT:
-			return leftVal.negate();
+			case AND_INTERVAL:
+			case AND:
+				return leftVal.and(expr.getRight().valueAround(x, y));
+			case OR:
+				return leftVal.or(expr.getRight().valueAround(x, y));
+			case IMPLICATION:
+				return leftVal.and(expr.getRight().valueAround(x, y).negate()).negate();
+			case NOT:
+				return leftVal.negate();
 		}
 		return ExtendedBoolean.UNKNOWN;
 	}

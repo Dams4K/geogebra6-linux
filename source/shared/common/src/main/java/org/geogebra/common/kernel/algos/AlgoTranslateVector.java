@@ -1,19 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
- */
-
 /*
- * AlgoTranslatePoint.java
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
  *
- * Created on 24. September 2001, 21:37
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -31,7 +29,7 @@ import org.geogebra.common.kernel.kernelND.GeoVectorND;
 
 /**
  * Vector w = v starting at A
- * 
+ *
  * @author Markus
  */
 public class AlgoTranslateVector extends AlgoElement {
@@ -40,13 +38,11 @@ public class AlgoTranslateVector extends AlgoElement {
 	protected GeoVectorND v; // input
 	protected GeoVectorND w; // output
 
-	public AlgoTranslateVector(Construction cons, String label, GeoVector v,
-			GeoPointND A) {
+	public AlgoTranslateVector(Construction cons, String label, GeoVector v, GeoPointND A) {
 		this(cons, label, (GeoVectorND) v, A);
 	}
 
-	protected AlgoTranslateVector(Construction cons, String label,
-			GeoVectorND v, GeoPointND A) {
+	protected AlgoTranslateVector(Construction cons, String label, GeoVectorND v, GeoPointND A) {
 		super(cons);
 		this.A = A;
 		this.v = v;
@@ -56,7 +52,7 @@ public class AlgoTranslateVector extends AlgoElement {
 
 		try {
 			w.setStartPoint(A);
-		} catch (CircularDefinitionException e) {
+		} catch (CircularDefinitionException ignored) {
 			// vector just created, no cycle possible
 		}
 
@@ -115,12 +111,11 @@ public class AlgoTranslateVector extends AlgoElement {
 	}
 
 	@Override
-	final public String toString(StringTemplate tpl) {
+	public final String toString(StringTemplate tpl) {
 		// Michael Borcherds 2008-03-30
 		// simplified to allow better Chinese translation
-		return getLoc().getPlainDefault("TranslationOfAtoB",
-				"Translation of %0 to %1", v.getLabel(tpl), A.getLabel(tpl));
-
+		return getLoc()
+				.getPlainDefault(
+						"TranslationOfAtoB", "Translation of %0 to %1", v.getLabel(tpl), A.getLabel(tpl));
 	}
-
 }

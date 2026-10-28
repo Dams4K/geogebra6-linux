@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.algos;
@@ -21,14 +25,26 @@ import org.geogebra.common.kernel.geos.GeoPoint;
 /**
  * Finds intersection points of two functions numerically (using the roots of
  * their difference)
- * 
+ *
  * @author Hans-Petter Ulven
  * @version 10.03.2011
  */
 public class AlgoIntersectFunctions extends AlgoRoots {
 
-	public AlgoIntersectFunctions(Construction cons, String[] labels,
-			GeoFunctionable f, GeoFunctionable g, GeoNumberValue left,
+	/**
+	 * @param cons construction
+	 * @param labels output labels
+	 * @param f first function
+	 * @param g second function
+	 * @param left left bound of the interval to search in
+	 * @param right right bound of the interval to search in
+	 */
+	public AlgoIntersectFunctions(
+			Construction cons,
+			String[] labels,
+			GeoFunctionable f,
+			GeoFunctionable g,
+			GeoNumberValue left,
 			GeoNumberValue right) {
 		super(cons, labels, f, g, left, right);
 	}
@@ -38,6 +54,9 @@ public class AlgoIntersectFunctions extends AlgoRoots {
 		return Commands.Intersect;
 	}
 
+	/**
+	 * @return intersection points
+	 */
 	public GeoPoint[] getIntersectionPoints() {
 		return super.getRootPoints();
 	}

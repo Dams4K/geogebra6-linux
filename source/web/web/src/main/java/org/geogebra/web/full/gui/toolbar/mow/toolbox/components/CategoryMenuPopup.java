@@ -1,10 +1,25 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.toolbar.mow.toolbox.components;
 
 import java.util.List;
 
 import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.gui.SetLabels;
-import org.geogebra.web.full.css.MaterialDesignResources;
 import org.geogebra.web.full.gui.contextmenu.CalculatorSubMenu;
 import org.geogebra.web.full.gui.menubar.MainMenu;
 import org.geogebra.web.full.gui.toolbar.mow.toolbox.ToolModeIconSpecAdapter;
@@ -14,7 +29,7 @@ import org.geogebra.web.html5.gui.view.IconSpec;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.main.toolbox.ToolboxIcon;
 
-public class CategoryMenuPopup extends GPopupMenuW implements SetLabels {
+public final class CategoryMenuPopup extends GPopupMenuW implements SetLabels {
 	private final List<Integer> tools;
 
 	/**
@@ -34,8 +49,10 @@ public class CategoryMenuPopup extends GPopupMenuW implements SetLabels {
 
 		for (Integer mode : tools) {
 			if (mode == EuclidianConstants.MODE_CALCULATOR) {
-				addItem(new AriaMenuItem("GeoGebra", MaterialDesignResources.INSTANCE
-						.geogebra_black(), new CalculatorSubMenu(getApp())));
+				addItem(new AriaMenuItem(
+						"GeoGebra",
+						getApp().getToolboxIconResource().getImageResource(ToolboxIcon.GEOGEBRA),
+						new CalculatorSubMenu(getApp())));
 			} else {
 				addItem(mode);
 			}

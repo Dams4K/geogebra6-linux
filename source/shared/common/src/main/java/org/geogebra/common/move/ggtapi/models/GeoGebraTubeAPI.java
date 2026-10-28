@@ -1,7 +1,24 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.move.ggtapi.models;
 
 import java.util.ArrayList;
 
+import org.geogebra.common.awt.annotations.HasNativeSubclass;
 import org.geogebra.common.move.ggtapi.events.LoginEvent;
 import org.geogebra.common.move.ggtapi.models.Material.MaterialType;
 import org.geogebra.common.move.ggtapi.models.json.JSONObject;
@@ -16,6 +33,7 @@ import org.geogebra.common.util.debug.Log;
  * Common base for geogebra.org JSON API
  * @author gabor
  */
+@HasNativeSubclass
 public abstract class GeoGebraTubeAPI implements BackendAPI {
 
 	/**
@@ -73,15 +91,13 @@ public abstract class GeoGebraTubeAPI implements BackendAPI {
 	 * @param callback
 	 *            callback
 	 */
-	protected final void performRequest(String requestString, boolean login,
-			AjaxCallback callback) {
+	protected final void performRequest(String requestString, boolean login, AjaxCallback callback) {
 		String postUrl = login ? getLoginUrl() : getUrl();
 		if ("null".equals(postUrl)) {
 			return;
 		}
 		HttpRequest request = createHttpRequest();
-		request.sendRequestPost("POST", postUrl, requestString,
-				callback);
+		request.sendRequestPost("POST", postUrl, requestString, callback);
 	}
 
 	/**
@@ -108,15 +124,14 @@ public abstract class GeoGebraTubeAPI implements BackendAPI {
 	protected abstract HttpRequest createHttpRequest();
 
 	@Override
-	public final void authorizeUser(final GeoGebraTubeUser user,
-			final LogInOperation op, final boolean automatic) {
+	public final void authorizeUser(
+			final GeoGebraTubeUser user, final LogInOperation op, final boolean automatic) {
 		if ("".equals(user.getLoginToken())) {
 			op.loginCanceled();
 			return;
 		}
 		performRequest(
-				buildTokenLoginRequest(user.getLoginToken(), user.getCookie()),
-				true, new AjaxCallback() {
+				buildTokenLoginRequest(user.getLoginToken(), user.getCookie()), true, new AjaxCallback() {
 					@Override
 					public void onSuccess(String responseStr) {
 						try {
@@ -124,26 +139,22 @@ public abstract class GeoGebraTubeAPI implements BackendAPI {
 
 							// Parse the userdata from the response
 							if (!parseUserDataFromResponse(user, responseStr)) {
-								op.onEvent(new LoginEvent(user, false,
-										automatic, responseStr));
+								op.onEvent(new LoginEvent(user, false, automatic, responseStr));
 								return;
 							}
 
-							op.onEvent(new LoginEvent(user, true, automatic,
-									responseStr));
+							op.onEvent(new LoginEvent(user, true, automatic, responseStr));
 
 							// GeoGebraTubeAPID.this.available = false;
 						} catch (Exception e) {
 							Log.debug(e);
 						}
-
 					}
 
 					@Override
 					public void onError(String error) {
 						GeoGebraTubeAPI.this.availabilityCheckDone = true;
-						op.onEvent(
-								new LoginEvent(user, false, automatic, null));
+						op.onEvent(new LoginEvent(user, false, automatic, null));
 					}
 				});
 	}
@@ -158,8 +169,7 @@ public abstract class GeoGebraTubeAPI implements BackendAPI {
 	 *            cookie (for web)
 	 * @return The JSONObject that contains the request.
 	 */
-	protected static String buildTokenLoginRequest(String token,
-			String cookie) {
+	protected static String buildTokenLoginRequest(String token, String cookie) {
 		JSONObject requestJSON = new JSONObject();
 		JSONObject apiJSON = new JSONObject();
 		JSONObject loginJSON = new JSONObject();
@@ -182,49 +192,51 @@ public abstract class GeoGebraTubeAPI implements BackendAPI {
 
 	@Override
 	public void setUserLanguage(String lang, String token) {
-		performRequest("{\"request\": {" + "\"api\":\"1.0.0\","
-				+ "\"login\": {\"token\":\"" + token
-				+ "\", \"getuserinfo\":\"false\"},"
-				+ "\"task\": {\"type\":\"setuserlang\", \"lang\":\"" + lang
-				+ "\"}}}", true, new AjaxCallback() {
+		performRequest(
+				"{\"request\": {" + "\"api\":\"1.0.0\","
+						+ "\"login\": {\"token\":\"" + token
+						+ "\", \"getuserinfo\":\"false\"},"
+						+ "\"task\": {\"type\":\"setuserlang\", \"lang\":\"" + lang
+						+ "\"}}}",
+				true,
+				new AjaxCallback() {
 
-			@Override
-			public void onSuccess(String response) {
-				// yay, it worked
-			}
+					@Override
+					public void onSuccess(String response) {
+						// yay, it worked
+					}
 
-			@Override
-			public void onError(String error) {
-				Log.error(error);
-
-			}
-		});
+					@Override
+					public void onError(String error) {
+						Log.error(error);
+					}
+				});
 	}
 
 	@Override
 	public void logout(String token) {
-		performRequest("{\"request\": {" + "\"api\":\"1.0.0\","
-				+ "\"logout\": {\"token\":\"" + token
-				+ "\", \"getuserinfo\":\"false\"}}}", true, new AjaxCallback() {
+		performRequest(
+				"{\"request\": {" + "\"api\":\"1.0.0\","
+						+ "\"logout\": {\"token\":\"" + token
+						+ "\", \"getuserinfo\":\"false\"}}}",
+				true,
+				new AjaxCallback() {
 
-			@Override
-			public void onSuccess(String response) {
-				// yay, it worked
-			}
+					@Override
+					public void onSuccess(String response) {
+						// yay, it worked
+					}
 
-			@Override
-			public void onError(String error) {
-				Log.error(error);
-
-			}
-		});
+					@Override
+					public void onError(String error) {
+						Log.error(error);
+					}
+				});
 	}
 
 	@Override
-	public void uploadLocalMaterial(final Material mat,
-			final MaterialCallbackI cb) {
-		performRequest(
-				UploadRequest.getRequestElement(mat).toJSONString(client), cb);
+	public void uploadLocalMaterial(final Material mat, final MaterialCallbackI cb) {
+		performRequest(UploadRequest.getRequestElement(mat).toJSONString(client), cb);
 	}
 
 	/**
@@ -233,8 +245,7 @@ public abstract class GeoGebraTubeAPI implements BackendAPI {
 	 * @param cb
 	 *            {@link MaterialCallbackI}
 	 */
-	protected final void performRequest(String requestString,
-			final MaterialCallbackI cb) {
+	protected final void performRequest(String requestString, final MaterialCallbackI cb) {
 		if ("null".equals(getUrl())) {
 			return;
 		}
@@ -244,12 +255,10 @@ public abstract class GeoGebraTubeAPI implements BackendAPI {
 			@Override
 			public void onSuccess(String response) {
 				ArrayList<Material> result = new ArrayList<>();
-				JSONParserGGT.prototype
-						.parseResponse(response, result);
+				JSONParserGGT.prototype.parseResponse(response, result);
 				if (cb != null) {
 					cb.onLoaded(result, null);
 				}
-
 			}
 
 			@Override
@@ -257,16 +266,20 @@ public abstract class GeoGebraTubeAPI implements BackendAPI {
 				cb.onError(new Exception(error));
 			}
 		});
-
 	}
 
 	@Override
-	public void uploadMaterial(String tubeID, String visibility,
-			final String filename, String base64, final MaterialCallbackI cb,
-			MaterialType type, boolean isMultiuser) {
+	public void uploadMaterial(
+			String tubeID,
+			String visibility,
+			final String filename,
+			String base64,
+			final MaterialCallbackI cb,
+			MaterialType type,
+			boolean isMultiuser) {
 		if (type == MaterialType.ggsTemplate) {
-			getMaterialRestAPI().uploadMaterial(tubeID, visibility, filename, base64, cb, type,
-					isMultiuser);
+			getMaterialRestAPI()
+					.uploadMaterial(tubeID, visibility, filename, base64, cb, type, isMultiuser);
 		} else {
 			uploadMaterial(tubeID, visibility, filename, base64, cb, type, null);
 		}
@@ -291,13 +304,18 @@ public abstract class GeoGebraTubeAPI implements BackendAPI {
 	 * @param parent
 	 *            parent ID
 	 */
-	public void uploadMaterial(String tubeID, String visibility,
-			final String filename, String base64, final MaterialCallbackI cb,
-			MaterialType type, Material parent) {
-		performRequest(UploadRequest
-				.getRequestElement(tubeID, visibility, filename, base64, type,
-						parent)
-				.toJSONString(client), cb);
+	public void uploadMaterial(
+			String tubeID,
+			String visibility,
+			final String filename,
+			String base64,
+			final MaterialCallbackI cb,
+			MaterialType type,
+			Material parent) {
+		performRequest(
+				UploadRequest.getRequestElement(tubeID, visibility, filename, base64, type, parent)
+						.toJSONString(client),
+				cb);
 	}
 
 	@Override
@@ -315,11 +333,6 @@ public abstract class GeoGebraTubeAPI implements BackendAPI {
 	@Override
 	public void setClient(ClientInfo clientInfo) {
 		this.client = clientInfo;
-	}
-
-	@Override
-	public boolean canUserShare(boolean student) {
-		return true;
 	}
 
 	@Override

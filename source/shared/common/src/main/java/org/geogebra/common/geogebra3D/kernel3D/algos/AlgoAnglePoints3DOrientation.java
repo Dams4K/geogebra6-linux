@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.geogebra3D.kernel3D.algos;
 
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoAngle3D;
@@ -11,7 +27,7 @@ import org.geogebra.common.util.DoubleUtil;
 
 /**
  * angle for three points, oriented
- * 
+ *
  * @author mathieu
  */
 public class AlgoAnglePoints3DOrientation extends AlgoAnglePoints3D {
@@ -31,8 +47,8 @@ public class AlgoAnglePoints3DOrientation extends AlgoAnglePoints3D {
 	 * @param orientation
 	 *            orientation
 	 */
-	AlgoAnglePoints3DOrientation(Construction cons, GeoPointND A,
-			GeoPointND B, GeoPointND C, GeoDirectionND orientation) {
+	AlgoAnglePoints3DOrientation(
+			Construction cons, GeoPointND A, GeoPointND B, GeoPointND C, GeoDirectionND orientation) {
 		super(cons, A, B, C, orientation);
 	}
 
@@ -44,16 +60,15 @@ public class AlgoAnglePoints3DOrientation extends AlgoAnglePoints3D {
 	 * @param isReversed
 	 *            if orientation is reversed
 	 */
-	public AlgoAnglePoints3DOrientation(Construction cons,
-			GeoDirectionND orientation, boolean isReversed) {
+	public AlgoAnglePoints3DOrientation(
+			Construction cons, GeoDirectionND orientation, boolean isReversed) {
 		super(cons);
 		this.orientation = orientation;
 		this.isReversed = isReversed;
 	}
 
 	@Override
-	protected void setInput(GeoPointND A, GeoPointND B, GeoPointND C,
-			GeoDirectionND orientation) {
+	protected void setInput(GeoPointND A, GeoPointND B, GeoPointND C, GeoDirectionND orientation) {
 
 		super.setInput(A, B, C, orientation);
 		this.orientation = orientation;
@@ -105,14 +120,16 @@ public class AlgoAnglePoints3DOrientation extends AlgoAnglePoints3D {
 		}
 
 		vn.normalize();
-
 	}
 
 	@Override
 	public String toString(StringTemplate tpl) {
 
-		return getLoc().getPlain("AngleBetweenABC", getA().getLabel(tpl),
-				getB().getLabel(tpl), getC().getLabel(tpl));
+		return getLoc()
+				.getPlain(
+						"AngleBetweenABC",
+						getA().getLabel(tpl),
+						getB().getLabel(tpl),
+						getC().getLabel(tpl));
 	}
-
 }

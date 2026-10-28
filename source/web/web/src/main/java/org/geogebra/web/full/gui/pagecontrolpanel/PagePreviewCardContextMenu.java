@@ -1,18 +1,36 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.gui.pagecontrolpanel;
 
-import org.geogebra.web.full.css.MaterialDesignResources;
 import org.geogebra.web.full.gui.util.IconButtonCardContextMenu;
 import org.geogebra.web.full.main.AppWFull;
 import org.geogebra.web.html5.gui.menu.AriaMenuItem;
+import org.geogebra.web.html5.main.general.GeneralIcon;
+import org.geogebra.web.html5.main.general.GeneralIconResource;
 
 /**
  * Context menu of the preview card.
  */
-public class PagePreviewCardContextMenu extends IconButtonCardContextMenu {
+public final class PagePreviewCardContextMenu extends IconButtonCardContextMenu {
 
 	private final PagePreviewCard card;
 	private MenuItemController menuItemController;
 	private AriaMenuItem paste;
+	private final GeneralIconResource generalIconResource;
 
 	/**
 	 * @param app application
@@ -21,6 +39,7 @@ public class PagePreviewCardContextMenu extends IconButtonCardContextMenu {
 	public PagePreviewCardContextMenu(AppWFull app, PagePreviewCard card) {
 		super(app);
 		this.card = card;
+		this.generalIconResource = app.getGeneralIconResource();
 	}
 
 	@Override
@@ -43,39 +62,52 @@ public class PagePreviewCardContextMenu extends IconButtonCardContextMenu {
 	}
 
 	private void addNewPage() {
-		addItem(MaterialDesignResources.INSTANCE.add_black(),
+		addItem(
+				generalIconResource.getImageResource(GeneralIcon.PLUS),
 				loc.getMenu("ContextMenu.NewPage"),
 				menuItemController.addNewPage(card.getPageIndex() + 1));
 	}
 
 	private void addDuplicatePage() {
-		addItem(MaterialDesignResources.INSTANCE.duplicatePage(),
-				loc.getMenu("ContextMenu.DuplicatePage"), menuItemController.onDuplicatePage());
+		addItem(
+				generalIconResource.getImageResource(GeneralIcon.DUPLICATE),
+				loc.getMenu("ContextMenu.DuplicatePage"),
+				menuItemController.onDuplicatePage());
 	}
 
 	private void addRenameItem() {
-		addItem(MaterialDesignResources.INSTANCE.mow_rename(),
-				loc.getMenu("Rename"), menuItemController.onRenamePage());
+		addItem(
+				generalIconResource.getImageResource(GeneralIcon.RENAME),
+				loc.getMenu("Rename"),
+				menuItemController.onRenamePage());
 	}
 
 	private void addDeleteItem() {
-		addItem(MaterialDesignResources.INSTANCE.delete_black(),
-				loc.getMenu("Delete"), menuItemController.onDelete());
+		addItem(
+				generalIconResource.getImageResource(GeneralIcon.DELETE),
+				loc.getMenu("Delete"),
+				menuItemController.onDelete());
 	}
 
 	private void addCutItem() {
-		addItem(MaterialDesignResources.INSTANCE.cut_black(),
-				loc.getMenu("Cut"), menuItemController.onCut());
+		addItem(
+				generalIconResource.getImageResource(GeneralIcon.CUT),
+				loc.getMenu("Cut"),
+				menuItemController.onCut());
 	}
 
 	private void addCopyItem() {
-		addItem(MaterialDesignResources.INSTANCE.copy_black(),
-				loc.getMenu("Copy"), menuItemController.onCopy());
+		addItem(
+				generalIconResource.getImageResource(GeneralIcon.COPY),
+				loc.getMenu("Copy"),
+				menuItemController.onCopy());
 	}
 
 	private void addPasteItem() {
-		paste = addItem(MaterialDesignResources.INSTANCE.paste_black(),
-				loc.getMenu("Paste"), menuItemController.onPaste(card, paste));
+		paste = addItem(
+				generalIconResource.getImageResource(GeneralIcon.PASTE),
+				loc.getMenu("Paste"),
+				menuItemController.onPaste(card, paste));
 	}
 
 	@Override

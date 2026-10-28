@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.kernel.barycentric;
 
 import org.geogebra.common.kernel.Construction;
@@ -15,11 +31,10 @@ import org.geogebra.common.util.MyMath;
  *         Georgia for creating a perl script which was used to create this
  *         class.
  * @version 30-09-2011
- * 
+ *
  *          This class calculates n-th Kimberling center of a triangle.
- * 
+ *
  */
-
 public class AlgoKimberling extends AlgoElement {
 
 	private GeoPointND A, B, C; // input
@@ -28,7 +43,7 @@ public class AlgoKimberling extends AlgoElement {
 
 	/**
 	 * Creates new algo for triangle center
-	 * 
+	 *
 	 * @param cons
 	 *            construction
 	 * @param label
@@ -42,15 +57,14 @@ public class AlgoKimberling extends AlgoElement {
 	 * @param n
 	 *            index in ETC
 	 */
-	public AlgoKimberling(Construction cons, String label, GeoPointND A,
-			GeoPointND B, GeoPointND C, GeoNumberValue n) {
+	public AlgoKimberling(
+			Construction cons, String label, GeoPointND A, GeoPointND B, GeoPointND C, GeoNumberValue n) {
 		super(cons);
 		this.A = A;
 		this.B = B;
 		this.C = C;
 		this.n = n;
-		int dim = MyMath.max(A.getDimension(), B.getDimension(),
-				C.getDimension());
+		int dim = MyMath.max(A.getDimension(), B.getDimension(), C.getDimension());
 		M = kernel.getGeoFactory().newPoint(dim, cons);
 		setInputOutput();
 		compute();

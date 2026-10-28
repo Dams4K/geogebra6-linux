@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.desktop.gui.dialog;
@@ -47,11 +51,10 @@ import org.geogebra.desktop.main.LocalizationD;
 
 /**
  * Dialog to manage existing user defined tools (macros).
- * 
+ *
  * @author Markus Hohenwarter
  */
-public class ToolManagerDialogD extends Dialog
-		implements ToolManagerDialogListener {
+public class ToolManagerDialogD extends Dialog implements ToolManagerDialogListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -97,20 +100,23 @@ public class ToolManagerDialogD extends Dialog
 	/**
 	 * Deletes all selected tools that are not used in the construction.
 	 */
-	private void deleteTools(JList<Macro> toolList,
-			DefaultListModel<Macro> listModel) {
+	private void deleteTools(JList<Macro> toolList, DefaultListModel<Macro> listModel) {
 		List<Macro> sel = toolList.getSelectedValuesList();
 		if (sel == null || sel.size() == 0) {
 			return;
 		}
 
 		// ARE YOU SURE ?
-		Object[] options = { loc.getMenu("DeleteTool"),
-				loc.getMenu("DontDeleteTool") };
-		int returnVal = JOptionPane.showOptionDialog(this,
-				loc.getMenu("Tool.DeleteQuestion"), loc.getMenu("Question"),
-				JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null,
-				options, options[1]);
+		Object[] options = {loc.getMenu("DeleteTool"), loc.getMenu("DontDeleteTool")};
+		int returnVal = JOptionPane.showOptionDialog(
+				this,
+				loc.getMenu("Tool.DeleteQuestion"),
+				loc.getMenu("Question"),
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.WARNING_MESSAGE,
+				null,
+				options,
+				options[1]);
 		if (returnVal == 1) {
 			return;
 		}
@@ -133,8 +139,7 @@ public class ToolManagerDialogD extends Dialog
 			panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 			JPanel toolListPanel = new JPanel(new BorderLayout(5, 5));
-			toolListPanel.setBorder(
-					BorderFactory.createTitledBorder(loc.getMenu("Tools")));
+			toolListPanel.setBorder(BorderFactory.createTitledBorder(loc.getMenu("Tools")));
 			getContentPane().add(toolListPanel, BorderLayout.NORTH);
 
 			toolsModel = new DefaultListModel<>();
@@ -143,9 +148,8 @@ public class ToolManagerDialogD extends Dialog
 			toolList.setCellRenderer(new MacroCellRenderer());
 			toolList.setVisibleRowCount(6);
 
-			JPanel centerPanel = ToolCreationDialogD
-					.createListUpDownRemovePanel(loc, toolList, null, false,
-							true, false, null);
+			JPanel centerPanel = ToolCreationDialogD.createListUpDownRemovePanel(
+					loc, toolList, null, false, true, false, null);
 
 			// JScrollPane jScrollPane1 = new JScrollPane(toolList);
 			// jScrollPane1.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED
@@ -153,8 +157,7 @@ public class ToolManagerDialogD extends Dialog
 			// toolListPanel.add(jScrollPane1, BorderLayout.CENTER);
 			toolListPanel.add(centerPanel, BorderLayout.CENTER);
 
-			JPanel toolButtonPanel = new JPanel(
-					new FlowLayout(FlowLayout.LEFT));
+			JPanel toolButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			toolListPanel.add(toolButtonPanel, BorderLayout.SOUTH);
 
 			final JButton btDelete = new JButton();
@@ -170,10 +173,8 @@ public class ToolManagerDialogD extends Dialog
 			btSave.setText(loc.getMenu("SaveAs") + " ...");
 
 			// name & icon
-			final ToolNameIconPanelD namePanel = new ToolNameIconPanelD(app,
-					true);
-			namePanel.setBorder(
-					BorderFactory.createTitledBorder(loc.getMenu("NameIcon")));
+			final ToolNameIconPanelD namePanel = new ToolNameIconPanelD(app, true);
+			namePanel.setBorder(BorderFactory.createTitledBorder(loc.getMenu("NameIcon")));
 			panel.add(namePanel, BorderLayout.CENTER);
 
 			JPanel closePanel = new JPanel();
@@ -205,7 +206,6 @@ public class ToolManagerDialogD extends Dialog
 				} else if (src == btSave) {
 					saveTools(toolList);
 				}
-
 			};
 
 			btSave.addActionListener(ac);
@@ -225,8 +225,7 @@ public class ToolManagerDialogD extends Dialog
 					// no or several tools selected
 					namePanel.init(null, null);
 				} else {
-					Macro macro = toolsModel
-							.getElementAt(selIndices[0]);
+					Macro macro = toolsModel.getElementAt(selIndices[0]);
 					namePanel.init(this, macro);
 				}
 			};
@@ -253,7 +252,7 @@ public class ToolManagerDialogD extends Dialog
 
 	/**
 	 * Opens tools in different windows
-	 * 
+	 *
 	 * @author Zbynek Konecny
 	 * @param toolList
 	 *            Tools to be opened
@@ -270,12 +269,10 @@ public class ToolManagerDialogD extends Dialog
 				app.setWaitCursor();
 				// avoid deadlock with current app
 				SwingUtilities.invokeLater(() -> {
-					GeoGebraFrame newFrame =
-							((GeoGebraFrame) app.getFrame()).createNewWindow(null, macro);
+					GeoGebraFrame newFrame = ((GeoGebraFrame) app.getFrame()).createNewWindow(null, macro);
 					newFrame.setTitle(macro.getCommandName());
 					byte[] byteArray = app.getMacrosBefore(macro);
-					newFrame.getApplication()
-							.loadMacroFileFromByteArray(byteArray, false);
+					newFrame.getApplication().loadMacroFileFromByteArray(byteArray, false);
 					newFrame.getApplication().openEditMacro(macro);
 					app.setDefaultCursor();
 				});
@@ -296,7 +293,7 @@ public class ToolManagerDialogD extends Dialog
 		}
 	}
 
-	private class MacroCellRenderer extends DefaultListCellRenderer {
+	private final class MacroCellRenderer extends DefaultListCellRenderer {
 
 		private static final long serialVersionUID = 1L;
 
@@ -305,9 +302,11 @@ public class ToolManagerDialogD extends Dialog
 		 * reconfigure the Jlabel each time we're called.
 		 */
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value, // value
-																				// to
-																				// display
+		public Component getListCellRendererComponent(
+				JList list,
+				Object value, // value
+				// to
+				// display
 				int index, // cell index
 				boolean iss, // is the cell selected
 				boolean chf) { // the list and the cell have the focus
@@ -349,10 +348,13 @@ public class ToolManagerDialogD extends Dialog
 			return;
 		}
 
-		File file = app.getGuiManager().showSaveDialog(
-				FileExtensions.GEOGEBRA_TOOL, null,
-				GeoGebraConstants.APPLICATION_NAME + " " + loc.getMenu("Tools"),
-				true, false);
+		File file = app.getGuiManager()
+				.showSaveDialog(
+						FileExtensions.GEOGEBRA_TOOL,
+						null,
+						GeoGebraConstants.APPLICATION_NAME + " " + loc.getMenu("Tools"),
+						true,
+						false);
 		if (file == null) {
 			return;
 		}
@@ -370,5 +372,4 @@ public class ToolManagerDialogD extends Dialog
 	public void refreshCustomToolsInToolBar() {
 		app.getGuiManager().refreshCustomToolsInToolBar();
 	}
-
 }

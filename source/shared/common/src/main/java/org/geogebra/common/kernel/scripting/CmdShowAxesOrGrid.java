@@ -1,13 +1,17 @@
-/* 
-GeoGebra - Dynamic Mathematics for Everyone
-http://www.geogebra.org
-
-This file is part of GeoGebra.
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
-the Free Software Foundation.
-
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
  */
 
 package org.geogebra.common.kernel.scripting;
@@ -24,9 +28,9 @@ import org.geogebra.common.main.settings.EuclidianSettings;
 
 /**
  * ShowAxex[] / ShowGrid[]
- * 
+ *
  * ShowAxes[Boolean] / ShowGrid[Boolean]
- * 
+ *
  * ShowAxes[View ID, Boolean] / ShowGrid[View ID/Boolean]
  */
 public class CmdShowAxesOrGrid extends CmdScripting {
@@ -35,7 +39,7 @@ public class CmdShowAxesOrGrid extends CmdScripting {
 
 	/**
 	 * Create new command processor
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */
@@ -52,40 +56,40 @@ public class CmdShowAxesOrGrid extends CmdScripting {
 
 		GeoElement[] arg = resArgs(c);
 		switch (n) {
-		case 0:
-			evs = app.getActiveEuclidianView().getSettings();
-			setAndRepaint(true, evs);
-			break;
-		case 1:
-			if (!(arg[0] instanceof BooleanValue)) {
-				throw argErr(c, arg[0]);
-			}
-
-			boolean show = ((BooleanValue) arg[0]).getBoolean();
-			evs = app.getActiveEuclidianView().getSettings();
-			setAndRepaint(show, evs);
-
-			break;
-		case 2:
-			if (!(arg[0] instanceof NumberValue)) {
-				throw argErr(c, arg[0]);
-			}
-			if (!(arg[1] instanceof BooleanValue)) {
-				throw argErr(c, arg[1]);
-			}
-
-			show = ((BooleanValue) arg[1]).getBoolean();
-			int evNo = (int) arg[0].evaluateDouble();
-			if (evNo >= 1 && evNo <= 3 || evNo == -1) {
-				evs = app.getSettings().getEuclidian(evNo);
-				if (evs != null) {
-					setAndRepaint(show, evs);
+			case 0:
+				evs = app.getActiveEuclidianView().getSettings();
+				setAndRepaint(true, evs);
+				break;
+			case 1:
+				if (!(arg[0] instanceof BooleanValue)) {
+					throw argErr(c, arg[0]);
 				}
-			}
-			break;
 
-		default:
-			throw argNumErr(c);
+				boolean show = ((BooleanValue) arg[0]).getBoolean();
+				evs = app.getActiveEuclidianView().getSettings();
+				setAndRepaint(show, evs);
+
+				break;
+			case 2:
+				if (!(arg[0] instanceof NumberValue)) {
+					throw argErr(c, arg[0]);
+				}
+				if (!(arg[1] instanceof BooleanValue)) {
+					throw argErr(c, arg[1]);
+				}
+
+				show = ((BooleanValue) arg[1]).getBoolean();
+				int evNo = (int) arg[0].evaluateDouble();
+				if (evNo >= 1 && evNo <= 3 || evNo == -1) {
+					evs = app.getSettings().getEuclidian(evNo);
+					if (evs != null) {
+						setAndRepaint(show, evs);
+					}
+				}
+				break;
+
+			default:
+				throw argNumErr(c);
 		}
 		return arg;
 	}

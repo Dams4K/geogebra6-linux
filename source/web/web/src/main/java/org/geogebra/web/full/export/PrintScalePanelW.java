@@ -1,3 +1,19 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.web.full.export;
 
 import java.util.Arrays;
@@ -18,7 +34,7 @@ import org.gwtproject.user.client.ui.TextBox;
  * Scale panel for print dialog
  *
  */
-public class PrintScalePanelW extends FlowPanel {
+public final class PrintScalePanelW extends FlowPanel {
 
 	private TextBox tfScale1;
 	private TextBox tfScale2;
@@ -59,21 +75,19 @@ public class PrintScalePanelW extends FlowPanel {
 		Runnable updateCm = this::fireTextFieldUpdate;
 
 		Runnable updateFixedSize = this::fireFixedSizeTextFieldUpdate;
-		
+
 		tfScale1 = getNumberField(updateCm);
 		tfScale2 = getNumberField(updateCm);
 		tfScaleFixed = getNumberField(updateFixedSize);
 
-		exportModeDropDown = new ComponentDropDown(app, null,
-				Arrays.asList(loc.getMenu("ScaleInCentimeter"), loc.getMenu("FixedSize")),
-				0);
+		exportModeDropDown = new ComponentDropDown(
+				app, null, Arrays.asList(loc.getMenu("ScaleInCentimeter"), loc.getMenu("FixedSize")), 0);
 		exportModeDropDown.setFullWidth(true);
 		add(exportModeDropDown);
 		exportModeDropDown.addChangeHandler(this::switchMode);
 
 		fixedSizeModePanel = new FlowPanel();
-		Label aPixelsOnScreen = new Label(" "
-				+ loc.getPlain("APixelsOnScreen", "100") + " = ");
+		Label aPixelsOnScreen = new Label(" " + loc.getPlain("APixelsOnScreen", "100") + " = ");
 		aPixelsOnScreen.addStyleName("aPixelsOnScreen");
 		fixedSizeModePanel.add(aPixelsOnScreen);
 		fixedSizeModePanel.add(tfScaleFixed);
@@ -112,8 +126,7 @@ public class PrintScalePanelW extends FlowPanel {
 	}
 
 	private void updateFixedSizeTextFields() {
-		double relScale = DoubleUtil
-				.checkInteger(100 * ev.getPrintingScale() / ev.getXscale());
+		double relScale = DoubleUtil.checkInteger(100 * ev.getPrintingScale() / ev.getXscale());
 		setTextNoListener(tfScaleFixed, relScale + "");
 	}
 
@@ -161,7 +174,7 @@ public class PrintScalePanelW extends FlowPanel {
 				Log.debug("printing scale set: " + scale);
 				ev.setPrintingScale(scale);
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			// invalid numbers, continue editing
 		}
 
@@ -171,17 +184,18 @@ public class PrintScalePanelW extends FlowPanel {
 	private TextBox getNumberField(final Runnable run) {
 		final TextBox ret = new TextBox();
 
-		ret.addDomHandler(event -> {
-			if (handlers.get(ret)) {
-				handlers.put(ret, false);
-				return;
-			}
-			run.run();
-		}, ChangeEvent.getType());
+		ret.addDomHandler(
+				event -> {
+					if (handlers.get(ret)) {
+						handlers.put(ret, false);
+						return;
+					}
+					run.run();
+				},
+				ChangeEvent.getType());
 
 		handlers.put(ret, false);
 
 		return ret;
 	}
-
 }

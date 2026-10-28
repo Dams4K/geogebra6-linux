@@ -1,34 +1,49 @@
+/*
+ * GeoGebra - Dynamic Mathematics for Everyone
+ * Copyright (c) GeoGebra GmbH, Altenbergerstr. 69, 4040 Linz, Austria
+ * https://www.geogebra.org
+ *
+ * This file is licensed by GeoGebra GmbH under the EUPL 1.2 licence and
+ * may be used under the EUPL 1.2 in compatible projects (see Article 5
+ * and the Appendix of EUPL 1.2 for details).
+ * You may obtain a copy of the licence at:
+ * https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Note: The overall GeoGebra software package is free to use for
+ * non-commercial purposes only.
+ * See https://www.geogebra.org/license for full licensing details
+ */
+
 package org.geogebra.common.exam.restrictions.realschule;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.geogebra.common.SuiteSubApp;
 import org.geogebra.common.exam.BaseExamTestSetup;
 import org.geogebra.common.gui.view.algebra.filter.AlgebraOutputFilter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class RealschuleAlgebraOutputFilterTests extends BaseExamTestSetup {
+class RealschuleAlgebraOutputFilterTests extends BaseExamTestSetup {
 
-	@Before
-	public void setup() {
+	@BeforeEach
+	void setup() {
 		setupApp(SuiteSubApp.GRAPHING);
 	}
 
 	@Test
-	public void testAlgebraOutputRestrictions() {
-		AlgebraOutputFilter outputFilter = new RealschuleAlgebraOutputFilter(null);
+	void testAlgebraOutputRestrictions() {
+		AlgebraOutputFilter outputFilter = new RealschuleAlgebraOutputFilter();
 
 		assertFalse(outputFilter.isAllowed(evaluateGeoElement("Line((0, 0), (1, 2))")));
 		assertFalse(outputFilter.isAllowed(evaluateGeoElement("Ray((0, 0), (1, 2))")));
 		assertFalse(outputFilter.isAllowed(evaluateGeoElement("Circle((0, 0), 1)")));
 
 		assertTrue(outputFilter.isAllowed(evaluateGeoElement("FitLine((1,1), (2,3))")));
-		assertTrue(outputFilter.isAllowed(evaluateGeoElement(
-				"FitImplicit((1...10,(1/(1...10))),3)")));
-		assertTrue(outputFilter.isAllowed(evaluateGeoElement(
-				"f(x)=FitPoly({(-2,1),(-1,0),(0,1),(1,0)},3)")));
+		assertTrue(outputFilter.isAllowed(evaluateGeoElement("FitImplicit((1...10,(1/(1...10))),3)")));
+		assertTrue(
+				outputFilter.isAllowed(evaluateGeoElement("f(x)=FitPoly({(-2,1),(-1,0),(0,1),(1,0)},3)")));
 		assertTrue(outputFilter.isAllowed(evaluateGeoElement("FitExp((1,1),(2,4))")));
 		assertTrue(outputFilter.isAllowed(evaluateGeoElement("FitGrowth((1,2),(3,4))")));
 		assertTrue(outputFilter.isAllowed(evaluateGeoElement("FitLogistic((1,2),(3,4),(5,6))")));
@@ -40,5 +55,4 @@ public class RealschuleAlgebraOutputFilterTests extends BaseExamTestSetup {
 		assertTrue(outputFilter.isAllowed(evaluateGeoElement("x^3 + y = 0")));
 		assertTrue(outputFilter.isAllowed(evaluateGeoElement("x")));
 	}
-
 }
