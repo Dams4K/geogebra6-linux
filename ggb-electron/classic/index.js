@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, shell } = require('electron')
 const path = require('path')
 
 let win = null
@@ -29,7 +29,11 @@ function createWindow() {
     })
 
     win.loadFile(path.join(__dirname, "war", "classic.html")).catch(error => {
-        console.error("Unable to load GeoGebra Classic: " + error)
+        console.error("Unable to load GeoGebra Classic: ", error)
+    })
+
+    win.on('close', (e) => {
+        app.quit();
     })
 
     win.on('closed', () => {

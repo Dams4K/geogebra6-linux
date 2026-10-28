@@ -186,6 +186,10 @@ tasks.register("prepareS3Upload") {
 tasks.register<Copy>("deployIntoWar") {
     dependsOn(copyHtml, tasks.gwtCompile)
     description = "Copies/updates the GWT production compilation directory (web3d, ...) to the war directory."
+
+    // fix "Type 'org.gradle.api.tasks.Copy' property 'destinationDir' doesn't have a configured value"
+    into(layout.projectDirectory.dir("war"))
+
     into("web3d/sourcemaps/") {
         from(layout.buildDirectory.file("gwt/deploy/web3d/symbolMaps/").get().asFile)
     }
