@@ -1,25 +1,38 @@
 {
   "name": "geogebra-classic-6",
+  "productName": "GeoGebra Classic 6",
   "version": "1.0.0",
+  "description": "GeoGebra Classic 6 packaged as a Linux desktop application with Electron",
   "main": "index.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist:appimage": "npm run build:web && npx electron-builder --linux AppImage",
+    "dist:deb": "npm run build:web && npx electron-builder --linux deb",
+    "dist:rpm": "npm run build:web && npx electron-builder --linux rpm",
+    "dist:linux": "npm run build:web && npx electron-builder --linux AppImage deb rpm"
   },
-  "keywords": [],
+  "keywords": [
+    "geogebra",
+    "mathematics",
+    "math",
+    "geometry",
+    "algebra",
+    "graphing",
+    "calculator",
+    "education"
+  ],
   "author": {
     "name": "Dams4K",
     "email": "damien.dams.contact@gmail.com "
   },
-  "license": "ISC",
-  "description": "",
+  "license": "EUPL-1.2",
   "devDependencies": {
-    "electron": "^38.4.0",
+    "electron": "^45.1.0",
     "electron-builder": "^26.18.0"
   },
   "homepage": "https://www.geogebra.org/",
   "build": {
     "appId": "org.geogebra.classic6",
-    "productName": "GeoGebra Classic 6",
     "icon": "icons/logo.png",
     "linux": {
       "target": [
