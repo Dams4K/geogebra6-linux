@@ -1,0 +1,64 @@
+name: Build GeoGebra Classic 6 for Linux
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "11"
+          cache: gradle
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ggb-electron/classic/package-lock.json
+
+      - name: Install Linux packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm rsync
+
+      - name: Install Electron dependencies
+        working-directory: ggb-electron/classic
+        run: npm ci
+
+      - name: Build Linux packages
+        working-directory: ggb-electron/classic
+        run: npm run dist:linux
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: geogebra-classic-6-linux
+          path: |
+            ggb-electron/classic/dist/*.AppImage
+            ggb-electron/classic/dist/*.deb
+            ggb-electron/classic/dist/*.rpm
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ggb-electron/classic/dist/*.AppImage
+            ggb-electron/classic/dist/*.deb
+            ggb-electron/classic/dist/*.rpm
+          generate_release_notes: true
