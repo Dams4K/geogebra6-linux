@@ -17,12 +17,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Java 11
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "11"
+          java-version: |
+            11
+            17
           cache: gradle
+
+      - name: Verify Java
+        run: |
+          java --version
+          echo "JAVA_HOME=$JAVA_HOME"
+          echo "JAVA_HOME_11_X64=$JAVA_HOME_11_X64"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

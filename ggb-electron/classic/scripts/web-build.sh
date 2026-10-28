@@ -7,7 +7,7 @@ WAR_DIR="$ROOT/source/web/web/war"
 
 echo "==> Compilation"
 cd "$ROOT"
-./gradlew -p source/web :web:gwtCompile :web:deployIntoWar
+./gradlew -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_11_X64 -p source/web :web:gwtCompile :web:deployIntoWar
 
 if [[ ! -f "$WAR_DIR/classic.html" ]]; then
   echo "Error: $WAR_DIR/classic.html not found." >&2
