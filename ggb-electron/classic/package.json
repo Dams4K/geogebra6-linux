@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "electron .",
-    "build:web": "bash scripts/build-web.sh",
+    "build:web": "bash scripts/web-build.sh",
     "dist:appimage": "npm run build:web && npx electron-builder --linux AppImage",
     "dist:deb": "npm run build:web && npx electron-builder --linux deb",
     "dist:rpm": "npm run build:web && npx electron-builder --linux rpm",
