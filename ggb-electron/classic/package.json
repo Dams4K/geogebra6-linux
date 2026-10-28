@@ -1,7 +1,7 @@
 {
   "name": "geogebra-classic-6",
   "productName": "GeoGebra Classic 6",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "GeoGebra Classic 6 packaged as a Linux desktop application with Electron",
   "main": "index.js",
   "scripts": {
