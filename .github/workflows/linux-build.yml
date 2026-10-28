@@ -42,7 +42,7 @@ jobs:
       - name: Install Linux packaging tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y rpm rsync
+          sudo apt-get install -y rpm rsync flatpak flatpak-builder
 
       - name: Install Electron dependencies
         working-directory: ggb-electron/classic
@@ -63,6 +63,7 @@ jobs:
           if-no-files-found: error
 
       - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: |

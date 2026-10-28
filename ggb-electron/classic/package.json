@@ -10,7 +10,7 @@
     "dist:appimage": "npm run build:web && npx electron-builder --linux AppImage",
     "dist:deb": "npm run build:web && npx electron-builder --linux deb",
     "dist:rpm": "npm run build:web && npx electron-builder --linux rpm",
-    "dist:linux": "npm run build:web && npx electron-builder --linux AppImage deb rpm"
+    "dist:linux": "npm run build:web && npx electron-builder --linux"
   },
   "keywords": [
     "geogebra",
@@ -35,12 +35,20 @@
   "build": {
     "appId": "org.geogebra.classic6",
     "icon": "icons/logo.png",
+    "electronLanguages": ["en-US"],
     "linux": {
       "target": [
         "AppImage",
-        "deb"
+        "deb",
+        "rpm",
+        "flatpak"
       ],
-      "maintainer": "damien.dams.contact@gmail.com"
+      "maintainer": "damien.dams.contact@gmail.com",
+      "files": [
+        "**/*",
+        "!war/**/*.map",
+        "!war/web3d/sourcemaps/**"
+      ]
     }
   }
 }
