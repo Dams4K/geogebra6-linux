@@ -48,10 +48,11 @@
         "**/*",
         "!war/**/*.map",
         "!war/web3d/sourcemaps/**"
-      ]
+      ],
+      "flatpak": {
+        "runtimeVersion": "26.08",
+        "baseVersion": "26.08"
+      }
     }
-  },
-  "flatpak": {
-    "runtimeVersion": "26.08"
   }
 }
